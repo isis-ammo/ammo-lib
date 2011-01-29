@@ -6,6 +6,7 @@
      It contains the path to the SDK. It should *NOT* be checked into
      Version Control Systems. -->
     <property file="local.properties" />
+    <echo message="ammo lib ${sdk.dir}"/>
 
     <!-- The build.properties file can be created by you and is never touched
          by the 'android' tool. This is the place to change some of the
@@ -44,6 +45,11 @@
     <taskdef name="setup"
         classname="com.android.ant.SetupTask"
         classpathref="android.antlibs" />
+
+    <!-- Hack to fix build failure - http://code.google.com/p/android/issues/detail?id=13024 -->
+    <path id="android.libraries.src"><path refid="project.libraries.src" /></path>
+    <path id="android.libraries.jars"><path refid="project.libraries.jars" /></path>
+
 
 <!-- extension targets. Uncomment the ones where you want to do custom work
      in between standard targets -->
