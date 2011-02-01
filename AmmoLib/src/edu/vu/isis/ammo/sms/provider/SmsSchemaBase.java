@@ -1,5 +1,5 @@
 // THIS IS GENERATED CODE, MAKE SURE ANY CHANGES MADE HERE ARE PROPAGATED INTO THE GENERATOR TEMPLATES
-package edu.vu.isis.ammo.sms.provider;
+package mil.darpa.transapp.ammo.sms.provider;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -23,6 +23,8 @@ public abstract class SmsSchemaBase {
 
 public static final String[] MESSAGE_CURSOR_COLUMNS = new String[] {
   MessageTableSchemaBase.FROM ,
+     MessageTableSchemaBase.TO ,
+     MessageTableSchemaBase.THREAD ,
      MessageTableSchemaBase.PAYLOAD 
 };
 
@@ -63,10 +65,22 @@ public static class MessageTableSchemaBase implements BaseColumns {
    
 
       /** 
-      * Description: Who the message if from.
+      * Description: Who the message is from.
       * <P>Type: TEXT</P> 
       */
           public static final String FROM = "from";
+      
+      /** 
+      * Description: Who the message is to.
+      * <P>Type: TEXT</P> 
+      */
+          public static final String TO = "to";
+      
+      /** 
+      * Description: The message thread id of a conversation
+      * <P>Type: LONG</P> 
+      */
+          public static final String THREAD = "thread";
       
       /** 
       * Description: The content of the message.
