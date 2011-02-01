@@ -1,5 +1,5 @@
 // THIS IS GENERATED CODE, MAKE SURE ANY CHANGES MADE HERE ARE PROPAGATED INTO THE GENERATOR TEMPLATES
-package mil.darpa.transapp.ammo.sms.provider;
+package edu.vu.isis.ammo.sms.provider;
 
 import android.net.Uri;
 import android.provider.BaseColumns;

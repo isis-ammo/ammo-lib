@@ -1,5 +1,5 @@
 // THIS IS GENERATED CODE, YOU SHOULD COPY THIS FOR YOUR HAND EDITS
-package mil.darpa.transapp.ammo.sms.provider;
+package edu.vu.isis.ammo.sms.provider;
 
 public class SmsSchema extends SmsSchemaBase {
 
