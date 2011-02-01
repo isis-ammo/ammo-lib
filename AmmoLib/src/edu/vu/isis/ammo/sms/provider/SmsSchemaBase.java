@@ -1,5 +1,5 @@
 // THIS IS GENERATED CODE, MAKE SURE ANY CHANGES MADE HERE ARE PROPAGATED INTO THE GENERATOR TEMPLATES
-package mil.darpa.transapp.ammo.sms.provider;
+package edu.vu.isis.ammo.sms.provider;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -7,7 +7,7 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 
 public abstract class SmsSchemaBase {
-   public static final String AUTHORITY = "mil.darpa.transapp.ammo.sms.provider.smsprovider";
+   public static final String AUTHORITY = "edu.vu.isis.ammo.sms.provider.smsprovider";
 
    public static final String DATABASE_NAME = "sms.db";
 
@@ -46,19 +46,19 @@ public static class MessageTableSchemaBase implements BaseColumns {
     * The MIME type of {@link #CONTENT_URI} providing a directory
     */
    public static final String CONTENT_TYPE =
-      ContentResolver.CURSOR_DIR_BASE_TYPE+"/vnd.mil.darpa.transapp.ammo.sms.message";
+      ContentResolver.CURSOR_DIR_BASE_TYPE+"/vnd.edu.vu.isis.ammo.sms.message";
    
    /**
     * A mime type used for publisher subscriber.
     */
    public static final String CONTENT_TOPIC =
-      "application/vnd.mil.darpa.transapp.ammo.sms.message";
+      "application/vnd.edu.vu.isis.ammo.sms.message";
    
    /**
     * The MIME type of a {@link #CONTENT_URI} sub-directory of a single message entry.
     */
    public static final String CONTENT_ITEM_TYPE = 
-      ContentResolver.CURSOR_ITEM_BASE_TYPE+"/vnd.mil.darpa.transapp.ammo.sms.message";
+      ContentResolver.CURSOR_ITEM_BASE_TYPE+"/vnd.edu.vu.isis.ammo.sms.message";
    
    
    public static final String DEFAULT_SORT_ORDER = ""; //"modified_date DESC";
