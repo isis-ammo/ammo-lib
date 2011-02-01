@@ -20,6 +20,7 @@ public class IncidentSchema extends IncidentSchemaBase {
 
          public static final int _DISPOSITION_DRAFT = 4;
          public static final int _DISPOSITION_LOCAL_PENDING = 5;
+		
          
       }    
       public static class CategoryTableSchema extends CategoryTableSchemaBase {
