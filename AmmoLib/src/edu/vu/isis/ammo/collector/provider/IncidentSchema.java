@@ -18,6 +18,8 @@ public class IncidentSchema extends IncidentSchemaBase {
          public static final String TIGR_TOPIC = "application/vnd.edu.vu.isis.ammo.map.object";
          protected EventTableSchema() { super(); }
 
+         public static final int STATUS_DRAFT = 1;
+         public static final int STATUS_LOCAL_PENDING = 2;
          public static final int _DISPOSITION_DRAFT = 4;
          public static final int _DISPOSITION_LOCAL_PENDING = 5;
 		
