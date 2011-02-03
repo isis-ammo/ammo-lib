@@ -155,7 +155,7 @@ public class AmmoDispatcher {
 	 * @param worth how valuable is the information
 	 * @return was the distribution content provider updated correctly.
 	 */
-	private boolean post(Uri uri, String mimeType, Calendar expiration, double worth) {
+	public boolean post(Uri uri, String mimeType, Calendar expiration, double worth) {
 		// check that the uri is valid
 		if (null == resolver.getType(PostalTableSchema.CONTENT_URI)) {
 			return false;
