@@ -95,7 +95,8 @@ public static final String[] EVENT_CURSOR_COLUMNS = new String[] {
      EventTableSchemaBase.CID ,
      EventTableSchemaBase.CATEGORY ,
      EventTableSchemaBase.UNIT ,
-     EventTableSchemaBase.SIZE 
+     EventTableSchemaBase.SIZE ,
+     EventTableSchemaBase.STATUS 
 };
 
 public static class EventTableSchemaBase implements BaseColumns {
@@ -218,6 +219,13 @@ public static class EventTableSchemaBase implements BaseColumns {
       * <P>Type: LONG</P> 
       */
           public static final String SIZE = "size";
+      
+      /** 
+      * Description: The status of the report with respect to submission to
+               the gateway plugin.
+      * <P>Type: INTEGER</P> 
+      */
+          public static final String STATUS = "status";
       
 
    public static final String _DISPOSITION = "_disp"; 
