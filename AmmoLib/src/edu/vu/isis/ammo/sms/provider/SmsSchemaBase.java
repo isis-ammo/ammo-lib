@@ -22,8 +22,8 @@ public abstract class SmsSchemaBase {
 // END   CUSTOM Sms CONSTANTS
 
 public static final String[] MESSAGE_CURSOR_COLUMNS = new String[] {
-  MessageTableSchemaBase.FROM ,
-     MessageTableSchemaBase.TO ,
+  MessageTableSchemaBase.SENDER ,
+     MessageTableSchemaBase.RECIPIENT ,
      MessageTableSchemaBase.THREAD ,
      MessageTableSchemaBase.PAYLOAD 
 };
@@ -68,13 +68,13 @@ public static class MessageTableSchemaBase implements BaseColumns {
       * Description: Who the message is from.
       * <P>Type: TEXT</P> 
       */
-          public static final String FROM = "from";
+          public static final String SENDER = "sender";
       
       /** 
       * Description: Who the message is to.
       * <P>Type: TEXT</P> 
       */
-          public static final String TO = "to";
+          public static final String RECIPIENT = "recipient";
       
       /** 
       * Description: The message thread id of a conversation
