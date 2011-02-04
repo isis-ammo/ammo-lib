@@ -429,7 +429,7 @@ public class AmmoDispatcher {
 		ContentValues values = new ContentValues();
 		values.put(SubscriptionTableSchema.EXPIRATION, 0);
 		String where = "\""+SubscriptionTableSchema.URI+"\" = '"+uri.toString()+"'";
-		resolver.update(uri, values, where, null);
+		resolver.update(SubscriptionTableSchema.CONTENT_URI, values, where, null);
 		return true;
 	}
 	
