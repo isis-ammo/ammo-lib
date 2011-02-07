@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.widget.Toast;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -237,43 +238,45 @@ public class AmmoDispatcher {
 		return this.pull(uri, mime, Calendar.HOUR, 1, 0.0, "");
 	}
 	private boolean pull(Uri uri, String mimeType, Calendar expiration, double worth, String query) {
-		if (expiration == null) {
-			expiration = Calendar.getInstance();
-			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
-		}
-		ContentValues values = new ContentValues();
-		values.put(RetrivalTableSchema.MIME, mimeType);
-		values.put(RetrivalTableSchema.URI, uri.toString());
-		values.put(RetrivalTableSchema.DISPOSITION, RetrivalTableSchema.DISPOSITION_PENDING);
-		values.put(RetrivalTableSchema.EXPIRATION, expiration.getTimeInMillis());
-		
-		values.put(RetrivalTableSchema.SELECTION, query);
-		values.put(RetrivalTableSchema.PROJECTION, "");
-		values.put(RetrivalTableSchema.CREATED_DATE, System.currentTimeMillis());
-		
-		String[] projection = {RetrivalTableSchema._ID};
-		String[] selectArgs = {uri.toString()};
-		// Cursor queryCursor = resolver.query(RetrivalTableSchema.CONTENT_URI, projection, selectUri, selectArgs, null);
-		Cursor queryCursor = resolver.query(RetrivalTableSchema.CONTENT_URI, projection, selectUri+"'"+uri.toString()+"'",null, null);
-		if (queryCursor == null) {
-           Toast.makeText(context, "missing pull content provider", Toast.LENGTH_LONG).show();
-           return false;
+	    if (expiration == null) {
+		expiration = Calendar.getInstance();
+		expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
 	    }
-		if (queryCursor.getCount() == 1) {
-			for (boolean more = queryCursor.moveToFirst(); more; ) {
-				long queryId = queryCursor.getLong(queryCursor.getColumnIndex(RetrivalTableSchema._ID));
-				Uri queryUri = ContentUris.withAppendedId(RetrivalTableSchema.CONTENT_URI, queryId);
-				resolver.update(queryUri, values, null, null);
-				break; // there is only one
-			}
-		} else if  (queryCursor.getCount() > 1) {
-			Toast.makeText(context, "corrupted subscriber content provider; removing offending tuples", Toast.LENGTH_LONG).show();
-			resolver.delete(RetrivalTableSchema.CONTENT_URI, selectUri, selectArgs);
-			resolver.insert(RetrivalTableSchema.CONTENT_URI, values);
-		} else {
-		    resolver.insert(RetrivalTableSchema.CONTENT_URI, values);
+	    ContentValues values = new ContentValues();
+	    values.put(RetrivalTableSchema.MIME, mimeType);
+	    values.put(RetrivalTableSchema.URI, uri.toString());
+	    values.put(RetrivalTableSchema.DISPOSITION, RetrivalTableSchema.DISPOSITION_PENDING);
+	    values.put(RetrivalTableSchema.EXPIRATION, expiration.getTimeInMillis());
+		
+	    values.put(RetrivalTableSchema.SELECTION, query);
+	    values.put(RetrivalTableSchema.PROJECTION, "");
+	    values.put(RetrivalTableSchema.CREATED_DATE, System.currentTimeMillis());
+		
+	    String[] projection = {RetrivalTableSchema._ID};
+	    String[] selectArgs = {uri.toString()};
+	    // Cursor queryCursor = resolver.query(RetrivalTableSchema.CONTENT_URI, projection, selectUri, selectArgs, null);
+	    Cursor queryCursor = resolver.query(RetrivalTableSchema.CONTENT_URI, projection, selectUri+"'"+uri.toString()+"'",null, null);
+	    if (queryCursor == null) {
+		Toast.makeText(context, "missing pull content provider", Toast.LENGTH_LONG).show();
+		return false;
+	    }
+	    if (queryCursor.getCount() == 1) {
+		Log.d("AmmoLib", "found an existing pull request in the retrival table ... updating ...");
+		for (boolean more = queryCursor.moveToFirst(); more; ) {
+		    long queryId = queryCursor.getLong(queryCursor.getColumnIndex(RetrivalTableSchema._ID));
+		    Uri queryUri = ContentUris.withAppendedId(RetrivalTableSchema.CONTENT_URI, queryId);
+		    resolver.update(queryUri, values, null, null);
+		    break; // there is only one
 		}
-		return true;
+	    } else if  (queryCursor.getCount() > 1) {
+		Toast.makeText(context, "corrupted subscriber content provider; removing offending tuples", Toast.LENGTH_LONG).show();
+		resolver.delete(RetrivalTableSchema.CONTENT_URI, selectUri, selectArgs);
+		resolver.insert(RetrivalTableSchema.CONTENT_URI, values);
+	    } else {
+		Log.d("AmmoLib", "creating a pull request in retrival table ... updating ...");
+		resolver.insert(RetrivalTableSchema.CONTENT_URI, values);
+	    }
+	    return true;
 	}
 	
 	/**
