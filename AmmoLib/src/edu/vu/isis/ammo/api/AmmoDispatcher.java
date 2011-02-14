@@ -47,22 +47,7 @@ public class AmmoDispatcher {
 	 */
 	// posting with explicit expiration and worth
 	static private File dir = new File(Environment.getExternalStorageDirectory(),"ammo_distributor_cache");
-	/**
-	 * Pull, a request for information to be placed into a content provider.
-	 * This mechanism establishes a relationship between mime type and target uri.
-	 * However the uri is not sent to the gateway, rather the content uri of the 
-	 * subscriber::querytable tuple is sent as the request_id.
-	 * Subsequently when a pull response is received the request_id is used to
-	 * look up the entry in the subscriber::queryTable which provides the target 
-	 * content provider uri.
-	 * 
-	 * @param uri of the the content provider to receive the tuples
-	 * @param mimeType the mime type of the tuples being requested, used for retrieval by the gateway
-	 * @param expiration how long does the subscription last?
-	 * @param worth how valuable is the information
-	 * @param query
-	 * @return was the subscriber content provider updated correctly.
-	 */
+	
 	// static final private String selectUri = "\""+RetrivalTableSchema.URI+"\" = '?'";
 	static final private String selectUri = "\""+RetrivalTableSchema.URI+"\" = ";
 
@@ -210,6 +195,8 @@ public class AmmoDispatcher {
 	/**
 	 * Rather than providing an absolute time this method specifies a
 	 * relative time (starting now) of how long the request should remain active.
+	 * This also uses the mime type from the content provider.
+	 * 
 	 * e.g.
 	 * ammo_dispatcher.pull(EventTableSchemaBase.CONTENT_URI, Calendar.MINUTE, 500, 10.0, ":event");
 	 * 
@@ -226,7 +213,11 @@ public class AmmoDispatcher {
 		return this.pull(uri, null , field, lifetime, worth, query);
 	}
 	/**
-	 * Sets the lifetime in seconds.
+	 * Sets the lifetime to one hour.
+	 * This is the simplest use of the call.
+	 *  e.g.
+	 * ammo_dispatcher.pull(EventTableSchemaBase.CONTENT_URI, "urn:something:api/service/location/");
+	 * 
 	 * 
 	 * @param uri
 	 * @param lifetime
@@ -237,6 +228,25 @@ public class AmmoDispatcher {
 	public boolean pull(Uri uri, String mime) {
 		return this.pull(uri, mime, Calendar.HOUR, 1, 0.0, "");
 	}
+	
+	/**
+	 * Force the mime type rather than using the resolver to acquire it.
+	 * 
+	 * @param uri
+	 * @param mime
+	 * @param field
+	 * @param lifetime
+	 * @param worth
+	 * @param query
+	 * @return
+	 */
+	public boolean pull(Uri uri, String mime, int field, int lifetime, double worth, String query) {
+		Calendar expiration = Calendar.getInstance(); 
+		expiration.add(field, lifetime);
+		if (mime == null) mime = this.resolver.getType(uri);
+		return this.pull(uri, mime, expiration, worth, query);
+	}
+	
 	/**
 	 * The base pull mechanism with all parameters.
 	 * The uri is the name of the content provider which will deserialize the response.
@@ -255,18 +265,25 @@ public class AmmoDispatcher {
 	 *   'urn:aterrasys.com:/api/rtc/people/list/'
 	 *   The call here provides this same type as the mimeType to the pull request.
 	 *   
+	 * With pull, a request for information to be placed into a content provider owned by the dispatcher.
+	 * This mechanism establishes a relationship between mime type and target uri.
+	 * The target uri is not sent to the gateway, rather the content uri of the 
+	 * subscriber::querytable tuple is sent as the request_id.
+	 * Subsequently when a pull response is received the request_id is used to
+	 * look up the entry in the subscriber::queryTable which provides the target 
+	 * content provider uri.
 	 * 
-	 * @param uricom.aterrasys.nevada
-	 * @param mimeType
-	 * @param expiration
-	 * @param worth
+	 * @param uri of the the content provider to receive the tuples
+	 * @param mimeType the mime type of the tuples being requested, used for retrieval by the gateway
+	 * @param expiration how long does the subscription last?
+	 * @param worth how valuable is the information
 	 * @param query
-	 * @return
+	 * @return was the subscriber content provider updated correctly.
 	 */
 	private boolean pull(Uri uri, String mimeType, Calendar expiration, double worth, String query) {
 	    if (expiration == null) {
-		expiration = Calendar.getInstance();
-		expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
+			expiration = Calendar.getInstance();
+			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
 	    }
 	    ContentValues values = new ContentValues();
 	    values.put(RetrivalTableSchema.MIME, mimeType);
@@ -305,22 +322,6 @@ public class AmmoDispatcher {
 	    return true;
 	}
 	
-	/**
-	 * Force the mime type rather than using the resolver to acquire it.
-	 * @param uri
-	 * @param mime
-	 * @param field
-	 * @param lifetime
-	 * @param worth
-	 * @param query
-	 * @return
-	 */
-	public boolean pull(Uri uri, String mime, int field, int lifetime, double worth, String query) {
-		Calendar expiration = Calendar.getInstance(); 
-		expiration.add(field, lifetime);
-		if (mime == null) mime = this.resolver.getType(uri);
-		return this.pull(uri, mime, expiration, worth, query);
-	}
 	
 	
 	
