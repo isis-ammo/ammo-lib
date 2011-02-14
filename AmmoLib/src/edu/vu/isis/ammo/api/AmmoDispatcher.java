@@ -208,7 +208,7 @@ public class AmmoDispatcher {
 	}
 
 	/**
-	 * Rather than providing a absolute time this method specifies a
+	 * Rather than providing an absolute time this method specifies a
 	 * relative time (starting now) of how long the request should remain active.
 	 * e.g.
 	 * ammo_dispatcher.pull(EventTableSchemaBase.CONTENT_URI, Calendar.MINUTE, 500, 10.0, ":event");
@@ -237,6 +237,32 @@ public class AmmoDispatcher {
 	public boolean pull(Uri uri, String mime) {
 		return this.pull(uri, mime, Calendar.HOUR, 1, 0.0, "");
 	}
+	/**
+	 * The base pull mechanism with all parameters.
+	 * The uri is the name of the content provider which will deserialize the response.
+	 * The mimeType is the name in which the target service has expressed an interest.
+	 * 
+	 * The expiration indicates when the the pull request is no longer relevant.
+	 * The worth indicates the value of the data requested.
+	 * The query will typically be a json string and will contain whatever 
+	 * additional information the interest expressing service needs.
+	 * 
+	 * e.g. 
+	 *   Suppose there is a table 'people' in content provider 'nevada' with sponsor 'com.aterrasys.nevada'.
+	 *   The client program wishes to initialize the table with a request to service.
+	 *   
+	 *   In preparation the service has expressed interest in the type
+	 *   'urn:aterrasys.com:/api/rtc/people/list/'
+	 *   The call here provides this same type as the mimeType to the pull request.
+	 *   
+	 * 
+	 * @param uricom.aterrasys.nevada
+	 * @param mimeType
+	 * @param expiration
+	 * @param worth
+	 * @param query
+	 * @return
+	 */
 	private boolean pull(Uri uri, String mimeType, Calendar expiration, double worth, String query) {
 	    if (expiration == null) {
 		expiration = Calendar.getInstance();
@@ -269,12 +295,12 @@ public class AmmoDispatcher {
 		    break; // there is only one
 		}
 	    } else if  (queryCursor.getCount() > 1) {
-		Toast.makeText(context, "corrupted subscriber content provider; removing offending tuples", Toast.LENGTH_LONG).show();
-		resolver.delete(RetrivalTableSchema.CONTENT_URI, selectUri, selectArgs);
-		resolver.insert(RetrivalTableSchema.CONTENT_URI, values);
+			Toast.makeText(context, "corrupted subscriber content provider; removing offending tuples", Toast.LENGTH_LONG).show();
+			resolver.delete(RetrivalTableSchema.CONTENT_URI, selectUri, selectArgs);
+			resolver.insert(RetrivalTableSchema.CONTENT_URI, values);
 	    } else {
-		Log.d("AmmoLib", "creating a pull request in retrival table ... updating ...");
-		resolver.insert(RetrivalTableSchema.CONTENT_URI, values);
+			Log.d("AmmoLib", "creating a pull request in retrival table ... updating ...");
+			resolver.insert(RetrivalTableSchema.CONTENT_URI, values);
 	    }
 	    return true;
 	}
