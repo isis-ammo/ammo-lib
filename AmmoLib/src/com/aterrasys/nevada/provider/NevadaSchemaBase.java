@@ -21,43 +21,46 @@ public abstract class NevadaSchemaBase {
 // BEGIN CUSTOM Nevada CONSTANTS
 // END   CUSTOM Nevada CONSTANTS
 
-public static final String[] PEOPLE_CURSOR_COLUMNS = new String[] {
-  PeopleTableSchemaBase.ID ,
-     PeopleTableSchemaBase.NAME ,
-     PeopleTableSchemaBase.SMS_EMAIL_GATEWAY 
+public static final String[] USERPEOPLE_CURSOR_COLUMNS = new String[] {
+  UserpeopleTableSchemaBase.USERID ,
+     UserpeopleTableSchemaBase.NAME ,
+     UserpeopleTableSchemaBase.SMS_EMAIL_GATEWAY ,
+     UserpeopleTableSchemaBase.PHONE ,
+     UserpeopleTableSchemaBase.USERNAME ,
+     UserpeopleTableSchemaBase.EMAIL 
 };
 
-public static class PeopleTableSchemaBase implements BaseColumns {
-   protected PeopleTableSchemaBase() {} // No instantiation.
+public static class UserpeopleTableSchemaBase implements BaseColumns {
+   protected UserpeopleTableSchemaBase() {} // No instantiation.
    
    /**
     * The content:// style URL for this table
     */
    public static final Uri CONTENT_URI =
-      Uri.parse("content://"+AUTHORITY+"/people");
+      Uri.parse("content://"+AUTHORITY+"/userpeople");
 
    public static Uri getUri(Cursor cursor) {
      Integer id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
-     return  Uri.withAppendedPath(PeopleTableSchemaBase.CONTENT_URI, id.toString());
+     return  Uri.withAppendedPath(UserpeopleTableSchemaBase.CONTENT_URI, id.toString());
    }
    
    /**
     * The MIME type of {@link #CONTENT_URI} providing a directory
     */
    public static final String CONTENT_TYPE =
-      ContentResolver.CURSOR_DIR_BASE_TYPE+"/vnd.com.aterrasys.nevada.people";
+      ContentResolver.CURSOR_DIR_BASE_TYPE+"/vnd.com.aterrasys.nevada.userpeople";
    
    /**
     * A mime type used for publisher subscriber.
     */
    public static final String CONTENT_TOPIC =
-      "application/vnd.com.aterrasys.nevada.people";
+      "application/vnd.com.aterrasys.nevada.userpeople";
    
    /**
-    * The MIME type of a {@link #CONTENT_URI} sub-directory of a single people entry.
+    * The MIME type of a {@link #CONTENT_URI} sub-directory of a single userpeople entry.
     */
    public static final String CONTENT_ITEM_TYPE = 
-      ContentResolver.CURSOR_ITEM_BASE_TYPE+"/vnd.com.aterrasys.nevada.people";
+      ContentResolver.CURSOR_ITEM_BASE_TYPE+"/vnd.com.aterrasys.nevada.userpeople";
    
    
    public static final String DEFAULT_SORT_ORDER = ""; //"modified_date DESC";
@@ -67,7 +70,7 @@ public static class PeopleTableSchemaBase implements BaseColumns {
       * Description: 
       * <P>Type: LONG</P> 
       */
-          public static final String ID = "id";
+          public static final String USERID = "userid";
       
       /** 
       * Description: 
@@ -81,12 +84,30 @@ public static class PeopleTableSchemaBase implements BaseColumns {
       */
           public static final String SMS_EMAIL_GATEWAY = "sms_email_gateway";
       
+      /** 
+      * Description: 
+      * <P>Type: TEXT</P> 
+      */
+          public static final String PHONE = "phone";
+      
+      /** 
+      * Description: 
+      * <P>Type: TEXT</P> 
+      */
+          public static final String USERNAME = "username";
+      
+      /** 
+      * Description: 
+      * <P>Type: TEXT</P> 
+      */
+          public static final String EMAIL = "email";
+      
 
    public static final String _DISPOSITION = "_disp"; 
 
 
-// BEGIN CUSTOM PEOPLE_SCHEMA PROPERTIES
-// END   CUSTOM PEOPLE_SCHEMA PROPERTIES
+// BEGIN CUSTOM USERPEOPLE_SCHEMA PROPERTIES
+// END   CUSTOM USERPEOPLE_SCHEMA PROPERTIES
 } 
 public static final String[] CHANNELS_CURSOR_COLUMNS = new String[] {
   ChannelsTableSchemaBase.ID ,
@@ -182,73 +203,6 @@ public static class ChannelsTableSchemaBase implements BaseColumns {
 
 // BEGIN CUSTOM CHANNELS_SCHEMA PROPERTIES
 // END   CUSTOM CHANNELS_SCHEMA PROPERTIES
-} 
-public static final String[] USER_CURSOR_COLUMNS = new String[] {
-  UserTableSchemaBase.ID ,
-     UserTableSchemaBase.USERNAME ,
-     UserTableSchemaBase.EMAIL 
-};
-
-public static class UserTableSchemaBase implements BaseColumns {
-   protected UserTableSchemaBase() {} // No instantiation.
-   
-   /**
-    * The content:// style URL for this table
-    */
-   public static final Uri CONTENT_URI =
-      Uri.parse("content://"+AUTHORITY+"/user");
-
-   public static Uri getUri(Cursor cursor) {
-     Integer id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
-     return  Uri.withAppendedPath(UserTableSchemaBase.CONTENT_URI, id.toString());
-   }
-   
-   /**
-    * The MIME type of {@link #CONTENT_URI} providing a directory
-    */
-   public static final String CONTENT_TYPE =
-      ContentResolver.CURSOR_DIR_BASE_TYPE+"/vnd.com.aterrasys.nevada.user";
-   
-   /**
-    * A mime type used for publisher subscriber.
-    */
-   public static final String CONTENT_TOPIC =
-      "application/vnd.com.aterrasys.nevada.user";
-   
-   /**
-    * The MIME type of a {@link #CONTENT_URI} sub-directory of a single user entry.
-    */
-   public static final String CONTENT_ITEM_TYPE = 
-      ContentResolver.CURSOR_ITEM_BASE_TYPE+"/vnd.com.aterrasys.nevada.user";
-   
-   
-   public static final String DEFAULT_SORT_ORDER = ""; //"modified_date DESC";
-   
-
-      /** 
-      * Description: The user id.
-      * <P>Type: LONG</P> 
-      */
-          public static final String ID = "id";
-      
-      /** 
-      * Description: A string representing the username .
-      * <P>Type: TEXT</P> 
-      */
-          public static final String USERNAME = "username";
-      
-      /** 
-      * Description: The users email
-      * <P>Type: TEXT</P> 
-      */
-          public static final String EMAIL = "email";
-      
-
-   public static final String _DISPOSITION = "_disp"; 
-
-
-// BEGIN CUSTOM USER_SCHEMA PROPERTIES
-// END   CUSTOM USER_SCHEMA PROPERTIES
 } 
 public static final String[] UNIT_CURSOR_COLUMNS = new String[] {
   UnitTableSchemaBase.ID ,
@@ -370,54 +324,54 @@ public static class UnitpersonTableSchemaBase implements BaseColumns {
 // BEGIN CUSTOM UNITPERSON_SCHEMA PROPERTIES
 // END   CUSTOM UNITPERSON_SCHEMA PROPERTIES
 } 
-public static final String[] UNITTRACKING_CURSOR_COLUMNS = new String[] {
-  UnittrackingTableSchemaBase.ID ,
-     UnittrackingTableSchemaBase.LAT ,
-     UnittrackingTableSchemaBase.LON ,
-     UnittrackingTableSchemaBase.CURRENTTIME 
+public static final String[] LOCATIONTRACKING_CURSOR_COLUMNS = new String[] {
+  LocationtrackingTableSchemaBase.USERID ,
+     LocationtrackingTableSchemaBase.LAT ,
+     LocationtrackingTableSchemaBase.LON ,
+     LocationtrackingTableSchemaBase.TRACKEDTIME 
 };
 
-public static class UnittrackingTableSchemaBase implements BaseColumns {
-   protected UnittrackingTableSchemaBase() {} // No instantiation.
+public static class LocationtrackingTableSchemaBase implements BaseColumns {
+   protected LocationtrackingTableSchemaBase() {} // No instantiation.
    
    /**
     * The content:// style URL for this table
     */
    public static final Uri CONTENT_URI =
-      Uri.parse("content://"+AUTHORITY+"/unittracking");
+      Uri.parse("content://"+AUTHORITY+"/locationtracking");
 
    public static Uri getUri(Cursor cursor) {
      Integer id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
-     return  Uri.withAppendedPath(UnittrackingTableSchemaBase.CONTENT_URI, id.toString());
+     return  Uri.withAppendedPath(LocationtrackingTableSchemaBase.CONTENT_URI, id.toString());
    }
    
    /**
     * The MIME type of {@link #CONTENT_URI} providing a directory
     */
    public static final String CONTENT_TYPE =
-      ContentResolver.CURSOR_DIR_BASE_TYPE+"/vnd.com.aterrasys.nevada.unittracking";
+      ContentResolver.CURSOR_DIR_BASE_TYPE+"/vnd.com.aterrasys.nevada.locationtracking";
    
    /**
     * A mime type used for publisher subscriber.
     */
    public static final String CONTENT_TOPIC =
-      "application/vnd.com.aterrasys.nevada.unittracking";
+      "application/vnd.com.aterrasys.nevada.locationtracking";
    
    /**
-    * The MIME type of a {@link #CONTENT_URI} sub-directory of a single unittracking entry.
+    * The MIME type of a {@link #CONTENT_URI} sub-directory of a single locationtracking entry.
     */
    public static final String CONTENT_ITEM_TYPE = 
-      ContentResolver.CURSOR_ITEM_BASE_TYPE+"/vnd.com.aterrasys.nevada.unittracking";
+      ContentResolver.CURSOR_ITEM_BASE_TYPE+"/vnd.com.aterrasys.nevada.locationtracking";
    
    
    public static final String DEFAULT_SORT_ORDER = ""; //"modified_date DESC";
    
 
       /** 
-      * Description: The unit id.
+      * Description: 
       * <P>Type: LONG</P> 
       */
-          public static final String ID = "id";
+          public static final String USERID = "userid";
       
       /** 
       * Description: 
@@ -435,88 +389,14 @@ public static class UnittrackingTableSchemaBase implements BaseColumns {
       * Description: 
       * <P>Type: LONG</P> 
       */
-          public static final String CURRENTTIME = "currenttime";
+          public static final String TRACKEDTIME = "trackedtime";
       
 
    public static final String _DISPOSITION = "_disp"; 
 
 
-// BEGIN CUSTOM UNITTRACKING_SCHEMA PROPERTIES
-// END   CUSTOM UNITTRACKING_SCHEMA PROPERTIES
-} 
-public static final String[] LOCATION_CURSOR_COLUMNS = new String[] {
-  LocationTableSchemaBase.ID ,
-     LocationTableSchemaBase.LAT ,
-     LocationTableSchemaBase.LON ,
-     LocationTableSchemaBase.TIMESTAMP 
-};
-
-public static class LocationTableSchemaBase implements BaseColumns {
-   protected LocationTableSchemaBase() {} // No instantiation.
-   
-   /**
-    * The content:// style URL for this table
-    */
-   public static final Uri CONTENT_URI =
-      Uri.parse("content://"+AUTHORITY+"/location");
-
-   public static Uri getUri(Cursor cursor) {
-     Integer id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
-     return  Uri.withAppendedPath(LocationTableSchemaBase.CONTENT_URI, id.toString());
-   }
-   
-   /**
-    * The MIME type of {@link #CONTENT_URI} providing a directory
-    */
-   public static final String CONTENT_TYPE =
-      ContentResolver.CURSOR_DIR_BASE_TYPE+"/vnd.com.aterrasys.nevada.location";
-   
-   /**
-    * A mime type used for publisher subscriber.
-    */
-   public static final String CONTENT_TOPIC =
-      "application/vnd.com.aterrasys.nevada.location";
-   
-   /**
-    * The MIME type of a {@link #CONTENT_URI} sub-directory of a single location entry.
-    */
-   public static final String CONTENT_ITEM_TYPE = 
-      ContentResolver.CURSOR_ITEM_BASE_TYPE+"/vnd.com.aterrasys.nevada.location";
-   
-   
-   public static final String DEFAULT_SORT_ORDER = ""; //"modified_date DESC";
-   
-
-      /** 
-      * Description: The unique id for this row
-      * <P>Type: LONG</P> 
-      */
-          public static final String ID = "id";
-      
-      /** 
-      * Description: 
-      * <P>Type: REAL</P> 
-      */
-          public static final String LAT = "lat";
-      
-      /** 
-      * Description: 
-      * <P>Type: REAL</P> 
-      */
-          public static final String LON = "lon";
-      
-      /** 
-      * Description: 
-      * <P>Type: LONG</P> 
-      */
-          public static final String TIMESTAMP = "timestamp";
-      
-
-   public static final String _DISPOSITION = "_disp"; 
-
-
-// BEGIN CUSTOM LOCATION_SCHEMA PROPERTIES
-// END   CUSTOM LOCATION_SCHEMA PROPERTIES
+// BEGIN CUSTOM LOCATIONTRACKING_SCHEMA PROPERTIES
+// END   CUSTOM LOCATIONTRACKING_SCHEMA PROPERTIES
 } 
 public static final String[] MAPANNOTATION_CURSOR_COLUMNS = new String[] {
   MapannotationTableSchemaBase.ID ,
