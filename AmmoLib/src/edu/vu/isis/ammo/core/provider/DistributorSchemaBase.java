@@ -221,7 +221,7 @@ public static class PostalTableSchemaBase implements BaseColumns {
 public static final String[] SERIALIZED_CURSOR_COLUMNS = new String[] {
   SerializedTableSchemaBase.URI ,
      SerializedTableSchemaBase.MIME_TYPE ,
-     SerializedTableSchemaBase.FILE 
+     SerializedTableSchemaBase.DATA 
 };
 
 public static class SerializedTableSchemaBase implements BaseColumns {
@@ -274,11 +274,11 @@ public static class SerializedTableSchemaBase implements BaseColumns {
           public static final String MIME_TYPE = "mime_type";
       
       /** 
-      * Description: A file name indicating where the serialized data is stored.
-           The serialized data cannot be stored in the field directly as it is limited in size.
+      * Description: If null then the data file corresponding to the column name and record id should be used.
+           This is done when the data size is larger than that allowed for a field contents.
       * <P>Type: TEXT</P> 
       */
-          public static final String FILE = "file";
+          public static final String DATA = "data";
       
 
    public static final String _DISPOSITION = "_disp"; 
