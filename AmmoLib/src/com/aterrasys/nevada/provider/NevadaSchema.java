@@ -4,20 +4,24 @@ package com.aterrasys.nevada.provider;
 public class NevadaSchema extends NevadaSchemaBase {
 
    public static final int DATABASE_VERSION = 1;
+   
+   public static final String RTC_LIST_PEOPLE_TYPE = "urn:aterrasys.com:/api/rtc/people/list/";
+   public static final String RTC_LIST_CHANNEL_TYPE = "urn:aterrasys.com:/api/rtc/channel/list/";
+   public static final String BFT_LOCATE_PERSON_TYPE = "urn:aterrasys.com:/api/bft/people/locate/";
 
-      public static class PeopleTableSchema extends PeopleTableSchemaBase {
+      public static class UserpeopleTableSchema extends UserpeopleTableSchemaBase {
 
-         protected PeopleTableSchema() { super(); }
+         protected UserpeopleTableSchema() { super(); }
       /**
         Add relation constants as appropriate.
         i.e.
         public static final String <NAME> = "<sponsor>.provider.<name>.<table>.action.<NAME>";
         e.g.
-        public static final String CONSTANT = "com.aterrasys.nevada.provider.nevada.people.action.CONSTANT";
+        public static final String CONSTANT = "com.aterrasys.nevada.provider.nevada.userpeople.action.CONSTANT";
 
         public static final String PRIORITY_SORT_ORDER = 
-               PeopleTableSchemaBase.EXPIRATION + " DESC, " +
-               PeopleTableSchemaBase.MODIFIED_DATE + " DESC ";
+               UserpeopleTableSchemaBase.EXPIRATION + " DESC, " +
+               UserpeopleTableSchemaBase.MODIFIED_DATE + " DESC ";
       */
       }
 
@@ -34,22 +38,6 @@ public class NevadaSchema extends NevadaSchemaBase {
         public static final String PRIORITY_SORT_ORDER = 
                ChannelsTableSchemaBase.EXPIRATION + " DESC, " +
                ChannelsTableSchemaBase.MODIFIED_DATE + " DESC ";
-      */
-      }
-
-      public static class UserTableSchema extends UserTableSchemaBase {
-
-         protected UserTableSchema() { super(); }
-      /**
-        Add relation constants as appropriate.
-        i.e.
-        public static final String <NAME> = "<sponsor>.provider.<name>.<table>.action.<NAME>";
-        e.g.
-        public static final String CONSTANT = "com.aterrasys.nevada.provider.nevada.user.action.CONSTANT";
-
-        public static final String PRIORITY_SORT_ORDER = 
-               UserTableSchemaBase.EXPIRATION + " DESC, " +
-               UserTableSchemaBase.MODIFIED_DATE + " DESC ";
       */
       }
 
@@ -85,35 +73,19 @@ public class NevadaSchema extends NevadaSchemaBase {
       */
       }
 
-      public static class UnittrackingTableSchema extends UnittrackingTableSchemaBase {
+      public static class LocationtrackingTableSchema extends LocationtrackingTableSchemaBase {
 
-         protected UnittrackingTableSchema() { super(); }
+         protected LocationtrackingTableSchema() { super(); }
       /**
         Add relation constants as appropriate.
         i.e.
         public static final String <NAME> = "<sponsor>.provider.<name>.<table>.action.<NAME>";
         e.g.
-        public static final String CONSTANT = "com.aterrasys.nevada.provider.nevada.unittracking.action.CONSTANT";
+        public static final String CONSTANT = "com.aterrasys.nevada.provider.nevada.locationtracking.action.CONSTANT";
 
         public static final String PRIORITY_SORT_ORDER = 
-               UnittrackingTableSchemaBase.EXPIRATION + " DESC, " +
-               UnittrackingTableSchemaBase.MODIFIED_DATE + " DESC ";
-      */
-      }
-
-      public static class LocationTableSchema extends LocationTableSchemaBase {
-
-         protected LocationTableSchema() { super(); }
-      /**
-        Add relation constants as appropriate.
-        i.e.
-        public static final String <NAME> = "<sponsor>.provider.<name>.<table>.action.<NAME>";
-        e.g.
-        public static final String CONSTANT = "com.aterrasys.nevada.provider.nevada.location.action.CONSTANT";
-
-        public static final String PRIORITY_SORT_ORDER = 
-               LocationTableSchemaBase.EXPIRATION + " DESC, " +
-               LocationTableSchemaBase.MODIFIED_DATE + " DESC ";
+               LocationtrackingTableSchemaBase.EXPIRATION + " DESC, " +
+               LocationtrackingTableSchemaBase.MODIFIED_DATE + " DESC ";
       */
       }
 

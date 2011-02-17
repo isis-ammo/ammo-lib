@@ -73,15 +73,22 @@ public class AmmoDispatcher {
 	 * @param value
 	 * @return
 	 */
-	public boolean post(String mimeType, ContentValues value) {
-		return this.post(mimeType, value, null, Double.NaN);
+	public boolean post(String mimeType, String serializedString) {
+		return this.post(mimeType, serializedString, null, Double.NaN);
 	}
 
-	public boolean post(String mimeType, ContentValues value, Calendar expiration, double worth) 
+	/**
+	 * Directly post a string.
+	 * 
+	 * @param mimeType
+	 * @param value
+	 * @param expiration
+	 * @param worth
+	 * @return
+	 */
+	public boolean post(String mimeType, String serializedString, Calendar expiration, double worth) 
 	{
 		File filename = new File(dir, Long.toHexString(System.currentTimeMillis()));
-		Gson gson = new Gson();
-        String serializedString = gson.toJson(value);
         try {
             //get data from file
             FileOutputStream fileStream = new FileOutputStream(filename);
@@ -105,9 +112,37 @@ public class AmmoDispatcher {
 		post(uri, mimeType, expiration, worth);
 		return true;
 	}
+	
+	/**
+	 * Posting with implicit expiration and worth, delivery is ASAP.
+	 *  
+	 * @param mimeType
+	 * @param value
+	 * @return
+	 */
+	public boolean post(String mimeType, ContentValues value) {
+		return this.post(mimeType, value, null, Double.NaN);
+	}
+
+	/**
+	 * Directly post a set of content values.
+	 * 
+	 * @param mimeType
+	 * @param value
+	 * @param expiration
+	 * @param worth
+	 * @return
+	 */
+	public boolean post(String mimeType, ContentValues value, Calendar expiration, double worth) 
+	{
+		Gson gson = new Gson();
+        String serializedString = gson.toJson(value);
+        return post(mimeType, serializedString, expiration, worth);
+	}
 
 	/**
 	 * Posting with implicit expiration and worth, their values are obtained from the content provider.
+	 * The mime type is obtained from the content provider.
 	 * 
 	 * @param uri
 	 * @return
