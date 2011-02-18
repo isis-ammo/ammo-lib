@@ -110,10 +110,12 @@ public static class DeliveryMechanismTableSchemaBase implements BaseColumns {
 public static final String[] POSTAL_CURSOR_COLUMNS = new String[] {
   PostalTableSchemaBase.CP_TYPE ,
      PostalTableSchemaBase.URI ,
+     PostalTableSchemaBase.SERIALIZE_TYPE ,
      PostalTableSchemaBase.DISPOSITION ,
      PostalTableSchemaBase.EXPIRATION ,
      PostalTableSchemaBase.UNIT ,
      PostalTableSchemaBase.VALUE ,
+     PostalTableSchemaBase.DATA ,
      PostalTableSchemaBase.CREATED_DATE ,
      PostalTableSchemaBase.MODIFIED_DATE 
 };
@@ -168,6 +170,19 @@ public static class PostalTableSchemaBase implements BaseColumns {
           public static final String URI = "uri";
       
       /** 
+      * Description: Indicates if the uri indicates a table or whether the data has been preserialized.
+             DIRECT : the serialized data is found in the data field (or a suitable file).
+             INDIRECT : the serialized data is obtained from the named uri.
+             DEFERRED : the same as INDIRECT but the serialization doesn't happen until the data is sent.
+      * <P>Type: EXCLUSIVE</P> 
+      */
+              public static final int SERIALIZE_TYPE_DIRECT = 1;
+                 public static final int SERIALIZE_TYPE_INDIRECT = 2;
+                 public static final int SERIALIZE_TYPE_DEFERRED = 3;
+            
+         public static final String SERIALIZE_TYPE = "serialize_type";
+      
+      /** 
       * Description: Status of the entry (sent or not sent).
       * <P>Type: EXCLUSIVE</P> 
       */
@@ -200,6 +215,13 @@ public static class PostalTableSchemaBase implements BaseColumns {
           public static final String VALUE = "value";
       
       /** 
+      * Description: If the If null then the data file corresponding to the column name and record id should be used.
+           This is done when the data size is larger than that allowed for a field contents.
+      * <P>Type: TEXT</P> 
+      */
+          public static final String DATA = "data";
+      
+      /** 
       * Description: 
       * <P>Type: LONG</P> 
       */
@@ -217,75 +239,6 @@ public static class PostalTableSchemaBase implements BaseColumns {
 
 // BEGIN CUSTOM POSTAL_SCHEMA PROPERTIES
 // END   CUSTOM POSTAL_SCHEMA PROPERTIES
-} 
-public static final String[] SERIALIZED_CURSOR_COLUMNS = new String[] {
-  SerializedTableSchemaBase.URI ,
-     SerializedTableSchemaBase.MIME_TYPE ,
-     SerializedTableSchemaBase.DATA 
-};
-
-public static class SerializedTableSchemaBase implements BaseColumns {
-   protected SerializedTableSchemaBase() {} // No instantiation.
-   
-   /**
-    * The content:// style URL for this table
-    */
-   public static final Uri CONTENT_URI =
-      Uri.parse("content://"+AUTHORITY+"/serialized");
-
-   public static Uri getUri(Cursor cursor) {
-     Integer id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
-     return  Uri.withAppendedPath(SerializedTableSchemaBase.CONTENT_URI, id.toString());
-   }
-   
-   /**
-    * The MIME type of {@link #CONTENT_URI} providing a directory
-    */
-   public static final String CONTENT_TYPE =
-      ContentResolver.CURSOR_DIR_BASE_TYPE+"/vnd.edu.vu.isis.ammo.core.serialized";
-   
-   /**
-    * A mime type used for publisher subscriber.
-    */
-   public static final String CONTENT_TOPIC =
-      "application/vnd.edu.vu.isis.ammo.core.serialized";
-   
-   /**
-    * The MIME type of a {@link #CONTENT_URI} sub-directory of a single serialized entry.
-    */
-   public static final String CONTENT_ITEM_TYPE = 
-      ContentResolver.CURSOR_ITEM_BASE_TYPE+"/vnd.edu.vu.isis.ammo.core.serialized";
-   
-   
-   public static final String DEFAULT_SORT_ORDER = ""; //"modified_date DESC";
-   
-
-      /** 
-      * Description: URI of the data to be distributed.
-           Serves as a key back to the postal table.
-      * <P>Type: TEXT</P> 
-      */
-          public static final String URI = "uri";
-      
-      /** 
-      * Description: 
-      * <P>Type: TEXT</P> 
-      */
-          public static final String MIME_TYPE = "mime_type";
-      
-      /** 
-      * Description: If null then the data file corresponding to the column name and record id should be used.
-           This is done when the data size is larger than that allowed for a field contents.
-      * <P>Type: TEXT</P> 
-      */
-          public static final String DATA = "data";
-      
-
-   public static final String _DISPOSITION = "_disp"; 
-
-
-// BEGIN CUSTOM SERIALIZED_SCHEMA PROPERTIES
-// END   CUSTOM SERIALIZED_SCHEMA PROPERTIES
 } 
 public static final String[] RETRIVAL_CURSOR_COLUMNS = new String[] {
   RetrivalTableSchemaBase.DISPOSITION ,

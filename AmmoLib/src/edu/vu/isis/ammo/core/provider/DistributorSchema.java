@@ -17,11 +17,7 @@ public class DistributorSchema extends DistributorSchemaBase {
                PostalTableSchemaBase.EXPIRATION + " DESC, " +
                PostalTableSchemaBase.MODIFIED_DATE + " DESC ";
       }    
-      public static class SerializedTableSchema extends SerializedTableSchemaBase {
-
-         protected SerializedTableSchema() { super(); }
-
-      }    
+    
       public static class RetrivalTableSchema extends RetrivalTableSchemaBase {
 
          protected RetrivalTableSchema() { super(); }
