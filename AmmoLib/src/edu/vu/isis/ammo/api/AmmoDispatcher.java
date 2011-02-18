@@ -1,8 +1,10 @@
 package edu.vu.isis.ammo.api;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Calendar;
 
 import android.content.ContentResolver;
@@ -18,7 +20,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import edu.vu.isis.ammo.core.provider.DistributorSchema.PostalTableSchema;
-import edu.vu.isis.ammo.core.provider.DistributorSchema.SerializedTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.RetrivalTableSchema;
 
 import edu.vu.isis.ammo.core.provider.DistributorSchema.SubscriptionTableSchema;
@@ -41,6 +42,7 @@ public class AmmoDispatcher {
 	 * "rwt" for read and write access that truncates any existing file.
 	 */
 	private static AmmoDispatcher instance = null;
+	private final static long MAXIMUM_FIELD_SIZE = 9046;
 	/**
 	 * Posting information which is not persistent on the mobile device. 
 	 * Once the item has been sent it is removed.
@@ -73,41 +75,101 @@ public class AmmoDispatcher {
 	 * @param value
 	 * @return
 	 */
+	public boolean post(String mimeType, String serializedString) {
+		return this.post(mimeType, serializedString, null, Double.NaN);
+	}
+
+	/**
+	 * Directly post a string.
+	 * 
+	 * @param mimeType
+	 * @param value
+	 * @param expiration
+	 * @param worth
+	 * @return
+	 */
+	public boolean post(String mimeType, String serializedString, Calendar expiration, double worth) 
+	{
+//		File filename = new File(dir, Long.toHexString(System.currentTimeMillis()));
+//        try {
+//            // put data into file
+//            FileOutputStream fileStream = new FileOutputStream(filename);
+//            byte[] buffer = serializedString.getBytes();
+//            fileStream.write(buffer, 0, buffer.length);
+//            fileStream.close();
+//        } catch (IOException ex) {
+//			ex.printStackTrace();
+//		}
+		if (expiration == null) {
+			expiration = Calendar.getInstance();
+			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
+		}
+		
+		ContentValues values = new ContentValues();
+		values.put(PostalTableSchema.CP_TYPE, mimeType);
+		// values.put(PostalTableSchema.URI, uri.toString());
+		values.put(PostalTableSchema.DISPOSITION, PostalTableSchema.DISPOSITION_PENDING);
+		values.put(PostalTableSchema.SERIALIZE_TYPE, PostalTableSchema.SERIALIZE_TYPE_DIRECT);
+		values.put(PostalTableSchema.EXPIRATION, expiration.getTimeInMillis());
+		// System.currentTimeMillis() + (120 * 1000));
+		values.put(PostalTableSchema.UNIT, 50);
+		values.put(PostalTableSchema.VALUE, worth);
+		values.put(PostalTableSchema.CREATED_DATE, System.currentTimeMillis());
+		
+		Uri uri;
+		if (serializedString.length() < MAXIMUM_FIELD_SIZE) {
+			values.put(PostalTableSchema.DATA, serializedString);
+			uri = resolver.insert(PostalTableSchema.CONTENT_URI, values);
+			return true;
+		}
+		// the data field will be left null
+		uri = resolver.insert(PostalTableSchema.CONTENT_URI, values);
+		try {
+			OutputStream ostream = resolver.openOutputStream(uri);
+			byte[] buffer = serializedString.getBytes();
+			ostream.write(buffer, 0, buffer.length);
+			ostream.flush();
+			ostream.close();
+		} catch (FileNotFoundException e) {
+			Log.e("AmmoDispatcher","distributor could not open file");
+			return false;
+		} catch (IOException e) {
+			Log.e("AmmoDispatcher","could not write to distributor");
+			return false;
+		}
+		return (uri != null);
+	}
+	
+	/**
+	 * Posting with implicit expiration and worth, delivery is ASAP.
+	 *  
+	 * @param mimeType
+	 * @param value
+	 * @return
+	 */
 	public boolean post(String mimeType, ContentValues value) {
 		return this.post(mimeType, value, null, Double.NaN);
 	}
 
+	/**
+	 * Directly post a set of content values.
+	 * 
+	 * @param mimeType
+	 * @param value
+	 * @param expiration
+	 * @param worth
+	 * @return
+	 */
 	public boolean post(String mimeType, ContentValues value, Calendar expiration, double worth) 
 	{
-		File filename = new File(dir, Long.toHexString(System.currentTimeMillis()));
 		Gson gson = new Gson();
         String serializedString = gson.toJson(value);
-        try {
-            //get data from file
-            FileOutputStream fileStream = new FileOutputStream(filename);
-            byte[] buffer = serializedString.getBytes();
-            fileStream.write(buffer, 0, buffer.length);
-            fileStream.close();
-        } catch (IOException ex) {
-			ex.printStackTrace();
-		}
-	
-		ContentValues values = new ContentValues();
-		values.put(SerializedTableSchema.URI, "");
-		values.put(SerializedTableSchema.MIME_TYPE, mimeType);
-		try {
-			values.put(SerializedTableSchema.FILE, filename.getCanonicalPath());
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		Uri uri = resolver.insert(SerializedTableSchema.CONTENT_URI, values);
-		
-		post(uri, mimeType, expiration, worth);
-		return true;
+        return post(mimeType, serializedString, expiration, worth);
 	}
 
 	/**
 	 * Posting with implicit expiration and worth, their values are obtained from the content provider.
+	 * The mime type is obtained from the content provider.
 	 * 
 	 * @param uri
 	 * @return
@@ -143,6 +205,8 @@ public class AmmoDispatcher {
 	 */
 	public boolean post(Uri uri, String mimeType, Calendar expiration, double worth) {
 		// check that the uri is valid
+		if (uri == null) return false;
+		
 		if (null == resolver.getType(PostalTableSchema.CONTENT_URI)) {
 			return false;
 		}
@@ -155,6 +219,7 @@ public class AmmoDispatcher {
 		ContentValues values = new ContentValues();
 		values.put(PostalTableSchema.CP_TYPE, mimeType);
 		values.put(PostalTableSchema.URI, uri.toString());
+		values.put(PostalTableSchema.SERIALIZE_TYPE, PostalTableSchema.SERIALIZE_TYPE_INDIRECT);
 		values.put(PostalTableSchema.DISPOSITION, PostalTableSchema.DISPOSITION_PENDING);
 		values.put(PostalTableSchema.EXPIRATION, expiration.getTimeInMillis());
 		// System.currentTimeMillis() + (120 * 1000));
