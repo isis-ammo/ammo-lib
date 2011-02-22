@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
 
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -14,6 +15,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Parcel;
 import android.widget.Toast;
 import android.util.Log;
 
@@ -68,6 +70,13 @@ public class AmmoDispatcher {
 		this.resolver = resolver;
 	}
 	
+	private byte[] serializePendingIntent(PendingIntent pi) {
+		if (pi != null) return null;
+	    Parcel parcel = Parcel.obtain();
+		PendingIntent.writePendingIntentOrNullToParcel(pi, parcel);
+		return parcel.marshall();
+	}
+	
 	/**
 	 * Posting with implicit expiration and worth, delivery is ASAP.
 	 *  
@@ -88,7 +97,10 @@ public class AmmoDispatcher {
 	 * @param worth
 	 * @return
 	 */
-	public boolean post(String mimeType, String serializedString, Calendar expiration, double worth) 
+	public boolean post(String mimeType, String serializedString, Calendar expiration, double worth) {
+		return post(mimeType, serializedString, expiration, worth, null);
+	}
+	public boolean post(String mimeType, String serializedString, Calendar expiration, double worth, PendingIntent notice) 
 	{
 //		File filename = new File(dir, Long.toHexString(System.currentTimeMillis()));
 //        try {
@@ -114,6 +126,8 @@ public class AmmoDispatcher {
 		// System.currentTimeMillis() + (120 * 1000));
 		values.put(PostalTableSchema.UNIT, 50);
 		values.put(PostalTableSchema.VALUE, worth);
+		if (notice != null) 
+		    values.put(PostalTableSchema.NOTICE, serializePendingIntent(notice));
 		values.put(PostalTableSchema.CREATED_DATE, System.currentTimeMillis());
 		
 		Uri uri;
@@ -204,6 +218,9 @@ public class AmmoDispatcher {
 	 * @return was the distribution content provider updated correctly.
 	 */
 	public boolean post(Uri uri, String mimeType, Calendar expiration, double worth) {
+		return post(uri,mimeType,expiration,worth,null);
+	}
+	public boolean post(Uri uri, String mimeType, Calendar expiration, double worth, PendingIntent notice) {
 		// check that the uri is valid
 		if (uri == null) return false;
 		
@@ -225,6 +242,8 @@ public class AmmoDispatcher {
 		// System.currentTimeMillis() + (120 * 1000));
 		values.put(PostalTableSchema.UNIT, 50);
 		values.put(PostalTableSchema.VALUE, worth);
+		if (notice != null) 
+		    values.put(PostalTableSchema.NOTICE, serializePendingIntent(notice));
 		values.put(PostalTableSchema.CREATED_DATE, System.currentTimeMillis());
 		
 		resolver.insert(PostalTableSchema.CONTENT_URI, values);
@@ -241,7 +260,7 @@ public class AmmoDispatcher {
 	 * @return
 	 */
 	public boolean pull(Uri uri, Calendar expiration, double worth, String query) {
-		return this.pull(uri, this.resolver.getType(uri), expiration, worth, query);
+		return this.pull(uri, this.resolver.getType(uri), expiration, worth, query, null);
 	}
 	
 	/**
@@ -309,7 +328,7 @@ public class AmmoDispatcher {
 		Calendar expiration = Calendar.getInstance(); 
 		expiration.add(field, lifetime);
 		if (mime == null) mime = this.resolver.getType(uri);
-		return this.pull(uri, mime, expiration, worth, query);
+		return this.pull(uri, mime, expiration, worth, query, null);
 	}
 	
 	/**
@@ -345,7 +364,7 @@ public class AmmoDispatcher {
 	 * @param query
 	 * @return was the subscriber content provider updated correctly.
 	 */
-	private boolean pull(Uri uri, String mimeType, Calendar expiration, double worth, String query) {
+	private boolean pull(Uri uri, String mimeType, Calendar expiration, double worth, String query, PendingIntent notice) {
 	    if (expiration == null) {
 			expiration = Calendar.getInstance();
 			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
@@ -359,6 +378,8 @@ public class AmmoDispatcher {
 	    values.put(RetrivalTableSchema.SELECTION, query);
 	    values.put(RetrivalTableSchema.PROJECTION, "");
 	    values.put(RetrivalTableSchema.CREATED_DATE, System.currentTimeMillis());
+	    if (notice != null) 
+		    values.put(RetrivalTableSchema.NOTICE, serializePendingIntent(notice));
 		
 	    String[] projection = {RetrivalTableSchema._ID};
 	    String[] selectArgs = {uri.toString()};
@@ -465,6 +486,10 @@ public class AmmoDispatcher {
 	 * @return was the subscriber content provider updated correctly.
 	 */
 	private boolean subscribe(Uri uri, String mimeType, Calendar expiration, double worth, String filter) {
+		return subscribe(uri, mimeType, expiration, worth, filter, null);
+	}
+	
+	private boolean subscribe(Uri uri, String mimeType, Calendar expiration, double worth, String filter, PendingIntent notice) {
 		if (expiration == null) {
 			expiration = Calendar.getInstance();
 			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
@@ -476,6 +501,8 @@ public class AmmoDispatcher {
 		values.put(SubscriptionTableSchema.EXPIRATION, expiration.getTimeInMillis());
 		
 		values.put(SubscriptionTableSchema.SELECTION, filter);
+		if (notice != null) 
+		    values.put(SubscriptionTableSchema.NOTICE, serializePendingIntent(notice));
 		values.put(SubscriptionTableSchema.CREATED_DATE, System.currentTimeMillis());
 		
 		String[] projection = {SubscriptionTableSchema._ID};

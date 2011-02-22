@@ -110,6 +110,7 @@ public static class DeliveryMechanismTableSchemaBase implements BaseColumns {
 public static final String[] POSTAL_CURSOR_COLUMNS = new String[] {
   PostalTableSchemaBase.CP_TYPE ,
      PostalTableSchemaBase.URI ,
+     PostalTableSchemaBase.NOTICE ,
      PostalTableSchemaBase.SERIALIZE_TYPE ,
      PostalTableSchemaBase.DISPOSITION ,
      PostalTableSchemaBase.EXPIRATION ,
@@ -168,6 +169,15 @@ public static class PostalTableSchemaBase implements BaseColumns {
       * <P>Type: TEXT</P> 
       */
           public static final String URI = "uri";
+      
+      /** 
+      * Description: A serialized pending intent.
+           This is a platform specific serialization.
+           In most cases this would be inappropriate but in this case the entry
+           is fairly transient so performance is more important.
+      * <P>Type: BLOB</P> 
+      */
+          public static final String NOTICE = "notice";
       
       /** 
       * Description: Indicates if the uri indicates a table or whether the data has been preserialized.
@@ -242,6 +252,7 @@ public static class PostalTableSchemaBase implements BaseColumns {
 } 
 public static final String[] RETRIVAL_CURSOR_COLUMNS = new String[] {
   RetrivalTableSchemaBase.DISPOSITION ,
+     RetrivalTableSchemaBase.NOTICE ,
      RetrivalTableSchemaBase.URI ,
      RetrivalTableSchemaBase.MIME ,
      RetrivalTableSchemaBase.PROJECTION ,
@@ -305,6 +316,15 @@ public static class RetrivalTableSchemaBase implements BaseColumns {
          public static final String DISPOSITION = "disposition";
       
       /** 
+      * Description: A serialized pending intent.
+           This is a platform specific serialization.
+           In most cases this would be inappropriate but in this case the entry
+           is fairly transient so performance is more important.
+      * <P>Type: BLOB</P> 
+      */
+          public static final String NOTICE = "notice";
+      
+      /** 
       * Description: URI target for the data to be pulled.
       * <P>Type: TEXT</P> 
       */
@@ -354,7 +374,10 @@ public static class RetrivalTableSchemaBase implements BaseColumns {
          public static final String CONTINUITY = "continuity";
       
       /** 
-      * Description: The meaning changes based on the continuit type.
+      * Description: The meaning changes based on the continuity type.
+             - ONCE : undefined
+             - TEMPORAL : chronic  
+             - QUANTITY : the maximum number of objects to return
       * <P>Type: INTEGER</P> 
       */
           public static final String CONTINUITY_VALUE = "continuity_value";
@@ -485,6 +508,7 @@ public static final String[] SUBSCRIPTION_CURSOR_COLUMNS = new String[] {
      SubscriptionTableSchemaBase.MIME ,
      SubscriptionTableSchemaBase.SELECTION ,
      SubscriptionTableSchemaBase.EXPIRATION ,
+     SubscriptionTableSchemaBase.NOTICE ,
      SubscriptionTableSchemaBase.CREATED_DATE ,
      SubscriptionTableSchemaBase.MODIFIED_DATE 
 };
@@ -560,6 +584,15 @@ public static class SubscriptionTableSchemaBase implements BaseColumns {
       * <P>Type: INTEGER</P> 
       */
           public static final String EXPIRATION = "expiration";
+      
+      /** 
+      * Description: A serialized pending intent.
+           This is a platform specific serialization.
+           In most cases this would be inappropriate but in this case the entry
+           is fairly transient so performance is more important.
+      * <P>Type: BLOB</P> 
+      */
+          public static final String NOTICE = "notice";
       
       /** 
       * Description: 
