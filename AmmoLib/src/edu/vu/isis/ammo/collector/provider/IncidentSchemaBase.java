@@ -96,6 +96,8 @@ public static final String[] EVENT_CURSOR_COLUMNS = new String[] {
      EventTableSchemaBase.CATEGORY ,
      EventTableSchemaBase.UNIT ,
      EventTableSchemaBase.SIZE ,
+     EventTableSchemaBase.DEST_GROUP_TYPE ,
+     EventTableSchemaBase.DEST_GROUP_NAME ,
      EventTableSchemaBase.STATUS 
 };
 
@@ -219,6 +221,18 @@ public static class EventTableSchemaBase implements BaseColumns {
       * <P>Type: LONG</P> 
       */
           public static final String SIZE = "size";
+      
+      /** 
+      * Description: Type of group report will be broadcasted (Broadcast, Callsign, Unit).
+      * <P>Type: TEXT</P> 
+      */
+          public static final String DEST_GROUP_TYPE = "dest_group_type";
+      
+      /** 
+      * Description: Destination group identifier to send quick report.
+      * <P>Type: TEXT</P> 
+      */
+          public static final String DEST_GROUP_NAME = "dest_group_name";
       
       /** 
       * Description: The status of the report with respect to submission to
