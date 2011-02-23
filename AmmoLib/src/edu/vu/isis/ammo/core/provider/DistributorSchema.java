@@ -2,7 +2,7 @@ package edu.vu.isis.ammo.core.provider;
 
 public class DistributorSchema extends DistributorSchemaBase {
 
-   public static final int DATABASE_VERSION = 2;
+   public static final int DATABASE_VERSION = 3;
 
       public static class DeliveryMechanismTableSchema extends DeliveryMechanismTableSchemaBase {
 
