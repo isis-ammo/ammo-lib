@@ -93,13 +93,12 @@ public static class ContactTableSchemaBase implements BaseColumns {
           public static final String CALL_SIGN = "call_sign";
       
       /** 
-      * Description: The user ID, e.g. for Tigr
+      * Description: An alias for the war fighter.
+           e.g. Hawk4
       * <P>Type: TEXT</P> 
       */
           public static final String USER_ID = "user_id";
       
-
-
       /** 
       * Description: Into the data table to the contacts photograph. Null allowed.
       * <P>Type: FK</P> 
@@ -187,7 +186,6 @@ public static final String[] RAW_CONTACT_CURSOR_COLUMNS = new String[] {
      RawContactTableSchemaBase.ACCOUNT_SOURCE_ID ,
      RawContactTableSchemaBase.DISPLAY_NAME ,
      RawContactTableSchemaBase.CALL_SIGN ,
-     RawContactTableSchemaBase.USER_ID ,
      RawContactTableSchemaBase.RANK_ID ,
      RawContactTableSchemaBase.VISUAL_ID ,
      RawContactTableSchemaBase.AUDIO_ID ,
@@ -310,15 +308,6 @@ public static class RawContactTableSchemaBase implements BaseColumns {
       */
           public static final String CALL_SIGN = "call_sign";
       
-
-      /** 
-      * Description: A user ID, e.g. for Tigr
-      * <P>Type: TEXT</P> 
-      */
-          public static final String USER_ID = "user_id";
-      
-
-
       /** 
       * Description: Into the data table to the contact's rank icon. Null allowed.
            The contact may have additional items in the data table but this is their primary rank.
