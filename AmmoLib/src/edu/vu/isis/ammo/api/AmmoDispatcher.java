@@ -22,7 +22,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import edu.vu.isis.ammo.core.provider.DistributorSchema.PostalTableSchema;
-import edu.vu.isis.ammo.core.provider.DistributorSchema.RetrivalTableSchema;
+import edu.vu.isis.ammo.core.provider.DistributorSchema.RetrievalTableSchema;
 
 import edu.vu.isis.ammo.core.provider.DistributorSchema.SubscriptionTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.PublicationTableSchema;
@@ -52,8 +52,8 @@ public class AmmoDispatcher {
 	// posting with explicit expiration and worth
 	static private File dir = new File(Environment.getExternalStorageDirectory(),"ammo_distributor_cache");
 	
-	// static final private String selectUri = "\""+RetrivalTableSchema.URI+"\" = '?'";
-	static final private String selectUri = "\""+RetrivalTableSchema.URI+"\" = ";
+	// static final private String selectUri = "\""+RetrievalTableSchema.URI+"\" = '?'";
+	static final private String selectUri = "\""+RetrievalTableSchema.URI+"\" = ";
 
 	public static AmmoDispatcher getInstance(Context context) {
 		if (instance == null) {
@@ -370,40 +370,40 @@ public class AmmoDispatcher {
 			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
 	    }
 	    ContentValues values = new ContentValues();
-	    values.put(RetrivalTableSchema.MIME, mimeType);
-	    values.put(RetrivalTableSchema.URI, uri.toString());
-	    values.put(RetrivalTableSchema.DISPOSITION, RetrivalTableSchema.DISPOSITION_PENDING);
-	    values.put(RetrivalTableSchema.EXPIRATION, expiration.getTimeInMillis());
+	    values.put(RetrievalTableSchema.MIME, mimeType);
+	    values.put(RetrievalTableSchema.URI, uri.toString());
+	    values.put(RetrievalTableSchema.DISPOSITION, RetrievalTableSchema.DISPOSITION_PENDING);
+	    values.put(RetrievalTableSchema.EXPIRATION, expiration.getTimeInMillis());
 		
-	    values.put(RetrivalTableSchema.SELECTION, query);
-	    values.put(RetrivalTableSchema.PROJECTION, "");
-	    values.put(RetrivalTableSchema.CREATED_DATE, System.currentTimeMillis());
+	    values.put(RetrievalTableSchema.SELECTION, query);
+	    values.put(RetrievalTableSchema.PROJECTION, "");
+	    values.put(RetrievalTableSchema.CREATED_DATE, System.currentTimeMillis());
 	    if (notice != null) 
-		    values.put(RetrivalTableSchema.NOTICE, serializePendingIntent(notice));
+		    values.put(RetrievalTableSchema.NOTICE, serializePendingIntent(notice));
 		
-	    String[] projection = {RetrivalTableSchema._ID};
+	    String[] projection = {RetrievalTableSchema._ID};
 	    String[] selectArgs = {uri.toString()};
-	    // Cursor queryCursor = resolver.query(RetrivalTableSchema.CONTENT_URI, projection, selectUri, selectArgs, null);
-	    Cursor queryCursor = resolver.query(RetrivalTableSchema.CONTENT_URI, projection, selectUri+"'"+uri.toString()+"'",null, null);
+	    // Cursor queryCursor = resolver.query(RetrievalTableSchema.CONTENT_URI, projection, selectUri, selectArgs, null);
+	    Cursor queryCursor = resolver.query(RetrievalTableSchema.CONTENT_URI, projection, selectUri+"'"+uri.toString()+"'",null, null);
 	    if (queryCursor == null) {
 		Toast.makeText(context, "missing pull content provider", Toast.LENGTH_LONG).show();
 		return false;
 	    }
 	    if (queryCursor.getCount() == 1) {
-		Log.d("AmmoLib", "found an existing pull request in the retrival table ... updating ...");
+		Log.d("AmmoLib", "found an existing pull request in the retrieval table ... updating ...");
 		for (boolean more = queryCursor.moveToFirst(); more; ) {
-		    long queryId = queryCursor.getLong(queryCursor.getColumnIndex(RetrivalTableSchema._ID));
-		    Uri queryUri = ContentUris.withAppendedId(RetrivalTableSchema.CONTENT_URI, queryId);
+		    long queryId = queryCursor.getLong(queryCursor.getColumnIndex(RetrievalTableSchema._ID));
+		    Uri queryUri = ContentUris.withAppendedId(RetrievalTableSchema.CONTENT_URI, queryId);
 		    resolver.update(queryUri, values, null, null);
 		    break; // there is only one
 		}
 	    } else if  (queryCursor.getCount() > 1) {
 			Toast.makeText(context, "corrupted subscriber content provider; removing offending tuples", Toast.LENGTH_LONG).show();
-			resolver.delete(RetrivalTableSchema.CONTENT_URI, selectUri, selectArgs);
-			resolver.insert(RetrivalTableSchema.CONTENT_URI, values);
+			resolver.delete(RetrievalTableSchema.CONTENT_URI, selectUri, selectArgs);
+			resolver.insert(RetrievalTableSchema.CONTENT_URI, values);
 	    } else {
-			Log.d("AmmoLib", "creating a pull request in retrival table ... updating ...");
-			resolver.insert(RetrivalTableSchema.CONTENT_URI, values);
+			Log.d("AmmoLib", "creating a pull request in retrieval table ... updating ...");
+			resolver.insert(RetrievalTableSchema.CONTENT_URI, values);
 	    }
 	    return true;
 	}
