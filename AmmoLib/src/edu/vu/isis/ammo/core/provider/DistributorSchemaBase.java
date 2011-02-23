@@ -250,53 +250,53 @@ public static class PostalTableSchemaBase implements BaseColumns {
 // BEGIN CUSTOM POSTAL_SCHEMA PROPERTIES
 // END   CUSTOM POSTAL_SCHEMA PROPERTIES
 } 
-public static final String[] RETRIVAL_CURSOR_COLUMNS = new String[] {
-  RetrivalTableSchemaBase.DISPOSITION ,
-     RetrivalTableSchemaBase.NOTICE ,
-     RetrivalTableSchemaBase.URI ,
-     RetrivalTableSchemaBase.MIME ,
-     RetrivalTableSchemaBase.PROJECTION ,
-     RetrivalTableSchemaBase.SELECTION ,
-     RetrivalTableSchemaBase.ARGS ,
-     RetrivalTableSchemaBase.ORDERING ,
-     RetrivalTableSchemaBase.CONTINUITY ,
-     RetrivalTableSchemaBase.CONTINUITY_VALUE ,
-     RetrivalTableSchemaBase.EXPIRATION ,
-     RetrivalTableSchemaBase.CREATED_DATE ,
-     RetrivalTableSchemaBase.MODIFIED_DATE 
+public static final String[] RETRIEVAL_CURSOR_COLUMNS = new String[] {
+  RetrievalTableSchemaBase.DISPOSITION ,
+     RetrievalTableSchemaBase.NOTICE ,
+     RetrievalTableSchemaBase.URI ,
+     RetrievalTableSchemaBase.MIME ,
+     RetrievalTableSchemaBase.PROJECTION ,
+     RetrievalTableSchemaBase.SELECTION ,
+     RetrievalTableSchemaBase.ARGS ,
+     RetrievalTableSchemaBase.ORDERING ,
+     RetrievalTableSchemaBase.CONTINUITY ,
+     RetrievalTableSchemaBase.CONTINUITY_VALUE ,
+     RetrievalTableSchemaBase.EXPIRATION ,
+     RetrievalTableSchemaBase.CREATED_DATE ,
+     RetrievalTableSchemaBase.MODIFIED_DATE 
 };
 
-public static class RetrivalTableSchemaBase implements BaseColumns {
-   protected RetrivalTableSchemaBase() {} // No instantiation.
+public static class RetrievalTableSchemaBase implements BaseColumns {
+   protected RetrievalTableSchemaBase() {} // No instantiation.
    
    /**
     * The content:// style URL for this table
     */
    public static final Uri CONTENT_URI =
-      Uri.parse("content://"+AUTHORITY+"/retrival");
+      Uri.parse("content://"+AUTHORITY+"/retrieval");
 
    public static Uri getUri(Cursor cursor) {
      Integer id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
-     return  Uri.withAppendedPath(RetrivalTableSchemaBase.CONTENT_URI, id.toString());
+     return  Uri.withAppendedPath(RetrievalTableSchemaBase.CONTENT_URI, id.toString());
    }
    
    /**
     * The MIME type of {@link #CONTENT_URI} providing a directory
     */
    public static final String CONTENT_TYPE =
-      ContentResolver.CURSOR_DIR_BASE_TYPE+"/vnd.edu.vu.isis.ammo.core.retrival";
+      ContentResolver.CURSOR_DIR_BASE_TYPE+"/vnd.edu.vu.isis.ammo.core.retrieval";
    
    /**
     * A mime type used for publisher subscriber.
     */
    public static final String CONTENT_TOPIC =
-      "application/vnd.edu.vu.isis.ammo.core.retrival";
+      "application/vnd.edu.vu.isis.ammo.core.retrieval";
    
    /**
-    * The MIME type of a {@link #CONTENT_URI} sub-directory of a single retrival entry.
+    * The MIME type of a {@link #CONTENT_URI} sub-directory of a single retrieval entry.
     */
    public static final String CONTENT_ITEM_TYPE = 
-      ContentResolver.CURSOR_ITEM_BASE_TYPE+"/vnd.edu.vu.isis.ammo.core.retrival";
+      ContentResolver.CURSOR_ITEM_BASE_TYPE+"/vnd.edu.vu.isis.ammo.core.retrieval";
    
    
    public static final String DEFAULT_SORT_ORDER = ""; //"modified_date DESC";
@@ -405,8 +405,8 @@ public static class RetrivalTableSchemaBase implements BaseColumns {
    public static final String _DISPOSITION = "_disp"; 
 
 
-// BEGIN CUSTOM RETRIVAL_SCHEMA PROPERTIES
-// END   CUSTOM RETRIVAL_SCHEMA PROPERTIES
+// BEGIN CUSTOM RETRIEVAL_SCHEMA PROPERTIES
+// END   CUSTOM RETRIEVAL_SCHEMA PROPERTIES
 } 
 public static final String[] PUBLICATION_CURSOR_COLUMNS = new String[] {
   PublicationTableSchemaBase.DISPOSITION ,
