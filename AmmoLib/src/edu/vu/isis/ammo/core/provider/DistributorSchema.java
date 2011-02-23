@@ -18,13 +18,13 @@ public class DistributorSchema extends DistributorSchemaBase {
                PostalTableSchemaBase.MODIFIED_DATE + " DESC ";
       }    
     
-      public static class RetrivalTableSchema extends RetrivalTableSchemaBase {
+      public static class RetrievalTableSchema extends RetrievalTableSchemaBase {
 
-         protected RetrivalTableSchema() { super(); }
+         protected RetrievalTableSchema() { super(); }
 
          public static final String PRIORITY_SORT_ORDER = 
-               RetrivalTableSchemaBase.EXPIRATION + " DESC, " +
-               RetrivalTableSchemaBase.MODIFIED_DATE + " DESC ";
+               RetrievalTableSchemaBase.EXPIRATION + " DESC, " +
+               RetrievalTableSchemaBase.MODIFIED_DATE + " DESC ";
       }    
       public static class PublicationTableSchema extends PublicationTableSchemaBase {
 
