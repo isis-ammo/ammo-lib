@@ -494,6 +494,8 @@ public class AmmoDispatcher {
 			expiration = Calendar.getInstance();
 			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
 		}
+		Log.d("AmmoDispatcher", "::subscribe with uri: " + uri.toString() + " mime: " + mimeType);
+		
 		ContentValues values = new ContentValues();
 		values.put(SubscriptionTableSchema.MIME, mimeType);
 		values.put(SubscriptionTableSchema.URI, uri.toString());
