@@ -555,6 +555,16 @@ public class AmmoDispatcher {
 		return true;
 	}
 	
+	public boolean unsubscribe(Uri uri, String mime) {
+		ContentValues values = new ContentValues();
+		values.put(SubscriptionTableSchema.EXPIRATION, 0);
+		values.put(SubscriptionTableSchema.MIME, mime);
+		String where = "\""+SubscriptionTableSchema.URI+"\" = '"+uri.toString()+"'" 
+		+ " AND " + "\"" + SubscriptionTableSchema.MIME+"\" = \"" + mime + "\"";
+		resolver.update(SubscriptionTableSchema.CONTENT_URI, values, where, null);
+		return true;
+	}
+	
 	/**
 	 * Subscribe to a topic, a request for information to be placed into a content provider.
 	 * This mechanism establishes a relationship between mime type and target uri.
