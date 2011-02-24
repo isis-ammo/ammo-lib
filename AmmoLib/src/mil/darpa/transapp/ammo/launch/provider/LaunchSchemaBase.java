@@ -25,6 +25,7 @@ public static final String[] CONTACT_CURSOR_COLUMNS = new String[] {
   ContactTableSchemaBase.LOOKUP_KEY ,
      ContactTableSchemaBase.DISPLAY_NAME ,
      ContactTableSchemaBase.CALL_SIGN ,
+     ContactTableSchemaBase.USER_ID ,
      ContactTableSchemaBase.VISUAL_ID ,
      ContactTableSchemaBase.AUDIO_ID ,
      ContactTableSchemaBase.TACTILE_ID ,
@@ -90,6 +91,13 @@ public static class ContactTableSchemaBase implements BaseColumns {
       * <P>Type: TEXT</P> 
       */
           public static final String CALL_SIGN = "call_sign";
+      
+      /** 
+      * Description: An alias for the war fighter.
+           e.g. Hawk4
+      * <P>Type: TEXT</P> 
+      */
+          public static final String USER_ID = "user_id";
       
       /** 
       * Description: Into the data table to the contacts photograph. Null allowed.
