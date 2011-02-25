@@ -83,7 +83,8 @@ public static class MediaTableSchemaBase implements BaseColumns {
 // END   CUSTOM MEDIA_SCHEMA PROPERTIES
 } 
 public static final String[] EVENT_CURSOR_COLUMNS = new String[] {
-  EventTableSchemaBase.MEDIA_COUNT ,
+  EventTableSchemaBase.UUID ,
+     EventTableSchemaBase.MEDIA_COUNT ,
      EventTableSchemaBase.DISPLAY_NAME ,
      EventTableSchemaBase.CATEGORY_ID ,
      EventTableSchemaBase.TITLE ,
@@ -137,6 +138,12 @@ public static class EventTableSchemaBase implements BaseColumns {
    public static final String DEFAULT_SORT_ORDER = ""; //"modified_date DESC";
    
 
+      /** 
+      * Description: 
+      * <P>Type: TEXT</P> 
+      */
+          public static final String UUID = "uuid";
+      
       /** 
       * Description: A count of the number of media children (i.e. from the media table.
       * <P>Type: INTEGER</P> 
