@@ -402,7 +402,7 @@ public class AmmoDispatcher {
 			resolver.delete(RetrievalTableSchema.CONTENT_URI, selectUri, selectArgs);
 			resolver.insert(RetrievalTableSchema.CONTENT_URI, values);
 	    } else {
-			Log.d("AmmoLib", "creating a pull request in retrieval table ... updating ...");
+			Log.d("AmmoLib", "creating a pull request in retrieval table ... inserting ...");
 			resolver.insert(RetrievalTableSchema.CONTENT_URI, values);
 	    }
 	    return true;
