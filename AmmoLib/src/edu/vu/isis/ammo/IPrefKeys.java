@@ -7,4 +7,6 @@ package edu.vu.isis.ammo;
  */
 public interface IPrefKeys {
 	public static final String PREF_OPERATOR_ID = "CORE_OPERATOR_ID";
+	public static final String AMMO_LOGIN = "AMMO_LOGIN";
+	public static final String AMMO_CONNECTED = "AMMO_CONNECTED";
 }
