@@ -1,10 +1,10 @@
 // THIS IS GENERATED CODE, MAKE SURE ANY CHANGES MADE HERE ARE PROPAGATED INTO THE GENERATOR TEMPLATES
 package edu.vu.isis.ammo.sms.provider;
 
-import android.net.Uri;
-import android.provider.BaseColumns;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.net.Uri;
+import android.provider.BaseColumns;
 
 public abstract class SmsSchemaBase {
    public static final String AUTHORITY = "edu.vu.isis.ammo.sms.provider.smsprovider";

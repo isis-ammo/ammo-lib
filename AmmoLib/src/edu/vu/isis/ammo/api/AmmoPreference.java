@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import edu.vu.isis.ammo.AmmoPreferenceReadOnlyAccess;
 import edu.vu.isis.ammo.core.provider.PreferenceSchema;
 
 public class AmmoPreference {
@@ -11,10 +12,17 @@ public class AmmoPreference {
 	private static AmmoPreference instance = null;
 	final private Context mContext;
 	final private ContentResolver mContentResolver;
+	final private boolean hasPermissionReadWrite;
 	
 	private AmmoPreference(Context context, ContentResolver contentResolver) {
 		mContext = context;
 		mContentResolver = contentResolver;
+		
+		if (context.getApplicationInfo().packageName.startsWith("edu.vu.isis.ammo.core")) {
+			hasPermissionReadWrite = true;
+		} else {
+			hasPermissionReadWrite = false;
+		}
 	}
 	
 	public static AmmoPreference getInstance(Context context) {
@@ -111,40 +119,53 @@ public class AmmoPreference {
 		return value;
 	}
 	
-	public void putString(String key, String value) {
+	public void putString(String key, String value) throws AmmoPreferenceReadOnlyAccess {
+		if (!hasPermissionReadWrite) {
+			throw new AmmoPreferenceReadOnlyAccess();
+		}
 		ContentValues vals = new ContentValues();
 		vals.put(key, value);
 		String[] selectionArgs = {key};
 		mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_STRING, selectionArgs);
 	}
 	
-	public void putBoolean(String key, boolean value) {
+	public void putBoolean(String key, boolean value) throws AmmoPreferenceReadOnlyAccess {
+		if (!hasPermissionReadWrite) {
+			throw new AmmoPreferenceReadOnlyAccess();
+		}
 		ContentValues vals = new ContentValues();
 		vals.put(key, value);
 		String[] selectionArgs = {key};
 		mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_BOOLEAN, selectionArgs);
 	}
 	
-	public void putInt(String key, int value) {
+	public void putInt(String key, int value) throws AmmoPreferenceReadOnlyAccess {
+		if (!hasPermissionReadWrite) {
+			throw new AmmoPreferenceReadOnlyAccess();
+		}
 		ContentValues vals = new ContentValues();
 		vals.put(key, value);
 		String[] selectionArgs = {key};
 		mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_INT, selectionArgs);
 	}
 	
-	public void putLong(String key, long value) {
+	public void putLong(String key, long value) throws AmmoPreferenceReadOnlyAccess {
+		if (!hasPermissionReadWrite) {
+			throw new AmmoPreferenceReadOnlyAccess();
+		}
 		ContentValues vals = new ContentValues();
 		vals.put(key, value);
 		String[] selectionArgs = {key};
 		mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_LONG, selectionArgs);
 	}
 	
-	public void putFloat(String key, float value) {
+	public void putFloat(String key, float value) throws AmmoPreferenceReadOnlyAccess {
+		if (!hasPermissionReadWrite) {
+			throw new AmmoPreferenceReadOnlyAccess();
+		}
 		ContentValues vals = new ContentValues();
 		vals.put(key, value);
 		String[] selectionArgs = {key};
 		mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_FLOAT, selectionArgs);
 	}
-	
-	
 }
