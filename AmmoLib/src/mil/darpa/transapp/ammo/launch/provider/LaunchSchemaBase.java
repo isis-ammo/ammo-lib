@@ -1,10 +1,10 @@
 // THIS IS GENERATED CODE, MAKE SURE ANY CHANGES MADE HERE ARE PROPAGATED INTO THE GENERATOR TEMPLATES
 package mil.darpa.transapp.ammo.launch.provider;
 
-import android.net.Uri;
-import android.provider.BaseColumns;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.net.Uri;
+import android.provider.BaseColumns;
 
 public abstract class LaunchSchemaBase {
    public static final String AUTHORITY = "mil.darpa.transapp.ammo.launch.provider.launchprovider";

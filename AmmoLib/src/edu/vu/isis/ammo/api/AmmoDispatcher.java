@@ -2,7 +2,6 @@ package edu.vu.isis.ammo.api;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
@@ -16,16 +15,15 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Parcel;
-import android.widget.Toast;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
 import edu.vu.isis.ammo.core.provider.DistributorSchema.PostalTableSchema;
-import edu.vu.isis.ammo.core.provider.DistributorSchema.RetrievalTableSchema;
-
-import edu.vu.isis.ammo.core.provider.DistributorSchema.SubscriptionTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.PublicationTableSchema;
+import edu.vu.isis.ammo.core.provider.DistributorSchema.RetrievalTableSchema;
+import edu.vu.isis.ammo.core.provider.DistributorSchema.SubscriptionTableSchema;
 
 /**
  * see https://ammo.isis.vanderbilt.edu/redmine/boards/2/topics/3
@@ -510,6 +508,8 @@ public class AmmoDispatcher {
 		String[] projection = {SubscriptionTableSchema._ID};
 		String[] selectArgs = {uri.toString()};
 		// Cursor filterCursor = resolver.query(SubscriptionTableSchema.CONTENT_URI, projection, selectUri, selectArgs, null);
+	    String selection = selectUri + "'" + uri.toString() + "'";
+
 		Cursor queryCursor = resolver.query(SubscriptionTableSchema.CONTENT_URI, projection, selectUri+"'"+uri.toString()+"'",null, null);
 		if (queryCursor == null) {
            Toast.makeText(context, "missing subscriber content provider", Toast.LENGTH_LONG).show();
