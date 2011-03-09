@@ -1,10 +1,10 @@
 // THIS IS GENERATED CODE, MAKE SURE ANY CHANGES MADE HERE ARE PROPAGATED INTO THE GENERATOR TEMPLATES
 package edu.vu.isis.ammo.core.provider;
 
-import android.content.ContentResolver;
-import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.content.ContentResolver;
+import android.database.Cursor;
 
 public abstract class DistributorSchemaBase {
    public static final String AUTHORITY = "edu.vu.isis.ammo.core.provider.distributorprovider";
@@ -21,92 +21,6 @@ public abstract class DistributorSchemaBase {
 // BEGIN CUSTOM Distributor CONSTANTS
 // END   CUSTOM Distributor CONSTANTS
 
-public static final String[] DELIVERY_MECHANISM_CURSOR_COLUMNS = new String[] {
-  DeliveryMechanismTableSchemaBase.CONN_TYPE ,
-     DeliveryMechanismTableSchemaBase.STATUS ,
-     DeliveryMechanismTableSchemaBase.UNIT ,
-     DeliveryMechanismTableSchemaBase.COST_UP ,
-     DeliveryMechanismTableSchemaBase.COST_DOWN 
-};
-
-public static class DeliveryMechanismTableSchemaBase implements BaseColumns {
-   protected DeliveryMechanismTableSchemaBase() {} // No instantiation.
-   
-   /**
-    * The content:// style URL for this table
-    */
-   public static final Uri CONTENT_URI =
-      Uri.parse("content://"+AUTHORITY+"/delivery_mechanism");
-
-   public static Uri getUri(Cursor cursor) {
-     Integer id = cursor.getInt(cursor.getColumnIndex(BaseColumns._ID));
-     return  Uri.withAppendedPath(DeliveryMechanismTableSchemaBase.CONTENT_URI, id.toString());
-   }
-   
-   /**
-    * The MIME type of {@link #CONTENT_URI} providing a directory
-    */
-   public static final String CONTENT_TYPE =
-      ContentResolver.CURSOR_DIR_BASE_TYPE+"/vnd.edu.vu.isis.ammo.core.delivery_mechanism";
-   
-   /**
-    * A mime type used for publisher subscriber.
-    */
-   public static final String CONTENT_TOPIC =
-      "application/vnd.edu.vu.isis.ammo.core.delivery_mechanism";
-   
-   /**
-    * The MIME type of a {@link #CONTENT_URI} sub-directory of a single delivery_mechanism entry.
-    */
-   public static final String CONTENT_ITEM_TYPE = 
-      ContentResolver.CURSOR_ITEM_BASE_TYPE+"/vnd.edu.vu.isis.ammo.core.delivery_mechanism";
-   
-   
-   public static final String DEFAULT_SORT_ORDER = ""; //"modified_date DESC";
-   
-
-      /** 
-      * Description: 
-      * <P>Type: EXCLUSIVE</P> 
-      */
-              public static final int CONN_TYPE_UNKNOWN = 0;
-                 public static final int CONN_TYPE_WIFI = 1;
-                 public static final int CONN_TYPE_CELLULAR = 2;
-                 public static final int CONN_TYPE_USB = 3;
-            
-         public static final String CONN_TYPE = "conn_type";
-      
-      /** 
-      * Description: 
-      * <P>Type: TEXT</P> 
-      */
-          public static final String STATUS = "status";
-      
-      /** 
-      * Description: 
-      * <P>Type: TEXT</P> 
-      */
-          public static final String UNIT = "unit";
-      
-      /** 
-      * Description: 
-      * <P>Type: INTEGER</P> 
-      */
-          public static final String COST_UP = "cost_up";
-      
-      /** 
-      * Description: 
-      * <P>Type: INTEGER</P> 
-      */
-          public static final String COST_DOWN = "cost_down";
-      
-
-   public static final String _DISPOSITION = "_disp"; 
-
-
-// BEGIN CUSTOM DELIVERY_MECHANISM_SCHEMA PROPERTIES
-// END   CUSTOM DELIVERY_MECHANISM_SCHEMA PROPERTIES
-} 
 public static final String[] POSTAL_CURSOR_COLUMNS = new String[] {
   PostalTableSchemaBase.CP_TYPE ,
      PostalTableSchemaBase.URI ,
@@ -197,11 +111,12 @@ public static class PostalTableSchemaBase implements BaseColumns {
       * <P>Type: EXCLUSIVE</P> 
       */
               public static final int DISPOSITION_PENDING = 1;
-                 public static final int DISPOSITION_SENT = 2;
-                 public static final int DISPOSITION_JOURNAL = 3;
-                 public static final int DISPOSITION_FAIL = 4;
-                 public static final int DISPOSITION_SATISFIED = 5;
+                 public static final int DISPOSITION_QUEUED = 2;
+                 public static final int DISPOSITION_SENT = 3;
+                 public static final int DISPOSITION_JOURNAL = 4;
+                 public static final int DISPOSITION_FAIL = 5;
                  public static final int DISPOSITION_EXPIRED = 6;
+                 public static final int DISPOSITION_SATISFIED = 7;
             
          public static final String DISPOSITION = "disposition";
       
@@ -307,11 +222,12 @@ public static class RetrievalTableSchemaBase implements BaseColumns {
       * <P>Type: EXCLUSIVE</P> 
       */
               public static final int DISPOSITION_PENDING = 1;
-                 public static final int DISPOSITION_SENT = 2;
-                 public static final int DISPOSITION_JOURNAL = 3;
-                 public static final int DISPOSITION_FAIL = 4;
-                 public static final int DISPOSITION_SATISFIED = 5;
+                 public static final int DISPOSITION_QUEUED = 2;
+                 public static final int DISPOSITION_SENT = 3;
+                 public static final int DISPOSITION_JOURNAL = 4;
+                 public static final int DISPOSITION_FAIL = 5;
                  public static final int DISPOSITION_EXPIRED = 6;
+                 public static final int DISPOSITION_SATISFIED = 7;
             
          public static final String DISPOSITION = "disposition";
       
@@ -458,10 +374,11 @@ public static class PublicationTableSchemaBase implements BaseColumns {
       * <P>Type: EXCLUSIVE</P> 
       */
               public static final int DISPOSITION_PENDING = 1;
-                 public static final int DISPOSITION_SENT = 2;
-                 public static final int DISPOSITION_JOURNAL = 3;
-                 public static final int DISPOSITION_FAIL = 4;
-                 public static final int DISPOSITION_EXPIRED = 5;
+                 public static final int DISPOSITION_QUEUED = 2;
+                 public static final int DISPOSITION_SENT = 3;
+                 public static final int DISPOSITION_JOURNAL = 4;
+                 public static final int DISPOSITION_FAIL = 5;
+                 public static final int DISPOSITION_EXPIRED = 6;
             
          public static final String DISPOSITION = "disposition";
       
@@ -554,10 +471,11 @@ public static class SubscriptionTableSchemaBase implements BaseColumns {
       * <P>Type: EXCLUSIVE</P> 
       */
               public static final int DISPOSITION_PENDING = 1;
-                 public static final int DISPOSITION_SENT = 2;
-                 public static final int DISPOSITION_JOURNAL = 3;
-                 public static final int DISPOSITION_FAIL = 4;
-                 public static final int DISPOSITION_EXPIRED = 5;
+                 public static final int DISPOSITION_QUEUED = 2;
+                 public static final int DISPOSITION_SENT = 3;
+                 public static final int DISPOSITION_JOURNAL = 4;
+                 public static final int DISPOSITION_FAIL = 5;
+                 public static final int DISPOSITION_EXPIRED = 6;
             
          public static final String DISPOSITION = "disposition";
       

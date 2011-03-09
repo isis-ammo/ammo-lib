@@ -1,10 +1,10 @@
 // THIS IS GENERATED CODE, MAKE SURE ANY CHANGES MADE HERE ARE PROPAGATED INTO THE GENERATOR TEMPLATES
 package com.aterrasys.nevada.provider;
 
-import android.content.ContentResolver;
-import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.content.ContentResolver;
+import android.database.Cursor;
 
 public abstract class NevadaSchemaBase {
    public static final String AUTHORITY = "com.aterrasys.nevada.provider.nevadaprovider";
