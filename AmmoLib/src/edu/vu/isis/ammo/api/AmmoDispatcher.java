@@ -51,7 +51,9 @@ public class AmmoDispatcher {
 	static private File dir = new File(Environment.getExternalStorageDirectory(),"ammo_distributor_cache");
 	
 	// static final private String selectUri = "\""+RetrievalTableSchema.URI+"\" = '?'";
-	static final private String selectUri = "\""+RetrievalTableSchema.URI+"\" = ";
+	static final private String selectRetrievalUri = "\""+RetrievalTableSchema.URI+"\" = ";
+	static final private String selectSubscriptionUri = "\""+SubscriptionTableSchema.URI+"\" = ";
+	static final private String selectPublicationUri = "\""+PublicationTableSchema.URI+"\" = ";
 
 	public static AmmoDispatcher getInstance(Context context) {
 		if (instance == null) {
@@ -382,7 +384,7 @@ public class AmmoDispatcher {
 	    String[] projection = {RetrievalTableSchema._ID};
 	    String[] selectArgs = {uri.toString()};
 	    // Cursor queryCursor = resolver.query(RetrievalTableSchema.CONTENT_URI, projection, selectUri, selectArgs, null);
-	    Cursor queryCursor = resolver.query(RetrievalTableSchema.CONTENT_URI, projection, selectUri+"'"+uri.toString()+"'",null, null);
+	    Cursor queryCursor = resolver.query(RetrievalTableSchema.CONTENT_URI, projection, selectRetrievalUri+"'"+uri.toString()+"'",null, null);
 	    if (queryCursor == null) {
 		Toast.makeText(context, "missing pull content provider", Toast.LENGTH_LONG).show();
 		return false;
@@ -397,7 +399,7 @@ public class AmmoDispatcher {
 		}
 	    } else if  (queryCursor.getCount() > 1) {
 			Toast.makeText(context, "corrupted subscriber content provider; removing offending tuples", Toast.LENGTH_LONG).show();
-			resolver.delete(RetrievalTableSchema.CONTENT_URI, selectUri, selectArgs);
+			resolver.delete(RetrievalTableSchema.CONTENT_URI, selectRetrievalUri, selectArgs);
 			resolver.insert(RetrievalTableSchema.CONTENT_URI, values);
 	    } else {
 			Log.d("AmmoLib", "creating a pull request in retrieval table ... inserting ...");
@@ -497,7 +499,6 @@ public class AmmoDispatcher {
 		ContentValues values = new ContentValues();
 		values.put(SubscriptionTableSchema.MIME, mimeType);
 		values.put(SubscriptionTableSchema.URI, uri.toString());
-		values.put(SubscriptionTableSchema.DISPOSITION, SubscriptionTableSchema.DISPOSITION_PENDING);
 		values.put(SubscriptionTableSchema.EXPIRATION, expiration.getTimeInMillis());
 		
 		values.put(SubscriptionTableSchema.SELECTION, filter);
@@ -508,9 +509,10 @@ public class AmmoDispatcher {
 		String[] projection = {SubscriptionTableSchema._ID};
 		String[] selectArgs = {uri.toString()};
 		// Cursor filterCursor = resolver.query(SubscriptionTableSchema.CONTENT_URI, projection, selectUri, selectArgs, null);
-	    String selection = selectUri + "'" + uri.toString() + "'";
 
-		Cursor queryCursor = resolver.query(SubscriptionTableSchema.CONTENT_URI, projection, selectUri+"'"+uri.toString()+"'",null, null);
+		String selection = selectSubscriptionUri + "'" + uri.toString() + "'" + " AND \"" + SubscriptionTableSchema.MIME + "\" = '" + mimeType + "'";
+
+		Cursor queryCursor = resolver.query(SubscriptionTableSchema.CONTENT_URI, projection, selection, null, null);
 		if (queryCursor == null) {
            Toast.makeText(context, "missing subscriber content provider", Toast.LENGTH_LONG).show();
            return false;
@@ -524,9 +526,12 @@ public class AmmoDispatcher {
 			}
 		} else if  (queryCursor.getCount() > 1) {
 			Toast.makeText(context, "corrupted subscriber content provider; removing offending tuples", Toast.LENGTH_LONG).show();
-			resolver.delete(SubscriptionTableSchema.CONTENT_URI, selectUri, selectArgs);
+			resolver.delete(SubscriptionTableSchema.CONTENT_URI, selectSubscriptionUri, selectArgs);
 			resolver.insert(SubscriptionTableSchema.CONTENT_URI, values);
 		} else {
+		    // if its a new entry set the DISPOSITION to pending - else leave it as is ...
+		    values.put(SubscriptionTableSchema.DISPOSITION, SubscriptionTableSchema.DISPOSITION_PENDING);
+
 		    resolver.insert(SubscriptionTableSchema.CONTENT_URI, values);
 		}
 		return true;
@@ -597,7 +602,7 @@ public class AmmoDispatcher {
 		String[] projection = {PublicationTableSchema._ID};
 		String[] selectArgs = {uri.toString()};
 		// Cursor queryCursor = resolver.query(PublicationTableSchema.CONTENT_URI, projection, selectUri, selectArgs, null);
-		Cursor queryCursor = resolver.query(PublicationTableSchema.CONTENT_URI, projection, selectUri+"'"+uri.toString()+"'",null, null);
+		Cursor queryCursor = resolver.query(PublicationTableSchema.CONTENT_URI, projection, selectPublicationUri+"'"+uri.toString()+"'",null, null);
 		if (queryCursor == null) {
            Toast.makeText(context, "missing subscriber content provider", Toast.LENGTH_LONG).show();
            return false;
@@ -611,7 +616,7 @@ public class AmmoDispatcher {
 			}
 		} else if  (queryCursor.getCount() > 1) {
 			Toast.makeText(context, "corrupted subscriber content provider; removing offending tuples", Toast.LENGTH_LONG).show();
-			resolver.delete(PublicationTableSchema.CONTENT_URI, selectUri, selectArgs);
+			resolver.delete(PublicationTableSchema.CONTENT_URI, selectPublicationUri, selectArgs);
 			resolver.insert(PublicationTableSchema.CONTENT_URI, values);
 		} else {
 		    resolver.insert(PublicationTableSchema.CONTENT_URI, values);
