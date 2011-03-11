@@ -64,7 +64,7 @@ public static class MediaTableSchemaBase implements BaseColumns {
 
       /** 
       * Description: Points to the event to which this belongs.
-      * <P>Type: FK</P> 
+      * <P>Type: TEXT</P> 
       */
           public static final String EVENT_ID = "event_id";
       
