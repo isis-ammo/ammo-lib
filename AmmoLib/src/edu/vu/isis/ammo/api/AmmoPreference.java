@@ -8,7 +8,7 @@ import edu.vu.isis.ammo.AmmoPreferenceReadOnlyAccess;
 import edu.vu.isis.ammo.core.provider.PreferenceSchema;
 
 public class AmmoPreference {
-	
+
 	private static AmmoPreference instance = null;
 	final private Context mContext;
 	final private ContentResolver mContentResolver;
