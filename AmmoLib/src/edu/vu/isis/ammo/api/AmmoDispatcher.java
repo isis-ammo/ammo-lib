@@ -25,6 +25,8 @@ import edu.vu.isis.ammo.core.provider.DistributorSchema.PublicationTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.RetrievalTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.SubscriptionTableSchema;
 
+import edu.vu.isis.ammo.core.provider.PreferenceSchema;
+
 /**
  * see https://ammo.isis.vanderbilt.edu/redmine/boards/2/topics/3
  * 
@@ -32,6 +34,7 @@ import edu.vu.isis.ammo.core.provider.DistributorSchema.SubscriptionTableSchema;
  * 
  */
 public class AmmoDispatcher {
+	String selection = PreferenceSchema.AMMO_PREF_TYPE_STRING;
 	
 	/**
 	 * Access mode for the file. 
@@ -506,7 +509,7 @@ public class AmmoDispatcher {
 		    values.put(SubscriptionTableSchema.NOTICE, serializePendingIntent(notice));
 		values.put(SubscriptionTableSchema.CREATED_DATE, System.currentTimeMillis());
 		
-		String[] projection = {SubscriptionTableSchema._ID};
+		String[] projection = {SubscriptionTableSchema._ID,SubscriptionTableSchema.EXPIRATION};
 		String[] selectArgs = {uri.toString()};
 		// Cursor filterCursor = resolver.query(SubscriptionTableSchema.CONTENT_URI, projection, selectUri, selectArgs, null);
 
@@ -520,6 +523,11 @@ public class AmmoDispatcher {
 		if (queryCursor.getCount() == 1) {
 			for (boolean more = queryCursor.moveToFirst(); more; ) {
 				long queryId = queryCursor.getLong(queryCursor.getColumnIndex(SubscriptionTableSchema._ID));
+				long queryExpiration = queryCursor.getLong(queryCursor.getColumnIndex(SubscriptionTableSchema.EXPIRATION));
+
+				if (queryExpiration == 0) // if this was an expired subscription then set its DISPOSITION to PENDING
+				    values.put(SubscriptionTableSchema.DISPOSITION, SubscriptionTableSchema.DISPOSITION_PENDING);
+
 				Uri queryUri = ContentUris.withAppendedId(SubscriptionTableSchema.CONTENT_URI, queryId);
 				resolver.update(queryUri, values, null, null);
 				break; // there is only one
