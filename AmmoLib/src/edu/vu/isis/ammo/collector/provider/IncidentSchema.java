@@ -12,6 +12,7 @@ public class IncidentSchema extends IncidentSchemaBase {
          public static final String AUDIO_DATA_TYPE = "audio/basic";
          public static final String TEXT_DATA_TYPE = "text/plain";
          public static final String VIDEO_DATA_TYPE = "video/3gpp";
+         public static final String TEMPLATE_DATA_TYPE = "text/template";
       }    
       public static class EventTableSchema extends EventTableSchemaBase {
 
