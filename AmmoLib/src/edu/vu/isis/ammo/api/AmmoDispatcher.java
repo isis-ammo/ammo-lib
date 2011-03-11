@@ -25,6 +25,8 @@ import edu.vu.isis.ammo.core.provider.DistributorSchema.PublicationTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.RetrievalTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.SubscriptionTableSchema;
 
+import edu.vu.isis.ammo.core.provider.PreferenceSchema;
+
 /**
  * see https://ammo.isis.vanderbilt.edu/redmine/boards/2/topics/3
  * 
@@ -32,6 +34,7 @@ import edu.vu.isis.ammo.core.provider.DistributorSchema.SubscriptionTableSchema;
  * 
  */
 public class AmmoDispatcher {
+	String selection = PreferenceSchema.AMMO_PREF_TYPE_STRING;
 	
 	/**
 	 * Access mode for the file. 
