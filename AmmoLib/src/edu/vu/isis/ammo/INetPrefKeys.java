@@ -45,5 +45,7 @@ public interface INetPrefKeys extends edu.vu.isis.ammo.IPrefKeys {
 	public static final String NET_CONN_PREF_IS_ACTIVE = NET_CONN_PREF + NET_IS_ACTIVE;
 	
 	public static final String NET_CONN_FLAT_LINE_TIME = NET_CONN_PREF + "FLAT_LINE_TIME";
+	
+	public static final String GATEWAY_SHOULD_USE = "GATEWAY_SHOULD_USE";
 
 }
