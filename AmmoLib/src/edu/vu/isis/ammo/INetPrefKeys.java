@@ -28,13 +28,13 @@ public interface INetPrefKeys extends edu.vu.isis.ammo.IPrefKeys {
 	public static final String NET_IS_AVAILABLE = "IS_AVAILABLE";  
 	public static final String NET_IS_STALE = "IS_STALE";
 	
-	public static final String PHYSICAL_LINK_PREF = "AMMO_PHYSICAL_LINK_";
+	public static final String WIRED_PREF = "AMMO_PHYSICAL_LINK_";
 	public static final String WIFI_PREF = "AMMO_WIFI_LINK_";
 	public static final String NET_CONN_PREF = "AMMO_NET_CONN_";
 	
-	public static final String PHYSICAL_LINK_PREF_IS_ACTIVE = PHYSICAL_LINK_PREF + NET_IS_ACTIVE;
-	public static final String PHYSICAL_LINK_PREF_SHOULD_USE = PHYSICAL_LINK_PREF + NET_SHOULD_USE;
-	public static final String PHYSICAL_LINK_PREF_IS_AVAILABLE = PHYSICAL_LINK_PREF + NET_IS_AVAILABLE;	
+	public static final String PHYSICAL_LINK_PREF_IS_ACTIVE = WIRED_PREF + NET_IS_ACTIVE;
+	public static final String WIRED_PREF_SHOULD_USE = WIRED_PREF + NET_SHOULD_USE;
+	public static final String PHYSICAL_LINK_PREF_IS_AVAILABLE = WIRED_PREF + NET_IS_AVAILABLE;	
 	  
 	public static final String WIFI_PREF_IS_ACTIVE = WIFI_PREF + NET_IS_ACTIVE;
 	public static final String WIFI_PREF_SHOULD_USE = WIFI_PREF + NET_SHOULD_USE;
@@ -45,5 +45,7 @@ public interface INetPrefKeys extends edu.vu.isis.ammo.IPrefKeys {
 	public static final String NET_CONN_PREF_IS_ACTIVE = NET_CONN_PREF + NET_IS_ACTIVE;
 	
 	public static final String NET_CONN_FLAT_LINE_TIME = NET_CONN_PREF + "FLAT_LINE_TIME";
+	
+	public static final String GATEWAY_SHOULD_USE = "GATEWAY_SHOULD_USE";
 
 }
