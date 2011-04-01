@@ -41,9 +41,9 @@ public class NevadaSchema extends NevadaSchemaBase {
       */
       }
 
-      public static class UnitTableSchema extends UnitTableSchemaBase {
+      public static class UnitsTableSchema extends UnitsTableSchemaBase {
 
-         protected UnitTableSchema() { super(); }
+         protected UnitsTableSchema() { super(); }
       /**
         Add relation constants as appropriate.
         i.e.
@@ -57,7 +57,7 @@ public class NevadaSchema extends NevadaSchemaBase {
       */
       }
 
-      public static class UnitpersonTableSchema extends UnitpersonTableSchemaBase {
+      public static class UnitpersonTableSchema extends MembersTableSchemaBase {
 
          protected UnitpersonTableSchema() { super(); }
       /**
@@ -73,7 +73,7 @@ public class NevadaSchema extends NevadaSchemaBase {
       */
       }
 
-      public static class LocationtrackingTableSchema extends LocationtrackingTableSchemaBase {
+      public static class LocationtrackingTableSchema extends LocationsTableSchemaBase {
 
          protected LocationtrackingTableSchema() { super(); }
       /**
