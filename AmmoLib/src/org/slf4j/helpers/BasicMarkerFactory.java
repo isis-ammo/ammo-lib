@@ -41,7 +41,7 @@ import org.slf4j.Marker;
  */
 public class BasicMarkerFactory implements IMarkerFactory {
 
-  Map markerMap = new HashMap();
+  Map<String,Marker> markerMap = new HashMap<String,Marker>();
   
   /**
    * Regular users should <em>not</em> create
@@ -64,7 +64,7 @@ public class BasicMarkerFactory implements IMarkerFactory {
       throw new IllegalArgumentException("Marker name cannot be null");
     }
 
-    Marker marker = (Marker) markerMap.get(name);
+    Marker marker = markerMap.get(name);
     if (marker == null) {
       marker = new BasicMarker(name);
       markerMap.put(name, marker);
