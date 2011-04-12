@@ -44,7 +44,17 @@ import org.slf4j.spi.MDCAdapter;
  */
 public class BasicMDCAdapter implements MDCAdapter {
 
-  private InheritableThreadLocal inheritableThreadLocal = new InheritableThreadLocal();
+	@SuppressWarnings("unchecked")
+	private InheritableThreadLocal inheritableThreadLocal = new InheritableThreadLocal();
+
+	@SuppressWarnings("unchecked")
+	private HashMap<String, String> getHashMap() {
+		return (HashMap<String, String>) inheritableThreadLocal.get();
+	}
+	@SuppressWarnings("unchecked")
+	private void setHashMap(HashMap<String, String> hashMap) {
+		inheritableThreadLocal.set(hashMap);
+	}
 
   /**
    * Put a context value (the <code>val</code> parameter) as identified with
@@ -58,25 +68,26 @@ public class BasicMDCAdapter implements MDCAdapter {
    * @throws IllegalArgumentException
    *                 in case the "key" parameter is null
    */
-  public void put(String key, String val) {
+public void put(String key, String val) {
     if (key == null) {
       throw new IllegalArgumentException("key cannot be null");
     }
-    HashMap map = (HashMap) inheritableThreadLocal.get();
-    if (map == null) {
-      map = new HashMap();
-      inheritableThreadLocal.set(map);
+    HashMap<String,String> hashMap = this.getHashMap();
+    if (hashMap == null) {
+      hashMap = new HashMap<String, String>();
+      this.setHashMap(hashMap);
     }
-    map.put(key, val);
+    hashMap.put(key, val);
   }
 
   /**
    * Get the context identified by the <code>key</code> parameter.
    */
-  public String get(String key) {
-    HashMap hashMap = (HashMap) inheritableThreadLocal.get();
+  
+public String get(String key) {
+	HashMap<String,String> hashMap = this.getHashMap();
     if ((hashMap != null) && (key != null)) {
-      return (String) hashMap.get(key);
+      return hashMap.get(key);
     } else {
       return null;
     }
@@ -86,9 +97,9 @@ public class BasicMDCAdapter implements MDCAdapter {
    * Remove the the context identified by the <code>key</code> parameter.
    */
   public void remove(String key) {
-    HashMap map = (HashMap) inheritableThreadLocal.get();
-    if (map != null) {
-      map.remove(key);
+	HashMap<String,String> hashMap = this.getHashMap();
+    if (hashMap != null) {
+      hashMap.remove(key);
     }
   }
 
@@ -96,7 +107,7 @@ public class BasicMDCAdapter implements MDCAdapter {
    * Clear all entries in the MDC.
    */
   public void clear() {
-    HashMap hashMap = (HashMap) inheritableThreadLocal.get();
+	HashMap<String,String> hashMap = this.getHashMap();
     if (hashMap != null) {
       hashMap.clear();
       // the InheritableThreadLocal.remove method was introduced in JDK 1.5
@@ -111,8 +122,8 @@ public class BasicMDCAdapter implements MDCAdapter {
    * 
    * @return the keys in the MDC
    */
-  public Set getKeys() {
-    HashMap hashMap = (HashMap) inheritableThreadLocal.get();
+  public Set<String> getKeys() {
+	HashMap<String,String> hashMap = this.getHashMap();
     if (hashMap != null) {
       return hashMap.keySet();
     } else {
@@ -124,24 +135,25 @@ public class BasicMDCAdapter implements MDCAdapter {
    * Returned value may be null.
    * 
    */
-  public Map getCopyOfContextMap() {
-    HashMap hashMap = (HashMap) inheritableThreadLocal.get();
-    if (hashMap != null) {
-      return new HashMap(hashMap);
-    } else {
-      return null;
-    }
+  public Map<String,String> getCopyOfContextMap() {
+	  HashMap<String,String> hashMap = this.getHashMap();
+	  if (hashMap != null) {
+		  return new HashMap<String,String>(hashMap);
+	  } else {
+		  return null;
+	  }
   }
 
+  @SuppressWarnings("unchecked")
   public void setContextMap(Map contextMap) {
-    HashMap hashMap = (HashMap) inheritableThreadLocal.get();
-    if (hashMap != null) {
-      hashMap.clear();
-      hashMap.putAll(contextMap);
-    } else {
-      hashMap = new HashMap(contextMap);
-      inheritableThreadLocal.set(hashMap);
-    }
+	  HashMap<String,String> hashMap = this.getHashMap();
+	  if (hashMap != null) {
+		  hashMap.clear();
+		  hashMap.putAll(contextMap);
+	  } else {
+		  hashMap = new HashMap<String,String>(contextMap);
+		  this.setHashMap(hashMap);
+	  }
   }
 
 }
