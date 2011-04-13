@@ -287,7 +287,7 @@ public class AmmoDispatcher {
 	 * e.g.
 	 * ammo_dispatcher.pull(EventTableSchemaBase.CONTENT_URI, Calendar.MINUTE, 500, 10.0, ":event");
 	 * 
-	 * EventTableSchemaBase.CONTENT_URI = "content://edu.vu.isis.ammo.collector.provider.incidentprovider/event"
+	 * EventTableSchemaBase.CONTENT_URI = "content://edu.vu.isis.ammo.dash.provider.incidentprovider/event"
 	 * 
 	 * @param uri
 	 * @param field {@link Calendar} 
@@ -447,7 +447,7 @@ public class AmmoDispatcher {
 	 * e.g.
 	 * ammo_dispatcher.subscribe(EventTableSchemaBase.CONTENT_URI, Calendar.MINUTE, 500, 10.0, ":event");
 	 * 
-	 * EventTableSchemaBase.CONTENT_URI = "content://edu.vu.isis.ammo.collector.provider.incidentprovider/event"
+	 * EventTableSchemaBase.CONTENT_URI = "content://edu.vu.isis.ammo.dash.provider.incidentprovider/event"
 	 * 
 	 * @param uri
 	 * @param field {@link Calendar} 
