@@ -1,4 +1,4 @@
-package edu.vu.isis.ammo.collector.provider;
+package edu.vu.isis.ammo.dash.provider;
 
 public class IncidentSchema extends IncidentSchemaBase {
 
@@ -32,6 +32,4 @@ public class IncidentSchema extends IncidentSchemaBase {
          
          protected CategoryTableSchema() { super(); }
       }    
-      
 }
-	

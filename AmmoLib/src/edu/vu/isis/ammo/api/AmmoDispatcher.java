@@ -20,12 +20,11 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import edu.vu.isis.ammo.core.provider.PreferenceSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.PostalTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.PublicationTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.RetrievalTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.SubscriptionTableSchema;
-
-import edu.vu.isis.ammo.core.provider.PreferenceSchema;
 
 /**
  * see https://ammo.isis.vanderbilt.edu/redmine/boards/2/topics/3
@@ -287,7 +286,7 @@ public class AmmoDispatcher {
 	 * e.g.
 	 * ammo_dispatcher.pull(EventTableSchemaBase.CONTENT_URI, Calendar.MINUTE, 500, 10.0, ":event");
 	 * 
-	 * EventTableSchemaBase.CONTENT_URI = "content://edu.vu.isis.ammo.collector.provider.incidentprovider/event"
+	 * EventTableSchemaBase.CONTENT_URI = "content://edu.vu.isis.ammo.dash.provider.incidentprovider/event"
 	 * 
 	 * @param uri
 	 * @param field {@link Calendar} 
@@ -447,7 +446,7 @@ public class AmmoDispatcher {
 	 * e.g.
 	 * ammo_dispatcher.subscribe(EventTableSchemaBase.CONTENT_URI, Calendar.MINUTE, 500, 10.0, ":event");
 	 * 
-	 * EventTableSchemaBase.CONTENT_URI = "content://edu.vu.isis.ammo.collector.provider.incidentprovider/event"
+	 * EventTableSchemaBase.CONTENT_URI = "content://edu.vu.isis.ammo.dash.provider.incidentprovider/event"
 	 * 
 	 * @param uri
 	 * @param field {@link Calendar} 
