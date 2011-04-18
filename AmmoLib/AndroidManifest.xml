@@ -5,7 +5,7 @@
       android:versionName="1.0">
     
     <application android:icon="@drawable/brand_icon" android:label="Dispatcher">
-		<activity android:name=".MyTest" android:label="Dispatcher Test">
+		<activity android:name="MyTest" android:label="Dispatcher Test">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
