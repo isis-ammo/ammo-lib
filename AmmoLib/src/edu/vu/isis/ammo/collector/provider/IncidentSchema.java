@@ -32,6 +32,5 @@ public class IncidentSchema extends IncidentSchemaBase {
          
          protected CategoryTableSchema() { super(); }
       }    
-      
 }
 	
