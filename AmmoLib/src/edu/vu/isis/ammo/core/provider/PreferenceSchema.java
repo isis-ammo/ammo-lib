@@ -25,5 +25,6 @@ public class PreferenceSchema {
 	public static enum AMMO_PREF_TYPE {
 		STRING, BOOLEAN, FLOAT, INT, LONG
 	};
+	
 }
 
