@@ -20,12 +20,11 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import edu.vu.isis.ammo.core.provider.PreferenceSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.PostalTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.PublicationTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.RetrievalTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.SubscriptionTableSchema;
-
-import edu.vu.isis.ammo.core.provider.PreferenceSchema;
 
 /**
  * see https://ammo.isis.vanderbilt.edu/redmine/boards/2/topics/3
