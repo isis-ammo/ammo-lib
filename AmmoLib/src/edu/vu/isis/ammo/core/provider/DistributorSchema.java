@@ -4,7 +4,7 @@ import android.provider.BaseColumns;
 
 public class DistributorSchema extends DistributorSchemaBase {
 
-   public static final int DATABASE_VERSION = 4;
+   public static final int DATABASE_VERSION = 5;
 
       public static class PostalTableSchema extends PostalTableSchemaBase {
 

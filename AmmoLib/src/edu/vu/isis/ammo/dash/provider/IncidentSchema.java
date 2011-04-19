@@ -2,7 +2,7 @@ package edu.vu.isis.ammo.dash.provider;
 
 public class IncidentSchema extends IncidentSchemaBase {
 
-   public static final int DATABASE_VERSION = 1;
+   public static final int DATABASE_VERSION = 2;
 
       public static class MediaTableSchema extends MediaTableSchemaBase {
 
