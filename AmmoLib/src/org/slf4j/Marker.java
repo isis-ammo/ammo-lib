@@ -80,7 +80,8 @@ public interface Marker extends Serializable {
   /**
    * @deprecated Replaced by {@link #hasReferences()}.
    */
-  public boolean hasChildren();
+  @Deprecated
+public boolean hasChildren();
   
   /**
    * Does this marker have any references?

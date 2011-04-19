@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Parcel;
+import android.provider.BaseColumns;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,6 +26,10 @@ import edu.vu.isis.ammo.core.provider.DistributorSchema.PostalTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.PublicationTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.RetrievalTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.SubscriptionTableSchema;
+import edu.vu.isis.ammo.core.provider.DistributorSchemaBase.PostalTableSchemaBase;
+import edu.vu.isis.ammo.core.provider.DistributorSchemaBase.PublicationTableSchemaBase;
+import edu.vu.isis.ammo.core.provider.DistributorSchemaBase.RetrievalTableSchemaBase;
+import edu.vu.isis.ammo.core.provider.DistributorSchemaBase.SubscriptionTableSchemaBase;
 
 /**
  * see https://ammo.isis.vanderbilt.edu/redmine/boards/2/topics/3
@@ -53,9 +58,9 @@ public class AmmoDispatcher {
 	static private File dir = new File(Environment.getExternalStorageDirectory(),"ammo_distributor_cache");
 	
 	// static final private String selectUri = "\""+RetrievalTableSchema.URI+"\" = '?'";
-	static final private String selectRetrievalUri = "\""+RetrievalTableSchema.URI+"\" = ";
-	static final private String selectSubscriptionUri = "\""+SubscriptionTableSchema.URI+"\" = ";
-	static final private String selectPublicationUri = "\""+PublicationTableSchema.URI+"\" = ";
+	static final private String selectRetrievalUri = "\""+RetrievalTableSchemaBase.URI+"\" = ";
+	static final private String selectSubscriptionUri = "\""+SubscriptionTableSchemaBase.URI+"\" = ";
+	static final private String selectPublicationUri = "\""+PublicationTableSchemaBase.URI+"\" = ";
 
 	public static AmmoDispatcher getInstance(Context context) {
 		if (instance == null) {
@@ -120,26 +125,26 @@ public class AmmoDispatcher {
 		}
 		
 		ContentValues values = new ContentValues();
-		values.put(PostalTableSchema.CP_TYPE, mimeType);
+		values.put(PostalTableSchemaBase.CP_TYPE, mimeType);
 		// values.put(PostalTableSchema.URI, uri.toString());
-		values.put(PostalTableSchema.DISPOSITION, PostalTableSchema.DISPOSITION_PENDING);
-		values.put(PostalTableSchema.SERIALIZE_TYPE, PostalTableSchema.SERIALIZE_TYPE_DIRECT);
-		values.put(PostalTableSchema.EXPIRATION, expiration.getTimeInMillis());
+		values.put(PostalTableSchemaBase.DISPOSITION, PostalTableSchemaBase.DISPOSITION_PENDING);
+		values.put(PostalTableSchemaBase.SERIALIZE_TYPE, PostalTableSchemaBase.SERIALIZE_TYPE_DIRECT);
+		values.put(PostalTableSchemaBase.EXPIRATION, expiration.getTimeInMillis());
 		// System.currentTimeMillis() + (120 * 1000));
-		values.put(PostalTableSchema.UNIT, 50);
-		values.put(PostalTableSchema.VALUE, worth);
+		values.put(PostalTableSchemaBase.UNIT, 50);
+		values.put(PostalTableSchemaBase.VALUE, worth);
 		if (notice != null) 
-		    values.put(PostalTableSchema.NOTICE, serializePendingIntent(notice));
-		values.put(PostalTableSchema.CREATED_DATE, System.currentTimeMillis());
+		    values.put(PostalTableSchemaBase.NOTICE, serializePendingIntent(notice));
+		values.put(PostalTableSchemaBase.CREATED_DATE, System.currentTimeMillis());
 		
 		Uri uri;
 		if (serializedString.length() < MAXIMUM_FIELD_SIZE) {
-			values.put(PostalTableSchema.DATA, serializedString);
-			uri = resolver.insert(PostalTableSchema.CONTENT_URI, values);
+			values.put(PostalTableSchemaBase.DATA, serializedString);
+			uri = resolver.insert(PostalTableSchemaBase.CONTENT_URI, values);
 			return true;
 		}
 		// the data field will be left null
-		uri = resolver.insert(PostalTableSchema.CONTENT_URI, values);
+		uri = resolver.insert(PostalTableSchemaBase.CONTENT_URI, values);
 		try {
 			OutputStream ostream = resolver.openOutputStream(uri);
 			byte[] buffer = serializedString.getBytes();
@@ -226,7 +231,7 @@ public class AmmoDispatcher {
 		// check that the uri is valid
 		if (uri == null) return false;
 		
-		if (null == resolver.getType(PostalTableSchema.CONTENT_URI)) {
+		if (null == resolver.getType(PostalTableSchemaBase.CONTENT_URI)) {
 			return false;
 		}
 		
@@ -236,19 +241,19 @@ public class AmmoDispatcher {
 		}
 		
 		ContentValues values = new ContentValues();
-		values.put(PostalTableSchema.CP_TYPE, mimeType);
-		values.put(PostalTableSchema.URI, uri.toString());
-		values.put(PostalTableSchema.SERIALIZE_TYPE, PostalTableSchema.SERIALIZE_TYPE_INDIRECT);
-		values.put(PostalTableSchema.DISPOSITION, PostalTableSchema.DISPOSITION_PENDING);
-		values.put(PostalTableSchema.EXPIRATION, expiration.getTimeInMillis());
+		values.put(PostalTableSchemaBase.CP_TYPE, mimeType);
+		values.put(PostalTableSchemaBase.URI, uri.toString());
+		values.put(PostalTableSchemaBase.SERIALIZE_TYPE, PostalTableSchemaBase.SERIALIZE_TYPE_INDIRECT);
+		values.put(PostalTableSchemaBase.DISPOSITION, PostalTableSchemaBase.DISPOSITION_PENDING);
+		values.put(PostalTableSchemaBase.EXPIRATION, expiration.getTimeInMillis());
 		// System.currentTimeMillis() + (120 * 1000));
-		values.put(PostalTableSchema.UNIT, 50);
-		values.put(PostalTableSchema.VALUE, worth);
+		values.put(PostalTableSchemaBase.UNIT, 50);
+		values.put(PostalTableSchemaBase.VALUE, worth);
 		if (notice != null) 
-		    values.put(PostalTableSchema.NOTICE, serializePendingIntent(notice));
-		values.put(PostalTableSchema.CREATED_DATE, System.currentTimeMillis());
+		    values.put(PostalTableSchemaBase.NOTICE, serializePendingIntent(notice));
+		values.put(PostalTableSchemaBase.CREATED_DATE, System.currentTimeMillis());
 		
-		resolver.insert(PostalTableSchema.CONTENT_URI, values);
+		resolver.insert(PostalTableSchemaBase.CONTENT_URI, values);
 		return true;
 	}
 	
@@ -372,21 +377,21 @@ public class AmmoDispatcher {
 			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
 	    }
 	    ContentValues values = new ContentValues();
-	    values.put(RetrievalTableSchema.MIME, mimeType);
-	    values.put(RetrievalTableSchema.URI, uri.toString());
-	    values.put(RetrievalTableSchema.DISPOSITION, RetrievalTableSchema.DISPOSITION_PENDING);
-	    values.put(RetrievalTableSchema.EXPIRATION, expiration.getTimeInMillis());
+	    values.put(RetrievalTableSchemaBase.MIME, mimeType);
+	    values.put(RetrievalTableSchemaBase.URI, uri.toString());
+	    values.put(RetrievalTableSchemaBase.DISPOSITION, RetrievalTableSchemaBase.DISPOSITION_PENDING);
+	    values.put(RetrievalTableSchemaBase.EXPIRATION, expiration.getTimeInMillis());
 		
-	    values.put(RetrievalTableSchema.SELECTION, query);
-	    values.put(RetrievalTableSchema.PROJECTION, "");
-	    values.put(RetrievalTableSchema.CREATED_DATE, System.currentTimeMillis());
+	    values.put(RetrievalTableSchemaBase.SELECTION, query);
+	    values.put(RetrievalTableSchemaBase.PROJECTION, "");
+	    values.put(RetrievalTableSchemaBase.CREATED_DATE, System.currentTimeMillis());
 	    if (notice != null) 
-		    values.put(RetrievalTableSchema.NOTICE, serializePendingIntent(notice));
+		    values.put(RetrievalTableSchemaBase.NOTICE, serializePendingIntent(notice));
 		
-	    String[] projection = {RetrievalTableSchema._ID};
+	    String[] projection = {BaseColumns._ID};
 	    String[] selectArgs = {uri.toString()};
 	    // Cursor queryCursor = resolver.query(RetrievalTableSchema.CONTENT_URI, projection, selectUri, selectArgs, null);
-	    Cursor queryCursor = resolver.query(RetrievalTableSchema.CONTENT_URI, projection, selectRetrievalUri+"'"+uri.toString()+"'",null, null);
+	    Cursor queryCursor = resolver.query(RetrievalTableSchemaBase.CONTENT_URI, projection, selectRetrievalUri+"'"+uri.toString()+"'",null, null);
 	    if (queryCursor == null) {
 		Toast.makeText(context, "missing pull content provider", Toast.LENGTH_LONG).show();
 		return false;
@@ -394,18 +399,18 @@ public class AmmoDispatcher {
 	    if (queryCursor.getCount() == 1) {
 		Log.d("AmmoLib", "found an existing pull request in the retrieval table ... updating ...");
 		for (boolean more = queryCursor.moveToFirst(); more; ) {
-		    long queryId = queryCursor.getLong(queryCursor.getColumnIndex(RetrievalTableSchema._ID));
-		    Uri queryUri = ContentUris.withAppendedId(RetrievalTableSchema.CONTENT_URI, queryId);
+		    long queryId = queryCursor.getLong(queryCursor.getColumnIndex(BaseColumns._ID));
+		    Uri queryUri = ContentUris.withAppendedId(RetrievalTableSchemaBase.CONTENT_URI, queryId);
 		    resolver.update(queryUri, values, null, null);
 		    break; // there is only one
 		}
 	    } else if  (queryCursor.getCount() > 1) {
 			Toast.makeText(context, "corrupted subscriber content provider; removing offending tuples", Toast.LENGTH_LONG).show();
-			resolver.delete(RetrievalTableSchema.CONTENT_URI, selectRetrievalUri, selectArgs);
-			resolver.insert(RetrievalTableSchema.CONTENT_URI, values);
+			resolver.delete(RetrievalTableSchemaBase.CONTENT_URI, selectRetrievalUri, selectArgs);
+			resolver.insert(RetrievalTableSchemaBase.CONTENT_URI, values);
 	    } else {
 			Log.d("AmmoLib", "creating a pull request in retrieval table ... inserting ...");
-			resolver.insert(RetrievalTableSchema.CONTENT_URI, values);
+			resolver.insert(RetrievalTableSchemaBase.CONTENT_URI, values);
 	    }
 	    return true;
 	}
@@ -499,16 +504,16 @@ public class AmmoDispatcher {
 		Log.d("AmmoDispatcher", "::subscribe with uri: " + uri.toString() + " mime: " + mimeType);
 		
 		ContentValues values = new ContentValues();
-		values.put(SubscriptionTableSchema.MIME, mimeType);
-		values.put(SubscriptionTableSchema.URI, uri.toString());
-		values.put(SubscriptionTableSchema.EXPIRATION, expiration.getTimeInMillis());
+		values.put(SubscriptionTableSchemaBase.MIME, mimeType);
+		values.put(SubscriptionTableSchemaBase.URI, uri.toString());
+		values.put(SubscriptionTableSchemaBase.EXPIRATION, expiration.getTimeInMillis());
 		
-		values.put(SubscriptionTableSchema.SELECTION, filter);
+		values.put(SubscriptionTableSchemaBase.SELECTION, filter);
 		if (notice != null) 
-		    values.put(SubscriptionTableSchema.NOTICE, serializePendingIntent(notice));
-		values.put(SubscriptionTableSchema.CREATED_DATE, System.currentTimeMillis());
+		    values.put(SubscriptionTableSchemaBase.NOTICE, serializePendingIntent(notice));
+		values.put(SubscriptionTableSchemaBase.CREATED_DATE, System.currentTimeMillis());
 		
-		String[] projection = {SubscriptionTableSchema._ID,SubscriptionTableSchema.EXPIRATION};
+		String[] projection = {BaseColumns._ID,SubscriptionTableSchemaBase.EXPIRATION};
 		String[] selectArgs = {uri.toString()};
 		// Cursor filterCursor = resolver.query(SubscriptionTableSchema.CONTENT_URI, projection, selectUri, selectArgs, null);
 

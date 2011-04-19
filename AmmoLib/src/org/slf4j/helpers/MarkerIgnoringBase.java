@@ -161,7 +161,8 @@ public abstract class MarkerIgnoringBase extends NamedLoggerBase implements Logg
     error(msg, t);
   }
 
-  public String toString() {
+  @Override
+public String toString() {
 	  return this.getClass().getName()+"("+getName()+")";
   }
   

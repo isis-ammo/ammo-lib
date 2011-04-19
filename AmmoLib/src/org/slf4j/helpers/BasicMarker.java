@@ -102,7 +102,7 @@ public synchronized Iterator<Marker> iterator() {
 
     int size = refereceList.size();
     for (int i = 0; i < size; i++) {
-      Marker m = (Marker) refereceList.get(i);
+      Marker m = refereceList.get(i);
       if (referenceToRemove.equals(m)) {
         refereceList.remove(i);
         return true;
@@ -122,7 +122,7 @@ public synchronized Iterator<Marker> iterator() {
 
     if (hasReferences()) {
       for (int i = 0; i < refereceList.size(); i++) {
-        Marker ref = (Marker) refereceList.get(i);
+        Marker ref = refereceList.get(i);
         if (ref.contains(other)) {
           return true;
         }
@@ -145,7 +145,7 @@ public synchronized Iterator<Marker> iterator() {
 
     if (hasReferences()) {
       for (int i = 0; i < refereceList.size(); i++) {
-        Marker ref = (Marker) refereceList.get(i);
+        Marker ref = refereceList.get(i);
         if (ref.contains(name)) {
           return true;
         }
@@ -158,7 +158,8 @@ public synchronized Iterator<Marker> iterator() {
   private static String CLOSE = " ]";
   private static String SEP = ", ";
 
-  public boolean equals(Object obj) {
+  @Override
+public boolean equals(Object obj) {
     if (this == obj)
       return true;
     if (obj == null)
@@ -170,11 +171,13 @@ public synchronized Iterator<Marker> iterator() {
     return name.equals(other.getName());
   }
 
-  public int hashCode() {
+  @Override
+public int hashCode() {
     return name.hashCode();
   }
 
-  public String toString() {
+  @Override
+public String toString() {
     if (!this.hasReferences()) {
       return this.getName();
     }
@@ -183,7 +186,7 @@ public synchronized Iterator<Marker> iterator() {
     StringBuffer sb = new StringBuffer(this.getName());
     sb.append(' ').append(OPEN);
     while (it.hasNext()) {
-      reference = (Marker) it.next();
+      reference = it.next();
       sb.append(reference.getName());
       if (it.hasNext()) {
         sb.append(SEP);
