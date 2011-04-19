@@ -5,6 +5,12 @@ package mil.darpa.transapp.ammo.launch.constants;
  * @author Demetri Miller
  *
  */
+
+/*
+ * IMPORTANT NOTE: The mimetype constants must match those in AmmoSource.java
+ * in the Contacts app
+ */
+
 public class Constants {
 	/**
 	 * Key to use when storing uris in intents.
@@ -25,7 +31,7 @@ public class Constants {
 	public static final String MIME_INSIGNIA = "vnd.android.cursor.item/insignia";
 	public static final String MIME_CALLSIGN = "vnd.android.cursor.item/callsign";
 	public static final String MIME_USERID = "vnd.android.cursor.item/userid";
-	public static final String MIME_RANK = "vnd.android.cursor.item/organization"; //vnd.android.cursor.item/rank";
-	public static final String MIME_UNIT_NAME = "vnd.android.cursor.item/organization"; //vnd.android.cursor.item/unitname";
+	public static final String MIME_RANK = "vnd.android.cursor.item/rank";
+	public static final String MIME_UNIT_NAME = "vnd.android.cursor.item/unitname";
 	
 }
