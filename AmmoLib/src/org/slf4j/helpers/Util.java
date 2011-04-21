@@ -24,7 +24,6 @@
 
 package org.slf4j.helpers;
 
-
 /**
  *
  * An internal utility class.

@@ -53,7 +53,7 @@ import org.slf4j.Logger;
 public class SubstituteLoggerFactory implements ILoggerFactory {
 
   // keep a record of requested logger names
-  final List loggerNameList = new ArrayList();
+  final List<String> loggerNameList = new ArrayList<String>();
 
   public Logger getLogger(String name) {
     synchronized (loggerNameList) {
@@ -62,8 +62,8 @@ public class SubstituteLoggerFactory implements ILoggerFactory {
     return NOPLogger.NOP_LOGGER;
   }
 
-  public List getLoggerNameList() {
-    List copy = new ArrayList();
+  public List<String> getLoggerNameList() {
+    List<String> copy = new ArrayList<String>();
     synchronized (loggerNameList) {
       copy.addAll(loggerNameList);
     }
