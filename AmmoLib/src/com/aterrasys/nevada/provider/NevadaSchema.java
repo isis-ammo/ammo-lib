@@ -4,10 +4,6 @@ package com.aterrasys.nevada.provider;
 public class NevadaSchema extends NevadaSchemaBase {
 
    public static final int DATABASE_VERSION = 1;
-   
-   public static final String RTC_LIST_PEOPLE_TYPE = "urn:aterrasys.com:/api/rtc/people/list/";
-   public static final String RTC_LIST_CHANNEL_TYPE = "urn:aterrasys.com:/api/rtc/channel/list/";
-   public static final String BFT_LOCATE_PERSON_TYPE = "urn:aterrasys.com:/api/bft/people/locate/";
 
       public static class UserpeopleTableSchema extends UserpeopleTableSchemaBase {
 
@@ -49,43 +45,43 @@ public class NevadaSchema extends NevadaSchemaBase {
         i.e.
         public static final String <NAME> = "<sponsor>.provider.<name>.<table>.action.<NAME>";
         e.g.
-        public static final String CONSTANT = "com.aterrasys.nevada.provider.nevada.unit.action.CONSTANT";
+        public static final String CONSTANT = "com.aterrasys.nevada.provider.nevada.units.action.CONSTANT";
 
         public static final String PRIORITY_SORT_ORDER = 
-               UnitTableSchemaBase.EXPIRATION + " DESC, " +
-               UnitTableSchemaBase.MODIFIED_DATE + " DESC ";
+               UnitsTableSchemaBase.EXPIRATION + " DESC, " +
+               UnitsTableSchemaBase.MODIFIED_DATE + " DESC ";
       */
       }
 
-      public static class UnitpersonTableSchema extends MembersTableSchemaBase {
+      public static class MembersTableSchema extends MembersTableSchemaBase {
 
-         protected UnitpersonTableSchema() { super(); }
+         protected MembersTableSchema() { super(); }
       /**
         Add relation constants as appropriate.
         i.e.
         public static final String <NAME> = "<sponsor>.provider.<name>.<table>.action.<NAME>";
         e.g.
-        public static final String CONSTANT = "com.aterrasys.nevada.provider.nevada.unitperson.action.CONSTANT";
+        public static final String CONSTANT = "com.aterrasys.nevada.provider.nevada.members.action.CONSTANT";
 
         public static final String PRIORITY_SORT_ORDER = 
-               UnitpersonTableSchemaBase.EXPIRATION + " DESC, " +
-               UnitpersonTableSchemaBase.MODIFIED_DATE + " DESC ";
+               MembersTableSchemaBase.EXPIRATION + " DESC, " +
+               MembersTableSchemaBase.MODIFIED_DATE + " DESC ";
       */
       }
 
-      public static class LocationtrackingTableSchema extends LocationsTableSchemaBase {
+      public static class LocationsTableSchema extends LocationsTableSchemaBase {
 
-         protected LocationtrackingTableSchema() { super(); }
+         protected LocationsTableSchema() { super(); }
       /**
         Add relation constants as appropriate.
         i.e.
         public static final String <NAME> = "<sponsor>.provider.<name>.<table>.action.<NAME>";
         e.g.
-        public static final String CONSTANT = "com.aterrasys.nevada.provider.nevada.locationtracking.action.CONSTANT";
+        public static final String CONSTANT = "com.aterrasys.nevada.provider.nevada.locations.action.CONSTANT";
 
         public static final String PRIORITY_SORT_ORDER = 
-               LocationtrackingTableSchemaBase.EXPIRATION + " DESC, " +
-               LocationtrackingTableSchemaBase.MODIFIED_DATE + " DESC ";
+               LocationsTableSchemaBase.EXPIRATION + " DESC, " +
+               LocationsTableSchemaBase.MODIFIED_DATE + " DESC ";
       */
       }
 
