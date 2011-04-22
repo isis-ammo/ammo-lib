@@ -266,8 +266,7 @@ final public class MessageFormatter {
   }
 
   // special treatment of array values was suggested by 'lizongbo'
-  private static void deeplyAppendParameter(StringBuffer sbuf, Object o,
-      Map seenMap) {
+  private static void deeplyAppendParameter(StringBuffer sbuf, Object o, Map seenMap) {
     if (o == null) {
       sbuf.append("null");
       return;
@@ -313,8 +312,7 @@ final public class MessageFormatter {
 
   }
 
-  private static void objectArrayAppend(StringBuffer sbuf, Object[] a,
-      Map seenMap) {
+  private static void objectArrayAppend(StringBuffer sbuf, Object[] a, Map seenMap) {
     sbuf.append('[');
     if (!seenMap.containsKey(a)) {
       seenMap.put(a, null);

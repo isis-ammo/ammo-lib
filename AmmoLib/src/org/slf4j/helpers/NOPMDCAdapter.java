@@ -28,11 +28,11 @@ public class NOPMDCAdapter implements MDCAdapter {
   public void remove(String key) {
   }
 
-  public Map getCopyOfContextMap() {
+  public Map<String,String> getCopyOfContextMap() {
     return null;
   }
 
-  public void setContextMap(Map contextMap) {
+  public void setContextMap(Map<String,String> contextMap) {
     // NOP
   }
 

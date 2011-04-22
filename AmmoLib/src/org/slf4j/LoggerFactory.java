@@ -155,7 +155,7 @@ public final class LoggerFactory {
   }
 
   private final static void emitSubstituteLoggerWarning() {
-    List loggerNameList = TEMP_FACTORY.getLoggerNameList();
+    List<String> loggerNameList = TEMP_FACTORY.getLoggerNameList();
     if (loggerNameList.size() == 0) {
       return;
     }
@@ -165,7 +165,7 @@ public final class LoggerFactory {
         .report("during the default configuration phase of the underlying logging system.");
     Util.report("See also " + SUBSTITUTE_LOGGER_URL);
     for (int i = 0; i < loggerNameList.size(); i++) {
-      String loggerName = (String) loggerNameList.get(i);
+      String loggerName = loggerNameList.get(i);
       Util.report(loggerName);
     }
   }
@@ -205,16 +205,16 @@ public final class LoggerFactory {
     try {
       ClassLoader loggerFactoryClassLoader = LoggerFactory.class
           .getClassLoader();
-      Enumeration paths;
+      Enumeration<URL> paths;
       if (loggerFactoryClassLoader == null) {
         paths = ClassLoader.getSystemResources(STATIC_LOGGER_BINDER_PATH);
       } else {
         paths = loggerFactoryClassLoader
             .getResources(STATIC_LOGGER_BINDER_PATH);
       }
-      List implementationList = new ArrayList();
+      List<URL> implementationList = new ArrayList<URL>();
       while (paths.hasMoreElements()) {
-        URL path = (URL) paths.nextElement();
+        URL path = paths.nextElement();
         implementationList.add(path);
       }
       if (implementationList.size() > 1) {
@@ -250,7 +250,7 @@ public final class LoggerFactory {
    *          the returned logger will be named after clazz
    * @return logger
    */
-  public static Logger getLogger(Class clazz) {
+  public static Logger getLogger(Class<?> clazz) {
     return getLogger(clazz.getSimpleName());
     // return getLogger(clazz.getName());
   }
