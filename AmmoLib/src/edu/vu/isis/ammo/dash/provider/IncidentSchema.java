@@ -27,8 +27,8 @@ public class IncidentSchema extends IncidentSchemaBase {
       }    
       public static class CategoryTableSchema extends CategoryTableSchemaBase {
 
-         public static final String RELOAD = "edu.vu.isis.ammo.collector.provider.incident.category.action.RELOAD";
-         public static final String RELOAD_FINISHED = "edu.vu.isis.ammo.collector.RELOAD_FINISHED";
+         public static final String RELOAD = "edu.vu.isis.ammo.dash.provider.incident.category.action.RELOAD";
+         public static final String RELOAD_FINISHED = "edu.vu.isis.ammo.dash.RELOAD_FINISHED";
          
          protected CategoryTableSchema() { super(); }
       }    
