@@ -118,11 +118,47 @@ public interface IAmmoRequest {
 	 * Only the getters will function for applications programs.
 	 */
 	public enum NetLinkState {
+		DISCONNECTED     ("Disconnected"),
+		IDLE             ("Idle"),
+		SCANNING         ("Scanning"),
+		CONNECTING       ("Connecting"),
+		AUTHENTICATING   ("Authenticating"),
+		OBTAINING_IPADDR ("Obtaining IP Address"),
+		FAILED           ("Failed"),
+		CONNECTED        ("Connected");
+
+		private final String text;  
+		NetLinkState(String text) {
+			this.text = text;
+		}
+		public String text()   { return this.text; }
+	}
+
+	public interface NetLink {
+		public NetLinkState getLinkState();
+	}
+
+	public enum GatewayState {
+		DISCONNECTED     ("Disconnected"),
+		IDLE             ("Idle"),
+		AUTHENTICATING   ("Authenticating"),
+		FAILED           ("Failed"),
+		CONNECTED        ("Connected");
+
+		private final String text;  
+		GatewayState(String text) {
+			this.text = text;
+		}
+		public String text()   { return this.text; }
+	}
+	public interface Gateway {
+		public GatewayState getGateway();
 		
 	}
 	
-	public interface Control {
-		public NetLinkState getLinkState();
+	public interface NetworkController {
+		public NetLink[] getNetworkLinks();
+		public Gateway[] getGateways();
 	}
 	
 }
