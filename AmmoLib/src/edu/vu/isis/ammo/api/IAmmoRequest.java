@@ -22,6 +22,8 @@ public interface IAmmoRequest {
 	public static final Intent LOGIN = new Intent("edu.vu.isis.ammo.auth.LOGIN");
 	public static final Intent LOGOUT = new Intent("edu.vu.isis.ammo.auth.LOGOUT");
 	
+	// the gateway event is raised when the authorized gateway changes.
+	public static final Intent GATEWAY_EVENT = new Intent("edu.vu.isis.ammo.auth.GATEWAY");
     
 	public interface Builder {
 		public IAmmoRequest duplicate(); // duplicate (and reset?)
@@ -135,7 +137,15 @@ public interface IAmmoRequest {
 	}
 
 	public interface NetLink {
-		public NetLinkState getLinkState();
+		public NetLinkState getState();
+		/**
+		 * Set the timespan for collecting metrics
+		 */
+		public Gateway setMetricTimespan(Duration span);
+		public int getLatencyTypical();
+		public int getThroughput();
+		
+		public Gateway[] getGateways();
 	}
 
 	public enum GatewayState {
@@ -152,13 +162,56 @@ public interface IAmmoRequest {
 		public String text()   { return this.text; }
 	}
 	public interface Gateway {
-		public GatewayState getGateway();
+		public GatewayState getState();
+		/**
+		 * Set the timespan for collecting metrics
+		 */
+		public Gateway setMetricTimespan(Duration span);
+		public int getLatencyTypical();
+		public int getThroughput();
 		
+		public NetLink[] getNetworkLinks();
 	}
 	
 	public interface NetworkController {
 		public NetLink[] getNetworkLinks();
 		public Gateway[] getGateways();
 	}
+	
+	/**
+	 * TODO:
+	 */
+	/*
+	 subscribe/publish/post/interest:
+	   data transmission rate
+	   last message
+	   total messages
+	   setMetricTimespan()
+	   
+	   notify() functor
+	   
+	   routing policy
+	     gateway: 
+	       number of active connections
+	       number of load requests
+	       
+	   click time: set and get
+	   
+	   gateway: 
+	     liveness (% up time)
+	     latency (when live)
+	     throughput (rate when alive)
+	     
+	   economy:
+	     measures of efficient and effective use
+	     
+	   various filters:
+	     filter - match
+	     query - set theory (sql like)
+	     downsample - for images and audio
+	   
+	   quality of service:
+	     
+	 */
 	
 }

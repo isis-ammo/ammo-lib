@@ -36,8 +36,7 @@ abstract public class AmmoRequest implements IAmmoRequest {
 	}
 
 	public abstract static class  Gateway implements IAmmoRequest.Gateway {
-		static public Gateway make(String name) { return null; }
-		
+		static public Gateway make(String name) { return null; }	
 	}
 	
 	public abstract static class  NetworkController implements IAmmoRequest.NetworkController {
