@@ -21,7 +21,6 @@ abstract public class AmmoRequest implements IAmmoRequest {
 	 * @param uuid
 	 * @return
 	 */
-	public abstract IAmmoRequest make(String uuid);
 	
 	public abstract static class Builder implements IAmmoRequest.Builder {
 		static public Builder make() { return null; }
