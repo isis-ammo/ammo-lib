@@ -17,14 +17,22 @@ import android.net.Uri;
 public interface IAmmoRequest {
 	
 	/**
-	 * Some broadcast intents
+	 * the operator has been authorized 
 	 */
 	public static final Intent LOGIN = new Intent("edu.vu.isis.ammo.auth.LOGIN");
 	public static final Intent LOGOUT = new Intent("edu.vu.isis.ammo.auth.LOGOUT");
 	
+	/**
+	 * the gateway event is raised when the authorized gateway changes.
+	 */
+	public static final Intent GATEWAY_EVENT = new Intent("edu.vu.isis.ammo.auth.GATEWAY");
     
 	public interface Builder {
-		public IAmmoRequest duplicate(); // duplicate (and reset?)
+		/**
+		 * duplicate (and reset?)
+		 * @return
+		 */
+		public IAmmoRequest duplicate();
 		/**
 		 * The following are factory actions which produce Ammo requests
 		 * @return
@@ -35,36 +43,105 @@ public interface IAmmoRequest {
 		public IAmmoRequest subscribe();
 		public IAmmoRequest retrieve();
 		
-		public IAmmoRequest recover(String uuid); // recover a previously built request, by name
+		/**
+		 * rather than trying to dynamically update an object.
+		 * These methods are used to replace an existing request.
+		 */
+		public IAmmoRequest replace(String uuid);
+		public IAmmoRequest replace(IAmmoRequest req);
+		
+		/**
+		 * recover a previously built request, by name
+		 * @param uuid
+		 * @return
+		 */
+		public IAmmoRequest recover(String uuid);
 		
 		/**
 		 * The following parameters are known by the builder.
 		*/
-		public Builder reset(); // reset all settings to default values.
+		/**
+		 * reset all settings to default values.
+		 */
+		public Builder reset();
+		/**
+		 * The content provider identifier, may also contain a specific row.
+		 * @param val
+		 * @return
+		 */
 		public Builder provider(Uri val);
-		public Builder payload(String val); // may be used in lieu of provider.
+		/**
+		 * may be used in lieu of provider.
+		 * @param val
+		 * @return
+		 */
+		public Builder payload(String val);
 		
 		public Builder name(String val);
-		public Builder longevity(Duration val); // from the time the request is posted.
-		public Builder longevity(Calendar val); // absolute time.
-		
-		public Builder priority(int val); // 0 : normal, >0 : higher priority, <0 : lower priority
-		public Builder notify(State[] val); // notifications to be sent: what, when and why
+		/**
+		 * from the time the request is posted.
+		 * @param val
+         * @return
+		 */
+        public Builder longevity(Duration val);
+        /**
+         * absolute time.
+         * @param val
+         * @return
+         */
+		public Builder longevity(Calendar val);
+		/**
+		 * 0 : normal, 
+		 * >0 : higher priority, 
+		 * <0 : lower priority
+		 * @param val
+		 * @return
+		 */
+		public Builder priority(int val);
+		/**
+		 * notifications to be sent: what, when and why
+		 * @param val
+		 * @return
+		 */
+		public Builder notify(State[] val);
 		public Builder notify(State val);
 		
 		public Builder liveness();
-		public Builder start(Calendar val); // from what time to you want data
-		public Builder worth(int val); // acts as a check against priority (does not effect request delivery, but status
+        /**
+         * from what time to you want data
+         * @param val
+         * @return
+         */
+		public Builder start(Calendar val); 
+		/**
+		 * acts as a check against priority (does not effect request delivery, but status
+		 * @param val
+		 * @return
+		 */
+		public Builder worth(int val);
+		/**
+		 * max number of gateway hops, <= 0 unlimited, generally 0 or 1
+		 * @param val
+		 * @return
+		 */
+		public Builder reach(int val);
+		/**
+		 * who will get this request?
+		 * @param val
+		 * @return
+		 */
+		public Builder recipient(Recipient val);
 		
-		public Builder reach(int val); // max number of gateway hops, <= 0 unlimited, generally 0 or 1
-		public Builder recipient(Recipient val); // who will get this request?
 	}
 
+	/**
+	 * rejected is mutable because although one target rejected the task another may accept
+	 */
 	public enum Status {
 		SUCCESS,  // a final status
 		FAIL,     // a final status
 		UNKNOWN,  // a mutable status
-		REJECTED, // a mutable status (just because one target rejected the task another may accept
+		REJECTED, // a mutable status 
 	}
 	
 	public enum Event {
@@ -76,7 +153,6 @@ public interface IAmmoRequest {
 	
 	/** 
 	 * A record of the current state of the object
-	 *
 	 */
 	public interface State {
 		public Event getEvent();
@@ -86,14 +162,19 @@ public interface IAmmoRequest {
 		public State setStatus(Status val);
 	}
 	
-	public interface Notice {
-		public State getState();
-		public State setState(State val);
+	/**
+	 * When a change is made from one state to another.
+	 * A null state indicates any.
+	 */
+	public interface Transition {
+		public State getTarget();
+		public State setTarget(State val);
+		public State getSource();
+		public State setSource(State val);
 	}
 	
 	/**
 	 * Works in conjunction with the contact manager.
-	 * 
 	 */
 	public interface Recipient {
 		public String getCallSign();
@@ -102,14 +183,26 @@ public interface IAmmoRequest {
 		public String getName(); // canonical name
 	}
 	
+	// ********** Request control methods ***************
 	/**
-	 * request control methods
-	 * 
+	 * get the current state of the request
 	 */
-	public State[] getState(); // get the current state of the request
-	public State[] cancel(); // cancel the request
-	public State[] expiration(Duration val); // change the expiration (longevity) of the request
-	
+	public State[] getState(); 
+	/**
+	 * cancel the request
+	 * @return
+	 */
+	public State[] cancel(); 
+	/**
+	 *  change the expiration (longevity) of the request
+	 * @param val
+	 * @return
+	 */
+	public State[] expiration(Duration val);
+	/**
+	 * This is provided to work in conjunction with AmmoRequest.make(uuid);
+	 * @return
+	 */
 	public String getUuid(); // 
 	
 	/** 
@@ -135,7 +228,15 @@ public interface IAmmoRequest {
 	}
 
 	public interface NetLink {
-		public NetLinkState getLinkState();
+		public NetLinkState getState();
+		/**
+		 * Set the timespan for collecting metrics
+		 */
+		public Gateway setMetricTimespan(Duration span);
+		public int getLatencyTypical();
+		public int getThroughput();
+		
+		public Gateway[] getGateways();
 	}
 
 	public enum GatewayState {
@@ -152,13 +253,60 @@ public interface IAmmoRequest {
 		public String text()   { return this.text; }
 	}
 	public interface Gateway {
-		public GatewayState getGateway();
+		public GatewayState getState();
+		/**
+		 * Set the timespan for collecting metrics
+		 */
+		public Gateway setMetricTimespan(Duration span);
+		public int getLatencyTypical();
+		public int getThroughput();
 		
+		public NetLink[] getNetworkLinks();
 	}
 	
 	public interface NetworkController {
 		public NetLink[] getNetworkLinks();
 		public Gateway[] getGateways();
 	}
+	
+	/**
+	 * TODO:
+	 */
+	/*
+	 subscribe/publish/post/interest:
+	   data transmission rate
+	   last message
+	   total messages
+	   setMetricTimespan()
+	   
+	   notify() functor
+	   
+	   routing policy
+	     gateway: 
+	       number of active connections
+	       number of load requests
+	       
+	   click time: set and get
+	   
+	   gateway: 
+	     liveness (% up time)
+	     latency (when live)
+	     throughput (rate when alive)
+	     
+	   economy:
+	     measures of efficient and effective use
+	     
+	   various filters:
+	     filter - match
+	     query - set theory (sql like)
+	     downsample - for images and audio
+	   
+	   quality of service:
+	     
+	 */
+	
+	/**
+	 * 
+	 */
 	
 }
