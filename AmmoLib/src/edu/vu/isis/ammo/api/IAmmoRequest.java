@@ -1,4 +1,8 @@
+
 package edu.vu.isis.ammo.api;
+/**
+ * See also AmmoRequest.java IAmmoPolicy.java and AmmoPolicy.java
+ */
 
 import java.util.Calendar;
 
@@ -103,8 +107,8 @@ public interface IAmmoRequest {
 		 * @param val
 		 * @return
 		 */
-		public Builder notify(State[] val);
-		public Builder notify(State val);
+		public Builder notify(Notice[] val);
+		public Builder notify(Notice val);
 		
 		public Builder liveness();
         /**
@@ -132,23 +136,42 @@ public interface IAmmoRequest {
 		 */
 		public Builder recipient(Recipient val);
 		
+		/**
+		 * The maximum number of bits per second.
+		 * @param val
+		 * @return
+		 */
+		public Builder maxTransmissionRate(int val);
+		
+		/**
+		 * various filtering mechanisms
+		 */
+		public Builder filter(Filter val); 
+		public Builder query(Query val);
+		public Builder downsample(Downsample val); 
+		   
+		/**
+		   quality of service:
+		 */
+		
 	}
 
 	/**
-	 * rejected is mutable because although one target rejected the task another may accept
+	 * rejected is mutable because although one target rejects a task another may accept
 	 */
+
+	public enum Event {
+		QUEUE , // placed under the control of the distributor
+		DISTRIBUTE, // placed under the control of a gateway
+		DELIVER, // obtained by at least one of the targets
+		COMPLETE, // a target has completed handling the task
+	}
+	
 	public enum Status {
 		SUCCESS,  // a final status
 		FAIL,     // a final status
 		UNKNOWN,  // a mutable status
 		REJECTED, // a mutable status 
-	}
-	
-	public enum Event {
-		QUEUED , // placed under the control of the distributor
-		DISTRIBUTED, // placed under the control of a gateway
-		DELIVERED, // obtained by at least one of the targets
-		COMPLETED, // a target has completed handling the task
 	}
 	
 	/** 
@@ -165,13 +188,18 @@ public interface IAmmoRequest {
 	/**
 	 * When a change is made from one state to another.
 	 * A null state indicates any.
+	 * The action 
 	 */
-	public interface Transition {
+	public interface Notice {
 		public State getTarget();
 		public State setTarget(State val);
 		public State getSource();
 		public State setSource(State val);
+		
+		public boolean runAction();
+		public Object getAction();
 	}
+	
 	
 	/**
 	 * Works in conjunction with the contact manager.
@@ -181,6 +209,27 @@ public interface IAmmoRequest {
 		public String[] getGroups();
 		public String getName(String type); // used e.g. tigr
 		public String getName(); // canonical name
+	}
+	
+	public interface Filter {
+		public Filter get();
+	}
+	
+	public interface Query {
+		public String[] getProjection();
+		public String getSelection();
+		public String[] getArgs();
+		public String[] getGroupBy();
+		public String[] getOrderBy();
+	}
+	
+	/**
+	 * An object can be down sampled to either a maximum size
+	 * or a fraction of its original size.
+	 */
+	public interface Downsample {
+		public int getMaxSize();
+		public double getFraction();
 	}
 	
 	// ********** Request control methods ***************
@@ -201,112 +250,28 @@ public interface IAmmoRequest {
 	public State[] expiration(Duration val);
 	/**
 	 * This is provided to work in conjunction with AmmoRequest.make(uuid);
+	 * It is used to preserve references to AmmoRequest objects across a restart
 	 * @return
 	 */
 	public String getUuid(); // 
 	
-	/** 
-	 * The methods which change the routing policy are not 
-	 * generally available to applications programs.
-	 * Only the getters will function for applications programs.
+	/**
+	 * Sets the timespan used to measure various metrics.
+	 * e.g. transmission rate
 	 */
-	public enum NetLinkState {
-		DISCONNECTED     ("Disconnected"),
-		IDLE             ("Idle"),
-		SCANNING         ("Scanning"),
-		CONNECTING       ("Connecting"),
-		AUTHENTICATING   ("Authenticating"),
-		OBTAINING_IPADDR ("Obtaining IP Address"),
-		FAILED           ("Failed"),
-		CONNECTED        ("Connected");
-
-		private final String text;  
-		NetLinkState(String text) {
-			this.text = text;
-		}
-		public String text()   { return this.text; }
-	}
-
-	public interface NetLink {
-		public NetLinkState getState();
-		/**
-		 * Set the timespan for collecting metrics
-		 */
-		public Gateway setMetricTimespan(Duration span);
-		public int getLatencyTypical();
-		public int getThroughput();
-		
-		public Gateway[] getGateways();
-	}
-
-	public enum GatewayState {
-		DISCONNECTED     ("Disconnected"),
-		IDLE             ("Idle"),
-		AUTHENTICATING   ("Authenticating"),
-		FAILED           ("Failed"),
-		CONNECTED        ("Connected");
-
-		private final String text;  
-		GatewayState(String text) {
-			this.text = text;
-		}
-		public String text()   { return this.text; }
-	}
-	public interface Gateway {
-		public GatewayState getState();
-		/**
-		 * Set the timespan for collecting metrics
-		 */
-		public Gateway setMetricTimespan(Duration span);
-		public int getLatencyTypical();
-		public int getThroughput();
-		
-		public NetLink[] getNetworkLinks();
-	}
-	
-	public interface NetworkController {
-		public NetLink[] getNetworkLinks();
-		public Gateway[] getGateways();
-	}
+	public void setMetricTimespan(int val);
+	public int getTransmissionRate();
 	
 	/**
-	 * TODO:
+	 * When was the last message received.
 	 */
-	/*
-	 subscribe/publish/post/interest:
-	   data transmission rate
-	   last message
-	   total messages
-	   setMetricTimespan()
-	   
-	   notify() functor
-	   
-	   routing policy
-	     gateway: 
-	       number of active connections
-	       number of load requests
-	       
-	   click time: set and get
-	   
-	   gateway: 
-	     liveness (% up time)
-	     latency (when live)
-	     throughput (rate when alive)
-	     
-	   economy:
-	     measures of efficient and effective use
-	     
-	   various filters:
-	     filter - match
-	     query - set theory (sql like)
-	     downsample - for images and audio
-	   
-	   quality of service:
-	     
-	 */
+	public Calendar getLastMessage();
 	
 	/**
-	 * 
+	 * Reset all statistics, counters, averages, but not time span
+	 * @param val
 	 */
-	
+	public void resetMetrics(int val);
+	public int getTotalMessages();
+	 
 }

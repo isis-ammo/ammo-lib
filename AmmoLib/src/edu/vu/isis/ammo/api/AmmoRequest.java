@@ -2,8 +2,7 @@ package edu.vu.isis.ammo.api;
 
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.database.ContentObserver;
-
+	
 /**
  * This API supersedes the AmmoDispatcher calls.
  * Those methods will still work but they are deprecated.
@@ -29,43 +28,42 @@ abstract public class AmmoRequest implements IAmmoRequest {
 		static public State make(Event level, Status state) { return null; }
 	}
 	
-	public abstract static class Transition implements IAmmoRequest.Transition {
-		/**
-		 *  an action to be taken
-		 * @param level
-		 * @param action
-		 * @return
-		 */
-		static public Transition make(State level, PendingIntent action) { return null; } 
-		/**
-		 * an observer to be triggered
-		 * @param level
-		 * @param observer
-		 * @return
-		 */
-		static public Transition make(State level, ContentObserver observer) { return null; } 
-		/**
-		 * an intent to be broadcast
-		 * @param level
-		 * @param intent
-		 * @return
-		 */
-		static public Transition make(State level, Intent intent) { return null; } 
+	/**
+	 * When the transition is noticed the PendingIntent is run.
+	 */
+	public abstract static class NoticePendingIntent implements IAmmoRequest.Notice {
+		protected NoticePendingIntent() {}
+		
+		static public IAmmoRequest.Notice make(State level, PendingIntent action) { 
+			return null; 
+		} 
+		abstract public PendingIntent getAction();
+	}
+	/**
+	 * When the transition is noticed the content observer it notified.
+	 */
+	public abstract static class NoticeRunnable implements IAmmoRequest.Notice {
+		protected NoticeRunnable() {}
+		
+		static public IAmmoRequest.Notice make(State level, Runnable actor) { 
+			return null; 
+		} 
+		abstract public PendingIntent getAction();
+	}
+	/**
+	 * When the transition is noticed the Intent is send as a broadcast intent
+	 */
+	public abstract static class NoticeIntent implements IAmmoRequest.Notice {
+		protected NoticeIntent() {}
+	
+		static public Notice make(State level, Intent intent) { 
+			return null; 
+		} 
+		abstract public PendingIntent getAction();
 	}
 	
 	public abstract static class Recipient implements IAmmoRequest.Recipient {
 		static public Recipient make(String name) { return null; }
 	}
 	
-	public abstract static class  NetLink implements IAmmoRequest.NetLink {
-		static public NetLink make(String name) { return null; }
-	}
-
-	public abstract static class  Gateway implements IAmmoRequest.Gateway {
-		static public Gateway make(String name) { return null; }	
-	}
-	
-	public abstract static class  NetworkController implements IAmmoRequest.NetworkController {
-		static public NetworkController make(String name) { return null; }
-	}
 }
