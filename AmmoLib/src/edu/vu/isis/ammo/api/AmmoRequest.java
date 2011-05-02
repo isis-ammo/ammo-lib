@@ -1,5 +1,8 @@
 package edu.vu.isis.ammo.api;
 
+/**
+ * See also IAmmoRequest.java IAmmoPolicy.java and AmmoPolicy.java
+ */
 import android.app.PendingIntent;
 import android.content.Intent;
 	

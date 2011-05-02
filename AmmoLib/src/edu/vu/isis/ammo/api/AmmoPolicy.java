@@ -1,5 +1,8 @@
 package edu.vu.isis.ammo.api;
 
+/**
+ * See also AmmoRequest.java IAmmoRequest.java and IAmmoPolicy.java
+ */
 
 /**
  * This API supersedes the AmmoDispatcher calls.

@@ -1,5 +1,9 @@
 package edu.vu.isis.ammo.api;
 
+/**
+ * See also AmmoRequest.java IAmmoRequest.java and AmmoPolicy.java
+ */
+
 import javax.xml.datatype.Duration;
 import java.util.Calendar;
 
@@ -57,6 +61,7 @@ public interface IAmmoPolicy {
 		}
 		public String text()   { return this.text; }
 	}
+	
 	public interface Gateway {
 		public GatewayState getState();
 		/**
@@ -94,9 +99,24 @@ public interface IAmmoPolicy {
 		public float getCost();
 	}
 	
+	/**
+	 * Identity provides mechanisms for finding out information about yourself.
+	 * It includes information from the contact manager and credentials.
+	 */
+	public interface Identity {
+		public Credential[] getCredentials();
+		
+	}
+	public interface Credential {
+		
+	}
+	
 	public interface NetworkController {
 		public NetLink[] getNetworkLinks();
 		public Gateway[] getGateways();
+		public Identity getIdentity();
 	}
+	
+	
 	
 }
