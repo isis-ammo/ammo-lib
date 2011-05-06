@@ -2,7 +2,18 @@
 package edu.vu.isis.ammo.api;
 /**
  * See also AmmoRequest.java IAmmoPolicy.java and AmmoPolicy.java
+ * 
+ * An IAmmoRequest is an immutable object.
+ * They come in two main varieties: Data, and Interest.
+ * Data is a request for new content to be injected into the system.
+ * Interest is a request to have content delivered.
+ * 
+ * Requests are immutable so that when a named piece of data
+ * is obtained it is known that it is correct and is not waiting
+ * for additional elements. (data-flow variables)
+ * 
  */
+
 
 import java.util.Calendar;
 
@@ -39,10 +50,10 @@ public interface IAmmoRequest {
 		public IAmmoRequest duplicate();
 		/**
 		 * The following are factory actions which produce Ammo requests
-		 * @return
+		 * @return 
 		 */
 		public IAmmoRequest post();
-		public IAmmoRequest directedPost();
+		public IAmmoRequest directedPost(Recipient recipient);
 		public IAmmoRequest publish();
 		public IAmmoRequest subscribe();
 		public IAmmoRequest retrieve();
@@ -81,8 +92,18 @@ public interface IAmmoRequest {
 		 */
 		public Builder payload(String val);
 		
-		public Builder name(String val);
 		/**
+		 * The name of the data being injected or the
+		 * prefix of the data being requested.
+		 * 
+		 * @param val
+		 * @return
+		 */
+		public Builder name(String val);
+		
+		/**
+		 * How long will the data item persist.
+		 * 
 		 * from the time the request is posted.
 		 * @param val
          * @return
@@ -96,7 +117,7 @@ public interface IAmmoRequest {
 		public Builder longevity(Calendar val);
 		/**
 		 * 0 : normal, 
-		 * >0 : higher priority, 
+		 * >0 : higher priority, (these are sent first)
 		 * <0 : lower priority
 		 * @param val
 		 * @return
