@@ -30,6 +30,7 @@ public interface INetPrefKeys extends edu.vu.isis.ammo.IPrefKeys {
 	
 	public static final String WIRED_PREF = "AMMO_PHYSICAL_LINK_";
 	public static final String WIFI_PREF = "AMMO_WIFI_LINK_";
+	public static final String PHONE_PREF = "AMMO_PHONE_LINK_";
 	public static final String NET_CONN_PREF = "AMMO_NET_CONN_";
 	
 	public static final String PHYSICAL_LINK_PREF_IS_ACTIVE = WIRED_PREF + NET_IS_ACTIVE;
@@ -39,6 +40,10 @@ public interface INetPrefKeys extends edu.vu.isis.ammo.IPrefKeys {
 	public static final String WIFI_PREF_IS_ACTIVE = WIFI_PREF + NET_IS_ACTIVE;
 	public static final String WIFI_PREF_SHOULD_USE = WIFI_PREF + NET_SHOULD_USE;
 	public static final String WIFI_PREF_IS_AVAILABLE = WIFI_PREF + NET_IS_AVAILABLE;
+	
+	public static final String PHONE_PREF_IS_ACTIVE = PHONE_PREF + NET_IS_ACTIVE;
+	public static final String PHONE_PREF_SHOULD_USE = PHONE_PREF + NET_SHOULD_USE;
+	public static final String PHONE_PREF_IS_AVAILABLE = PHONE_PREF + NET_IS_AVAILABLE;
 	
 	public static final String NET_CONN_PREF_IS_STALE = NET_CONN_PREF + NET_IS_STALE;
 	public static final String NET_CONN_PREF_SHOULD_USE = NET_CONN_PREF + NET_SHOULD_USE;
