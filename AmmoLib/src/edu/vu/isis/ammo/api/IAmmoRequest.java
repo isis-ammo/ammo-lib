@@ -93,8 +93,16 @@ public interface IAmmoRequest {
 		public Builder payload(String val);
 		
 		/**
-		 * The name of the data being injected or the
-		 * prefix of the data being requested.
+		 * The type of the data being injected.
+		 * 
+		 * @param val
+		 * @return
+		 */
+		public Builder type(String val);
+		
+		/**
+		 * The unique name of the data being injected.
+		 * The name only need be unique in the context of the type.
 		 * 
 		 * @param val
 		 * @return
