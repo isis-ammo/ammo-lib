@@ -11,6 +11,17 @@ import java.util.Calendar;
  * This API provides insight into the network policy
  * and the resulting performance and economy.
  * 
+ * The Ammo architecture consists of several layers
+ * of indirection.
+ * 
+ * - Distributor: 
+ *   Schedules requests for delivery.
+ *   Makes use of the priority and expiration to construct schedule.
+ *   
+ * - Network Service:
+ *   Decides which channel to use to deliver a particular request.
+ *   
+ * 
  */
 public interface IAmmoStatus {
 	
@@ -116,7 +127,5 @@ public interface IAmmoStatus {
 		public Gateway[] getGateways();
 		public Identity getIdentity();
 	}
-	
-	
 	
 }
