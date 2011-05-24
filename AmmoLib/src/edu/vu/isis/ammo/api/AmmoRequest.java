@@ -11,7 +11,7 @@ public class AmmoRequest implements IAmmoRequest {
      static public Builder make() { return null; }
   }
 
-  public abstract static class Event implements IAmmoRequest.Color {
+  public abstract static class Event implements IAmmoRequest.Event {
      static public Color make(Place place, Color color) { return null; }
   }
      
@@ -45,6 +45,5 @@ public class AmmoRequest implements IAmmoRequest {
   public abstract static class Recipient implements IAmmoRequest.Recipient {
      static public Recipient make(String name) { return null; }
   }
-
 }
 

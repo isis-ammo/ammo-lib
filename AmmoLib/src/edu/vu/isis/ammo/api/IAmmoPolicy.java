@@ -7,7 +7,7 @@ import javax.xml.datatype.Duration;
 import java.util.Calendar;
 
 public interface IAmmoPolicy {
-  public enum NetLinkState {
+  public enum NetlinkState {
      DISCONNECTED     ("Disconnected"),
      IDLE             ("Idle"),
      SCANNING         ("Scanning"),
@@ -18,7 +18,7 @@ public interface IAmmoPolicy {
      CONNECTED        ("Connected");
 
      private final String text;  
-     NetLinkState(String text) {
+     NetlinkState(String text) {
         this.text = text;
      }
      public String text()   { return this.text; }
@@ -42,9 +42,12 @@ public interface IAmmoPolicy {
      public Credential[] getCredentials();
   }
   public interface Credential { }
+     public interface Gateway {}
+     public interface Netlink {}
+
    
-  public interface NetworkController {
-     public NetLink[] getNetworkLinks();
+  public interface NetControl {
+     public Netlink[] getNetworkLinks();
      public Gateway[] getGateways();
      public Identity getIdentity();
   }

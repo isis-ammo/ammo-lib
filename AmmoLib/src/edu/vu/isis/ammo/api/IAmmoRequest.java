@@ -15,10 +15,10 @@ public interface IAmmoRequest {
       public IAmmoRequest duplicate();
 
       public Builder reset();
-
       public IAmmoRequest post();
       public IAmmoRequest directedPost(Recipient recipient);
       public IAmmoRequest publish();
+
       public IAmmoRequest subscribe();
       public IAmmoRequest retrieve();
       public IAmmoRequest interest();
@@ -53,52 +53,6 @@ public interface IAmmoRequest {
 
               
 
-      public interface Recipient {
-         public String getCallSign();
-         public String[] getGroups();
-         public String getName(String type); // used e.g. tigr
-         public String getName(); // canonical name
-      }
-      public interface Filter {
-         public Filter get();
-      }
-         
-         
-      public interface Query {
-         public String[] getProjection();
-         public String getSelection();
-         public String[] getArgs();
-         public String[] getGroupBy();
-         public String[] getOrderBy();
-      }
-
-      public interface Downsample {
-         public int getMaxSize();
-         public double getFraction();
-      }
-
-      public enum Place { QUEUE , DISTRIBUTE, DELIVER, COMPLETE }
-         
-      public enum Color { SUCCESS, FAIL,  UNKNOWN, REJECTED };
-         
-      public interface Event {
-         public Place getPlace();
-         public Event setPlace(Place val);
-         
-         public Color getColor();
-         public Event setColor(Color val);
-      }
-         
-      public interface Notice {
-         public Event getTarget();
-         public Event setTarget(Event val);
-         public Event getSource();
-         public Event setSource(Event val);
-            
-         public boolean runAction();
-         public Object getAction();
-      }
-
          public Event[] getEvent(); 
 
          public Event[] cancel(); 
@@ -116,6 +70,53 @@ public interface IAmmoRequest {
          public int getTotalMessages();
 
    }
+   public interface Recipient {
+      public String getCallSign();
+      public String[] getGroups();
+      public String getName(String type); // used e.g. tigr
+      public String getName(); // canonical name
+   }
+   public interface Filter {
+      public Filter get();
+   }
+      
+      
+   public interface Query {
+      public String[] getProjection();
+      public String getSelection();
+      public String[] getArgs();
+      public String[] getGroupBy();
+      public String[] getOrderBy();
+   }
+
+   public interface Downsample {
+      public int getMaxSize();
+      public double getFraction();
+   }
+
+   public enum Place { QUEUE , DISTRIBUTE, DELIVER, COMPLETE }
+      
+   public enum Color { SUCCESS, FAIL,  UNKNOWN, REJECTED };
+      
+   public interface Event {
+      public Place getPlace();
+      public Event setPlace(Place val);
+      
+      public Color getColor();
+      public Event setColor(Color val);
+   }
+      
+   public interface Notice {
+      public Event getTarget();
+      public Event setTarget(Event val);
+      public Event getSource();
+      public Event setSource(Event val);
+         
+      public boolean runAction();
+      public Object getAction();
+   }
+
+
 
 }
    
