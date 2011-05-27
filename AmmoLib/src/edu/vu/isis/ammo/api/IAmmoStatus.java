@@ -1,4 +1,4 @@
-// IAmmoPolicy.java
+// IAmmoStatus.java
 package edu.vu.isis.ammo.api;
 /**
   See docs/java/ammo-api.nw for documentation
@@ -6,7 +6,7 @@ package edu.vu.isis.ammo.api;
 import javax.xml.datatype.Duration;
 import java.util.Calendar;
 
-public interface IAmmoPolicy {
+public interface IAmmoStatus {
   public enum NetlinkState {
      DISCONNECTED     ("Disconnected"),
      IDLE             ("Idle"),
