@@ -1,4 +1,4 @@
-package mil.darpa.transapp.ammo.launch.constants;
+package edu.vu.isis.ammo.launch.constants;
 
 /**
  * Static constants used throughout the application.
@@ -20,11 +20,11 @@ public class Constants {
 	/**
 	 * Intent to load indiviual contact.
 	 */
-	public static final String INDIVIDUAL_CONTACT_ACTIVITY_LAUNCH = "mil.darpa.transapp.ammo.launch.individualcontactactivity.LAUNCH";
+	public static final String INDIVIDUAL_CONTACT_ACTIVITY_LAUNCH = "edu.vu.isis.ammo.launch.individualcontactactivity.LAUNCH";
 	
-	public static final String AMMO_ACCOUNT_TYPE = "mil.darpa.transapp.ammo";
+	public static final String AMMO_ACCOUNT_TYPE = "edu.vu.isis.ammo";
 	public static final String AMMO_DEFAULT_ACCOUNT_NAME = "ammo";
-    public static final String AMMO_AUTHTOKEN_TYPE = "mil.darpa.transapp.ammo";
+    public static final String AMMO_AUTHTOKEN_TYPE = "edu.vu.isis.ammo";
     
     public static final String LDAP_MIME = "application/vnd.edu.vu.isis.ammo.launcher.contact_pull";
 	

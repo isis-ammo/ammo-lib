@@ -1,5 +1,5 @@
 // THIS IS GENERATED CODE, YOU SHOULD COPY THIS FOR YOUR HAND EDITS
-package mil.darpa.transapp.ammo.launch.provider;
+package edu.vu.isis.ammo.launch.provider;
 
 import android.net.Uri;
 
