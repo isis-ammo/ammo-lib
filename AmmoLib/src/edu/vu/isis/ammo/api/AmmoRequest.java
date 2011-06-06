@@ -6,7 +6,7 @@ package edu.vu.isis.ammo.api;
 import android.app.PendingIntent;
 import android.content.Intent;
 
-public class AmmoRequest implements IAmmoRequest {
+abstract public class AmmoRequest implements IAmmoRequest {
   public abstract static class Builder implements IAmmoRequest.Builder {
      static public Builder make() { return null; }
   }

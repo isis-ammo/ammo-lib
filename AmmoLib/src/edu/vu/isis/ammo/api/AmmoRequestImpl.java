@@ -272,6 +272,6 @@ public class AmmoRequestImpl extends AmmoRequest implements Parcelable {
 		}
 		
 	}
- 
+	
 }
 
