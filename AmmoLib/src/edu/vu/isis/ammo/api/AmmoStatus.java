@@ -18,5 +18,3 @@ abstract public class AmmoStatus implements IAmmoStatus {
    }
 }
 
-// not implemented
-
