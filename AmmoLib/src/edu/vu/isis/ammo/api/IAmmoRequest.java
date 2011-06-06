@@ -2,6 +2,7 @@
 package edu.vu.isis.ammo.api;
 /**
 <<<<<<< HEAD
+<<<<<<< HEAD
   See docs/java/ammo-api.nw for documentation
 */ 
 =======
@@ -20,6 +21,10 @@ package edu.vu.isis.ammo.api;
 
 
 >>>>>>> origin/newnet
+=======
+  See docs/java/ammo-api.nw for documentation
+*/ 
+>>>>>>> master
 import java.util.Calendar;
 
 import javax.xml.datatype.Duration;
@@ -29,6 +34,9 @@ import android.net.Uri;
 
 public interface IAmmoRequest {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> master
    public interface Builder {
       public IAmmoRequest duplicate();
 
@@ -55,6 +63,7 @@ public interface IAmmoRequest {
         public Builder downsample(char val); 
 
 
+<<<<<<< HEAD
         public Builder longevity(Duration val);
         public Builder longevity(Calendar val);
 
@@ -290,6 +299,87 @@ public interface IAmmoRequest {
 		
 	}
 >>>>>>> origin/newnet
+=======
+        public Builder longevity(Duration val);
+        public Builder longevity(Calendar val);
+
+        public Builder priority(int val);
+
+        public Builder worth(int val);
+
+              
+        public Builder liveness(int val);
+        public Builder start(Calendar val); 
+        public Builder scope(int val);
+        public Builder recipient(Recipient val);
+        public Builder maxTransmissionRate(int val);
+
+              
+
+         public Event[] getEvent(); 
+
+         public Event[] cancel(); 
+
+         public Event[] expiration(Duration val);
+
+         public String getUuid(); // 
+         
+         public void setMetricTimespan(int val);
+         public int getTransmissionRate();
+         
+         public Calendar getLastMessage();
+         
+         public void resetMetrics(int val);
+         public int getTotalMessages();
+
+   }
+   public interface Recipient {
+      public String getCallSign();
+      public String[] getGroups();
+      public String getName(String type); // used e.g. tigr
+      public String getName(); // canonical name
+   }
+   public interface Filter {
+      public Filter get();
+   }
+      
+      
+   public interface Query {
+      public String[] getProjection();
+      public String getSelection();
+      public String[] getArgs();
+      public String[] getGroupBy();
+      public String[] getOrderBy();
+   }
+
+   public interface Downsample {
+      public int getMaxSize();
+      public double getFraction();
+   }
+
+   public enum Place { QUEUE , DISTRIBUTE, DELIVER, COMPLETE }
+      
+   public enum Color { SUCCESS, FAIL,  UNKNOWN, REJECTED };
+      
+   public interface Event {
+      public Place getPlace();
+      public Event setPlace(Place val);
+      
+      public Color getColor();
+      public Event setColor(Color val);
+   }
+      
+   public interface Notice {
+      public Event getTarget();
+      public Event setTarget(Event val);
+      public Event getSource();
+      public Event setSource(Event val);
+         
+      public boolean runAction();
+      public Object getAction();
+   }
+
+>>>>>>> master
 
 
 }
