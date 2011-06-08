@@ -320,6 +320,11 @@ public class AmmoDispatcher {
 		return this.pull(uri, mime, Calendar.HOUR, 1, 0.0, "");
 	}
 	
+
+        public boolean pull(Uri uri, String mime, String query) {
+	    return this.pull(uri, mime, Calendar.HOUR, 1, 0.0, query);
+	}
+
 	/**
 	 * Force the mime type rather than using the resolver to acquire it.
 	 * 
