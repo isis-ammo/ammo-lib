@@ -23,7 +23,6 @@ public interface IAmmoPolicy {
      }
      public String text()   { return this.text; }
   }
-
   public enum GatewayState {
      DISCONNECTED     ("Disconnected"),
      IDLE             ("Idle"),

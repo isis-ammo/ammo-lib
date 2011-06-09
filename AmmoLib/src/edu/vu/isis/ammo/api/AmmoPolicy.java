@@ -18,4 +18,3 @@ abstract public class AmmoPolicy implements IAmmoPolicy {
       static public NetControl make(String name) { return null; }
    }
 }
-

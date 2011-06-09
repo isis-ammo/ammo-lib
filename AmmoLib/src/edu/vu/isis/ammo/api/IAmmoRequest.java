@@ -13,20 +13,16 @@ import android.net.Uri;
 public interface IAmmoRequest {
    public interface Builder {
       public IAmmoRequest duplicate();
-
       public Builder reset();
       public IAmmoRequest post();
       public IAmmoRequest directedPost(Recipient recipient);
       public IAmmoRequest publish();
-
       public IAmmoRequest subscribe();
       public IAmmoRequest retrieve();
       public IAmmoRequest interest();
       public IAmmoRequest replace(IAmmoRequest req);
       public IAmmoRequest replace(String uuid);
-
       public IAmmoRequest recover(String uuid);
-
         public Builder provider(Uri val);
         public Builder payload(String val);
         public Builder type(String val);
@@ -35,40 +31,24 @@ public interface IAmmoRequest {
         public Builder query(Query val);
         public Builder downsample(Downsample val); 
         public Builder downsample(char val); 
-
-
         public Builder longevity(Duration val);
         public Builder longevity(Calendar val);
-
         public Builder priority(int val);
-
         public Builder worth(int val);
-
-              
         public Builder liveness(int val);
         public Builder start(Calendar val); 
         public Builder scope(int val);
         public Builder recipient(Recipient val);
         public Builder maxTransmissionRate(int val);
-
-              
-
          public Event[] getEvent(); 
-
          public Event[] cancel(); 
-
          public Event[] expiration(Duration val);
-
          public String getUuid(); // 
-         
          public void setMetricTimespan(int val);
          public int getTransmissionRate();
-         
          public Calendar getLastMessage();
-         
          public void resetMetrics(int val);
          public int getTotalMessages();
-
    }
    public interface Recipient {
       public String getCallSign();
@@ -79,8 +59,6 @@ public interface IAmmoRequest {
    public interface Filter {
       public Filter get();
    }
-      
-      
    public interface Query {
       public String[] getProjection();
       public String getSelection();
@@ -88,16 +66,12 @@ public interface IAmmoRequest {
       public String[] getGroupBy();
       public String[] getOrderBy();
    }
-
    public interface Downsample {
       public int getMaxSize();
       public double getFraction();
    }
-
    public enum Place { QUEUE , DISTRIBUTE, DELIVER, COMPLETE }
-      
    public enum Color { SUCCESS, FAIL,  UNKNOWN, REJECTED };
-      
    public interface Event {
       public Place getPlace();
       public Event setPlace(Place val);
@@ -105,7 +79,6 @@ public interface IAmmoRequest {
       public Color getColor();
       public Event setColor(Color val);
    }
-      
    public interface Notice {
       public Event getTarget();
       public Event setTarget(Event val);
@@ -115,7 +88,6 @@ public interface IAmmoRequest {
       public boolean runAction();
       public Object getAction();
    }
-
 
 
 }
