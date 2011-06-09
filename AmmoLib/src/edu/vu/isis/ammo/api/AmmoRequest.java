@@ -1,8 +1,6 @@
 // AmmoRequest.java
+//  See docs/java/ammo-api.nw for documentation
 package edu.vu.isis.ammo.api;
-/**
-  See docs/java/ammo-api.nw for documentation
-*/ 
 import android.app.PendingIntent;
 import android.content.Intent;
 

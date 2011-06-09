@@ -1,8 +1,6 @@
 // IAmmoRequest.java
+// See docs/java/ammo-api.nw for documentation
 package edu.vu.isis.ammo.api;
-/**
-  See docs/java/ammo-api.nw for documentation
-*/ 
 import java.util.Calendar;
 
 import javax.xml.datatype.Duration;
@@ -88,7 +86,4 @@ public interface IAmmoRequest {
       public boolean runAction();
       public Object getAction();
    }
-
-
 }
-   
