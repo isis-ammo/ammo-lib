@@ -183,6 +183,7 @@ public class AmmoDispatcher {
 	 */
 	public boolean post(String mimeType, ContentValues value, Calendar expiration, double worth) 
 	{
+		Log.i("AmmoDispatcher", "post(" + value.toString());
 		Gson gson = new Gson();
         String serializedString = gson.toJson(value);
         return post(mimeType, serializedString, expiration, worth);
@@ -227,7 +228,15 @@ public class AmmoDispatcher {
 	public boolean post(Uri uri, String mimeType, Calendar expiration, double worth) {
 		return post(uri,mimeType,expiration,worth,null);
 	}
+	
+	public boolean post(Uri uri, String mimeType) {
+		return post(uri,mimeType,null,Double.NaN,null);
+	}
+	
+	
 	public boolean post(Uri uri, String mimeType, Calendar expiration, double worth, PendingIntent notice) {
+		
+		Log.i("AmmoDispatcher", "real post [" + uri + "]");
 		// check that the uri is valid
 		if (uri == null) return false;
 		
