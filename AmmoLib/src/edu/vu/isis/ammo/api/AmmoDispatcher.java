@@ -558,7 +558,8 @@ public class AmmoDispatcher {
 		    // if its a new entry set the DISPOSITION to pending - else leave it as is ...
 		    values.put(SubscriptionTableSchema.DISPOSITION, SubscriptionTableSchema.DISPOSITION_PENDING);
 
-		    resolver.insert(SubscriptionTableSchema.CONTENT_URI, values);
+		    Uri uri2 = resolver.insert(SubscriptionTableSchema.CONTENT_URI, values);
+		    Log.i("AmmoDispatcher",uri2.toString());
 		}
 		return true;
 	}
