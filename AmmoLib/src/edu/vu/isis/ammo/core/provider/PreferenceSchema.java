@@ -22,6 +22,7 @@ public class PreferenceSchema {
 	public static final String AMMO_PREF_TYPE_INT = "getInt";
 	public static final String AMMO_PREF_TYPE_LONG = "getLong";
 	
+	//something trivial
 	public static enum AMMO_PREF_TYPE {
 		STRING, BOOLEAN, FLOAT, INT, LONG
 	};
