@@ -37,7 +37,7 @@ public interface IAmmoRequest {
         public static Query DEFAULT_DOWNSAMPLE = 0;
         public Builder downsample(Downsample val); 
         public Builder downsample(char val); 
-        public static Duration DEFAULT_LOGEVITY = Duration.HOUR;
+        public static Duration DEFAULT_LONGEVITY = Duration.HOUR;
         public Builder longevity(Duration val);
         public Builder longevity(Calendar val);
         public static int LOW_PRIORITY = -10;

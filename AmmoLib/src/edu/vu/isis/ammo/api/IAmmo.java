@@ -28,7 +28,7 @@ public interface IAmmo {
   
     
 
-  % Radio Control
+   Radio Control
 
   public interface NetControl {
      public NetworkInterface[] getNetworkLinks();
