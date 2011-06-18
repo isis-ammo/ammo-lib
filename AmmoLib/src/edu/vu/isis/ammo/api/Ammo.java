@@ -3,8 +3,8 @@ package edu.vu.isis.ammo.api;
 
 abstract public class Ammo implements IAmmo {
 
-   public abstract static class  Netlink implements IAmmo.Netlink {
-      static public Netlink getInstance(String name) { return null; }
+   public abstract static class  NetworkInterface implements IAmmo.NetworkInterface {
+      static public NetworkInterface getInstance(String name) { return null; }
    }
 
    public abstract static class  Gateway implements IAmmo.Gateway {

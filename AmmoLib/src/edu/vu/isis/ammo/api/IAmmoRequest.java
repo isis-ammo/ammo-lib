@@ -21,7 +21,9 @@ public interface IAmmoRequest {
       public IAmmoRequest replace(IAmmoRequest req);
       public IAmmoRequest replace(String uuid);
       public IAmmoRequest recover(String uuid);
+        public static String DEFAULT_PROVIDER = null;
         public Builder provider(Uri val);
+        public static String DEFAULT_PAYLOAD = "";
         public Builder payload(String val);
         public static String DEFAULT_TYPE = "";
         public Builder type(String val);

@@ -8,14 +8,30 @@ public interface IAmmo {
   
   
   
+
+  public interface NetworkInterface {
+     public NetworkInterfaceState getState();
+
+     public Gateway setMetricTimespan(Duration span);
+     public int getLatency();
+     public int getThroughput();
+     
+     public Gateway[] getGateways();
+  }
+
+
+
+  
+    
+
   
   
-  
-  
-  
-   
+    
+
+  % Radio Control
+
   public interface NetControl {
-     public Netlink[] getNetworkLinks();
+     public NetworkInterface[] getNetworkLinks();
      public Gateway[] getGateways();
      public Identity getIdentity();
   }
