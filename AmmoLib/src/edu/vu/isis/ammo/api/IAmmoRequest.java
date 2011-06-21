@@ -27,9 +27,8 @@ public interface IAmmoRequest {
         public Builder payload(String val);
         public static String DEFAULT_TYPE = "";
         public Builder type(String val);
-
-        public static String DEFAULT_TITLE = "";
-        public Builder title(String val);
+        public static String DEFAULT_ID = "";
+        public Builder id(String val);
         public static Filter DEFAULT_FILTER = null;
         public Builder filter(Filter val); 
         public static Query DEFAULT_QUERY = null;
@@ -37,13 +36,14 @@ public interface IAmmoRequest {
         public static Query DEFAULT_DOWNSAMPLE = 0;
         public Builder downsample(Downsample val); 
         public Builder downsample(char val); 
-        public static Duration DEFAULT_LONGEVITY = Duration.HOUR;
-        public Builder longevity(Duration val);
-        public Builder longevity(Calendar val);
+        public static Duration DEFAULT_DURABILITY = Duration.HOUR;
+        public Builder durability(Duration val);
+        public Builder durability(Calendar val);
+        public static int BACKGROUND_PRIORITY = -1000;
         public static int LOW_PRIORITY = -10;
         public static int NORMAL_PRIORITY = 0;
         public static int HIGH_PRIORITY = 10;
-        public static int URGENT = 1000;
+        public static int URGENT_PRIORITY = 1000;
 
         public static int DEFAULT_PRIORITY = NORMAL_PRIORITY;
         public Builder priority(int val);
