@@ -21,47 +21,50 @@ public interface IAmmoRequest {
       public IAmmoRequest replace(IAmmoRequest req);
       public IAmmoRequest replace(String uuid);
       public IAmmoRequest recover(String uuid);
-        public static String DEFAULT_PROVIDER = null;
+        public static final String DEFAULT_PROVIDER = null;
         public Builder provider(Uri val);
-        public static String DEFAULT_PAYLOAD = "";
+        public static final String DEFAULT_PAYLOAD = "";
         public Builder payload(String val);
-        public static String DEFAULT_TYPE = "";
-        public Builder type(String val);
-        public static String DEFAULT_ID = "";
+        public static final String DEFAULT_TOPIC = "";
         public Builder id(String val);
-        public static Filter DEFAULT_FILTER = null;
-        public Builder filter(Filter val); 
-        public static Query DEFAULT_QUERY = null;
-        public Builder query(Query val);
-        public static Query DEFAULT_DOWNSAMPLE = 0;
+        public static final Query DEFAULT_DOWNSAMPLE = 0;
         public Builder downsample(Downsample val); 
         public Builder downsample(char val); 
-        public static Duration DEFAULT_DURABILITY = Duration.HOUR;
-        public Builder durability(Duration val);
-        public Builder durability(Calendar val);
-        public static int BACKGROUND_PRIORITY = -1000;
-        public static int LOW_PRIORITY = -10;
-        public static int NORMAL_PRIORITY = 0;
-        public static int HIGH_PRIORITY = 10;
-        public static int URGENT_PRIORITY = 1000;
+        public static final final int VOLAILE_DURABILITY = 1;
+        public static final final int PERSISTENT_DURABILITY = 2;
 
-        public static int DEFAULT_PRIORITY = NORMAL_PRIORITY;
-        public Builder priority(int val);
-        public static int DEFAULT_WORTH = 100;
-        public Builder worth(int val);
-        public static int DEFAULT_LIVENESS = 0;
-        public Builder liveness(int val);
-        public static int DEFAULT_START = Calendar.NOW;
-        public Builder start(Calendar val); 
-        public static int DEFAULT_SCOPE = -1;
-        public Builder scope(int val);
-        public static int ANY_RECIPIENT = null;
+        public static Duration DEFAULT_DURABILITY = PERSISTENT_DURABILITY;
+        public Builder durability(int val);
+        public static final int ANY_RECIPIENT = null;
 
-        public static int DEFAULT_RECIPIENT = ANY_RECIPIENT;
+        public static final int DEFAULT_RECIPIENT = ANY_RECIPIENT;
         public Builder recipient(Recipient val);
-        public static int UNLIMITED_THROTTLE = -1;
+        public static final int BACKGROUND_PRIORITY = -1000;
+        public static final int LOW_PRIORITY = -10;
+        public static final int NORMAL_PRIORITY = 0;
+        public static final int HIGH_PRIORITY = 10;
+        public static final int URGENT_PRIORITY = 1000;
 
-        public static int DEFAULT_THROTTLE = UNLIMITED_THROTTLE;
+        public static final int DEFAULT_PRIORITY = NORMAL_PRIORITY;
+        public Builder priority(int val);
+        public static final int OLDEST_FIRST_ORDER = 1;
+        public static final int NEWEST_ONLY_ORDER = 2;
+        public static final int NEWEST_FIRST_ORDER = 3;
+
+        public static final int DEFAULT_ORDER = OLDEST_FIRST_ORDER;
+        public Builder priority(int val);
+        public static final int DEFAULT_WORTH = 100;
+        public Builder worth(int val);
+        public static final int DEFAULT_LIVENESS = 0;
+        public Builder liveness(int val);
+        public static final int DEFAULT_START = Calendar.NOW;
+        public Builder start(Calendar val); 
+        public static final int DEFAULT_SCOPE = -1;
+        public static final int DEFAULT_SCOPE = -1;
+        public Builder scope(int val);
+        public static final int UNLIMITED_THROTTLE = -1;
+
+        public static final int DEFAULT_THROTTLE = UNLIMITED_THROTTLE;
         public Builder throttle(int val);
          public Event[] getEvent(); 
          public Event[] cancel(); 
@@ -79,21 +82,19 @@ public interface IAmmoRequest {
       public String getName(String type); // used e.g. tigr
       public String getName(); // canonical name
    }
-   public interface Filter {
-      public Filter get();
-   }
    public interface Query {
-      public String[] getProjection();
-      public String getSelection();
-      public String[] getArgs();
-      public String[] getGroupBy();
-      public String[] getOrderBy();
+      public String selection();
+      public String[] args();
+
+      public Query selection(String val);
+      public Query args(String[] val);
    }
+   public interface Form public interface Map<String, String>;
    public interface Downsample {
       public int getMaxSize();
       public double getFraction();
    }
-   public enum Place { QUEUE , DISTRIBUTE, DELIVER, COMPLETE }
+   public enum Place { DISPATCHED , DISTRIBUTED, DELIVERED, COMPLETED }
    public enum Color { SUCCESS, FAIL,  UNKNOWN, REJECTED };
    public interface Event {
       public Place getPlace();
