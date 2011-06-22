@@ -13,7 +13,7 @@ public interface IAmmoRequest {
       public IAmmoRequest duplicate();
       public Builder reset();
       public IAmmoRequest post();
-      public IAmmoRequest directedPost(Recipient recipient);
+      public IAmmoRequest directedPost(Entity recipient);
       public IAmmoRequest publish();
       public IAmmoRequest subscribe();
       public IAmmoRequest retrieve();
@@ -38,7 +38,8 @@ public interface IAmmoRequest {
         public static final int ANY_RECIPIENT = null;
 
         public static final int DEFAULT_RECIPIENT = ANY_RECIPIENT;
-        public Builder recipient(Recipient val);
+        public Builder recipient(Entity val);
+        public Builder source(Entity val);
         public static final int BACKGROUND_PRIORITY = -1000;
         public static final int LOW_PRIORITY = -10;
         public static final int NORMAL_PRIORITY = 0;
@@ -76,7 +77,7 @@ public interface IAmmoRequest {
          public void resetMetrics(int val);
          public int getTotalMessages();
    }
-   public interface Recipient {
+   public interface Entity {
       public String getCallSign();
       public String[] getGroups();
       public String getName(String type); // used e.g. tigr
