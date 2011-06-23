@@ -17,19 +17,20 @@ public interface IAmmoRequest {
       public IAmmoRequest publish();
       public IAmmoRequest subscribe();
       public IAmmoRequest retrieve();
-      public IAmmoRequest interest();
       public IAmmoRequest replace(IAmmoRequest req);
       public IAmmoRequest replace(String uuid);
-      public IAmmoRequest recover(String uuid);
         public static final String DEFAULT_PROVIDER = null;
         public Builder provider(Uri val);
         public static final String DEFAULT_PAYLOAD = "";
         public Builder payload(String val);
+        public static final String DEFAULT_TYPE = "";
+        public Builder type(String val);
         public static final String DEFAULT_TOPIC = "";
         public Builder id(String val);
-        public static final Query DEFAULT_DOWNSAMPLE = 0;
-        public Builder downsample(Downsample val); 
-        public Builder downsample(char val); 
+        public static final int NO_DOWNSAMPLE = 0;
+
+        public static final int DEFAULT_DOWNSAMPLE = NO_DOWNSAMPLE;
+        public Builder downsample(int maxSize); 
         public static final final int VOLAILE_DURABILITY = 1;
         public static final final int PERSISTENT_DURABILITY = 2;
 
@@ -53,35 +54,34 @@ public interface IAmmoRequest {
         public static final int NEWEST_FIRST_ORDER = 3;
 
         public static final int DEFAULT_ORDER = OLDEST_FIRST_ORDER;
-        public Builder priority(int val);
-        public static final int DEFAULT_WORTH = 100;
-        public Builder worth(int val);
-        public static final int DEFAULT_LIVENESS = 0;
-        public Builder liveness(int val);
+        public Builder order(int val);
+        public Builder order(String[] val);
         public static final int DEFAULT_START = Calendar.NOW;
         public Builder start(Calendar val); 
-        public static final int DEFAULT_SCOPE = -1;
-        public static final int DEFAULT_SCOPE = -1;
+        public Builder start(Duration val); 
+        public static final int IMMEDIATE_SCOPE = 0;
+        public static final int LOCAL_SCOPE = 1;
+        public static final int GATEWAY_SCOPE = 2;
+        public static final int UNLIMITED_SCOPE = -1;
+
+        public static final int DEFAULT_SCOPE = UNLIMITED_SCOPE;
         public Builder scope(int val);
         public static final int UNLIMITED_THROTTLE = -1;
 
         public static final int DEFAULT_THROTTLE = UNLIMITED_THROTTLE;
         public Builder throttle(int val);
-         public Event[] getEvent(); 
+         public String uuid();  
          public Event[] cancel(); 
-         public Event[] expiration(Duration val);
-         public String getUuid(); // 
-         public void setMetricTimespan(int val);
-         public int getTransmissionRate();
-         public Calendar getLastMessage();
+         public void metricTimespan(int val);
+         public Calendar lastMessage();
          public void resetMetrics(int val);
-         public int getTotalMessages();
+         public Event[] eventSet(); 
    }
    public interface Entity {
-      public String getCallSign();
-      public String[] getGroups();
-      public String getName(String type); // used e.g. tigr
-      public String getName(); // canonical name
+      public String callSign();
+      public String[] groups();
+      public String tigr(); 
+      public String name(); // canonical name
    }
    public interface Query {
       public String selection();
@@ -91,26 +91,24 @@ public interface IAmmoRequest {
       public Query args(String[] val);
    }
    public interface Form public interface Map<String, String>;
-   public interface Downsample {
-      public int getMaxSize();
-      public double getFraction();
-   }
-   public enum Place { DISPATCHED , DISTRIBUTED, DELIVERED, COMPLETED }
-   public enum Color { SUCCESS, FAIL,  UNKNOWN, REJECTED };
+   public enum DeliveryProgress { DISPATCHED , DISTRIBUTED, DELIVERED, COMPLETED }
+   public enum DeliveryState { SUCCESS, FAIL,  UNKNOWN, REJECTED };
    public interface Event {
-      public Place getPlace();
-      public Event setPlace(Place val);
+      public DeliveryProgress progress();
+      public Event progress(DeliveryProgress val);
       
-      public Color getColor();
-      public Event setColor(Color val);
+      public DeliveryState state();
+      public Event state(DeliveryState val);
    }
    public interface Notice {
-      public Event getTarget();
-      public Event setTarget(Event val);
-      public Event getSource();
-      public Event setSource(Event val);
+      public Event target();
+      public Notice target(Event val);
+
+      public Event source();
+      public Notice source(Event val);
          
-      public boolean runAction();
-      public Object getAction();
+      public boolean act();
+      public Object action();
+      public Notice action(Object val);
    }
 }

@@ -10,13 +10,13 @@ public interface IAmmo {
   
 
   public interface NetworkInterface {
-     public NetworkInterfaceState getState();
+     public NetworkInterfaceState state();
 
      public Gateway setMetricTimespan(Duration span);
-     public int getLatency();
-     public int getThroughput();
+     public int latency();
+     public int throughput();
      
-     public Gateway[] getGateways();
+     public Gateway[] gatewaySet();
   }
 
 
@@ -31,9 +31,9 @@ public interface IAmmo {
    Radio Control
 
   public interface NetControl {
-     public NetworkInterface[] getNetworkLinks();
-     public Gateway[] getGateways();
-     public Identity getIdentity();
+     public NetworkInterface[] networkLinks();
+     public Gateway[] gateways();
+     public Identity identity();
   }
 }
 
