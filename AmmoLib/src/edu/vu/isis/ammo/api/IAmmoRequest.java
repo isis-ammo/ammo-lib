@@ -35,7 +35,7 @@ public interface IAmmoRequest {
 
         public static final int DEFAULT_DOWNSAMPLE = NO_DOWNSAMPLE;
         public Builder downsample(int maxSize); 
-        public static final final int VOLAILE_DURABILITY = 1;
+        public static final final int VOLATILE_DURABILITY = 1;
         public static final final int PERSISTENT_DURABILITY = 2;
 
         public static Duration DEFAULT_DURABILITY = PERSISTENT_DURABILITY;
@@ -102,7 +102,9 @@ public interface IAmmoRequest {
       public Query args(String[] val);
    }
    public interface Form public interface Map<String, String>;
-   public enum DeliveryProgress { DISPATCHED , DISTRIBUTED, DELIVERED, COMPLETED }
+   public enum DeliveryProgress { 
+      DISPATCHED, DISTRIBUTED, 
+      DELIVERED, COMPLETED };
    public enum DeliveryState { SUCCESS, FAIL,  UNKNOWN, REJECTED };
    public interface Event {
       public DeliveryProgress progress();
