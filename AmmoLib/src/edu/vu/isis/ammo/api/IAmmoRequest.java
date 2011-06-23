@@ -13,7 +13,7 @@ public interface IAmmoRequest {
       public IAmmoRequest duplicate();
       public Builder reset();
       public IAmmoRequest post();
-      public IAmmoRequest directedPost(Entity recipient);
+      public IAmmoRequest directedPost(Anon recipient);
       public IAmmoRequest publish();
       public IAmmoRequest subscribe();
       public IAmmoRequest retrieve();
@@ -22,11 +22,15 @@ public interface IAmmoRequest {
         public static final String DEFAULT_PROVIDER = null;
         public Builder provider(Uri val);
         public static final String DEFAULT_PAYLOAD = "";
+
         public Builder payload(String val);
+        public Builder payload(byte[] val);
+        public Builder payload(ContentValues val);
         public static final String DEFAULT_TYPE = "";
         public Builder type(String val);
-        public static final String DEFAULT_TOPIC = "";
-        public Builder id(String val);
+        public Builder type(Oid val);  // V:2.0
+        public static final String DEFAULT_UID = "";
+        public Builder uid(String val);
         public static final int NO_DOWNSAMPLE = 0;
 
         public static final int DEFAULT_DOWNSAMPLE = NO_DOWNSAMPLE;
@@ -36,11 +40,12 @@ public interface IAmmoRequest {
 
         public static Duration DEFAULT_DURABILITY = PERSISTENT_DURABILITY;
         public Builder durability(int val);
-        public static final int ANY_RECIPIENT = null;
+        public static final int ANY_ANON = null;
 
-        public static final int DEFAULT_RECIPIENT = ANY_RECIPIENT;
-        public Builder recipient(Entity val);
-        public Builder source(Entity val);
+        public static final int DEFAULT_RECIPIENT = ANY_ANON;
+        public static final int DEFAULT_ORIGINATOR = ANY_ANON;
+        public Builder recipient(Anon val);
+        public Builder originator(Anon val);
         public static final int BACKGROUND_PRIORITY = -1000;
         public static final int LOW_PRIORITY = -10;
         public static final int NORMAL_PRIORITY = 0;
@@ -77,12 +82,18 @@ public interface IAmmoRequest {
          public void resetMetrics(int val);
          public Event[] eventSet(); 
    }
-   public interface Entity {
+   public interface Anon {
+      public String name(); // canonical name
+   }
+
+   public interface Warfighter extends Anon {
       public String callSign();
       public String[] groups();
       public String tigr(); 
-      public String name(); // canonical name
    }
+
+   public interface Group extends Anon {}
+   public interface Server extends Anon {}
    public interface Query {
       public String selection();
       public String[] args();
