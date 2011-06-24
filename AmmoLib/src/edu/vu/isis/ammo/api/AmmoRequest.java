@@ -6,6 +6,6 @@ import android.content.Intent;
 
 abstract public class AmmoRequest implements IAmmoRequest {
   public abstract static class Builder implements IAmmoRequest.Builder {
-     static public Builder getInstance() { return null; }
+     static public Builder create() { return null; }
   }
 }

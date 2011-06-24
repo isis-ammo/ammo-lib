@@ -13,6 +13,7 @@ public interface IAmmoRequest {
       public IAmmoRequest duplicate();
       public Builder reset();
       public IAmmoRequest post();
+      public IAmmoRequest directedSubscribe(Anon originator);
       public IAmmoRequest directedPost(Anon recipient);
       public IAmmoRequest publish();
       public IAmmoRequest subscribe();
@@ -64,17 +65,16 @@ public interface IAmmoRequest {
         public static final int DEFAULT_START = Calendar.NOW;
         public Builder start(Calendar val); 
         public Builder start(Duration val); 
-        public static final int IMMEDIATE_SCOPE = 0;
-        public static final int LOCAL_SCOPE = 1;
-        public static final int GATEWAY_SCOPE = 2;
-        public static final int UNLIMITED_SCOPE = -1;
+        public enum DeliveryScope {
+           IMMEDIATE, LOCAL, GLOBAL, RECIPIENT };
 
-        public static final int DEFAULT_SCOPE = UNLIMITED_SCOPE;
-        public Builder scope(int val);
+        public static final DeliveryScope DEFAULT_SCOPE = DeliveryScope.GLOBAL;
+        public Builder scope(DeliveryScope val);
         public static final int UNLIMITED_THROTTLE = -1;
 
         public static final int DEFAULT_THROTTLE = UNLIMITED_THROTTLE;
         public Builder throttle(int val);
+         public static AmmoRequest getInstance(String uuid);  
          public String uuid();  
          public Event[] cancel(); 
          public void metricTimespan(int val);
