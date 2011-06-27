@@ -76,12 +76,12 @@ public interface IAmmoRequest {
 
         public static final int DEFAULT_THROTTLE = UNLIMITED_THROTTLE;
         public Builder throttle(int val);
-         public String uuid();  
-         public Event[] cancel(); 
-         public void metricTimespan(int val);
-         public Calendar lastMessage();
-         public void resetMetrics(int val);
-         public Event[] eventSet(); 
+      public String uuid();  
+      public Event[] cancel(); 
+      public void metricTimespan(int val);
+      public Calendar lastMessage();
+      public void resetMetrics(int val);
+      public Event[] eventSet(); 
    }
    public interface Anon {
       public String name(); // canonical name

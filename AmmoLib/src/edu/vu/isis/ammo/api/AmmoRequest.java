@@ -8,4 +8,5 @@ abstract public class AmmoRequest implements IAmmoRequest {
   public abstract static class Builder implements IAmmoRequest.Builder {
      static public Builder create() { return null; }
   }
+  public static AmmoRequest getInstance(String uuid) { return null; }  
 }

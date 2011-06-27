@@ -24,37 +24,17 @@ public interface IAmmo {
   
 
   public interface Gateway {
-     public GatewayState state();
-
-     public Gateway setMetricTimespan(Duration span);
-     
-     /**
-      * liveness in proportion of time up.
-      */
-     public float liveness();
-     /**
-      * when up how long does a message take in response 
-      * to a request in milliseconds
-      */
-     public int latency();
-     /**
-      * when up how many bits per second
-      */
-     public float throughput();
-     /**
-      * how many active gateway connections, load measure
-      */
-     public int activeConnectionCount();
-     
-     public NetworkInterface[] networkLinks();
-     public Calendar time();
-     
-     /**
-      * measures of efficient and effective use
-      * Compares the worth of the messages sent against the cost.
-      */
-     public float economy();
-     public float cost();
+    // no gateway controls
+    public GatewayState state();
+    public Gateway setMetricTimespan(Duration span);
+    public float liveness();
+    public int latency();
+    public float throughput();
+    public int activeConnectionCount();
+    public NetworkInterface[] networkLinks();
+    public Calendar time();
+    public float worth();
+    public float cost();
   }
   public enum GatewayState {
      DISCONNECTED     ("Disconnected"),
@@ -69,7 +49,6 @@ public interface IAmmo {
      }
      public String text()   { return this.text; }
   }
-     
 
   public enum NetworkInterfaceState {
      DISCONNECTED     ("Disconnected"),
@@ -88,10 +67,54 @@ public interface IAmmo {
      public String text()   { return this.text; }
   }
 
-  
-    
+  public interface Distributor {
+     public Distributor maxSize(long val);
+     public Distributor queueServiceOrder(int[] val);
+     public Distributor priorityQueueWeights(int[] val);
+     public Distributor typePriority(String type, int priority);
+     public int state(long val);
+     public int managedDataStore(int val);
+  }
+    public interface DistributorStore {
+       public Distributor remove(int rowid);
+       public Distributor priority(int rowid, int priority);
+       public Distributor queueOrder(int rowid, int order);
+       public int pendingItemCount();
+       public int pendingItemSize();
 
-  
+       public int minQueueSize();
+       public int maxQueueSize();
+       public int avgQueueSize();
+
+       public int minItemSize();
+       public int maxItemSize();
+       public int avgItemSize();
+
+       public int itemSubmitted();
+       public int itemDispatched();
+    }
+
+  public interface NetworkService {
+     public NetworkService linksToUse(String[] val);
+     // public NetworkService channelToLink(Pair<String,String>[] val);
+     public NetworkService distribution(int val);
+     public int state();
+     public int[] hasConnection();
+     public int[] activeLinks();
+     public int[] activeChannels();
+
+     public int sentCount();
+     public int receivedCount();
+
+     public int minSentThrough();
+     public int maxSentThrough();
+
+     public int minReceivedThrough();
+     public int maxReceivedThrough();
+
+     public int minLatency();
+     public int maxLatency();
+  }
   public interface NetworkInterface {
      public NetworkInterfaceState state();
 
@@ -101,8 +124,10 @@ public interface IAmmo {
      
      public Gateway[] gatewaySet();
   }
-
-    
+    public interface Channel {
+       
+       
+    }
 
    // Radio Control
 
