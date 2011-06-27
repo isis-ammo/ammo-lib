@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.xml.datatype.Duration;
 
+import android.content.Intent;
 import android.content.ContentValues;
 import android.net.Uri;
 
@@ -42,10 +43,10 @@ public interface IAmmoRequest {
 
         // public static Duration DEFAULT_DURABILITY = PERSISTENT_DURABILITY;
         public Builder durability(int val);
-        public static final int ANY_ANON = 0;
+        public static final Anon ANY_ANON = null;
 
-        public static final int DEFAULT_RECIPIENT = ANY_ANON;
-        public static final int DEFAULT_ORIGINATOR = ANY_ANON;
+        public static final Anon DEFAULT_RECIPIENT = ANY_ANON;
+        public static final Anon DEFAULT_ORIGINATOR = ANY_ANON;
         public Builder recipient(Anon val);
         public Builder originator(Anon val);
         public static final int BACKGROUND_PRIORITY = -1000;
@@ -75,7 +76,6 @@ public interface IAmmoRequest {
 
         public static final int DEFAULT_THROTTLE = UNLIMITED_THROTTLE;
         public Builder throttle(int val);
-         
          public String uuid();  
          public Event[] cancel(); 
          public void metricTimespan(int val);
@@ -83,7 +83,6 @@ public interface IAmmoRequest {
          public void resetMetrics(int val);
          public Event[] eventSet(); 
    }
-   
    public interface Anon {
       public String name(); // canonical name
    }
