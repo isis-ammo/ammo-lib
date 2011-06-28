@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.xml.datatype.Duration;
 
-import android.content.Intent;
 import android.content.ContentValues;
 import android.net.Uri;
 
