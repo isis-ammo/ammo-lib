@@ -10,12 +10,10 @@ import edu.vu.isis.ammo.core.provider.PreferenceSchema;
 public class AmmoPreference {
 	
 	private static AmmoPreference instance = null;
-	final private Context mContext;
 	final private ContentResolver mContentResolver;
 	final private boolean hasPermissionReadWrite;
 	
 	private AmmoPreference(Context context, ContentResolver contentResolver) {
-		mContext = context;
 		mContentResolver = contentResolver;
 		
 		if (context.getApplicationInfo().packageName.startsWith("edu.vu.isis.ammo.core")) {
@@ -30,20 +28,6 @@ public class AmmoPreference {
 			instance = new AmmoPreference(context, context.getContentResolver());
 		}
 		return instance;
-	}
-	
-	// Returns a string array where values are concatenated from each string element.
-	private String[] constructFredProtocolStringArray(String[] defVals, String[] methodTypes) {
-		if (defVals.length != methodTypes.length) {
-			return null;
-		}
-		
-		String[] result = new String[defVals.length];
-		for (int i=0; i<defVals.length; i++) {
-			result[i] = methodTypes[i] + ":" + defVals[i];
-		}
-		
-		return result;
 	}
 	
 	// =================================

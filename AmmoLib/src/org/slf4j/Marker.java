@@ -76,12 +76,6 @@ public interface Marker extends Serializable {
    * @return true if reference could be found and removed, false otherwise.
    */
   public boolean remove(Marker reference);
-
-  /**
-   * @deprecated Replaced by {@link #hasReferences()}.
-   */
-  @Deprecated
-public boolean hasChildren();
   
   /**
    * Does this marker have any references?

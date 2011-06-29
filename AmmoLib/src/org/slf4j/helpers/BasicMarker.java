@@ -81,11 +81,7 @@ public class BasicMarker implements Marker {
   public synchronized boolean hasReferences() {
     return ((refereceList != null) && (refereceList.size() > 0));
   }
-  
-  public boolean hasChildren() {
-    return hasReferences();
-  }
-
+ 
 @SuppressWarnings("unchecked")
 public synchronized Iterator<Marker> iterator() {
     if (refereceList != null) {

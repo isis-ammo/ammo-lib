@@ -1,6 +1,5 @@
 package edu.vu.isis.ammo.api;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,7 +12,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Parcel;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -22,9 +20,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import edu.vu.isis.ammo.core.provider.PreferenceSchema;
-import edu.vu.isis.ammo.core.provider.DistributorSchema.PostalTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.PublicationTableSchema;
-import edu.vu.isis.ammo.core.provider.DistributorSchema.RetrievalTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.SubscriptionTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchemaBase.PostalTableSchemaBase;
 import edu.vu.isis.ammo.core.provider.DistributorSchemaBase.PublicationTableSchemaBase;
@@ -55,7 +51,7 @@ public class AmmoDispatcher {
 	 * Once the item has been sent it is removed.
 	 */
 	// posting with explicit expiration and worth
-	static private File dir = new File(Environment.getExternalStorageDirectory(),"ammo_distributor_cache");
+	// static private File dir = new File(Environment.getExternalStorageDirectory(),"ammo_distributor_cache");
 	
 	// static final private String selectUri = "\""+RetrievalTableSchema.URI+"\" = '?'";
 	static final private String selectRetrievalUri = "\""+RetrievalTableSchemaBase.URI+"\" = ";
@@ -600,20 +596,18 @@ public class AmmoDispatcher {
 	}
 	
 	/**
-	 * Subscribe to a topic, a request for information to be placed into a content provider.
+	 * Publish a content provider to a topic.
 	 * This mechanism establishes a relationship between mime type and target uri.
-	 * However the uri is not sent to the gateway, rather the content uri of the 
-	 * subscriber::filtertable tuple is sent as the request_id.
-	 * Subsequently when a pull response is received the request_id is used to
-	 * look up the entry in the subscriber::filterTable which provides the target 
-	 * content provider uri.
 	 * 
 	 * @param uri of the the content provider to receive the tuples
 	 * @param mimeType the mime type of the tuples being requested, used for retrieval by the gateway
 	 * @param expiration how long does the subscription last?
-	 * @return was the subscriber content provider updated correctly.
+	 * @return was the published content provider updated correctly?
 	 */
-	private boolean publish(Uri uri, String mimeType, Calendar expiration) {
+	public boolean publish(Uri uri, String mimeType) {
+		return this.publish(uri, mimeType, (Calendar) null);
+	}
+	public boolean publish(Uri uri, String mimeType, Calendar expiration) {
 		if (expiration == null) {
 			expiration = Calendar.getInstance();
 			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
