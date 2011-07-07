@@ -254,6 +254,10 @@ public final class LoggerFactory {
     return getLogger(clazz.getSimpleName());
     // return getLogger(clazz.getName());
   }
+  
+  public static Logger getLogger(Class<?> clazz, String name) {
+	    return getLogger(clazz.getSimpleName()+"/"+name);
+  }
 
   /**
    * Return the {@link ILoggerFactory} instance in use.
