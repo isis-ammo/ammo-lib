@@ -266,6 +266,14 @@ public class AmmoDispatcher {
 		return true;
 	}
 	
+
+
+	public List<Map<String, String>> postal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 	/**
 	 * Get the status of items in the retrieval table.
 	 * @return
@@ -601,6 +609,13 @@ public class AmmoDispatcher {
 		return true;
 	}
 	
+	public List<Map<String, String>> subscription() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	
 	/**
 	 * Force the topic type rather than using the resolver to acquire it.
 	 * @param provider
@@ -708,5 +723,4 @@ public class AmmoDispatcher {
 		return true;
 	}
 
-	
 }
