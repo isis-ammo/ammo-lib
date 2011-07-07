@@ -267,13 +267,6 @@ public class AmmoDispatcher {
 	}
 	
 
-
-	public List<Map<String, String>> postal() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
 	/**
 	 * Get the status of items in the retrieval table.
 	 * @return
@@ -608,12 +601,6 @@ public class AmmoDispatcher {
 		}
 		return true;
 	}
-	
-	public List<Map<String, String>> subscription() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	
 	
 	/**
