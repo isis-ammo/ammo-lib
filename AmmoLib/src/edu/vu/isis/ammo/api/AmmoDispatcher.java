@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -266,6 +268,14 @@ public class AmmoDispatcher {
 		return true;
 	}
 	
+
+
+	public List<Map<String, String>> postal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 	/**
 	 * Pulling with explicit expiration, worth, and query.
 	 *  
@@ -330,7 +340,7 @@ public class AmmoDispatcher {
 	}
 	
 
-        public boolean pull(Uri uri, String mime, String query) {
+    public boolean pull(Uri uri, String mime, String query) {
 	    return this.pull(uri, mime, Calendar.HOUR, 1, 0.0, query);
 	}
 
@@ -428,6 +438,13 @@ public class AmmoDispatcher {
 	    }
 	    return true;
 	}
+	
+
+	public List<Map<String, String>> retrieval() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 	
 	
@@ -564,6 +581,13 @@ public class AmmoDispatcher {
 		return true;
 	}
 	
+	public List<Map<String, String>> subscription() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	
 	/**
 	 * Force the mime type rather than using the resolver to acquire it.
 	 * @param uri
@@ -650,6 +674,5 @@ public class AmmoDispatcher {
 		}
 		return true;
 	}
-	
-	
+
 }
