@@ -1,7 +1,7 @@
 // IAmmo.java
 package edu.vu.isis.ammo.api;
 
-import javax.xml.datatype.Duration;
+import edu.vu.isis.ammo.api.TimeInterval;
 import java.util.Calendar;
 
 public interface IAmmo {
@@ -26,7 +26,7 @@ public interface IAmmo {
   public interface Gateway {
     // no gateway controls
     public GatewayState state();
-    public Gateway setMetricTimespan(Duration span);
+    public Gateway setMetricTimespan(TimeInterval span);
     public float liveness();
     public int latency();
     public float throughput();
@@ -118,7 +118,7 @@ public interface IAmmo {
   public interface NetworkInterface {
      public NetworkInterfaceState state();
 
-     public Gateway setMetricTimespan(Duration span);
+     public Gateway setMetricTimespan(TimeInterval span);
      public int latency();
      public int throughput();
      
@@ -137,4 +137,3 @@ public interface IAmmo {
      public Identity identity();
   }
 }
-

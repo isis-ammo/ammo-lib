@@ -4,8 +4,9 @@ package edu.vu.isis.ammo.api;
 import java.util.Calendar;
 import java.util.Map;
 
-import javax.xml.datatype.Duration;
+import edu.vu.isis.ammo.api.TimeInterval;
 
+import android.content.Intent;
 import android.content.ContentValues;
 import android.net.Uri;
 
@@ -19,6 +20,7 @@ public interface IAmmoRequest {
       public IAmmoRequest publish();
       public IAmmoRequest subscribe();
       public IAmmoRequest retrieve();
+      public IAmmoRequest getInstance(String uuid);
       public IAmmoRequest replace(IAmmoRequest req);
       public IAmmoRequest replace(String uuid);
         public static final String DEFAULT_PROVIDER = null;
@@ -33,14 +35,15 @@ public interface IAmmoRequest {
         public Builder type(Oid val);  // V:2.0
         public static final String DEFAULT_UID = "";
         public Builder uid(String val);
-        public static final int NO_DOWNSAMPLE = 0;
+        public static final TimeInterval UNLIMITED_EXPIRATION = new TimeInterval(TimeInterval.UNLIMITED);
+        public static final TimeInterval DEFAULT_EXPIRATION = new TimeInterval(TimeInterval.Unit.HOUR);
 
-        public static final int DEFAULT_DOWNSAMPLE = NO_DOWNSAMPLE;
-        public Builder downsample(int maxSize); 
+        public Builder expiration(TimeInterval val);
+        public Builder expiration(Calendar val);
         public static final int VOLATILE_DURABILITY = 1;
         public static final int PERSISTENT_DURABILITY = 2;
 
-        // public static Duration DEFAULT_DURABILITY = PERSISTENT_DURABILITY;
+        // public static TimeInterval DEFAULT_DURABILITY = PERSISTENT_DURABILITY;
         public Builder durability(int val);
         public static final Anon ANY_ANON = null;
 
@@ -65,7 +68,7 @@ public interface IAmmoRequest {
         public Builder order(String[] val);
         public static final long DEFAULT_START = System.currentTimeMillis();
         public Builder start(Calendar val); 
-        public Builder start(Duration val); 
+        public Builder start(TimeInterval val); 
         public enum DeliveryScope {
            IMMEDIATE, LOCAL, GLOBAL, RECIPIENT };
 
@@ -75,6 +78,21 @@ public interface IAmmoRequest {
 
         public static final int DEFAULT_THROTTLE = UNLIMITED_THROTTLE;
         public Builder throttle(int val);
+        public static final String NO_FILTER = "";
+        public static final String DEFAULT_FILTER = NO_FILTER;
+
+        public Builder filter(String val); 
+        public static final int NO_DOWNSAMPLE = 0;
+        public static final int DEFAULT_DOWNSAMPLE = NO_DOWNSAMPLE;
+
+        public Builder downsample(int maxSize); 
+        public static String[] ALL_PROJECTION = null;
+        public static String[] DEFAULT_PROJECTION = ALL_PROJECTION;
+        public Builder projection(String[] val);
+        public static String[] DEFAULT_SELECTION = null;
+        public Builder selection(Query val);
+        public static Form DEFAULT_FORM = null;
+        public Builder selection(Form val); 
       public String uuid();  
       public Event[] cancel(); 
       public void metricTimespan(int val);
@@ -82,6 +100,10 @@ public interface IAmmoRequest {
       public void resetMetrics(int val);
       public Event[] eventSet(); 
    }
+   public enum Action {
+     POST, DIRECTED_POST, PUBLISH, RETRIEVE, SUBSCRIBE, DIRECTED_SUBSCRIBE
+   };
+
    public interface Anon {
       public String name(); // canonical name
    }
@@ -98,7 +120,6 @@ public interface IAmmoRequest {
       public String selection();
       public String[] args();
 
-      public Query selection(String val);
       public Query args(String[] val);
    }
    public interface Form extends Map<String, String> {}
