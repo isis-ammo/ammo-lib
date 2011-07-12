@@ -4,9 +4,6 @@ package edu.vu.isis.ammo.api;
 import java.util.Calendar;
 import java.util.Map;
 
-import edu.vu.isis.ammo.api.TimeInterval;
-
-import android.content.Intent;
 import android.content.ContentValues;
 import android.net.Uri;
 

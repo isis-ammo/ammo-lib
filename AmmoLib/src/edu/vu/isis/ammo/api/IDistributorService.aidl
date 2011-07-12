@@ -1,8 +1,15 @@
 package edu.vu.isis.ammo.api;
 
+import edu.vu.isis.ammo.api.AmmoRequest;
 
 interface IDistributorService 
 {
-   AmmoRequest request(String uuid);
-   String request(AmmoRequest request);
+   /**
+    makeRequest returns a unique identifier which may be used by
+    recoverRequest to get the request back
+    */
+   String makeRequest(in AmmoRequest request); 
+   AmmoRequest recoverRequest(in String uuid);
+   
+   
 }   
