@@ -11,18 +11,18 @@ import android.content.ContentValues;
 import android.net.Uri;
 
 public interface IAmmoRequest {
-   public interface Builder {
-      public IAmmoRequest duplicate();
-      public Builder reset();
-      public IAmmoRequest post();
-      public IAmmoRequest directedSubscribe(Anon originator);
-      public IAmmoRequest directedPost(Anon recipient);
-      public IAmmoRequest publish();
-      public IAmmoRequest subscribe();
-      public IAmmoRequest retrieve();
-      public IAmmoRequest getInstance(String uuid);
-      public IAmmoRequest replace(IAmmoRequest req);
-      public IAmmoRequest replace(String uuid);
+    public interface Builder {
+        public IAmmoRequest duplicate();
+        public Builder reset();
+        public IAmmoRequest post();
+        public IAmmoRequest directedSubscribe(Anon originator);
+        public IAmmoRequest directedPost(Anon recipient);
+        public IAmmoRequest publish();
+        public IAmmoRequest subscribe();
+        public IAmmoRequest retrieve();
+        public IAmmoRequest getInstance(String uuid);
+        public IAmmoRequest replace(IAmmoRequest req);
+        public IAmmoRequest replace(String uuid);
         public static final String DEFAULT_PROVIDER = null;
         public Builder provider(Uri val);
         public static final String DEFAULT_PAYLOAD = "";
@@ -67,10 +67,11 @@ public interface IAmmoRequest {
         public Builder order(int val);
         public Builder order(String[] val);
         public static final long DEFAULT_START = System.currentTimeMillis();
-        public Builder start(Calendar val); 
-        public Builder start(TimeInterval val); 
+        public Builder start(Calendar val);
+        public Builder start(TimeInterval val);
         public enum DeliveryScope {
-           IMMEDIATE, LOCAL, GLOBAL, RECIPIENT };
+            IMMEDIATE, LOCAL, GLOBAL, RECIPIENT
+        };
 
         public static final DeliveryScope DEFAULT_SCOPE = DeliveryScope.GLOBAL;
         public Builder scope(DeliveryScope val);
@@ -81,68 +82,69 @@ public interface IAmmoRequest {
         public static final String NO_FILTER = "";
         public static final String DEFAULT_FILTER = NO_FILTER;
 
-        public Builder filter(String val); 
+        public Builder filter(String val);
         public static final int NO_DOWNSAMPLE = 0;
         public static final int DEFAULT_DOWNSAMPLE = NO_DOWNSAMPLE;
 
-        public Builder downsample(int maxSize); 
+        public Builder downsample(int maxSize);
         public static String[] ALL_PROJECTION = null;
         public static String[] DEFAULT_PROJECTION = ALL_PROJECTION;
         public Builder projection(String[] val);
         public static String[] DEFAULT_SELECTION = null;
         public Builder selection(Query val);
         public static Form DEFAULT_FORM = null;
-        public Builder selection(Form val); 
-      public String uuid();  
-      public Event[] cancel(); 
-      public void metricTimespan(int val);
-      public Calendar lastMessage();
-      public void resetMetrics(int val);
-      public Event[] eventSet(); 
-   }
-   public enum Action {
-     POSTAL, DIRECTED_POSTAL, PUBLISH, RETRIEVAL, SUBSCRIBE, DIRECTED_SUBSCRIBE
-   };
+        public Builder selection(Form val);
+        public String uuid();
+        public Event[] cancel();
+        public void metricTimespan(int val);
+        public Calendar lastMessage();
+        public void resetMetrics(int val);
+        public Event[] eventSet();
+    }
+    public enum Action {
+        POSTAL, DIRECTED_POSTAL, PUBLISH, RETRIEVAL, SUBSCRIBE, DIRECTED_SUBSCRIBE
+    };
 
-   public interface Anon {
-      public String name(); // canonical name
-   }
+    public interface Anon {
+        public String name(); // canonical name
+    }
 
-   public interface Warfighter extends Anon {
-      public String callSign();
-      public String[] groups();
-      public String tigr(); 
-   }
+    public interface Warfighter extends Anon {
+        public String callSign();
+        public String[] groups();
+        public String tigr();
+    }
 
-   public interface Group extends Anon {}
-   public interface Server extends Anon {}
-   public interface Query {
-      public String selection();
-      public String[] args();
+    public interface Group extends Anon {}
+    public interface Server extends Anon {}
+    public interface Query {
+        public String selection();
+        public String[] args();
 
-      public Query args(String[] val);
-   }
-   public interface Form extends Map<String, String> {}
-   public enum DeliveryProgress { 
-      DISPATCHED, DISTRIBUTED, 
-      DELIVERED, COMPLETED };
-   public enum DeliveryState { SUCCESS, FAIL,  UNKNOWN, REJECTED };
-   public interface Event {
-      public DeliveryProgress progress();
-      public Event progress(DeliveryProgress val);
-      
-      public DeliveryState state();
-      public Event state(DeliveryState val);
-   }
-   public interface Notice {
-      public Event target();
-      public Notice target(Event val);
+        public Query args(String[] val);
+    }
+    public interface Form extends Map<String, String> {}
+    public enum DeliveryProgress {
+        DISPATCHED, DISTRIBUTED,
+        DELIVERED, COMPLETED
+    };
+    public enum DeliveryState { SUCCESS, FAIL,  UNKNOWN, REJECTED };
+    public interface Event {
+        public DeliveryProgress progress();
+        public Event progress(DeliveryProgress val);
 
-      public Event source();
-      public Notice source(Event val);
-         
-      public boolean act();
-      public Object action();
-      public Notice action(Object val);
-   }
+        public DeliveryState state();
+        public Event state(DeliveryState val);
+    }
+    public interface Notice {
+        public Event target();
+        public Notice target(Event val);
+
+        public Event source();
+        public Notice source(Event val);
+
+        public boolean act();
+        public Object action();
+        public Notice action(Object val);
+    }
 }

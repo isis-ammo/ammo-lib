@@ -11,146 +11,146 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link FileInputStream} which (optionally) deletes the underlying file when
  * the stream is closed.
- * 
+ *
  * @author phreed
  */
 public class TempFileInputStream extends FileInputStream {
 
-	private static final Logger logger = LoggerFactory.getLogger(TempFileInputStream.class);
+    private static final Logger logger = LoggerFactory.getLogger(TempFileInputStream.class);
 
-	/**
-	 * Underlying file object
-	 */
-	private File mFile;
+    /**
+     * Underlying file object
+     */
+    private File mFile;
 
-	/**
-	 * Indicates intention to delete on close.
-	 */
-	private final boolean mWillDeleteOnClose;
+    /**
+     * Indicates intention to delete on close.
+     */
+    private final boolean mWillDeleteOnClose;
 
-	/**
-	 * Was underlying file stream closed.
-	 * Indicates closed was called.
-	 */
-	private boolean mIsClosed;
+    /**
+     * Was underlying file stream closed.
+     * Indicates closed was called.
+     */
+    private boolean mIsClosed;
 
-	/**
-	 * Was underlying File object deleted.
-	 * Indicates closed was called and file was deleted successfully.
-	 */
-	private boolean mIsDeleted;
+    /**
+     * Was underlying File object deleted.
+     * Indicates closed was called and file was deleted successfully.
+     */
+    private boolean mIsDeleted;
 
-	/**
-	 * Creates a fileInputStream wrapped around the given file.
-	 * This file will be deleted when close.
-	 * 
-	 * @param file
-	 * 
-	 * @throws FileNotFoundException
-	 */
-	static public TempFileInputStream getInstance(File file) 
-	throws FileNotFoundException {
-		return new TempFileInputStream(file, true);
-	}
-	
-	static public TempFileInputStream getInstance(File file, final boolean aDeleteOnClose) 
-	throws FileNotFoundException {
-		return new TempFileInputStream(file, aDeleteOnClose);
-	}
+    /**
+     * Creates a fileInputStream wrapped around the given file.
+     * This file will be deleted when close.
+     *
+     * @param file
+     *
+     * @throws FileNotFoundException
+     */
+    static public TempFileInputStream getInstance(File file)
+    throws FileNotFoundException {
+        return new TempFileInputStream(file, true);
+    }
 
-	/**
-	 * Creates a fileInputStream wrapped around the given file.
-	 * 
-	 * @param file
-	 * @param mWillDeleteOnClose
-	 * 
-	 * @throws FileNotFoundException
-	 */
-	private TempFileInputStream(final File aFile, final boolean aDeleteOnClose) 
-	throws FileNotFoundException {
-		super(aFile);
-		this.mFile = aFile;
-		this.mWillDeleteOnClose = aDeleteOnClose;
-		this.mIsClosed = false;
-		this.mIsDeleted = false;
-	}
+    static public TempFileInputStream getInstance(File file, final boolean aDeleteOnClose)
+    throws FileNotFoundException {
+        return new TempFileInputStream(file, aDeleteOnClose);
+    }
 
-	/**
-	 * @return should the file should be deleted on close()?
-	 */
-	public final boolean willDeleteOnClose() {
-		return mWillDeleteOnClose;
-	}
+    /**
+     * Creates a fileInputStream wrapped around the given file.
+     *
+     * @param file
+     * @param mWillDeleteOnClose
+     *
+     * @throws FileNotFoundException
+     */
+    private TempFileInputStream(final File aFile, final boolean aDeleteOnClose)
+    throws FileNotFoundException {
+        super(aFile);
+        this.mFile = aFile;
+        this.mWillDeleteOnClose = aDeleteOnClose;
+        this.mIsClosed = false;
+        this.mIsDeleted = false;
+    }
 
-	/**
-	 * @return has file been deleted?
-	 */
-	public boolean mIsDeleted() {
-		return mIsDeleted;
-	}
+    /**
+     * @return should the file should be deleted on close()?
+     */
+    public final boolean willDeleteOnClose() {
+        return mWillDeleteOnClose;
+    }
 
-	/**
-	 * Closes the underlying FileInputStream. Normally also deletes the file.
-	 * 
-	 * @see java.io.FileInputStream#close()
-	 */
-	@Override
-	public void close() {
+    /**
+     * @return has file been deleted?
+     */
+    public boolean mIsDeleted() {
+        return mIsDeleted;
+    }
 
-		if (mIsClosed) {
-			logger.debug("already closed: " + this);
-			return;
-		}
+    /**
+     * Closes the underlying FileInputStream. Normally also deletes the file.
+     *
+     * @see java.io.FileInputStream#close()
+     */
+    @Override
+    public void close() {
 
-		logger.debug("closing: " + this);
-		mIsClosed = true;
+        if (mIsClosed) {
+            logger.debug("already closed: " + this);
+            return;
+        }
 
-		try {
-			super.close();
-			if (willDeleteOnClose()) {
-				mIsDeleted = mFile.delete();
-			}
-		} catch (IOException ex) {
-			logger.warn("Failed to close() stream: " + this, ex);
-		} catch (RuntimeException ex) {
-			logger.warn("Failed to delete(): " + mFile, ex);
-		}
+        logger.debug("closing: " + this);
+        mIsClosed = true;
 
-		logger.info(toString());
-		mFile = null;
-	}
+        try {
+            super.close();
+            if (willDeleteOnClose()) {
+                mIsDeleted = mFile.delete();
+            }
+        } catch (IOException ex) {
+            logger.warn("Failed to close() stream: " + this, ex);
+        } catch (RuntimeException ex) {
+            logger.warn("Failed to delete(): " + mFile, ex);
+        }
 
-	@Override
-	public String toString() {
+        logger.info(toString());
+        mFile = null;
+    }
 
-		String defaultStr = super.toString();
+    @Override
+    public String toString() {
 
-		try {
-			StringBuilder sb = new StringBuilder();
-			sb.append(defaultStr).append("File: ").append("name[")
-					.append(mFile).append("], ").append("size[")
-					.append(mFile == null ? 0L : mFile.length()).append("], ")
-					.append("delete?[")
-					.append(mWillDeleteOnClose ? "yes" : "no").append("], ")
-					.append("is closed?[").append(mIsClosed ? "yes" : "no")
-					.append("], ").append("is deleted?[")
-					.append(mIsDeleted ? "yes" : "no").append("]").append("");
-			return sb.toString();
-		} catch (RuntimeException ex) {
-			logger.info("could not make string", ex);
-			return defaultStr;
-		}
-	}
+        String defaultStr = super.toString();
 
-	// testing
-	public static void main(String[] args) throws IOException {
-		File file = File.createTempFile("temp_file", ".tmp");
-		FileInputStream fis = TempFileInputStream.getInstance(file);
+        try {
+            StringBuilder sb = new StringBuilder();
+            sb.append(defaultStr).append("File: ").append("name[")
+            .append(mFile).append("], ").append("size[")
+            .append(mFile == null ? 0L : mFile.length()).append("], ")
+            .append("delete?[")
+            .append(mWillDeleteOnClose ? "yes" : "no").append("], ")
+            .append("is closed?[").append(mIsClosed ? "yes" : "no")
+            .append("], ").append("is deleted?[")
+            .append(mIsDeleted ? "yes" : "no").append("]").append("");
+            return sb.toString();
+        } catch (RuntimeException ex) {
+            logger.info("could not make string", ex);
+            return defaultStr;
+        }
+    }
 
-		System.out.println("*** Before close: " + fis);
-		System.out.println("Temp file exists: " + file.exists());
-		fis.close();
-		System.out.println("*** After close: " + fis);
-		System.out.println("Temp file exists: " + file.exists());
-	}
+    // testing
+    public static void main(String[] args) throws IOException {
+        File file = File.createTempFile("temp_file", ".tmp");
+        FileInputStream fis = TempFileInputStream.getInstance(file);
+
+        System.out.println("*** Before close: " + fis);
+        System.out.println("Temp file exists: " + file.exists());
+        fis.close();
+        System.out.println("*** After close: " + fis);
+        System.out.println("Temp file exists: " + file.exists());
+    }
 }

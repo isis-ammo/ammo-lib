@@ -7,7 +7,7 @@ package edu.vu.isis.ammo;
  *
  */
 public interface IAmmoActivitySetup {
-	public void setViewReferences();
-	public void setViewAttributes();
-	public void setOnClickListeners();
+    public void setViewReferences();
+    public void setViewAttributes();
+    public void setOnClickListeners();
 }

@@ -67,18 +67,18 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 
         //final private AmmoDispatcher.IService service;
         private Builder() {
-             final ServiceConnection connection = new ServiceConnection() {
-                 @Override
-                 public void onServiceConnected(ComponentName clazz, IBinder service) {
-                     // AmmoDispatcher.this.service = AmmoDispatcher.IService.Stub.asInterface(service);
-                 }
+            final ServiceConnection connection = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName clazz, IBinder service) {
+                    // AmmoDispatcher.this.service = AmmoDispatcher.IService.Stub.asInterface(service);
+                }
 
-                 @Override
-                 public void onServiceDisconnected(ComponentName className) {
-                     logger.info("Service has unexpectedly disconnected");
-                     //AmmoDispatcher.this.service = null;
-                 }
-             };
+                @Override
+                public void onServiceDisconnected(ComponentName className) {
+                    logger.info("Service has unexpectedly disconnected");
+                    //AmmoDispatcher.this.service = null;
+                }
+            };
         }
 
         private Uri provider;
@@ -125,7 +125,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
         public IAmmoRequest publish() {
             return new AmmoRequest(IAmmoRequest.Action.PUBLISH, this);
         }
-        
+
         @Override
         public IAmmoRequest retrieve() {
             return new AmmoRequest(IAmmoRequest.Action.RETRIEVAL, this);
@@ -277,7 +277,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
             return null;
         }
 
-        
+
         @Override
         public Builder throttle(int val) {
             // TODO Auto-generated method stub
@@ -380,7 +380,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
     }
 
     public class Form extends HashMap<String, String> implements
-            IAmmoRequest.Form {
+        IAmmoRequest.Form {
         private static final long serialVersionUID = 4787609325728657052L;
 
         public Form() {
@@ -449,8 +449,8 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
     };
 
     private AmmoRequest(Parcel in) {
-        this.action = IAmmoRequest.Action.values()[in.readInt()];  
-        
+        this.action = IAmmoRequest.Action.values()[in.readInt()];
+
         this.provider = Uri.parse(in.readString());
 
         this.payload_str = in.readString();
@@ -477,8 +477,8 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
     /**
      * Describe the kinds of special objects contained in this Parcelable's
      * marshaled representation.
-     * 
-     * @return a bitmask indicating the set of special object types 
+     *
+     * @return a bitmask indicating the set of special object types
      *     marshaled by the Parcelable.
      */
     @Override

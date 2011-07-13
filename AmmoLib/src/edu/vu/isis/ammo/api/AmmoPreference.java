@@ -8,148 +8,148 @@ import edu.vu.isis.ammo.AmmoPreferenceReadOnlyAccess;
 import edu.vu.isis.ammo.core.provider.PreferenceSchema;
 
 public class AmmoPreference {
-	
-	private static AmmoPreference instance = null;
-	final private ContentResolver mContentResolver;
-	final private boolean hasPermissionReadWrite;
-	
-	private AmmoPreference(Context context, ContentResolver contentResolver) {
-		mContentResolver = contentResolver;
-		
-		if (context.getApplicationInfo().packageName.startsWith("edu.vu.isis.ammo.core")) {
-			hasPermissionReadWrite = true;
-		} else {
-			hasPermissionReadWrite = false;
-		}
-	}
-	
-	public static AmmoPreference getInstance(Context context) {
-		if (instance == null) {
-			instance = new AmmoPreference(context, context.getContentResolver());
-		}
-		return instance;
-	}
-	
-	// =================================
-	// Preference Setters/Getters
-	// =================================
-	/**
-	 * Preference key is stored in projection. 
-	 * Preference def value is stored in selectionArgs
-	 * Preference type is stored in selection.
-	 */
-	public String getString(String key, String defaultValue) {
-		String[] projection = {key};
-		String selection = PreferenceSchema.AMMO_PREF_TYPE_STRING;
-		String[] selectionArgs = {defaultValue};
-		String sortOrder = null;
 
-		Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection, 
-				selection, selectionArgs, sortOrder);
-		cur.moveToFirst();
-		String value = cur.getString(cur.getColumnIndex(key));
-		cur.close();
-		return value;
-	}
-	
-	// Cursors don't support boolean type. Cast as string until value retrieved
-	// and then cast back.
-	public boolean getBoolean(String key, boolean defaultValue) {
-		String[] projection = {key};
-		String selection = PreferenceSchema.AMMO_PREF_TYPE_BOOLEAN;
-		String[] selectionArgs = {String.valueOf(defaultValue)};
-		String sortOrder = null;
-		Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection, 
-				selection, selectionArgs, sortOrder);
-		cur.moveToFirst();
-		boolean value = Boolean.valueOf(cur.getString(cur.getColumnIndex(key)));
-		cur.close();
-		return value;
-	}
-	
-	public long getLong(String key, long defaultValue) {
-		String[] projection = {key};
-		String selection = PreferenceSchema.AMMO_PREF_TYPE_LONG;
-		String[] selectionArgs = {String.valueOf(defaultValue)};
-		Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection, 
-				selection, selectionArgs, null);
-		cur.moveToFirst();
-		long value = cur.getLong(cur.getColumnIndex(key));
-		cur.close();
-		return value;
-	}
-	
-	public float getFloat(String key, float defaultValue) {
-		String[] projection = {key};
-		String selection = PreferenceSchema.AMMO_PREF_TYPE_FLOAT;
-		String[] selectionArgs = {String.valueOf(defaultValue)};
-		Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection, 
-				selection, selectionArgs, null);
-		cur.moveToFirst();
-		float value = cur.getFloat(cur.getColumnIndex(key));
-		cur.close();
-		return value;
-	}
-	
-	public int getInt(String key, int defaultValue) {
-		String[] projection = {key};
-		String selection = PreferenceSchema.AMMO_PREF_TYPE_INT;
-		String[] selectionArgs = {String.valueOf(defaultValue)};
-		Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection, 
-				selection, selectionArgs, null);
-		cur.moveToFirst();
-		int value = cur.getInt(cur.getColumnIndex(key));
-		cur.close();
-		return value;
-	}
-	
-	public void putString(String key, String value) throws AmmoPreferenceReadOnlyAccess {
-		if (!hasPermissionReadWrite) {
-			throw new AmmoPreferenceReadOnlyAccess();
-		}
-		ContentValues vals = new ContentValues();
-		vals.put(key, value);
-		String[] selectionArgs = {key};
-		mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_STRING, selectionArgs);
-	}
-	
-	public void putBoolean(String key, boolean value) throws AmmoPreferenceReadOnlyAccess {
-		if (!hasPermissionReadWrite) {
-			throw new AmmoPreferenceReadOnlyAccess();
-		}
-		ContentValues vals = new ContentValues();
-		vals.put(key, value);
-		String[] selectionArgs = {key};
-		mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_BOOLEAN, selectionArgs);
-	}
-	
-	public void putInt(String key, int value) throws AmmoPreferenceReadOnlyAccess {
-		if (!hasPermissionReadWrite) {
-			throw new AmmoPreferenceReadOnlyAccess();
-		}
-		ContentValues vals = new ContentValues();
-		vals.put(key, value);
-		String[] selectionArgs = {key};
-		mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_INT, selectionArgs);
-	}
-	
-	public void putLong(String key, long value) throws AmmoPreferenceReadOnlyAccess {
-		if (!hasPermissionReadWrite) {
-			throw new AmmoPreferenceReadOnlyAccess();
-		}
-		ContentValues vals = new ContentValues();
-		vals.put(key, value);
-		String[] selectionArgs = {key};
-		mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_LONG, selectionArgs);
-	}
-	
-	public void putFloat(String key, float value) throws AmmoPreferenceReadOnlyAccess {
-		if (!hasPermissionReadWrite) {
-			throw new AmmoPreferenceReadOnlyAccess();
-		}
-		ContentValues vals = new ContentValues();
-		vals.put(key, value);
-		String[] selectionArgs = {key};
-		mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_FLOAT, selectionArgs);
-	}
+    private static AmmoPreference instance = null;
+    final private ContentResolver mContentResolver;
+    final private boolean hasPermissionReadWrite;
+
+    private AmmoPreference(Context context, ContentResolver contentResolver) {
+        mContentResolver = contentResolver;
+
+        if (context.getApplicationInfo().packageName.startsWith("edu.vu.isis.ammo.core")) {
+            hasPermissionReadWrite = true;
+        } else {
+            hasPermissionReadWrite = false;
+        }
+    }
+
+    public static AmmoPreference getInstance(Context context) {
+        if (instance == null) {
+            instance = new AmmoPreference(context, context.getContentResolver());
+        }
+        return instance;
+    }
+
+    // =================================
+    // Preference Setters/Getters
+    // =================================
+    /**
+     * Preference key is stored in projection.
+     * Preference def value is stored in selectionArgs
+     * Preference type is stored in selection.
+     */
+    public String getString(String key, String defaultValue) {
+        String[] projection = {key};
+        String selection = PreferenceSchema.AMMO_PREF_TYPE_STRING;
+        String[] selectionArgs = {defaultValue};
+        String sortOrder = null;
+
+        Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection,
+                                            selection, selectionArgs, sortOrder);
+        cur.moveToFirst();
+        String value = cur.getString(cur.getColumnIndex(key));
+        cur.close();
+        return value;
+    }
+
+    // Cursors don't support boolean type. Cast as string until value retrieved
+    // and then cast back.
+    public boolean getBoolean(String key, boolean defaultValue) {
+        String[] projection = {key};
+        String selection = PreferenceSchema.AMMO_PREF_TYPE_BOOLEAN;
+        String[] selectionArgs = {String.valueOf(defaultValue)};
+        String sortOrder = null;
+        Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection,
+                                            selection, selectionArgs, sortOrder);
+        cur.moveToFirst();
+        boolean value = Boolean.valueOf(cur.getString(cur.getColumnIndex(key)));
+        cur.close();
+        return value;
+    }
+
+    public long getLong(String key, long defaultValue) {
+        String[] projection = {key};
+        String selection = PreferenceSchema.AMMO_PREF_TYPE_LONG;
+        String[] selectionArgs = {String.valueOf(defaultValue)};
+        Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection,
+                                            selection, selectionArgs, null);
+        cur.moveToFirst();
+        long value = cur.getLong(cur.getColumnIndex(key));
+        cur.close();
+        return value;
+    }
+
+    public float getFloat(String key, float defaultValue) {
+        String[] projection = {key};
+        String selection = PreferenceSchema.AMMO_PREF_TYPE_FLOAT;
+        String[] selectionArgs = {String.valueOf(defaultValue)};
+        Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection,
+                                            selection, selectionArgs, null);
+        cur.moveToFirst();
+        float value = cur.getFloat(cur.getColumnIndex(key));
+        cur.close();
+        return value;
+    }
+
+    public int getInt(String key, int defaultValue) {
+        String[] projection = {key};
+        String selection = PreferenceSchema.AMMO_PREF_TYPE_INT;
+        String[] selectionArgs = {String.valueOf(defaultValue)};
+        Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection,
+                                            selection, selectionArgs, null);
+        cur.moveToFirst();
+        int value = cur.getInt(cur.getColumnIndex(key));
+        cur.close();
+        return value;
+    }
+
+    public void putString(String key, String value) throws AmmoPreferenceReadOnlyAccess {
+        if (!hasPermissionReadWrite) {
+            throw new AmmoPreferenceReadOnlyAccess();
+        }
+        ContentValues vals = new ContentValues();
+        vals.put(key, value);
+        String[] selectionArgs = {key};
+        mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_STRING, selectionArgs);
+    }
+
+    public void putBoolean(String key, boolean value) throws AmmoPreferenceReadOnlyAccess {
+        if (!hasPermissionReadWrite) {
+            throw new AmmoPreferenceReadOnlyAccess();
+        }
+        ContentValues vals = new ContentValues();
+        vals.put(key, value);
+        String[] selectionArgs = {key};
+        mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_BOOLEAN, selectionArgs);
+    }
+
+    public void putInt(String key, int value) throws AmmoPreferenceReadOnlyAccess {
+        if (!hasPermissionReadWrite) {
+            throw new AmmoPreferenceReadOnlyAccess();
+        }
+        ContentValues vals = new ContentValues();
+        vals.put(key, value);
+        String[] selectionArgs = {key};
+        mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_INT, selectionArgs);
+    }
+
+    public void putLong(String key, long value) throws AmmoPreferenceReadOnlyAccess {
+        if (!hasPermissionReadWrite) {
+            throw new AmmoPreferenceReadOnlyAccess();
+        }
+        ContentValues vals = new ContentValues();
+        vals.put(key, value);
+        String[] selectionArgs = {key};
+        mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_LONG, selectionArgs);
+    }
+
+    public void putFloat(String key, float value) throws AmmoPreferenceReadOnlyAccess {
+        if (!hasPermissionReadWrite) {
+            throw new AmmoPreferenceReadOnlyAccess();
+        }
+        ContentValues vals = new ContentValues();
+        vals.put(key, value);
+        String[] selectionArgs = {key};
+        mContentResolver.update(PreferenceSchema.CONTENT_URI, vals, PreferenceSchema.AMMO_PREF_TYPE_FLOAT, selectionArgs);
+    }
 }

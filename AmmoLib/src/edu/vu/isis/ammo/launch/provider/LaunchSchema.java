@@ -5,79 +5,97 @@ import android.net.Uri;
 
 public class LaunchSchema extends LaunchSchemaBase {
 
-   public static final int DATABASE_VERSION = 1;
-   
-   public static final class StructuredName {
-	   public static final String CONTENT_ITEM_TYPE = "vnd.android.item/vnd.edu.isis.ammo.STRUCTURED_NAME";
-	   public static final String DISPLAY_NAME = DataTableSchemaBase.DATA_KEY;
-       public static final String FIRST_NAME = DataTableSchemaBase.DATA_2;
-       public static final String MIDDLE_NAME = DataTableSchemaBase.DATA_3;
-       public static final String LAST_NAME = DataTableSchemaBase.DATA_4;
-   }
-   
-   public static final class Telephone {
-	   public static final String CONTENT_ITEM_TYPE = "vnd.android.item/vnd.edu.isis.ammo.TELEPHONE";
-	   public static final String NUMBER = DataTableSchemaBase.DATA_KEY;
-   }
-   
-   public static final class Email {
-	   public static final String CONTENT_ITEM_TYPE = "vnd.android.item/vnd.edu.isis.ammo.E_MAIL";
-	   public static final String ADDRESS = DataTableSchemaBase.DATA_KEY;
-   }
-   
-   public static final class Callsign {
-	   public static final String CONTENT_ITEM_TYPE = "vnd.android.item/vnd.edu.isis.ammo.CALL_SIGN";
-	   public static final String NAME = DataTableSchemaBase.DATA_KEY;
-   }
-   
-   public static final Uri CONTENT_LDAP_URI = Uri.parse("content://"+AUTHORITY+"/ldap");
+    public static final int DATABASE_VERSION = 1;
 
-      public static class ContactTableSchema extends ContactTableSchemaBase {
+    public static final class StructuredName {
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.item/vnd.edu.isis.ammo.STRUCTURED_NAME";
+        public static final String DISPLAY_NAME = DataTableSchemaBase.DATA_KEY;
+        public static final String FIRST_NAME = DataTableSchemaBase.DATA_2;
+        public static final String MIDDLE_NAME = DataTableSchemaBase.DATA_3;
+        public static final String LAST_NAME = DataTableSchemaBase.DATA_4;
+    }
 
-         protected ContactTableSchema() { super(); }
-      }
+    public static final class Telephone {
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.item/vnd.edu.isis.ammo.TELEPHONE";
+        public static final String NUMBER = DataTableSchemaBase.DATA_KEY;
+    }
 
-      public static class RawContactTableSchema extends RawContactTableSchemaBase {
+    public static final class Email {
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.item/vnd.edu.isis.ammo.E_MAIL";
+        public static final String ADDRESS = DataTableSchemaBase.DATA_KEY;
+    }
 
-         protected RawContactTableSchema() { super(); }
-      }
+    public static final class Callsign {
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.item/vnd.edu.isis.ammo.CALL_SIGN";
+        public static final String NAME = DataTableSchemaBase.DATA_KEY;
+    }
 
-      public static class DataTableSchema extends DataTableSchemaBase {
+    public static final Uri CONTENT_LDAP_URI = Uri.parse("content://"+AUTHORITY+"/ldap");
 
-         protected DataTableSchema() { super(); }
-      }
+    public static class ContactTableSchema extends ContactTableSchemaBase {
 
-      public static class DataExtraTableSchema extends DataExtraTableSchemaBase {
+        protected ContactTableSchema() {
+            super();
+        }
+    }
 
-         protected DataExtraTableSchema() { super(); }
-      }
+    public static class RawContactTableSchema extends RawContactTableSchemaBase {
 
-      public static class GroupMembershipTableSchema extends GroupMembershipTableSchemaBase {
+        protected RawContactTableSchema() {
+            super();
+        }
+    }
 
-         protected GroupMembershipTableSchema() { super(); }
-      }
+    public static class DataTableSchema extends DataTableSchemaBase {
 
-      public static class MimeTypeTableSchema extends MimeTypeTableSchemaBase {
+        protected DataTableSchema() {
+            super();
+        }
+    }
 
-         protected MimeTypeTableSchema() { super(); }
-      }
+    public static class DataExtraTableSchema extends DataExtraTableSchemaBase {
 
-      public static class MimeFieldTableSchema extends MimeFieldTableSchemaBase {
+        protected DataExtraTableSchema() {
+            super();
+        }
+    }
 
-         protected MimeFieldTableSchema() { super(); }
-      }
+    public static class GroupMembershipTableSchema extends GroupMembershipTableSchemaBase {
 
-      public static class ActionTableSchema extends ActionTableSchemaBase {
+        protected GroupMembershipTableSchema() {
+            super();
+        }
+    }
 
-         protected ActionTableSchema() { super(); }
-      }
+    public static class MimeTypeTableSchema extends MimeTypeTableSchemaBase {
 
-      public static class ActionExtraTableSchema extends ActionExtraTableSchemaBase {
+        protected MimeTypeTableSchema() {
+            super();
+        }
+    }
 
-         protected ActionExtraTableSchema() { super(); }
-      }
-      
-      public static final String View_Ldap = "lookup_key";
+    public static class MimeFieldTableSchema extends MimeFieldTableSchemaBase {
 
-      
+        protected MimeFieldTableSchema() {
+            super();
+        }
+    }
+
+    public static class ActionTableSchema extends ActionTableSchemaBase {
+
+        protected ActionTableSchema() {
+            super();
+        }
+    }
+
+    public static class ActionExtraTableSchema extends ActionExtraTableSchemaBase {
+
+        protected ActionExtraTableSchema() {
+            super();
+        }
+    }
+
+    public static final String View_Ldap = "lookup_key";
+
+
 }
