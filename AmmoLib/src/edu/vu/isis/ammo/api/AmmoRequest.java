@@ -3,34 +3,26 @@ package edu.vu.isis.ammo.api;
 import java.util.Calendar;
 import java.util.HashMap;
 
-import javax.xml.datatype.Duration;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import android.content.ComponentName;
 import android.content.ContentValues;
-import android.content.ServiceConnection;
 import android.net.Uri;
-import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
 import edu.vu.isis.ammo.api.IAmmoRequest.Builder.DeliveryScope;
-import edu.vu.isis.ammo.core.provider.PreferenceSchema;
 
 /**
- * see https://ammo.isis.vanderbilt.edu/redmine/boards/2/topics/3
+ * see docs/dev-guide/developer-guide.pdf
  */
-public class AmmoRequest implements IAmmoRequest, Parcelable {
+public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcelable {
     private static final Logger logger = LoggerFactory.getLogger(AmmoRequest.class);
 
-    public interface IService {
-        String Stub = null;
-    }
-
-    String selection = PreferenceSchema.AMMO_PREF_TYPE_STRING;
-
+    // **********************
+    // PUBLIC PROPERTIES
+    // **********************
     final public IAmmoRequest.Action action;
+    final public String uuid;
 
     final public Uri provider;
     final public String payload_str;
@@ -39,7 +31,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 
     final public String type_str;
     final public Oid type_oid;
-    final public String uuid;
+    
     final public int downsample;
     final public int durability;
 
@@ -49,15 +41,30 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
     final public int priority;
     final public int order;
     final public Calendar start_abs;
-    final public Duration start_rel;
+    final public TimeInterval start_rel;
     final public DeliveryScope scope;
     final public int throttle;
 
-    // final private AmmoRequest.IService service;
+    @Override
+    public IAmmoRequest replace(IAmmoRequest req) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IAmmoRequest replace(String uuid) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     public static Builder createBuilder() {
         return new AmmoRequest.Builder();
     }
+    
+	@Override
+	public String uuid() {
+		return this.uuid;
+	}
 
     /**
      * The builder makes requests to the Distributor via AIDL methods.
@@ -67,28 +74,21 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 
         //final private AmmoDispatcher.IService service;
         private Builder() {
-            final ServiceConnection connection = new ServiceConnection() {
-                @Override
-                public void onServiceConnected(ComponentName clazz, IBinder service) {
-                    // AmmoDispatcher.this.service = AmmoDispatcher.IService.Stub.asInterface(service);
-                }
-
-                @Override
-                public void onServiceDisconnected(ComponentName className) {
-                    logger.info("Service has unexpectedly disconnected");
-                    //AmmoDispatcher.this.service = null;
-                }
-            };
         }
 
         private Uri provider;
+        
+        public enum PayloadType { NONE, STR, BYTE, CV };
+        private PayloadType payload_type;
         private String payload_str;
         private byte[] payload_byte;
         private ContentValues payload_cv;
 
+        public enum DataType { STR, OID };
+        private DataType data_type;
         private String type_str;
         private Oid type_oid;
-        private String uuid;
+        
         private int downsample;
         private int durability;
 
@@ -96,11 +96,28 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
         private Anon originator;
 
         private int priority;
-        private int order;
+        private int[] order;
+        
+        public enum StartType { ABS, REL };
+        private StartType start_type;
         private Calendar start_abs;
-        private Duration start_rel;
+        private TimeInterval start_rel;
+        
+        public enum ExpirationType { ABS, REL };
+        private ExpirationType expiration_type;
+        private Calendar expiration_abs;
+        private TimeInterval expiration_rel;
+        
         private DeliveryScope scope;
         private int throttle;
+        
+        private String[] projection;
+        
+        public enum SelectType { QUERY, FORM };
+        private SelectType select_type;
+        private IAmmoRequest.Query select_query;
+        private IAmmoRequest.Form select_form;
+		private String uid;
 
         // ***************
         // ACTIONS
@@ -135,34 +152,41 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
             return new AmmoRequest(IAmmoRequest.Action.SUBSCRIBE, this);
         }
 
-
-        // **************
-        // SET PROPERTIES
-        // **************
-        @Override
-        public Builder downsample(int maxSize) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Event[] cancel() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
         @Override
         public IAmmoRequest duplicate() {
             // TODO Auto-generated method stub
             return null;
         }
-
         @Override
-        public Builder durability(int val) {
+        public Event[] cancel() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+        
+        @Override
+        public IAmmoRequest getInstance(String uuid) {
             // TODO Auto-generated method stub
             return null;
         }
 
+
+        // **************
+        // CONTROL
+        // **************
+        @Override
+        public void metricTimespan(int val) {
+            // TODO Auto-generated method stub
+
+        }
+        
+        @Override
+        public void resetMetrics(int val) {
+            // TODO Auto-generated method stub
+        }
+
+        // **************
+        // STATISTICS
+        // **************
         @Override
         public Event[] eventSet() {
             // TODO Auto-generated method stub
@@ -174,180 +198,174 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
             // TODO Auto-generated method stub
             return null;
         }
+        
 
+
+        // **************
+        // SET PROPERTIES
+        // **************
         @Override
-        public void metricTimespan(int val) {
-            // TODO Auto-generated method stub
-
+        public Builder downsample(int maxSize) {
+            this.downsample = maxSize;
+            return this;
         }
 
         @Override
+        public Builder durability(int val) {
+        	this.durability = val;
+            return this;
+        }
+
+
+        @Override
         public Builder order(int val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.order[0] = val;
+            return this;
         }
 
         @Override
         public Builder order(String[] val) {
-            // TODO Auto-generated method stub
-            return null;
+        	// TODO this.order = val;
+            return this;
         }
 
         @Override
         public Builder originator(Anon val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.originator = val;
+            return this;
         }
 
         @Override
         public Builder payload(String val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.payload_type = PayloadType.STR;
+        	this.payload_str = val;
+            return this;
         }
 
         @Override
         public Builder payload(byte[] val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.payload_type = PayloadType.BYTE;
+        	this.payload_byte = val;
+            return this;
         }
 
         @Override
         public Builder payload(ContentValues val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.payload_type = PayloadType.CV;
+        	this.payload_cv = val;
+            return this;
         }
 
         @Override
         public Builder priority(int val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.priority = val;
+            return this;
         }
 
         @Override
         public Builder provider(Uri val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.provider = val;
+            return this;
         }
 
         @Override
         public Builder recipient(Anon val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.recipient = val;
+            return this;
         }
 
-        @Override
-        public IAmmoRequest replace(IAmmoRequest req) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public IAmmoRequest replace(String uuid) {
-            // TODO Auto-generated method stub
-            return null;
-        }
 
         @Override
         public Builder reset() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public void resetMetrics(int val) {
-            // TODO Auto-generated method stub
-
+            
+            return this;
         }
 
         @Override
         public Builder scope(DeliveryScope val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.scope = val;
+            return this;
         }
 
         @Override
         public Builder start(Calendar val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.start_type = StartType.ABS;
+        	this.start_abs = val;
+            return this;
         }
 
         @Override
         public Builder start(TimeInterval val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.start_type = StartType.REL;
+        	this.start_rel = val;
+            return this;
         }
 
 
         @Override
         public Builder throttle(int val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.throttle = val;
+            return this;
         }
 
         @Override
         public Builder type(String val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.data_type = DataType.STR;
+        	this.type_str = val;
+            return this;
         }
 
         @Override
         public Builder type(Oid val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.data_type = DataType.OID;
+        	this.type_oid = val;
+            return this;
         }
 
         @Override
         public Builder uid(String val) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public String uuid() {
-            // TODO Auto-generated method stub
-            return null;
+        	this.uid = val;
+            return this;
         }
 
         @Override
         public Builder expiration(TimeInterval val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.expiration_type = ExpirationType.REL;
+        	this.expiration_rel = val;
+            return this;
         }
 
         @Override
         public Builder expiration(Calendar val) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public IAmmoRequest getInstance(String uuid) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.expiration_type = ExpirationType.ABS;
+        	this.expiration_abs = val;
+            return this;
         }
 
         @Override
         public Builder projection(String[] val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.projection = val;
+            return this;
         }
 
         @Override
         public Builder selection(IAmmoRequest.Query val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.select_type = SelectType.QUERY;
+        	this.select_query = val;
+            return this;
         }
 
         @Override
         public Builder selection(IAmmoRequest.Form val) {
-            // TODO Auto-generated method stub
-            return null;
+        	this.select_type = SelectType.FORM;
+        	this.select_form = val;
+            return this;
         }
 
         @Override
         public Builder filter(String val) {
-            // TODO Auto-generated method stub
-            return null;
+        	// TODO this.filter = val;
+            return this;
         }
 
     }
@@ -415,7 +433,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 
         this.type_str = builder.type_str;
         this.type_oid = builder.type_oid;
-        this.uuid = builder.uuid();
+        
         this.downsample = builder.downsample;
         this.durability = builder.durability;
 
@@ -423,11 +441,17 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
         this.originator = builder.originator;
 
         this.priority = builder.priority;
-        this.order = builder.order;
+        this.order = 0; // TODO builder.order;
         this.start_abs = builder.start_abs;
         this.start_rel = builder.start_rel;
         this.scope = builder.scope;
         this.throttle = builder.throttle;
+        
+        this.uuid = generateUuid();
+    }
+    
+    private String generateUuid() {
+    	return "a uuid";
     }
 
     // ****************************

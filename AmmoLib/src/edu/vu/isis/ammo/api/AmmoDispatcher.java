@@ -114,6 +114,9 @@ public class AmmoDispatcher  {
         return post(provider,topicType,expiration,worth,null);
     }
 
+    public boolean post(Uri provider) {
+        return post(provider,this.resolver.getType(provider),null,Double.NaN,null);
+    }
     public boolean post(Uri provider, String topicType) {
         return post(provider,topicType,null,Double.NaN,null);
     }

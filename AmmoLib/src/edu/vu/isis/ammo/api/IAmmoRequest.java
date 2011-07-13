@@ -11,6 +11,12 @@ import android.content.ContentValues;
 import android.net.Uri;
 
 public interface IAmmoRequest {
+
+	public String uuid();
+	
+    public IAmmoRequest replace(IAmmoRequest req);
+    public IAmmoRequest replace(String uuid);
+    
     public interface Builder {
         public IAmmoRequest duplicate();
         public Builder reset();
@@ -20,9 +26,6 @@ public interface IAmmoRequest {
         public IAmmoRequest publish();
         public IAmmoRequest subscribe();
         public IAmmoRequest retrieve();
-        public IAmmoRequest getInstance(String uuid);
-        public IAmmoRequest replace(IAmmoRequest req);
-        public IAmmoRequest replace(String uuid);
         public static final String DEFAULT_PROVIDER = null;
         public Builder provider(Uri val);
         public static final String DEFAULT_PAYLOAD = "";
@@ -94,7 +97,7 @@ public interface IAmmoRequest {
         public Builder selection(Query val);
         public static Form DEFAULT_FORM = null;
         public Builder selection(Form val);
-        public String uuid();
+        
         public Event[] cancel();
         public void metricTimespan(int val);
         public Calendar lastMessage();
