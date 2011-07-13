@@ -60,11 +60,50 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
     public static Builder createBuilder() {
         return new AmmoRequest.Builder();
     }
+  
+
+
+    // **************
+    // CONTROL
+    // **************
+    @Override
+    public void metricTimespan(int val) {
+        // TODO Auto-generated method stub
+
+    }
+    
+    @Override
+    public void resetMetrics(int val) {
+        // TODO Auto-generated method stub
+    }
     
 	@Override
 	public String uuid() {
 		return this.uuid;
 	}
+	
+	@Override
+	public Event[] cancel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+    // **************
+    // STATISTICS
+    // **************
+    @Override
+    public Event[] eventSet() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Calendar lastMessage() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+
 
     /**
      * The builder makes requests to the Distributor via AIDL methods.
@@ -157,48 +196,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
             // TODO Auto-generated method stub
             return null;
         }
-        @Override
-        public Event[] cancel() {
-            // TODO Auto-generated method stub
-            return null;
-        }
         
         @Override
         public IAmmoRequest getInstance(String uuid) {
             // TODO Auto-generated method stub
             return null;
         }
-
-
-        // **************
-        // CONTROL
-        // **************
-        @Override
-        public void metricTimespan(int val) {
-            // TODO Auto-generated method stub
-
-        }
-        
-        @Override
-        public void resetMetrics(int val) {
-            // TODO Auto-generated method stub
-        }
-
-        // **************
-        // STATISTICS
-        // **************
-        @Override
-        public Event[] eventSet() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Calendar lastMessage() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-        
 
 
         // **************
@@ -533,5 +536,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         // dest.writeInt(this.scope = in.readInt();
         dest.writeInt(this.throttle);
     }
+
 
 }

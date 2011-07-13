@@ -418,11 +418,11 @@ public class AmmoDispatcher  {
         return null;
     }
 
-    /*
+    
     public boolean unsubscribe(Uri provider) {
       IAmmoRequest ar = this.ab
          .provider(provider)
-         .get(IAmmoRequest.Action.SUBSCRIBE);
+         .subscribe();
       ar.cancel();
       return ar != null;
     }
@@ -431,11 +431,10 @@ public class AmmoDispatcher  {
       IAmmoRequest ar = this.ab
          .type(topicType)
          .provider(provider)
-         .get(IAmmoRequest.Action.SUBSCRIBE);
+         .subscribe();
       ar.cancel();
       return ar != null;
     }
-    */
 
     /**
        * Publish a content provider to a topicType.
