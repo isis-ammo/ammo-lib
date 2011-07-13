@@ -30,28 +30,28 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 
     String selection = PreferenceSchema.AMMO_PREF_TYPE_STRING;
 
-    final private IAmmoRequest.Action action;
+    final public IAmmoRequest.Action action;
 
-    final private Uri provider;
-    final private String payload_str;
-    final private byte[] payload_byte;
-    final private ContentValues payload_cv;
+    final public Uri provider;
+    final public String payload_str;
+    final public byte[] payload_byte;
+    final public ContentValues payload_cv;
 
-    final private String type_str;
-    final private Oid type_oid;
-    final private String uuid;
-    final private int downsample;
-    final private int durability;
+    final public String type_str;
+    final public Oid type_oid;
+    final public String uuid;
+    final public int downsample;
+    final public int durability;
 
-    final private Anon recipient;
-    final private Anon originator;
+    final public Anon recipient;
+    final public Anon originator;
 
-    final private int priority;
-    final private int order;
-    final private Calendar start_abs;
-    final private Duration start_rel;
-    final private DeliveryScope scope;
-    final private int throttle;
+    final public int priority;
+    final public int order;
+    final public Calendar start_abs;
+    final public Duration start_rel;
+    final public DeliveryScope scope;
+    final public int throttle;
 
     // final private AmmoRequest.IService service;
 
@@ -108,7 +108,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 
         @Override
         public IAmmoRequest directedPost(Anon recipient) {
-            return new AmmoRequest(IAmmoRequest.Action.DIRECTED_POST, this);
+            return new AmmoRequest(IAmmoRequest.Action.DIRECTED_POSTAL, this);
         }
 
         @Override
@@ -118,7 +118,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 
         @Override
         public IAmmoRequest post() {
-            return new AmmoRequest(IAmmoRequest.Action.POST, this);
+            return new AmmoRequest(IAmmoRequest.Action.POSTAL, this);
         }
 
         @Override
@@ -128,7 +128,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
         
         @Override
         public IAmmoRequest retrieve() {
-            return new AmmoRequest(IAmmoRequest.Action.RETRIEVE, this);
+            return new AmmoRequest(IAmmoRequest.Action.RETRIEVAL, this);
         }
         @Override
         public IAmmoRequest subscribe() {

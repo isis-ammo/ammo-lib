@@ -4,6 +4,9 @@ package edu.vu.isis.ammo.api;
 import java.util.Calendar;
 import java.util.Map;
 
+import edu.vu.isis.ammo.api.TimeInterval;
+
+import android.content.Intent;
 import android.content.ContentValues;
 import android.net.Uri;
 
@@ -98,7 +101,7 @@ public interface IAmmoRequest {
       public Event[] eventSet(); 
    }
    public enum Action {
-     POST, DIRECTED_POST, PUBLISH, RETRIEVE, SUBSCRIBE, DIRECTED_SUBSCRIBE
+     POSTAL, DIRECTED_POSTAL, PUBLISH, RETRIEVAL, SUBSCRIBE, DIRECTED_SUBSCRIBE
    };
 
    public interface Anon {

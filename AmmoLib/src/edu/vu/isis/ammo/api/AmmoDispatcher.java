@@ -25,10 +25,12 @@ public class AmmoDispatcher  {
    final private AmmoRequest.Builder ab;
    final private ContentResolver resolver;
    
-   public AmmoDispatcher(Context context) {
-      
+   private AmmoDispatcher(Context context) {
        this.ab = AmmoRequest.createBuilder(); 
        this.resolver = context.getContentResolver();
+   }
+   public static AmmoDispatcher getInstance(Context context) {
+	   return new AmmoDispatcher(context);
    }
     
     
