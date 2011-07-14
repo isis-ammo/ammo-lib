@@ -2,7 +2,7 @@
 package edu.vu.isis.ammo.api;
 
 import edu.vu.isis.ammo.api.TimeInterval;
-import java.util.Calendar;
+import edu.vu.isis.ammo.api.TimeStamp;
 
 public interface IAmmo {
   public interface Identity {
@@ -32,7 +32,7 @@ public interface IAmmo {
     public float throughput();
     public int activeConnectionCount();
     public NetworkInterface[] networkLinks();
-    public Calendar time();
+    public TimeStamp time();
     public float worth();
     public float cost();
   }

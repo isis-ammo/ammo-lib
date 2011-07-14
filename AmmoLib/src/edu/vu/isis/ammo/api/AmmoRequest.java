@@ -1,6 +1,5 @@
 package edu.vu.isis.ammo.api;
 
-import java.util.Calendar;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
@@ -11,6 +10,7 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import edu.vu.isis.ammo.api.IAmmoRequest.Builder.DeliveryScope;
+
 
 /**
  * see docs/dev-guide/developer-guide.pdf
@@ -25,12 +25,15 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
     final public String uuid;
 
     final public Uri provider;
+    
+    private Builder.PayloadType payload_type;
     final public String payload_str;
     final public byte[] payload_byte;
     final public ContentValues payload_cv;
 
-    final public String type_str;
-    final public Oid type_oid;
+    private Builder.TopicEncoding topic_type;
+    final public String topic_str;
+    final public Oid topic_oid;
     
     final public int downsample;
     final public int durability;
@@ -40,11 +43,133 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
     final public int priority;
     final public int order;
-    final public Calendar start_abs;
+    
+    final public Builder.StartType start_type;
+    final public TimeStamp start_abs;
     final public TimeInterval start_rel;
+    
+    private Builder.ExpireType expire_type;
+    private TimeStamp expire_abs;
+    private TimeInterval expire_rel;
+    
     final public DeliveryScope scope;
     final public int throttle;
+    
+    final public String[] project;
+    
+    final public Builder.SelectType select_type;
+    final public IAmmoRequest.Query select_query;
+    final public IAmmoRequest.Form select_form;
+    
 
+    private AmmoRequest(IAmmoRequest.Action action, Builder builder) {
+        this.action = action;
+
+        this.provider = builder.provider;
+        
+        this.payload_type = builder.payload_type;
+        switch (this.payload_type) {
+        case CV:
+            this.payload_str = null;
+            this.payload_byte = null;
+            this.payload_cv = builder.payload_cv;
+            break;
+        case BYTE:
+            this.payload_str = null;
+            this.payload_byte = builder.payload_byte;
+            this.payload_cv = null;
+            break;
+        case STR:
+            this.payload_str = builder.payload_str;
+            this.payload_byte = null;
+            this.payload_cv = null;
+            break;
+        default:
+            this.payload_str = null;
+            this.payload_byte = null;
+            this.payload_cv = null;
+        }
+
+        this.topic_type = builder.topic_enc;
+        switch (this.topic_type) {
+        case STR:
+            this.topic_str = builder.topic_str;
+            this.topic_oid = null;
+            break;
+        case OID:
+            this.topic_str = null;
+            this.topic_oid = builder.topic_oid;
+            break;
+        default:
+            this.topic_str = null;
+            this.topic_oid = null;
+        }
+        
+        this.downsample = builder.downsample;
+        this.durability = builder.durability;
+
+        this.recipient = builder.recipient;
+        this.originator = builder.originator;
+
+        this.priority = builder.priority;
+        this.order = 0; // TODO builder.order;
+        
+        this.start_type = builder.start_type;
+        switch (this.start_type) {
+        case ABS:
+            this.start_abs = builder.start_abs;
+            this.start_rel = null;
+            break;
+        case REL:
+            this.start_abs = null;
+            this.start_rel = builder.start_rel;
+            break;
+        default:
+            this.start_rel = null;
+            this.start_abs = null;
+        }
+        
+        this.expire_type = builder.expire_type;
+        switch (this.expire_type) {
+        case ABS:
+            this.expire_abs = builder.expire_abs;
+            this.expire_rel = null;
+            break;
+        case REL:
+            this.expire_abs = null;
+            this.expire_rel = builder.expire_rel;
+            break;
+        default:
+            this.expire_abs = null;
+            this.expire_rel = null;
+        }
+        
+        this.scope = builder.scope;
+        this.throttle = builder.throttle;
+        
+        this.project = builder.project;
+        
+        this.select_type = builder.select_type;
+        switch (this.select_type) {
+        case QUERY:
+            this.select_query = builder.select_query;
+            this.select_form = null;
+            break;
+        case FORM:
+            this.select_query = null;
+            this.select_form = builder.select_form;
+            break;
+        default:
+            this.select_query = null;
+            this.select_form = null;
+        }
+        
+        this.uuid = generateUuid();
+    }
+    
+    private String generateUuid() {
+        return "a uuid";
+    }
     @Override
     public IAmmoRequest replace(IAmmoRequest req) {
         // TODO Auto-generated method stub
@@ -58,7 +183,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
     }
 
     public static Builder createBuilder() {
-        return new AmmoRequest.Builder();
+        return new AmmoRequest.Builder().reset();
     }
   
 
@@ -77,16 +202,16 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         // TODO Auto-generated method stub
     }
     
-	@Override
-	public String uuid() {
-		return this.uuid;
-	}
-	
-	@Override
-	public Event[] cancel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String uuid() {
+        return this.uuid;
+    }
+    
+    @Override
+    public Event[] cancel() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     // **************
     // STATISTICS
@@ -98,7 +223,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
     }
 
     @Override
-    public Calendar lastMessage() {
+    public TimeStamp lastMessage() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -111,22 +236,19 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
      */
     public static class Builder implements IAmmoRequest.Builder {
 
-        //final private AmmoDispatcher.IService service;
         private Builder() {
         }
 
         private Uri provider;
         
-        public enum PayloadType { NONE, STR, BYTE, CV };
         private PayloadType payload_type;
         private String payload_str;
         private byte[] payload_byte;
         private ContentValues payload_cv;
 
-        public enum DataType { STR, OID };
-        private DataType data_type;
-        private String type_str;
-        private Oid type_oid;
+        private TopicEncoding topic_enc;
+        private String topic_str;
+        private Oid topic_oid;
         
         private int downsample;
         private int durability;
@@ -137,38 +259,36 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         private int priority;
         private int[] order;
         
-        public enum StartType { ABS, REL };
         private StartType start_type;
-        private Calendar start_abs;
+        private TimeStamp start_abs;
         private TimeInterval start_rel;
         
-        public enum ExpirationType { ABS, REL };
-        private ExpirationType expiration_type;
-        private Calendar expiration_abs;
-        private TimeInterval expiration_rel;
+        private ExpireType expire_type;
+        private TimeStamp expire_abs;
+        private TimeInterval expire_rel;
         
         private DeliveryScope scope;
         private int throttle;
         
-        private String[] projection;
+        private String[] project;
         
-        public enum SelectType { QUERY, FORM };
         private SelectType select_type;
         private IAmmoRequest.Query select_query;
         private IAmmoRequest.Form select_form;
-		private String uid;
+        
+        private String uid;
 
         // ***************
         // ACTIONS
         // ***************
 
         @Override
-        public IAmmoRequest directedPost(Anon recipient) {
+        public IAmmoRequest directedPost(IAmmoRequest.Anon recipient) {
             return new AmmoRequest(IAmmoRequest.Action.DIRECTED_POSTAL, this);
         }
 
         @Override
-        public IAmmoRequest directedSubscribe(Anon originator) {
+        public IAmmoRequest directedSubscribe(IAmmoRequest.Anon originator) {
             return new AmmoRequest(IAmmoRequest.Action.DIRECTED_SUBSCRIBE, this);
         }
 
@@ -208,6 +328,28 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         // SET PROPERTIES
         // **************
         @Override
+        public Builder reset() {
+            this.downsample(DEFAULT_DOWNSAMPLE);
+            this.durability(DEFAULT_DURABILITY);
+            this.order(DEFAULT_ORDER);
+            this.originator(DEFAULT_ORIGINATOR);
+            this.payload(DEFAULT_PAYLOAD);
+            this.priority(DEFAULT_PRIORITY);
+            this.provider(DEFAULT_PROVIDER);
+            this.recipient(DEFAULT_RECIPIENT);
+            this.scope(DEFAULT_SCOPE);
+            this.start(DEFAULT_START);
+            this.throttle(DEFAULT_THROTTLE);
+            this.topic(DEFAULT_TOPIC);
+            this.uid(DEFAULT_UID);
+            this.expire(DEFAULT_EXPIRE);
+            this.project(DEFAULT_PROJECT);
+            this.select(DEFAULT_SELECT);
+            this.filter(DEFAULT_FILTER);
+            return this;
+        }
+        
+        @Override
         public Builder downsample(int maxSize) {
             this.downsample = maxSize;
             return this;
@@ -215,180 +357,192 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
         @Override
         public Builder durability(int val) {
-        	this.durability = val;
+            this.durability = val;
             return this;
         }
 
 
         @Override
         public Builder order(int val) {
-        	this.order[0] = val;
+            this.order[0] = val;
             return this;
         }
 
         @Override
         public Builder order(String[] val) {
-        	// TODO this.order = val;
+            // TODO this.order = val;
             return this;
         }
 
         @Override
-        public Builder originator(Anon val) {
-        	this.originator = val;
+        public Builder originator(IAmmoRequest.Anon val) {
+            this.originator = (Anon) val;
             return this;
         }
 
         @Override
         public Builder payload(String val) {
-        	this.payload_type = PayloadType.STR;
-        	this.payload_str = val;
+            this.payload_type = PayloadType.STR;
+            this.payload_str = val;
             return this;
         }
 
         @Override
         public Builder payload(byte[] val) {
-        	this.payload_type = PayloadType.BYTE;
-        	this.payload_byte = val;
+            this.payload_type = PayloadType.BYTE;
+            this.payload_byte = val;
             return this;
         }
 
         @Override
         public Builder payload(ContentValues val) {
-        	this.payload_type = PayloadType.CV;
-        	this.payload_cv = val;
+            this.payload_type = PayloadType.CV;
+            this.payload_cv = val;
             return this;
         }
 
         @Override
         public Builder priority(int val) {
-        	this.priority = val;
+            this.priority = val;
             return this;
         }
 
         @Override
         public Builder provider(Uri val) {
-        	this.provider = val;
+            this.provider = val;
             return this;
         }
 
         @Override
-        public Builder recipient(Anon val) {
-        	this.recipient = val;
-            return this;
-        }
-
-
-        @Override
-        public Builder reset() {
-            
+        public Builder recipient(IAmmoRequest.Anon val) {
+            this.recipient = (Anon) val;
             return this;
         }
 
         @Override
         public Builder scope(DeliveryScope val) {
-        	this.scope = val;
+            this.scope = val;
             return this;
         }
 
         @Override
-        public Builder start(Calendar val) {
-        	this.start_type = StartType.ABS;
-        	this.start_abs = val;
+        public Builder start(TimeStamp val) {
+            this.start_type = StartType.ABS;
+            this.start_abs = val;
             return this;
         }
 
         @Override
         public Builder start(TimeInterval val) {
-        	this.start_type = StartType.REL;
-        	this.start_rel = val;
+            this.start_type = StartType.REL;
+            this.start_rel = val;
             return this;
         }
 
 
         @Override
         public Builder throttle(int val) {
-        	this.throttle = val;
+            this.throttle = val;
             return this;
         }
 
         @Override
-        public Builder type(String val) {
-        	this.data_type = DataType.STR;
-        	this.type_str = val;
+        public Builder topic(String val) {
+            this.topic_enc = TopicEncoding.STR;
+            this.topic_str = val;
             return this;
         }
 
         @Override
-        public Builder type(Oid val) {
-        	this.data_type = DataType.OID;
-        	this.type_oid = val;
+        public Builder topic(Oid val) {
+            this.topic_enc = TopicEncoding.OID;
+            this.topic_oid = val;
             return this;
         }
 
         @Override
         public Builder uid(String val) {
-        	this.uid = val;
+            this.uid = val;
             return this;
         }
 
         @Override
-        public Builder expiration(TimeInterval val) {
-        	this.expiration_type = ExpirationType.REL;
-        	this.expiration_rel = val;
+        public Builder expire(TimeInterval val) {
+            this.expire_type = ExpireType.REL;
+            this.expire_rel = val;
             return this;
         }
 
         @Override
-        public Builder expiration(Calendar val) {
-        	this.expiration_type = ExpirationType.ABS;
-        	this.expiration_abs = val;
+        public Builder expire(TimeStamp val) {
+            this.expire_type = ExpireType.ABS;
+            this.expire_abs = val;
             return this;
         }
 
         @Override
-        public Builder projection(String[] val) {
-        	this.projection = val;
+        public Builder project(String[] val) {
+            this.project = val;
             return this;
         }
 
         @Override
-        public Builder selection(IAmmoRequest.Query val) {
-        	this.select_type = SelectType.QUERY;
-        	this.select_query = val;
+        public Builder select(IAmmoRequest.Query val) {
+            this.select_type = SelectType.QUERY;
+            this.select_query = val;
             return this;
         }
 
         @Override
-        public Builder selection(IAmmoRequest.Form val) {
-        	this.select_type = SelectType.FORM;
-        	this.select_form = val;
+        public Builder select(IAmmoRequest.Form val) {
+            this.select_type = SelectType.FORM;
+            this.select_form = val;
             return this;
         }
 
         @Override
         public Builder filter(String val) {
-        	// TODO this.filter = val;
+            // TODO this.filter = val;
             return this;
         }
 
+
     }
 
-    public static class Query implements IAmmoRequest.Query {
-        final private String selection;
+    // *********************************
+    // Parcelable Support
+    // *********************************
+
+    public static final Parcelable.Creator<Query> QUERY_CREATOR = 
+    	new Parcelable.Creator<Query>() {
+
+        @Override
+        public Query createFromParcel(Parcel source) {
+            return new Query(source);
+        }
+
+        @Override
+        public Query[] newArray(int size) {
+            return new Query[size];
+        }
+
+    };
+    public static class Query implements IAmmoRequest.Query, Parcelable {
+        final private String select;
         final private String[] args;
 
-        public Query(String selection, String[] args) {
-            this.selection = selection;
+        public Query(String select, String[] args) {
+            this.select = select;
             this.args = args;
         }
 
-        public Query(String selection) {
-            this.selection = selection;
+        public Query(String select) {
+            this.select = select;
             this.args = null;
         }
 
-        public String selection() {
-            return this.selection;
+        public String select() {
+            return this.select;
         }
 
         public String[] args() {
@@ -396,72 +550,124 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         }
 
         public Query args(String[] args) {
-            return new Query(this.selection, args);
+            return new Query(this.select, args);
         }
+        
+        // Parcelable Support
+        
+	    private Query(Parcel in) {
+	    	this.select = in.readString();
+	    	this.args = in.createStringArray();
+	    }
+	    
+		@Override
+		public int describeContents() {
+			return 0;
+		}
+
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			dest.writeString(this.select);
+			dest.writeStringArray(this.args);
+		}
     }
 
-    public class Form extends HashMap<String, String> implements
-        IAmmoRequest.Form {
+    public static final Parcelable.Creator<Form> FORM_CREATOR = 
+    	new Parcelable.Creator<Form>() {
+
+        @Override
+        public Form createFromParcel(Parcel source) {
+            return new Form(source);
+        }
+
+        @Override
+        public Form[] newArray(int size) {
+            return new Form[size];
+        }
+
+    };
+    public static class Form extends HashMap<String, String> 
+    implements IAmmoRequest.Form, Parcelable {
         private static final long serialVersionUID = 4787609325728657052L;
 
         public Form() {
             super();
         }
-    }
+        
+        // Parcelable Support
+        
+	    private Form(Parcel in) {
+	        // in.readMap(this, loader)
+	    }
+	    
+		@Override
+		public int describeContents() {
+			return 0;
+		}
 
-    /**
-     * Access mode for the file. May be "r" for read-only access, "w" for
-     * write-only access (erasing whatever data is currently in the file), "wa"
-     * for write-only access to append to any existing data, "rw" for read and
-     * write access on any existing data, and "rwt" for read and write access
-     * that truncates any existing file.
-     */
-    private final static long MAXIMUM_FIELD_SIZE = 9046;
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			dest.writeMap(this);
+		}
+    }
+    
+    public static final Parcelable.Creator<Anon> ANON_CREATOR = 
+    	new Parcelable.Creator<Anon>() {
+
+        @Override
+        public Anon createFromParcel(Parcel source) {
+            return new Anon(source);
+        }
+
+        @Override
+        public Anon[] newArray(int size) {
+            return new Anon[size];
+        }
+
+    };
+    public static class Anon implements IAmmoRequest.Anon, Parcelable {
+
+		@Override
+		public String name() {
+			return null;
+		}
+
+	    // *********************************
+	    // Parcelable Support
+	    // *********************************
+
+	    private Anon(Parcel in) {
+	    	// TODO Auto-generated method stub
+	    }
+	    
+		@Override
+		public int describeContents() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			// TODO Auto-generated method stub
+			
+		}
+    }
 
     /**
      * Posting information which is not persistent on the mobile device. Once
      * the item has been sent it is removed.
      */
-    // posting with explicit expiration and worth
+    // posting with explicit expire and worth
     // static private File dir = new
     // File(Environment.getExternalStorageDirectory(),"ammo_distributor_cache");
 
-    private AmmoRequest(IAmmoRequest.Action action, Builder builder) {
-        this.action = action;
-
-        this.provider = builder.provider;
-        this.payload_str = builder.payload_str;
-        this.payload_byte = builder.payload_byte;
-        this.payload_cv = builder.payload_cv;
-
-        this.type_str = builder.type_str;
-        this.type_oid = builder.type_oid;
-        
-        this.downsample = builder.downsample;
-        this.durability = builder.durability;
-
-        this.recipient = builder.recipient;
-        this.originator = builder.originator;
-
-        this.priority = builder.priority;
-        this.order = 0; // TODO builder.order;
-        this.start_abs = builder.start_abs;
-        this.start_rel = builder.start_rel;
-        this.scope = builder.scope;
-        this.throttle = builder.throttle;
-        
-        this.uuid = generateUuid();
-    }
-    
-    private String generateUuid() {
-    	return "a uuid";
-    }
 
     // ****************************
     // Parcelable Support
     // ****************************
 
-    public static final Parcelable.Creator<AmmoRequest> CREATOR = new Parcelable.Creator<AmmoRequest>() {
+    public static final Parcelable.Creator<AmmoRequest> CREATOR = 
+    	new Parcelable.Creator<AmmoRequest>() {
 
         @Override
         public AmmoRequest createFromParcel(Parcel source) {
@@ -475,30 +681,110 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
     };
 
+    // De-Serialize or Un-Marshall
     private AmmoRequest(Parcel in) {
+        this.uuid = in.readString();
+        
         this.action = IAmmoRequest.Action.values()[in.readInt()];
 
         this.provider = Uri.parse(in.readString());
+        
+        this.payload_type = Builder.PayloadType.values()[in.readInt()];
+        switch (this.payload_type) {
+        case CV:
+            this.payload_str = null;
+            this.payload_byte = null;
+            this.payload_cv = ContentValues.CREATOR.createFromParcel(in);
+            break;
+        case BYTE:
+            this.payload_str = null;
+            this.payload_byte = in.createByteArray();
+            this.payload_cv = null;
+            break;
+        case STR:
+            this.payload_str = in.readString();
+            this.payload_byte = null;
+            this.payload_cv = null;
+            break;
+        default:
+            this.payload_str = null;
+            this.payload_byte = null;
+            this.payload_cv = null;
+        }
 
-        this.payload_str = in.readString();
-        this.payload_byte = null; // in.readString();
-        this.payload_cv = null; // in.readString();
-
-        this.type_str = in.readString();
-        this.type_oid = null; // in.readString();
-        this.uuid = in.readString();
+        this.topic_type = Builder.TopicEncoding.values()[in.readInt()];
+        switch (this.topic_type) {
+        case STR:
+            this.topic_str = in.readString();
+            this.topic_oid = null;
+            break;
+        case OID:
+            this.topic_str = null;
+            this.topic_oid = Oid.CREATOR.createFromParcel(in);
+            break;
+        default:
+            this.topic_str = null;
+            this.topic_oid = null;
+        }
+        
         this.downsample = in.readInt();
         this.durability = in.readInt();
 
-        this.recipient = null; // in.readString();
-        this.originator = null; // in.readString();
+        this.recipient = ANON_CREATOR.createFromParcel(in);
+        this.originator = ANON_CREATOR.createFromParcel(in);
 
         this.priority = in.readInt();
         this.order = in.readInt();
-        this.start_abs = null; // in.readInt();
-        this.start_rel = null; // in.readInt();
-        this.scope = null; // in.readInt();
+       
+        this.start_type = Builder.StartType.values()[in.readInt()];
+        switch (this.start_type) {
+        case ABS:
+            this.start_abs = TimeStamp.CREATOR.createFromParcel(in);
+            this.start_rel = null;
+            break;
+        case REL:
+            this.start_abs = null;
+            this.start_rel = TimeInterval.CREATOR.createFromParcel(in);
+            break;
+        default:
+            this.start_rel = null;
+            this.start_abs = null;
+        }
+
+        this.expire_type = Builder.ExpireType.values()[in.readInt()];
+        switch (this.expire_type) {
+        case ABS:
+            this.expire_abs = TimeStamp.CREATOR.createFromParcel(in);
+            this.expire_rel = null;
+            break;
+        case REL:
+            this.expire_abs = null;
+            this.expire_rel = TimeInterval.CREATOR.createFromParcel(in);
+            break;
+        default:
+            this.expire_abs = null;
+            this.expire_rel = null;
+        }
+        
+        this.scope = Builder.DeliveryScope.values()[in.readInt()];
         this.throttle = in.readInt();
+        
+        this.project = in.createStringArray();
+        
+        this.select_type = Builder.SelectType.values()[in.readInt()];
+        switch (this.select_type) {
+        case QUERY:
+            this.select_query = QUERY_CREATOR.createFromParcel(in);
+            this.select_form = null;
+            break;
+        case FORM:
+            this.select_query = null;
+            this.select_form = FORM_CREATOR.createFromParcel(in);
+            break;
+        default:
+            this.select_query = null;
+            this.select_form = null;
+        }
     }
 
     /**
@@ -513,29 +799,70 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         return 0;
     }
 
+    // Serialize or Marshal
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.action.ordinal());
-        dest.writeString(this.provider.toString());
-
-        dest.writeString(this.payload_str);
-
-        dest.writeString(this.type_str);
+        
         dest.writeString(this.uuid);
+        
+        dest.writeInt(this.action.ordinal());
 
+        dest.writeString(this.provider.toString());
+        
+        dest.writeInt(this.payload_type.ordinal());
+        switch (this.payload_type) {
+        case CV:
+        	this.payload_cv.writeToParcel(dest, flags); 
+            break;
+        case BYTE:
+            dest.writeByteArray(this.payload_byte);
+            break;
+        case STR:
+        	dest.writeString(this.payload_str);
+            break;
+        }
+        
+        dest.writeInt(this.topic_type.ordinal());
+        switch (this.topic_type) {
+        case STR:
+        	dest.writeString(this.topic_str);
+            break;
+        case OID:
+            this.topic_oid.writeToParcel(dest, flags);
+            break;
+        }
+        
         dest.writeInt(this.downsample);
         dest.writeInt(this.durability);
 
-        // this.recipient = in.readString();
-        // this.originator = in.readString();
+        this.recipient.writeToParcel(dest, flags);
+        this.originator.writeToParcel(dest, flags);
 
         dest.writeInt(this.priority);
         dest.writeInt(this.order);
-        // dest.writeInt(this.start_abs = in.readInt();
-        // dest.writeInt(this.start_rel = in.readInt();
-        // dest.writeInt(this.scope = in.readInt();
+        
+        dest.writeInt(this.start_type.ordinal());
+        switch (this.start_type) {
+        case ABS:
+            this.start_abs.writeToParcel(dest, flags);
+            break;
+        case REL:
+            this.start_rel.writeToParcel(dest, flags);
+            break;
+        }
+
+        dest.writeInt(this.expire_type.ordinal());
+        switch (this.expire_type) {
+        case ABS:
+            this.expire_abs.writeToParcel(dest, flags);
+            break;
+        case REL:
+            this.expire_rel.writeToParcel(dest, flags);
+            break;
+        }
+        
+        dest.writeInt(this.scope.ordinal());
         dest.writeInt(this.throttle);
     }
-
 
 }

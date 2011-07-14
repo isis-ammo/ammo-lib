@@ -65,9 +65,9 @@ public class AmmoDispatcher  {
         }
 
         IAmmoRequest ar = this.ab
-                          .type(topicType)
+                          .topic(topicType)
                           .payload(payload)
-                          .expiration(expiration)
+                          .expire(new TimeStamp(expiration))
                           //.worth(worth)
                           //.notice(notice)
                           .post();
@@ -121,6 +121,9 @@ public class AmmoDispatcher  {
         return post(provider,topicType,null,Double.NaN,null);
     }
 
+    public boolean post(Uri provider, Calendar expiration, double worth) {
+    	return post(provider,this.resolver.getType(provider),expiration,worth,null);
+    }
 
     public boolean post(Uri provider, String topicType, Calendar expiration, double worth, PendingIntent notice) {
         logger.trace("post provider {} {} {} {} {}", new Object[] {topicType, provider, expiration, worth, notice});
@@ -128,9 +131,9 @@ public class AmmoDispatcher  {
         if (provider == null) return false;
 
         IAmmoRequest ar = this.ab
-                          .type(topicType)
+                          .topic(topicType)
                           .provider(provider)
-                          .expiration(expiration)
+                          .expire(new TimeStamp(expiration))
                           //.worth(worth)
                           //.notice(notice)
                           .post();
@@ -259,10 +262,10 @@ public class AmmoDispatcher  {
         }
 
         IAmmoRequest ar = this.ab
-                          .type(topicType)
+                          .topic(topicType)
                           .provider(provider)
-                          .expiration(expiration)
-                          .selection(new AmmoRequest.Query(query))
+                          .expire(new TimeStamp(expiration))
+                          .select(new AmmoRequest.Query(query))
                           // .notice(notice)
                           .retrieve();
         return ar != null;
@@ -362,9 +365,9 @@ public class AmmoDispatcher  {
         }
 
         IAmmoRequest ar = this.ab
-                          .type(topicType)
+                          .topic(topicType)
                           .provider(provider)
-                          .expiration(expiration)
+                          .expire(new TimeStamp(expiration))
                           .filter(filter)
                           // .notice(notice)
                           .subscribe();
@@ -387,9 +390,9 @@ public class AmmoDispatcher  {
         expiration.add(field, lifetime);
         if (topicType == null) topicType = this.resolver.getType(provider);
         IAmmoRequest ar = this.ab
-                          .type(topicType)
+                          .topic(topicType)
                           .provider(provider)
-                          .expiration(expiration)
+                          .expire(new TimeStamp(expiration))
                           .filter(filter)
                           // .notice(notice)
                           .subscribe();
@@ -429,7 +432,7 @@ public class AmmoDispatcher  {
 
     public boolean unsubscribe(Uri provider, String topicType) {
       IAmmoRequest ar = this.ab
-         .type(topicType)
+         .topic(topicType)
          .provider(provider)
          .subscribe();
       ar.cancel();
@@ -456,7 +459,7 @@ public class AmmoDispatcher  {
         }
         IAmmoRequest ar = this.ab
                           .provider(provider)
-                          .expiration(expiration)
+                          .expire(new TimeStamp(expiration))
                           .publish();
         return ar != null;
     }

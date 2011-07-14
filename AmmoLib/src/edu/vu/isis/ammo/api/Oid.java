@@ -5,7 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-public class Oid implements List<Integer> {
+import edu.vu.isis.ammo.api.TimeInterval.Unit;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Oid implements List<Integer>, Parcelable {
 
     @Override
     public boolean add(Integer arg0) {
@@ -144,5 +149,40 @@ public class Oid implements List<Integer> {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    // *********************************
+    // Parcelable Support
+    // *********************************
+
+    public static final Parcelable.Creator<Oid> CREATOR = 
+    	new Parcelable.Creator<Oid>() {
+
+        @Override
+        public Oid createFromParcel(Parcel source) {
+            return new Oid(source);
+        }
+
+        @Override
+        public Oid[] newArray(int size) {
+            return new Oid[size];
+        }
+
+    };
+    
+    private Oid(Parcel in) {
+    	// TODO Auto-generated method stub
+    }
+    
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
