@@ -36,29 +36,25 @@ import org.slf4j.spi.MDCAdapter;
  * @author Thorsten M&ouml;ler
  * @version $Rev:$; $Author:$; $Date:$
  */
-public class StaticMDCBinder
-{
+public class StaticMDCBinder {
 
-	/**
-	 * The unique instance of this class.
-	 */
-	public static final StaticMDCBinder SINGLETON = new StaticMDCBinder();
+    /**
+     * The unique instance of this class.
+     */
+    public static final StaticMDCBinder SINGLETON = new StaticMDCBinder();
 
-	private StaticMDCBinder()
-	{
-	}
+    private StaticMDCBinder() {
+    }
 
-	/**
-	 * Currently this method always returns an instance of
-	 * {@link StaticMDCBinder}.
-	 */
-	public MDCAdapter getMDCA()
-	{
-		return new NOPMDCAdapter();
-	}
+    /**
+     * Currently this method always returns an instance of
+     * {@link StaticMDCBinder}.
+     */
+    public MDCAdapter getMDCA() {
+        return new NOPMDCAdapter();
+    }
 
-	public String getMDCAdapterClassStr()
-	{
-		return NOPMDCAdapter.class.getName();
-	}
+    public String getMDCAdapterClassStr() {
+        return NOPMDCAdapter.class.getName();
+    }
 }

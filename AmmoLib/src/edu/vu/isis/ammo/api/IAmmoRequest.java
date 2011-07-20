@@ -7,7 +7,6 @@ import java.util.Calendar;
 
 import javax.xml.datatype.Duration;
 
-import android.content.Intent;
 import android.net.Uri;
 
 public interface IAmmoRequest {

@@ -3,8 +3,6 @@ package edu.vu.isis.ammo.api;
 /**
   See docs/java/ammo-api.nw for documentation
 */ 
-import javax.xml.datatype.Duration;
-import java.util.Calendar;
 
 public interface IAmmoStatus {
   public enum NetlinkState {
