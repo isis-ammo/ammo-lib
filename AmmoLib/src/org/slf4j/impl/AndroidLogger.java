@@ -54,275 +54,241 @@ import android.util.Log;
  * @author Thorsten M&ouml;ller
  * @version $Rev:$; $Author:$; $Date:$
  */
-public class AndroidLogger extends MarkerIgnoringBase
-{
-	private static final long serialVersionUID = -1227274521521287937L;
-	
-	public static boolean opTraceEnabled = true;
-	public static boolean opDebugEnabled = true;
-	public static boolean opInfoEnabled = true;
-	public static boolean opWarnEnabled = true;
-	public static boolean opErrorEnabled = true;
+public class AndroidLogger extends MarkerIgnoringBase {
+    private static final long serialVersionUID = -1227274521521287937L;
 
-	/**
-	 * Package access allows only {@link AndroidLoggerFactory} to instantiate
-	 * SimpleLogger instances.
-	 */
-	AndroidLogger(final String name)
-	{
-		this.name = name;
-	}
+    public static boolean opTraceEnabled = true;
+    public static boolean opDebugEnabled = true;
+    public static boolean opInfoEnabled = true;
+    public static boolean opWarnEnabled = true;
+    public static boolean opErrorEnabled = true;
 
-	/* @see org.slf4j.Logger#isTraceEnabled() */
-	public boolean isTraceEnabled()
-	{
-		return Log.isLoggable(name, Log.VERBOSE);
-	}
+    /**
+     * Package access allows only {@link AndroidLoggerFactory} to instantiate
+     * SimpleLogger instances.
+     */
+    AndroidLogger(final String name) {
+        this.name = name;
+    }
 
-	/* @see org.slf4j.Logger#trace(java.lang.String) */
-	public void trace(final String msg)
-	{
-		if (!Log.isLoggable(name, Log.VERBOSE)) return;
-		if (!opTraceEnabled) return;
-		Log.v(name, msg);
-	}
+    /* @see org.slf4j.Logger#isTraceEnabled() */
+    public boolean isTraceEnabled() {
+        return Log.isLoggable(name, Log.VERBOSE);
+    }
 
-	/* @see org.slf4j.Logger#trace(java.lang.String, java.lang.Object) */
-	public void trace(final String format, final Object param1)
-	{
-		if (!Log.isLoggable(name, Log.VERBOSE)) return;
-		if (!opTraceEnabled) return;
-		Log.v(name, format(format, param1, null));
-	}
+    /* @see org.slf4j.Logger#trace(java.lang.String) */
+    public void trace(final String msg) {
+        if (!Log.isLoggable(name, Log.VERBOSE)) return;
+        if (!opTraceEnabled) return;
+        Log.v(name, msg);
+    }
 
-	/* @see org.slf4j.Logger#trace(java.lang.String, java.lang.Object, java.lang.Object) */
-	public void trace(final String format, final Object param1, final Object param2)
-	{
-		if (!Log.isLoggable(name, Log.VERBOSE)) return;
-		if (!opTraceEnabled) return;
-		Log.v(name, format(format, param1, param2));
-	}
+    /* @see org.slf4j.Logger#trace(java.lang.String, java.lang.Object) */
+    public void trace(final String format, final Object param1) {
+        if (!Log.isLoggable(name, Log.VERBOSE)) return;
+        if (!opTraceEnabled) return;
+        Log.v(name, format(format, param1, null));
+    }
 
-	/* @see org.slf4j.Logger#trace(java.lang.String, java.lang.Object[]) */
-	public void trace(final String format, final Object[] argArray)
-	{
-		if (!Log.isLoggable(name, Log.VERBOSE)) return;
-		if (!opTraceEnabled) return;
-		Log.v(name, format(format, argArray));
-	}
+    /* @see org.slf4j.Logger#trace(java.lang.String, java.lang.Object, java.lang.Object) */
+    public void trace(final String format, final Object param1, final Object param2) {
+        if (!Log.isLoggable(name, Log.VERBOSE)) return;
+        if (!opTraceEnabled) return;
+        Log.v(name, format(format, param1, param2));
+    }
 
-	/* @see org.slf4j.Logger#trace(java.lang.String, java.lang.Throwable) */
-	public void trace(final String msg, final Throwable t)
-	{
-		if (!Log.isLoggable(name, Log.VERBOSE)) return;
-		if (!opTraceEnabled) return;
-		Log.v(name, msg, t);
-	}
+    /* @see org.slf4j.Logger#trace(java.lang.String, java.lang.Object[]) */
+    public void trace(final String format, final Object[] argArray) {
+        if (!Log.isLoggable(name, Log.VERBOSE)) return;
+        if (!opTraceEnabled) return;
+        Log.v(name, format(format, argArray));
+    }
 
-	/* @see org.slf4j.Logger#isDebugEnabled() */
-	public boolean isDebugEnabled()
-	{
-		return Log.isLoggable(name, Log.DEBUG);
-	}
+    /* @see org.slf4j.Logger#trace(java.lang.String, java.lang.Throwable) */
+    public void trace(final String msg, final Throwable t) {
+        if (!Log.isLoggable(name, Log.VERBOSE)) return;
+        if (!opTraceEnabled) return;
+        Log.v(name, msg, t);
+    }
 
-	/* @see org.slf4j.Logger#debug(java.lang.String) */
-	public void debug(final String msg)
-	{
-		if (!Log.isLoggable(name, Log.DEBUG)) return;
-		if (!opDebugEnabled) return;
-		Log.d(name, msg);
-	}
+    /* @see org.slf4j.Logger#isDebugEnabled() */
+    public boolean isDebugEnabled() {
+        return Log.isLoggable(name, Log.DEBUG);
+    }
 
-	/* @see org.slf4j.Logger#debug(java.lang.String, java.lang.Object) */
-	public void debug(final String format, final Object arg1)
-	{
-		if (!Log.isLoggable(name, Log.DEBUG)) return;
-		if (!opDebugEnabled) return;
-		Log.d(name, format(format, arg1, null));
-	}
+    /* @see org.slf4j.Logger#debug(java.lang.String) */
+    public void debug(final String msg) {
+        if (!Log.isLoggable(name, Log.DEBUG)) return;
+        if (!opDebugEnabled) return;
+        Log.d(name, msg);
+    }
 
-	/* @see org.slf4j.Logger#debug(java.lang.String, java.lang.Object, java.lang.Object) */
-	public void debug(final String format, final Object param1, final Object param2)
-	{
-		if (!Log.isLoggable(name, Log.DEBUG)) return;
-		if (!opDebugEnabled) return;
-		Log.d(name, format(format, param1, param2));
-	}
+    /* @see org.slf4j.Logger#debug(java.lang.String, java.lang.Object) */
+    public void debug(final String format, final Object arg1) {
+        if (!Log.isLoggable(name, Log.DEBUG)) return;
+        if (!opDebugEnabled) return;
+        Log.d(name, format(format, arg1, null));
+    }
 
-	/* @see org.slf4j.Logger#debug(java.lang.String, java.lang.Object[]) */
-	public void debug(final String format, final Object[] argArray)
-	{
-		if (!Log.isLoggable(name, Log.DEBUG)) return;
-		if (!opDebugEnabled) return;
-		Log.d(name, format(format, argArray));
-	}
+    /* @see org.slf4j.Logger#debug(java.lang.String, java.lang.Object, java.lang.Object) */
+    public void debug(final String format, final Object param1, final Object param2) {
+        if (!Log.isLoggable(name, Log.DEBUG)) return;
+        if (!opDebugEnabled) return;
+        Log.d(name, format(format, param1, param2));
+    }
 
-	/* @see org.slf4j.Logger#debug(java.lang.String, java.lang.Throwable) */
-	public void debug(final String msg, final Throwable t)
-	{
-		if (!Log.isLoggable(name, Log.DEBUG)) return;
-		if (!opDebugEnabled) return;
-		Log.d(name, msg, t);
-	}
+    /* @see org.slf4j.Logger#debug(java.lang.String, java.lang.Object[]) */
+    public void debug(final String format, final Object[] argArray) {
+        if (!Log.isLoggable(name, Log.DEBUG)) return;
+        if (!opDebugEnabled) return;
+        Log.d(name, format(format, argArray));
+    }
 
-	/* @see org.slf4j.Logger#isInfoEnabled() */
-	public boolean isInfoEnabled()
-	{
-		return Log.isLoggable(name, Log.INFO);
-	}
+    /* @see org.slf4j.Logger#debug(java.lang.String, java.lang.Throwable) */
+    public void debug(final String msg, final Throwable t) {
+        if (!Log.isLoggable(name, Log.DEBUG)) return;
+        if (!opDebugEnabled) return;
+        Log.d(name, msg, t);
+    }
 
-	/* @see org.slf4j.Logger#info(java.lang.String) */
-	public void info(final String msg)
-	{
-		if (!Log.isLoggable(name, Log.INFO)) return;
-		if (!opInfoEnabled) return;
-		Log.i(name, msg);
-	}
+    /* @see org.slf4j.Logger#isInfoEnabled() */
+    public boolean isInfoEnabled() {
+        return Log.isLoggable(name, Log.INFO);
+    }
 
-	/* @see org.slf4j.Logger#info(java.lang.String, java.lang.Object) */
-	public void info(final String format, final Object arg)
-	{
-		if (!Log.isLoggable(name, Log.INFO)) return;
-		if (!opInfoEnabled) return;
-		Log.i(name, format(format, arg, null));
-	}
+    /* @see org.slf4j.Logger#info(java.lang.String) */
+    public void info(final String msg) {
+        if (!Log.isLoggable(name, Log.INFO)) return;
+        if (!opInfoEnabled) return;
+        Log.i(name, msg);
+    }
 
-	/* @see org.slf4j.Logger#info(java.lang.String, java.lang.Object, java.lang.Object) */
-	public void info(final String format, final Object arg1, final Object arg2)
-	{
-		if (!Log.isLoggable(name, Log.INFO)) return;
-		if (!opInfoEnabled) return;
-		Log.i(name, format(format, arg1, arg2));
-	}
+    /* @see org.slf4j.Logger#info(java.lang.String, java.lang.Object) */
+    public void info(final String format, final Object arg) {
+        if (!Log.isLoggable(name, Log.INFO)) return;
+        if (!opInfoEnabled) return;
+        Log.i(name, format(format, arg, null));
+    }
 
-	/* @see org.slf4j.Logger#info(java.lang.String, java.lang.Object[]) */
-	public void info(final String format, final Object[] argArray)
-	{
-		if (!Log.isLoggable(name, Log.INFO)) return;
-		if (!opInfoEnabled) return;
-		Log.i(name, format(format, argArray));
-	}
+    /* @see org.slf4j.Logger#info(java.lang.String, java.lang.Object, java.lang.Object) */
+    public void info(final String format, final Object arg1, final Object arg2) {
+        if (!Log.isLoggable(name, Log.INFO)) return;
+        if (!opInfoEnabled) return;
+        Log.i(name, format(format, arg1, arg2));
+    }
 
-	/* @see org.slf4j.Logger#info(java.lang.String, java.lang.Throwable) */
-	public void info(final String msg, final Throwable t)
-	{
-		if (!Log.isLoggable(name, Log.INFO)) return;
-		if (!opInfoEnabled) return;
-		Log.i(name, msg, t);
-	}
+    /* @see org.slf4j.Logger#info(java.lang.String, java.lang.Object[]) */
+    public void info(final String format, final Object[] argArray) {
+        if (!Log.isLoggable(name, Log.INFO)) return;
+        if (!opInfoEnabled) return;
+        Log.i(name, format(format, argArray));
+    }
 
-	/* @see org.slf4j.Logger#isWarnEnabled() */
-	public boolean isWarnEnabled()
-	{
-		return Log.isLoggable(name, Log.WARN);
-	}
+    /* @see org.slf4j.Logger#info(java.lang.String, java.lang.Throwable) */
+    public void info(final String msg, final Throwable t) {
+        if (!Log.isLoggable(name, Log.INFO)) return;
+        if (!opInfoEnabled) return;
+        Log.i(name, msg, t);
+    }
 
-	/* @see org.slf4j.Logger#warn(java.lang.String) */
-	public void warn(final String msg)
-	{
-		if (!Log.isLoggable(name, Log.WARN)) return;
-		if (!opWarnEnabled) return;
-		Log.w(name, msg);
-	}
+    /* @see org.slf4j.Logger#isWarnEnabled() */
+    public boolean isWarnEnabled() {
+        return Log.isLoggable(name, Log.WARN);
+    }
 
-	/* @see org.slf4j.Logger#warn(java.lang.String, java.lang.Object) */
-	public void warn(final String format, final Object arg)
-	{
-		if (!Log.isLoggable(name, Log.WARN)) return;
-		if (!opWarnEnabled) return;
-		Log.w(name, format(format, arg, null));
-	}
+    /* @see org.slf4j.Logger#warn(java.lang.String) */
+    public void warn(final String msg) {
+        if (!Log.isLoggable(name, Log.WARN)) return;
+        if (!opWarnEnabled) return;
+        Log.w(name, msg);
+    }
 
-	/* @see org.slf4j.Logger#warn(java.lang.String, java.lang.Object, java.lang.Object) */
-	public void warn(final String format, final Object arg1, final Object arg2)
-	{
-		if (!Log.isLoggable(name, Log.WARN)) return;
-		if (!opWarnEnabled) return;
-		Log.w(name, format(format, arg1, arg2));
-	}
+    /* @see org.slf4j.Logger#warn(java.lang.String, java.lang.Object) */
+    public void warn(final String format, final Object arg) {
+        if (!Log.isLoggable(name, Log.WARN)) return;
+        if (!opWarnEnabled) return;
+        Log.w(name, format(format, arg, null));
+    }
 
-	/* @see org.slf4j.Logger#warn(java.lang.String, java.lang.Object[]) */
-	public void warn(final String format, final Object[] argArray)
-	{
-		if (!Log.isLoggable(name, Log.WARN)) return;
-		if (!opWarnEnabled) return;
-		Log.w(name, format(format, argArray));
-	}
+    /* @see org.slf4j.Logger#warn(java.lang.String, java.lang.Object, java.lang.Object) */
+    public void warn(final String format, final Object arg1, final Object arg2) {
+        if (!Log.isLoggable(name, Log.WARN)) return;
+        if (!opWarnEnabled) return;
+        Log.w(name, format(format, arg1, arg2));
+    }
 
-	/* @see org.slf4j.Logger#warn(java.lang.String, java.lang.Throwable) */
-	public void warn(final String msg, final Throwable t)
-	{
-		if (!Log.isLoggable(name, Log.WARN)) return;
-		if (!opWarnEnabled) return;
-		Log.w(name, msg, t);
-	}
+    /* @see org.slf4j.Logger#warn(java.lang.String, java.lang.Object[]) */
+    public void warn(final String format, final Object[] argArray) {
+        if (!Log.isLoggable(name, Log.WARN)) return;
+        if (!opWarnEnabled) return;
+        Log.w(name, format(format, argArray));
+    }
 
-	/* @see org.slf4j.Logger#isErrorEnabled() */
-	public boolean isErrorEnabled()
-	{
-		return Log.isLoggable(name, Log.ERROR);
-	}
+    /* @see org.slf4j.Logger#warn(java.lang.String, java.lang.Throwable) */
+    public void warn(final String msg, final Throwable t) {
+        if (!Log.isLoggable(name, Log.WARN)) return;
+        if (!opWarnEnabled) return;
+        Log.w(name, msg, t);
+    }
 
-	/* @see org.slf4j.Logger#error(java.lang.String) */
-	public void error(final String msg)
-	{
-		if (!Log.isLoggable(name, Log.ERROR)) return;
-		if (!opErrorEnabled) return;
-		Log.e(name, msg);
-	}
+    /* @see org.slf4j.Logger#isErrorEnabled() */
+    public boolean isErrorEnabled() {
+        return Log.isLoggable(name, Log.ERROR);
+    }
 
-	/* @see org.slf4j.Logger#error(java.lang.String, java.lang.Object) */
-	public void error(final String format, final Object arg)
-	{
-		if (!Log.isLoggable(name, Log.ERROR)) return;
-		if (!opErrorEnabled) return;
-		Log.e(name, format(format, arg, null));
-	}
+    /* @see org.slf4j.Logger#error(java.lang.String) */
+    public void error(final String msg) {
+        if (!Log.isLoggable(name, Log.ERROR)) return;
+        if (!opErrorEnabled) return;
+        Log.e(name, msg);
+    }
 
-	/* @see org.slf4j.Logger#error(java.lang.String, java.lang.Object, java.lang.Object) */
-	public void error(final String format, final Object arg1, final Object arg2)
-	{
-		if (!Log.isLoggable(name, Log.ERROR)) return;
-		if (!opErrorEnabled) return;
-		Log.e(name, format(format, arg1, arg2));
-	}
+    /* @see org.slf4j.Logger#error(java.lang.String, java.lang.Object) */
+    public void error(final String format, final Object arg) {
+        if (!Log.isLoggable(name, Log.ERROR)) return;
+        if (!opErrorEnabled) return;
+        Log.e(name, format(format, arg, null));
+    }
 
-	/* @see org.slf4j.Logger#error(java.lang.String, java.lang.Object[]) */
-	public void error(final String format, final Object[] argArray)
-	{
-		if (!Log.isLoggable(name, Log.ERROR)) return;
-		if (!opErrorEnabled) return;
-		Log.e(name, format(format, argArray));
-	}
+    /* @see org.slf4j.Logger#error(java.lang.String, java.lang.Object, java.lang.Object) */
+    public void error(final String format, final Object arg1, final Object arg2) {
+        if (!Log.isLoggable(name, Log.ERROR)) return;
+        if (!opErrorEnabled) return;
+        Log.e(name, format(format, arg1, arg2));
+    }
 
-	/* @see org.slf4j.Logger#error(java.lang.String, java.lang.Throwable) */
-	public void error(final String msg, final Throwable t)
-	{
-		if (!Log.isLoggable(name, Log.ERROR)) return;
-		if (!opErrorEnabled) return;
-		Log.e(name, msg, t);
-	}
+    /* @see org.slf4j.Logger#error(java.lang.String, java.lang.Object[]) */
+    public void error(final String format, final Object[] argArray) {
+        if (!Log.isLoggable(name, Log.ERROR)) return;
+        if (!opErrorEnabled) return;
+        Log.e(name, format(format, argArray));
+    }
 
-	/**
-	 * For formatted messages substitute arguments.
-	 *
-	 * @param format
-	 * @param arg1
-	 * @param arg2
-	 */
-	private String format(final String format, final Object arg1, final Object arg2)
-	{
-		return MessageFormatter.format(format, arg1, arg2).getMessage();
-	}
+    /* @see org.slf4j.Logger#error(java.lang.String, java.lang.Throwable) */
+    public void error(final String msg, final Throwable t) {
+        if (!Log.isLoggable(name, Log.ERROR)) return;
+        if (!opErrorEnabled) return;
+        Log.e(name, msg, t);
+    }
 
-	/**
-	 * For formatted messages substitute arguments.
-	 *
-	 * @param format
-	 * @param args
-	 */
-	private String format(final String format, final Object[] args)
-	{
-		return MessageFormatter.arrayFormat(format, args).getMessage();
-	}
+    /**
+     * For formatted messages substitute arguments.
+     *
+     * @param format
+     * @param arg1
+     * @param arg2
+     */
+    private String format(final String format, final Object arg1, final Object arg2) {
+        return MessageFormatter.format(format, arg1, arg2).getMessage();
+    }
+
+    /**
+     * For formatted messages substitute arguments.
+     *
+     * @param format
+     * @param args
+     */
+    private String format(final String format, final Object[] args) {
+        return MessageFormatter.arrayFormat(format, args).getMessage();
+    }
 }
