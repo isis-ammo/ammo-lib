@@ -1,122 +1,183 @@
 // IAmmoRequest.java
+// See docs/java/ammo-api.nw for documentation
 package edu.vu.isis.ammo.api;
-/**
-  See docs/java/ammo-api.nw for documentation
-*/ 
-import java.util.Calendar;
+import java.util.Map;
 
-import javax.xml.datatype.Duration;
+import edu.vu.isis.ammo.api.TimeStamp;
+import edu.vu.isis.ammo.api.TimeInterval;
 
-import android.content.Intent;
+import android.content.ContentValues;
 import android.net.Uri;
 
 public interface IAmmoRequest {
+   public String uuid();  
+   public IAmmoRequest replace(IAmmoRequest req);
+   public IAmmoRequest replace(String uuid);
+   public Event[] cancel(); 
+   public void metricTimespan(int val);
+   public TimeStamp lastMessage();
+   public void resetMetrics(int val);
+   public Event[] eventSet(); 
+
    public interface Builder {
       public IAmmoRequest duplicate();
-
       public Builder reset();
       public IAmmoRequest post();
-      public IAmmoRequest directedPost(Recipient recipient);
+      public IAmmoRequest directedSubscribe(Anon originator);
+      public IAmmoRequest directedPost(Anon recipient);
       public IAmmoRequest publish();
-
       public IAmmoRequest subscribe();
       public IAmmoRequest retrieve();
-      public IAmmoRequest interest();
-      public IAmmoRequest replace(IAmmoRequest req);
-      public IAmmoRequest replace(String uuid);
-
-      public IAmmoRequest recover(String uuid);
-
+      public IAmmoRequest getInstance(String uuid);
         public Builder provider(Uri val);
+
+        public static final Uri DEFAULT_PROVIDER = null;
+
+        public enum PayloadType { NONE, STR, BYTE, CV };
+        public static final String DEFAULT_PAYLOAD = "";
+
         public Builder payload(String val);
-        public Builder type(String val);
-        public Builder name(String val);
-        public Builder filter(Filter val); 
-        public Builder query(Query val);
-        public Builder downsample(Downsample val); 
-        public Builder downsample(char val); 
+        public Builder payload(byte[] val);
+        public Builder payload(ContentValues val);
+        public enum TopicEncoding { STR, OID };
 
+        public Builder topic(String val);
+        public Builder topic(Oid val);  // V:2.0
 
-        public Builder longevity(Duration val);
-        public Builder longevity(Calendar val);
+        public static final String DEFAULT_TOPIC = "";
+
+        public static final String DEFAULT_UID = "";
+        public Builder uid(String val);
+        public enum ExpireType { ABS, REL };
+
+        public Builder expire(TimeInterval val);
+        public Builder expire(TimeStamp val);
+
+        public static final TimeInterval UNLIMITED_EXPIRE = new TimeInterval(TimeInterval.UNLIMITED);
+        public static final TimeInterval DEFAULT_EXPIRE = new TimeInterval(TimeInterval.Unit.HOUR);
+
+        public static final int VOLATILE_DURABILITY = 1;
+        public static final int PERSISTENT_DURABILITY = 2;
+
+        public static final int DEFAULT_DURABILITY = PERSISTENT_DURABILITY;
+        public Builder durability(int val);
+        public static final Anon ANY_ANON = null;
+
+        public Builder recipient(Anon val);
+        public Builder originator(Anon val);
+
+        public static final Anon DEFAULT_RECIPIENT = ANY_ANON;
+        public static final Anon DEFAULT_ORIGINATOR = ANY_ANON;
+
+        public static final int BACKGROUND_PRIORITY = -1000;
+        public static final int LOW_PRIORITY = -10;
+        public static final int NORMAL_PRIORITY = 0;
+        public static final int HIGH_PRIORITY = 10;
+        public static final int URGENT_PRIORITY = 1000;
 
         public Builder priority(int val);
 
-        public Builder worth(int val);
+        public static final int DEFAULT_PRIORITY = NORMAL_PRIORITY;
 
-              
-        public Builder liveness(int val);
-        public Builder start(Calendar val); 
-        public Builder scope(int val);
-        public Builder recipient(Recipient val);
-        public Builder maxTransmissionRate(int val);
+        public static final int OLDEST_FIRST_ORDER = 1;
+        public static final int NEWEST_ONLY_ORDER = 2;
+        public static final int NEWEST_FIRST_ORDER = 3;
 
-              
+        public Builder order(int val);
+        public Builder order(String[] val);
 
-         public Event[] getEvent(); 
+        public static final int DEFAULT_ORDER = OLDEST_FIRST_ORDER;
 
-         public Event[] cancel(); 
+        public enum StartType { ABS, REL };
 
-         public Event[] expiration(Duration val);
+        public Builder start(TimeStamp val); 
+        public Builder start(TimeInterval val); 
 
-         public String getUuid(); // 
-         
-         public void setMetricTimespan(int val);
-         public int getTransmissionRate();
-         
-         public Calendar getLastMessage();
-         
-         public void resetMetrics(int val);
-         public int getTotalMessages();
+        public static final TimeInterval DEFAULT_START = new TimeInterval(TimeInterval.Unit.MINUTE);
 
+        public enum DeliveryScope {
+           IMMEDIATE, LOCAL, GLOBAL, RECIPIENT 
+        };
+
+        public Builder scope(DeliveryScope val);
+
+        public static final DeliveryScope DEFAULT_SCOPE = DeliveryScope.GLOBAL;
+        public static final int UNLIMITED_THROTTLE = -1;
+
+        public Builder throttle(int val);
+
+        public static final int DEFAULT_THROTTLE = UNLIMITED_THROTTLE;
+
+        public static final String NO_FILTER = "";
+
+        public Builder filter(String val); 
+
+        public static final String DEFAULT_FILTER = NO_FILTER;
+
+        public static final int NO_DOWNSAMPLE = 0;
+        public static final int DEFAULT_DOWNSAMPLE = NO_DOWNSAMPLE;
+
+        public Builder downsample(int maxSize); 
+        public static String[] ALL_PROJECT = null;
+
+        public Builder project(String[] val);
+
+        public static String[] DEFAULT_PROJECT = ALL_PROJECT;
+
+        public static final Query ALL_SELECT = null;
+        public enum SelectType { QUERY, FORM };
+
+        public Builder select(Query val);
+
+        public static final Query DEFAULT_SELECT = ALL_SELECT;
+
+        public static Form DEFAULT_FORM = null;
+        public Builder select(Form val); 
    }
-   public interface Recipient {
-      public String getCallSign();
-      public String[] getGroups();
-      public String getName(String type); // used e.g. tigr
-      public String getName(); // canonical name
+   public enum Action {
+     POSTAL, DIRECTED_POSTAL, PUBLISH, RETRIEVAL, SUBSCRIBE, DIRECTED_SUBSCRIBE
+   };
+
+   public interface Anon {
+      public String name(); // canonical name
    }
-   public interface Filter {
-      public Filter get();
+
+   public interface Warfighter extends Anon {
+      public String callSign();
+      public String[] groups();
+      public String tigr(); 
    }
-      
-      
+
+   public interface Group extends Anon {}
+   public interface Server extends Anon {}
    public interface Query {
-      public String[] getProjection();
-      public String getSelection();
-      public String[] getArgs();
-      public String[] getGroupBy();
-      public String[] getOrderBy();
-   }
+      public String select();
+      public String[] args();
 
-   public interface Downsample {
-      public int getMaxSize();
-      public double getFraction();
+      public Query args(String[] val);
    }
-
-   public enum Place { QUEUE , DISTRIBUTE, DELIVER, COMPLETE }
-      
-   public enum Color { SUCCESS, FAIL,  UNKNOWN, REJECTED };
-      
+   public interface Form extends Map<String, String> {}
+   public enum DeliveryProgress { 
+      DISPATCHED, DISTRIBUTED, 
+      DELIVERED, COMPLETED 
+   };
+   public enum DeliveryState { SUCCESS, FAIL,  UNKNOWN, REJECTED };
    public interface Event {
-      public Place getPlace();
-      public Event setPlace(Place val);
+      public DeliveryProgress progress();
+      public Event progress(DeliveryProgress val);
       
-      public Color getColor();
-      public Event setColor(Color val);
+      public DeliveryState state();
+      public Event state(DeliveryState val);
    }
-      
    public interface Notice {
-      public Event getTarget();
-      public Event setTarget(Event val);
-      public Event getSource();
-      public Event setSource(Event val);
+      public Event target();
+      public Notice target(Event val);
+
+      public Event source();
+      public Notice source(Event val);
          
-      public boolean runAction();
-      public Object getAction();
+      public boolean act();
+      public Object action();
+      public Notice action(Object val);
    }
-
-
-
 }
-   
