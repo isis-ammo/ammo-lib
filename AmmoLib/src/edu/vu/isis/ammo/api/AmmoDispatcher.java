@@ -634,7 +634,7 @@ public class AmmoDispatcher {
 	 * @param expiration how long does the subscription last?
 	 * @return was the subscriber content provider updated correctly.
 	 */
-	private boolean publish(Uri uri, String mimeType, Calendar expiration) {
+	public boolean publish(Uri uri, String mimeType, Calendar expiration) {
 		if (expiration == null) {
 			expiration = Calendar.getInstance();
 			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));

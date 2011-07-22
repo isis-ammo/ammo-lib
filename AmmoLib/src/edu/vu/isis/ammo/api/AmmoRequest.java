@@ -364,6 +364,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
         @Override
         public Builder order(int val) {
+        	if (this.order == null) this.order = new int[2];
             this.order[0] = val;
             return this;
         }

@@ -353,7 +353,6 @@ public class AmmoValues {
     }
 
     public static final Parcelable.Creator<AmmoValues> CREATOR = new Parcelable.Creator<AmmoValues>() {
-        @SuppressWarnings( { "deprecation", "unchecked" })
         public AmmoValues createFromParcel(Parcel in) {
             return new AmmoValues(ContentValues.CREATOR.createFromParcel(in));
         }
@@ -367,7 +366,6 @@ public class AmmoValues {
         return this.cv.describeContents();
     }
 
-    @SuppressWarnings("deprecation")
     public void writeToParcel(Parcel parcel, int flags) {
         this.cv.writeToParcel(parcel, flags);
     }
