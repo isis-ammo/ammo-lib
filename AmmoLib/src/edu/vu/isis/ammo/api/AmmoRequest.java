@@ -5,11 +5,18 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
+import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.RemoteException;
 import edu.vu.isis.ammo.api.IAmmoRequest.Builder.DeliveryScope;
+import edu.vu.isis.ammo.api.IDistributorService;
 
 
 /**
@@ -182,8 +189,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         return null;
     }
 
-    public static Builder createBuilder() {
-        return new AmmoRequest.Builder().reset();
+    public static Builder newBuilder(Context context) {
+        return new AmmoRequest.Builder(context).reset();
     }
   
 
@@ -234,9 +241,26 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
      * The builder makes requests to the Distributor via AIDL methods.
      *
      */
+    private static final Intent DISTRIBUTOR_SERVICE = new Intent(IDistributorService.class.getName());
+    private static IDistributorService distributor = null;
+    
+    private final static ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            logger.trace("service connected");
+            // 
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            logger.trace("service disconnected");
+            distributor = null;
+        }
+    };
+    
     public static class Builder implements IAmmoRequest.Builder {
 
-        private Builder() {
+        private Builder(Context context) {
+            context.bindService(DISTRIBUTOR_SERVICE, conn, Context.BIND_AUTO_CREATE);
         }
 
         private Uri provider;
@@ -283,32 +307,42 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         // ***************
 
         @Override
-        public IAmmoRequest directedPost(IAmmoRequest.Anon recipient) {
-            return new AmmoRequest(IAmmoRequest.Action.DIRECTED_POSTAL, this);
+        public IAmmoRequest directedPost(IAmmoRequest.Anon recipient) throws RemoteException {
+            AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.DIRECTED_POSTAL, this);
+            distributor.makeRequest(request);
+            return request;
         }
 
         @Override
-        public IAmmoRequest directedSubscribe(IAmmoRequest.Anon originator) {
+        public IAmmoRequest directedSubscribe(IAmmoRequest.Anon originator) throws RemoteException {
             return new AmmoRequest(IAmmoRequest.Action.DIRECTED_SUBSCRIBE, this);
         }
 
         @Override
-        public IAmmoRequest post() {
-            return new AmmoRequest(IAmmoRequest.Action.POSTAL, this);
+        public IAmmoRequest post() throws RemoteException {
+            AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.POSTAL, this);
+            distributor.makeRequest(request);
+            return request;
         }
 
         @Override
-        public IAmmoRequest publish() {
-            return new AmmoRequest(IAmmoRequest.Action.PUBLISH, this);
+        public IAmmoRequest publish() throws RemoteException {
+            AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.PUBLISH, this);
+            distributor.makeRequest(request);
+            return request;
         }
 
         @Override
-        public IAmmoRequest retrieve() {
-            return new AmmoRequest(IAmmoRequest.Action.RETRIEVAL, this);
+        public IAmmoRequest retrieve() throws RemoteException {
+            AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.RETRIEVAL, this);
+            distributor.makeRequest(request);
+            return request;
         }
         @Override
-        public IAmmoRequest subscribe() {
-            return new AmmoRequest(IAmmoRequest.Action.SUBSCRIBE, this);
+        public IAmmoRequest subscribe() throws RemoteException {
+            AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.SUBSCRIBE, this);
+            distributor.makeRequest(request);
+            return request;
         }
 
         @Override
@@ -364,7 +398,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
         @Override
         public Builder order(int val) {
-        	if (this.order == null) this.order = new int[2];
+            if (this.order == null) this.order = new int[2];
             this.order[0] = val;
             return this;
         }
@@ -515,7 +549,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
     // *********************************
 
     public static final Parcelable.Creator<Query> QUERY_CREATOR = 
-    	new Parcelable.Creator<Query>() {
+        new Parcelable.Creator<Query>() {
 
         @Override
         public Query createFromParcel(Parcel source) {
@@ -556,25 +590,25 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         
         // Parcelable Support
         
-	    private Query(Parcel in) {
-	    	this.select = in.readString();
-	    	this.args = in.createStringArray();
-	    }
-	    
-		@Override
-		public int describeContents() {
-			return 0;
-		}
+        private Query(Parcel in) {
+            this.select = in.readString();
+            this.args = in.createStringArray();
+        }
+        
+        @Override
+        public int describeContents() {
+            return 0;
+        }
 
-		@Override
-		public void writeToParcel(Parcel dest, int flags) {
-			dest.writeString(this.select);
-			dest.writeStringArray(this.args);
-		}
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.select);
+            dest.writeStringArray(this.args);
+        }
     }
 
     public static final Parcelable.Creator<Form> FORM_CREATOR = 
-    	new Parcelable.Creator<Form>() {
+        new Parcelable.Creator<Form>() {
 
         @Override
         public Form createFromParcel(Parcel source) {
@@ -597,23 +631,23 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         
         // Parcelable Support
         
-	    private Form(Parcel in) {
-	        // in.readMap(this, loader)
-	    }
-	    
-		@Override
-		public int describeContents() {
-			return 0;
-		}
+        private Form(Parcel in) {
+            // in.readMap(this, loader)
+        }
+        
+        @Override
+        public int describeContents() {
+            return 0;
+        }
 
-		@Override
-		public void writeToParcel(Parcel dest, int flags) {
-			dest.writeMap(this);
-		}
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeMap(this);
+        }
     }
     
     public static final Parcelable.Creator<Anon> ANON_CREATOR = 
-    	new Parcelable.Creator<Anon>() {
+        new Parcelable.Creator<Anon>() {
 
         @Override
         public Anon createFromParcel(Parcel source) {
@@ -628,30 +662,30 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
     };
     public static class Anon implements IAmmoRequest.Anon, Parcelable {
 
-		@Override
-		public String name() {
-			return null;
-		}
+        @Override
+        public String name() {
+            return null;
+        }
 
-	    // *********************************
-	    // Parcelable Support
-	    // *********************************
+        // *********************************
+        // Parcelable Support
+        // *********************************
 
-	    private Anon(Parcel in) {
-	    	// TODO Auto-generated method stub
-	    }
-	    
-		@Override
-		public int describeContents() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
+        private Anon(Parcel in) {
+            // TODO Auto-generated method stub
+        }
+        
+        @Override
+        public int describeContents() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
 
-		@Override
-		public void writeToParcel(Parcel dest, int flags) {
-			// TODO Auto-generated method stub
-			
-		}
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            // TODO Auto-generated method stub
+            
+        }
     }
 
     /**
@@ -668,7 +702,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
     // ****************************
 
     public static final Parcelable.Creator<AmmoRequest> CREATOR = 
-    	new Parcelable.Creator<AmmoRequest>() {
+        new Parcelable.Creator<AmmoRequest>() {
 
         @Override
         public AmmoRequest createFromParcel(Parcel source) {
@@ -813,20 +847,20 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         dest.writeInt(this.payload_type.ordinal());
         switch (this.payload_type) {
         case CV:
-        	this.payload_cv.writeToParcel(dest, flags); 
+            this.payload_cv.writeToParcel(dest, flags); 
             break;
         case BYTE:
             dest.writeByteArray(this.payload_byte);
             break;
         case STR:
-        	dest.writeString(this.payload_str);
+            dest.writeString(this.payload_str);
             break;
         }
         
         dest.writeInt(this.topic_type.ordinal());
         switch (this.topic_type) {
         case STR:
-        	dest.writeString(this.topic_str);
+            dest.writeString(this.topic_str);
             break;
         case OID:
             this.topic_oid.writeToParcel(dest, flags);
