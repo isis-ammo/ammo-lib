@@ -3,16 +3,14 @@
 package edu.vu.isis.ammo.api;
 import java.util.Map;
 
-import edu.vu.isis.ammo.api.TimeStamp;
-import edu.vu.isis.ammo.api.TimeInterval;
-
 import android.content.ContentValues;
 import android.net.Uri;
+import android.os.RemoteException;
 
 public interface IAmmoRequest {
    public String uuid();  
-   public IAmmoRequest replace(IAmmoRequest req);
-   public IAmmoRequest replace(String uuid);
+   public IAmmoRequest replace(IAmmoRequest req) throws RemoteException;
+   public IAmmoRequest replace(String uuid) throws RemoteException;
    public Event[] cancel(); 
    public void metricTimespan(int val);
    public TimeStamp lastMessage();
@@ -22,13 +20,13 @@ public interface IAmmoRequest {
    public interface Builder {
       public IAmmoRequest duplicate();
       public Builder reset();
-      public IAmmoRequest post();
-      public IAmmoRequest directedSubscribe(Anon originator);
-      public IAmmoRequest directedPost(Anon recipient);
-      public IAmmoRequest publish();
-      public IAmmoRequest subscribe();
-      public IAmmoRequest retrieve();
-      public IAmmoRequest getInstance(String uuid);
+      public IAmmoRequest post() throws RemoteException;
+      public IAmmoRequest directedSubscribe(Anon originator) throws RemoteException;
+      public IAmmoRequest directedPost(Anon recipient) throws RemoteException;
+      public IAmmoRequest publish() throws RemoteException;
+      public IAmmoRequest subscribe() throws RemoteException;
+      public IAmmoRequest retrieve() throws RemoteException;
+      public IAmmoRequest getInstance(String uuid) throws RemoteException;
         public Builder provider(Uri val);
 
         public static final Uri DEFAULT_PROVIDER = null;
