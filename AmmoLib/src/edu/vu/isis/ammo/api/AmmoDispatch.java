@@ -12,6 +12,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
+import android.os.IBinder;
 import android.os.RemoteException;
 
 import com.google.gson.Gson;
@@ -30,8 +31,15 @@ public class AmmoDispatch  {
         this.ab = AmmoRequest.newBuilder(context);
         this.resolver = context.getContentResolver();
     }
-    public static AmmoDispatch getInstance(Context context) {
+    private AmmoDispatch(Context context, IBinder service) {
+    	this.ab = AmmoRequest.newBuilder(service);
+    	this.resolver = context.getContentResolver();
+    }
+    public static AmmoDispatch newInstance(Context context) {
         return new AmmoDispatch(context);
+    }
+    public static AmmoDispatch newInstance(Context context, IBinder service) {
+        return new AmmoDispatch(context, service);
     }
 
 
