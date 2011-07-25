@@ -24,9 +24,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import edu.vu.isis.ammo.core.provider.PreferenceSchema;
-import edu.vu.isis.ammo.core.provider.DistributorSchema.PostalTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.PublicationTableSchema;
-import edu.vu.isis.ammo.core.provider.DistributorSchema.RetrievalTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.SubscriptionTableSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchemaBase.PostalTableSchemaBase;
 import edu.vu.isis.ammo.core.provider.DistributorSchemaBase.PublicationTableSchemaBase;
@@ -35,8 +33,6 @@ import edu.vu.isis.ammo.core.provider.DistributorSchemaBase.SubscriptionTableSch
 
 /**
  * see https://ammo.isis.vanderbilt.edu/redmine/boards/2/topics/3
- * 
- * @author phreed
  * 
  */
 public class AmmoDispatcher {
@@ -57,6 +53,7 @@ public class AmmoDispatcher {
 	 * Once the item has been sent it is removed.
 	 */
 	// posting with explicit expiration and worth
+	@SuppressWarnings("unused")
 	static private File dir = new File(Environment.getExternalStorageDirectory(),"ammo_distributor_cache");
 	
 	// static final private String selectUri = "\""+RetrievalTableSchema.URI+"\" = '?'";
@@ -637,7 +634,7 @@ public class AmmoDispatcher {
 	 * @param expiration how long does the subscription last?
 	 * @return was the subscriber content provider updated correctly.
 	 */
-	private boolean publish(Uri uri, String mimeType, Calendar expiration) {
+	public boolean publish(Uri uri, String mimeType, Calendar expiration) {
 		if (expiration == null) {
 			expiration = Calendar.getInstance();
 			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));

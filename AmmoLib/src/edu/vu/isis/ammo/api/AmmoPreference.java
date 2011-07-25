@@ -10,6 +10,7 @@ import edu.vu.isis.ammo.core.provider.PreferenceSchema;
 public class AmmoPreference {
 	
 	private static AmmoPreference instance = null;
+	@SuppressWarnings("unused")
 	final private Context mContext;
 	final private ContentResolver mContentResolver;
 	final private boolean hasPermissionReadWrite;
@@ -33,6 +34,7 @@ public class AmmoPreference {
 	}
 	
 	// Returns a string array where values are concatenated from each string element.
+	@SuppressWarnings("unused")
 	private String[] constructFredProtocolStringArray(String[] defVals, String[] methodTypes) {
 		if (defVals.length != methodTypes.length) {
 			return null;
