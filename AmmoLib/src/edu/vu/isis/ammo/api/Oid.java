@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import edu.vu.isis.ammo.api.TimeInterval.Unit;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
