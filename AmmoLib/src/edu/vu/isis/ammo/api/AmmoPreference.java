@@ -26,7 +26,8 @@ public class AmmoPreference {
 		}
 	}
 	
-	public static AmmoPreference getInstance(Context context) {
+	public static AmmoPreference getInstance(Context context) { return newInstance(context); }
+	public static AmmoPreference newInstance(Context context) {
 		if (instance == null) {
 			instance = new AmmoPreference(context, context.getContentResolver());
 		}
