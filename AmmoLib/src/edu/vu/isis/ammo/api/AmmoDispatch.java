@@ -12,6 +12,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
+import android.os.RemoteException;
 
 import com.google.gson.Gson;
 
@@ -26,7 +27,7 @@ public class AmmoDispatch  {
     final private ContentResolver resolver;
 
     private AmmoDispatch(Context context) {
-        this.ab = AmmoRequest.createBuilder();
+        this.ab = AmmoRequest.newBuilder(context);
         this.resolver = context.getContentResolver();
     }
     public static AmmoDispatch getInstance(Context context) {
@@ -40,8 +41,9 @@ public class AmmoDispatch  {
        * @param topicType
        * @param value
        * @return
+     * @throws RemoteException 
        */
-    public boolean post(String topicType, String serializedString) {
+    public boolean post(String topicType, String serializedString) throws RemoteException {
         return this.post(topicType, serializedString, null, Double.NaN);
     }
 
@@ -53,11 +55,12 @@ public class AmmoDispatch  {
        * @param expiration
        * @param worth
        * @return
+     * @throws RemoteException 
        */
-    public boolean post(String topicType, String payload, Calendar expiration, double worth) {
+    public boolean post(String topicType, String payload, Calendar expiration, double worth) throws RemoteException {
         return post(topicType, payload, expiration, worth, null);
     }
-    public boolean post(String topicType, String payload, Calendar expiration, double worth, PendingIntent notice) {
+    public boolean post(String topicType, String payload, Calendar expiration, double worth, PendingIntent notice) throws RemoteException {
         logger.trace("post payload {} {} {} {} {}", new Object[] {topicType, payload, expiration, worth, notice});
         if (expiration == null) {
             expiration = Calendar.getInstance();
@@ -80,8 +83,9 @@ public class AmmoDispatch  {
        * @param topicType
        * @param value
        * @return
+     * @throws RemoteException 
        */
-    public boolean post(String topicType, ContentValues value) {
+    public boolean post(String topicType, ContentValues value) throws RemoteException {
         return this.post(topicType, value, null, Double.NaN);
     }
 
@@ -93,8 +97,9 @@ public class AmmoDispatch  {
        * @param expiration
        * @param worth
        * @return
+     * @throws RemoteException 
        */
-    public boolean post(String topicType, ContentValues value, Calendar expiration, double worth) {
+    public boolean post(String topicType, ContentValues value, Calendar expiration, double worth) throws RemoteException {
         Gson gson = new Gson();
         String serializedString = gson.toJson(value.valueSet());
         return post(topicType, serializedString, expiration, worth);
@@ -109,23 +114,24 @@ public class AmmoDispatch  {
        * @param expiration how long before the item must be posted, the journal time
        * @param worth how valuable is the information
        * @return was the distribution content provider updated correctly.
+     * @throws RemoteException 
        */
-    public boolean post(Uri provider, String topicType, Calendar expiration, double worth) {
+    public boolean post(Uri provider, String topicType, Calendar expiration, double worth) throws RemoteException {
         return post(provider,topicType,expiration,worth,null);
     }
 
-    public boolean post(Uri provider) {
+    public boolean post(Uri provider) throws RemoteException {
         return post(provider,this.resolver.getType(provider),null,Double.NaN,null);
     }
-    public boolean post(Uri provider, String topicType) {
+    public boolean post(Uri provider, String topicType) throws RemoteException {
         return post(provider,topicType,null,Double.NaN,null);
     }
 
-    public boolean post(Uri provider, Calendar expiration, double worth) {
+    public boolean post(Uri provider, Calendar expiration, double worth) throws RemoteException {
     	return post(provider,this.resolver.getType(provider),expiration,worth,null);
     }
 
-    public boolean post(Uri provider, String topicType, Calendar expiration, double worth, PendingIntent notice) {
+    public boolean post(Uri provider, String topicType, Calendar expiration, double worth, PendingIntent notice) throws RemoteException {
         logger.trace("post provider {} {} {} {} {}", new Object[] {topicType, provider, expiration, worth, notice});
         // check that the provider is valid
         if (provider == null) return false;
@@ -157,8 +163,9 @@ public class AmmoDispatch  {
 	 * @param worth
 	 * @param query
 	 * @return
+	 * @throws RemoteException 
 	 */
-	public boolean pull(Uri uri, Calendar expiration, double worth, String query) {
+	public boolean pull(Uri uri, Calendar expiration, double worth, String query) throws RemoteException {
 		return this.pull(uri, this.resolver.getType(uri), expiration, worth, query, null);
 	}
     /**
@@ -169,8 +176,9 @@ public class AmmoDispatch  {
        * @param worth
        * @param query
        * @return
+     * @throws RemoteException 
        */
-    public boolean pull(Uri provider, int lifetime, double worth, String query) {
+    public boolean pull(Uri provider, int lifetime, double worth, String query) throws RemoteException {
         return this.pull(provider, Calendar.SECOND, lifetime, worth, query);
     }
 
@@ -190,8 +198,9 @@ public class AmmoDispatch  {
        * @param worth
        * @param query
        * @return
+     * @throws RemoteException 
        */
-    public boolean pull(Uri provider, int field, int lifetime, double worth, String query) {
+    public boolean pull(Uri provider, int field, int lifetime, double worth, String query) throws RemoteException {
         return this.pull(provider, null , field, lifetime, worth, query);
     }
     /**
@@ -206,13 +215,14 @@ public class AmmoDispatch  {
        * @param worth
        * @param query
        * @return
+     * @throws RemoteException 
        */
-    public boolean pull(Uri provider, String topicType) {
+    public boolean pull(Uri provider, String topicType) throws RemoteException {
         return this.pull(provider, topicType, Calendar.HOUR, 1, 0.0, "");
     }
 
 
-    public boolean pull(Uri provider, String topicType, String query) {
+    public boolean pull(Uri provider, String topicType, String query) throws RemoteException {
         return this.pull(provider, topicType, Calendar.HOUR, 1, 0.0, query);
     }
 
@@ -226,8 +236,9 @@ public class AmmoDispatch  {
        * @param worth
        * @param query
        * @return
+     * @throws RemoteException 
        */
-    public boolean pull(Uri provider, String topicType, int field, int lifetime, double worth, String query) {
+    public boolean pull(Uri provider, String topicType, int field, int lifetime, double worth, String query) throws RemoteException {
         Calendar expiration = Calendar.getInstance();
         expiration.add(field, lifetime);
         return this.pull(provider, topicType, expiration, worth, query, null);
@@ -265,8 +276,9 @@ public class AmmoDispatch  {
        * @param worth how valuable is the information
        * @param query
        * @return was the subscriber content provider updated correctly.
+     * @throws RemoteException 
        */
-    private boolean pull(Uri provider, String topicType, Calendar expiration, double worth, String query, PendingIntent notice) {
+    private boolean pull(Uri provider, String topicType, Calendar expiration, double worth, String query, PendingIntent notice) throws RemoteException {
         logger.trace("pull {} {} {} {} {} {}", new Object[] {topicType, provider, expiration, worth, query, notice});
         if (expiration == null) {
             expiration = Calendar.getInstance();
@@ -299,8 +311,9 @@ public class AmmoDispatch  {
        * @param worth
        * @param filter
        * @return
+     * @throws RemoteException 
        */
-    public boolean subscribe(Uri provider, Calendar expiration, double worth, String filter) {
+    public boolean subscribe(Uri provider, Calendar expiration, double worth, String filter) throws RemoteException {
         return this.subscribe(provider, this.resolver.getType(provider), expiration, worth, filter);
     }
 
@@ -313,8 +326,9 @@ public class AmmoDispatch  {
        * @param worth
        * @param filter
        * @return
+     * @throws RemoteException 
        */
-    public boolean subscribe(Uri provider, int lifetime, double worth, String filter) {
+    public boolean subscribe(Uri provider, int lifetime, double worth, String filter) throws RemoteException {
         return this.subscribe(provider, Calendar.SECOND, lifetime, worth, filter);
     }
 
@@ -332,8 +346,9 @@ public class AmmoDispatch  {
        * @param worth
        * @param filter
        * @return
+     * @throws RemoteException 
        */
-    public boolean subscribe(Uri provider, int field, int lifetime, double worth, String filter) {
+    public boolean subscribe(Uri provider, int field, int lifetime, double worth, String filter) throws RemoteException {
         return this.subscribe(provider, null , field, lifetime, worth, filter);
     }
     /**
@@ -344,8 +359,9 @@ public class AmmoDispatch  {
        * @param worth
        * @param filter
        * @return
+     * @throws RemoteException 
        */
-    public boolean subscribe(Uri provider, String topicType) {
+    public boolean subscribe(Uri provider, String topicType) throws RemoteException {
         if (topicType == null) topicType = this.resolver.getType(provider);
         return this.subscribe(provider, topicType, Calendar.HOUR, 1, 0, "");
     }
@@ -364,12 +380,13 @@ public class AmmoDispatch  {
        * @param worth how valuable is the information
        * @param filter
        * @return was the subscriber content provider updated correctly.
+     * @throws RemoteException 
        */
-    private boolean subscribe(Uri provider, String topicType, Calendar expiration, double worth, String filter) {
+    private boolean subscribe(Uri provider, String topicType, Calendar expiration, double worth, String filter) throws RemoteException {
         return subscribe(provider, topicType, expiration, worth, filter, null);
     }
 
-    private boolean subscribe(Uri provider, String topicType, Calendar expiration, double worth, String filter, PendingIntent notice) {
+    private boolean subscribe(Uri provider, String topicType, Calendar expiration, double worth, String filter, PendingIntent notice) throws RemoteException {
         logger.trace("subscribe {} {} {} {} {} {}", new Object[] {topicType, provider, expiration, worth, filter, notice});
         if (expiration == null) {
             expiration = Calendar.getInstance();
@@ -396,8 +413,9 @@ public class AmmoDispatch  {
        * @param worth
        * @param filter
        * @return
+     * @throws RemoteException 
        */
-    public boolean subscribe(Uri provider, String topicType, int field, int lifetime, double worth, String filter) {
+    public boolean subscribe(Uri provider, String topicType, int field, int lifetime, double worth, String filter) throws RemoteException {
         Calendar expiration = Calendar.getInstance();
         expiration.add(field, lifetime);
         if (topicType == null) topicType = this.resolver.getType(provider);
@@ -434,7 +452,7 @@ public class AmmoDispatch  {
     }
 
     
-    public boolean unsubscribe(Uri provider) {
+    public boolean unsubscribe(Uri provider) throws RemoteException {
       IAmmoRequest ar = this.ab
          .provider(provider)
          .subscribe();
@@ -442,7 +460,7 @@ public class AmmoDispatch  {
       return ar != null;
     }
 
-    public boolean unsubscribe(Uri provider, String topicType) {
+    public boolean unsubscribe(Uri provider, String topicType) throws RemoteException {
       IAmmoRequest ar = this.ab
          .topic(topicType)
          .provider(provider)
@@ -459,11 +477,12 @@ public class AmmoDispatch  {
        * @param topicType the topicType type of the tuples being requested, used for retrieval by the gateway
        * @param expiration how long does the subscription last?
        * @return was the published content provider updated correctly?
+     * @throws RemoteException 
        */
-    public boolean publish(Uri provider, String topicType) {
+    public boolean publish(Uri provider, String topicType) throws RemoteException {
         return this.publish(provider, topicType, (Calendar) null);
     }
-    public boolean publish(Uri provider, String topicType, Calendar expiration) {
+    public boolean publish(Uri provider, String topicType, Calendar expiration) throws RemoteException {
         logger.trace("publish {} {} {}", new Object[] {topicType, provider, expiration});
         if (expiration == null) {
             expiration = Calendar.getInstance();
