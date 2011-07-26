@@ -32,8 +32,8 @@ public class AmmoDispatch  {
         this.resolver = context.getContentResolver();
     }
     private AmmoDispatch(Context context, IBinder service) {
-    	this.ab = AmmoRequest.newBuilder(service);
-    	this.resolver = context.getContentResolver();
+        this.ab = AmmoRequest.newBuilder(service);
+        this.resolver = context.getContentResolver();
     }
     public static AmmoDispatch newInstance(Context context) {
         return new AmmoDispatch(context);
@@ -108,9 +108,14 @@ public class AmmoDispatch  {
      * @throws RemoteException 
        */
     public boolean post(String topicType, ContentValues value, Calendar expiration, double worth) throws RemoteException {
-        Gson gson = new Gson();
-        String serializedString = gson.toJson(value.valueSet());
-        return post(topicType, serializedString, expiration, worth);
+        try {
+            Gson gson = new Gson();
+            String serializedString = gson.toJson(value.valueSet());
+            return post(topicType, serializedString, expiration, worth);
+        } catch (IllegalAccessError ex) {
+            logger.error("gson library error {}", ex.getStackTrace());
+        }
+        return false;
     }
 
 
@@ -136,7 +141,7 @@ public class AmmoDispatch  {
     }
 
     public boolean post(Uri provider, Calendar expiration, double worth) throws RemoteException {
-    	return post(provider,this.resolver.getType(provider),expiration,worth,null);
+        return post(provider,this.resolver.getType(provider),expiration,worth,null);
     }
 
     public boolean post(Uri provider, String topicType, Calendar expiration, double worth, PendingIntent notice) throws RemoteException {
@@ -163,19 +168,19 @@ public class AmmoDispatch  {
         return null;
     }
 
-	/**
-	 * Pulling with explicit expiration, worth, and query.
-	 *  
-	 * @param uri
-	 * @param expiration
-	 * @param worth
-	 * @param query
-	 * @return
-	 * @throws RemoteException 
-	 */
-	public boolean pull(Uri uri, Calendar expiration, double worth, String query) throws RemoteException {
-		return this.pull(uri, this.resolver.getType(uri), expiration, worth, query, null);
-	}
+    /**
+     * Pulling with explicit expiration, worth, and query.
+     *  
+     * @param uri
+     * @param expiration
+     * @param worth
+     * @param query
+     * @return
+     * @throws RemoteException 
+     */
+    public boolean pull(Uri uri, Calendar expiration, double worth, String query) throws RemoteException {
+        return this.pull(uri, this.resolver.getType(uri), expiration, worth, query, null);
+    }
     /**
        * Sets the lifetime in seconds.
        *
