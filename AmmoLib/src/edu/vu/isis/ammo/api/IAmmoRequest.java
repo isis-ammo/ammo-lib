@@ -138,7 +138,21 @@ public interface IAmmoRequest {
         public Builder select(Form val); 
    }
    public enum Action {
-     POSTAL, DIRECTED_POSTAL, PUBLISH, RETRIEVAL, SUBSCRIBE, DIRECTED_SUBSCRIBE
+     POSTAL, DIRECTED_POSTAL, PUBLISH, RETRIEVAL, SUBSCRIBE, DIRECTED_SUBSCRIBE;
+
+     @Override
+     public String toString() {
+         switch (this) {
+         case POSTAL: return "POSTAL";
+         case DIRECTED_POSTAL: return "DIRECTED POST";
+         case PUBLISH: return "PUBLISH";
+         case RETRIEVAL: return "RETRIEVAL";
+         case SUBSCRIBE: return "SUBSCRIBE";
+         case DIRECTED_SUBSCRIBE: return "DIRECTED SUBSCRIBE";
+         default: 
+             return null;
+         }
+     }
    };
 
    public interface Anon {
