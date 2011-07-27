@@ -69,6 +69,18 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
     final public IAmmoRequest.Query select_query;
     final public IAmmoRequest.Form select_form;
     
+    @Override
+    public String toString() {
+    	StringBuilder sb = new StringBuilder();
+    	sb.append(this.action.toString()).append(" Request ");
+    	sb.append(this.uuid).append(" ");
+    	switch(this.topic_type) {
+    	case STR: sb.append("topic ").append(this.topic_str); break;
+    	case OID: sb.append("topic ").append(this.topic_oid); break;
+    	}
+    	return sb.toString();
+    }
+    
 
     private AmmoRequest(IAmmoRequest.Action action, Builder builder) {
         this.action = action;
