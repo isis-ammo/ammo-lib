@@ -4,9 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -22,6 +27,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import edu.vu.isis.ammo.core.provider.PreferenceSchema;
 import edu.vu.isis.ammo.core.provider.DistributorSchema.PublicationTableSchema;
@@ -183,9 +189,11 @@ public class AmmoDispatcher {
 	public boolean post(String mimeType, ContentValues value, Calendar expiration, double worth) 
 	{
 		Log.i("AmmoDispatcher", "post(" + value.toString());
-		Gson gson = new Gson();
-        String serializedString = gson.toJson(value);
-        return post(mimeType, serializedString, expiration, worth);
+	    Gson gson = new Gson();
+	    Set<Entry<String,Object>> set = value.valueSet();
+	    Type collectionType = new TypeToken<Set<Entry<String,Object>>>(){}.getType();
+	    String serializedString = gson.toJson(set, collectionType);
+	    return post(mimeType, serializedString, expiration, worth);
 	}
 
 	/**
@@ -269,7 +277,7 @@ public class AmmoDispatcher {
 
 	public List<Map<String, String>> postal() {
 		// TODO Auto-generated method stub
-		return null;
+		return newSampleResult();
 	}
 
 	
@@ -439,7 +447,7 @@ public class AmmoDispatcher {
 
 	public List<Map<String, String>> retrieval() {
 		// TODO Auto-generated method stub
-		return null;
+		return newSampleResult();
 	}
 
 	
@@ -580,7 +588,7 @@ public class AmmoDispatcher {
 	
 	public List<Map<String, String>> subscription() {
 		// TODO Auto-generated method stub
-		return null;
+		return newSampleResult();
 	}
 	
 	
@@ -634,7 +642,7 @@ public class AmmoDispatcher {
 	 * @param expiration how long does the subscription last?
 	 * @return was the subscriber content provider updated correctly.
 	 */
-	private boolean publish(Uri uri, String mimeType, Calendar expiration) {
+	public boolean publish(Uri uri, String mimeType, Calendar expiration) {
 		if (expiration == null) {
 			expiration = Calendar.getInstance();
 			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
@@ -671,5 +679,17 @@ public class AmmoDispatcher {
 		}
 		return true;
 	}
+	
+	
+    /**
+     * @return a sample result when no real results are available.
+     */
+    private List<Map<String,String>> newSampleResult() {
+		List<Map<String,String>> result = new ArrayList<Map<String,String>>(2);
+		Map<String,String> map_A = new HashMap<String,String>();
+		map_A.put("sample", "sample value");
+		result.add(map_A);
+		return result;
+    }
 
 }

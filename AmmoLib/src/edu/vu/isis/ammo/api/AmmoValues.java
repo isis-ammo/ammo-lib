@@ -16,7 +16,7 @@ import android.os.Parcelable;
  * - instrumentation
  */
 public class AmmoValues {
-    private ContentValues cv;
+    private final ContentValues cv;
 
     public AmmoValues() {
         this.cv = new ContentValues();
@@ -43,8 +43,10 @@ public class AmmoValues {
     }
 
     public AmmoValues(ContentValues from) {
-        this.cv = new ContentValues(cv);
+        this.cv = new ContentValues(from);
     }
+    
+    public ContentValues asContentValues() { return this.cv; }
 
     @Override
     public boolean equals(Object object) {
@@ -353,7 +355,6 @@ public class AmmoValues {
     }
 
     public static final Parcelable.Creator<AmmoValues> CREATOR = new Parcelable.Creator<AmmoValues>() {
-        @SuppressWarnings( { "deprecation", "unchecked" })
         public AmmoValues createFromParcel(Parcel in) {
             return new AmmoValues(ContentValues.CREATOR.createFromParcel(in));
         }
@@ -367,7 +368,6 @@ public class AmmoValues {
         return this.cv.describeContents();
     }
 
-    @SuppressWarnings("deprecation")
     public void writeToParcel(Parcel parcel, int flags) {
         this.cv.writeToParcel(parcel, flags);
     }

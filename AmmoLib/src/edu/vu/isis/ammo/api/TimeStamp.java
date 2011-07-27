@@ -17,8 +17,13 @@ public class TimeStamp implements Parcelable {
     }
     
     public TimeStamp(Calendar cal) {
-    	this.millis = cal.getTimeInMillis();
+    	this.millis = (cal == null) ? System.currentTimeMillis() : cal.getTimeInMillis();
     	this.interval = new TimeInterval(0);
+    }
+    
+    public TimeStamp(Calendar cal, int interval) {
+    	this.millis = (cal == null) ? System.currentTimeMillis() : cal.getTimeInMillis();
+    	this.interval = new TimeInterval(interval);
     }
     
     // *********************************
