@@ -1,6 +1,7 @@
 package edu.vu.isis.ammo.api;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,6 +193,10 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
     public static Builder newBuilder(Context context) {
         return new AmmoRequest.Builder(context).reset();
     }
+    
+    public static Builder newBuilder(IBinder service) {
+        return new AmmoRequest.Builder(service).reset();
+    }
   
 
 
@@ -242,26 +247,37 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
      *
      */
     private static final Intent DISTRIBUTOR_SERVICE = new Intent(IDistributorService.class.getName());
-    private static IDistributorService distributor = null;
-    
-    private final static ServiceConnection conn = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            logger.trace("service connected");
-            // 
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            logger.trace("service disconnected");
-            distributor = null;
-        }
-    };
+
     
     public static class Builder implements IAmmoRequest.Builder {
 
+        private final AtomicReference<IDistributorService> distributor;
+        
         private Builder(Context context) {
-            context.bindService(DISTRIBUTOR_SERVICE, conn, Context.BIND_AUTO_CREATE);
+            this.distributor = new AtomicReference<IDistributorService>(null);
+            
+            final ServiceConnection conn = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName name, IBinder service) {
+                    logger.trace("service connected");
+                    distributor.set((IDistributorService) service);
+                }
+                @Override
+                public void onServiceDisconnected(ComponentName name) {
+                    logger.trace("service disconnected");
+                    distributor.set(null);
+                }
+            };
+            boolean isBound = context.bindService(DISTRIBUTOR_SERVICE, conn, Context.BIND_AUTO_CREATE);
+            logger.info("is the service bound? {}", isBound);
         }
+        
+        private Builder(IBinder service) {
+            this.distributor = new AtomicReference<IDistributorService>(null);
+            this.distributor.set((IDistributorService) service);
+            logger.info("is the service bound?");
+        }
+
 
         private Uri provider;
         
@@ -309,7 +325,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         @Override
         public IAmmoRequest directedPost(IAmmoRequest.Anon recipient) throws RemoteException {
             AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.DIRECTED_POSTAL, this);
-            distributor.makeRequest(request);
+            distributor.get().makeRequest(request);
             return request;
         }
 
@@ -321,27 +337,35 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         @Override
         public IAmmoRequest post() throws RemoteException {
             AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.POSTAL, this);
-            distributor.makeRequest(request);
+            if (distributor.get() == null)
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    // TODO Auto-generated catch block
+                	logger.info("post failed {}", ex.getStackTrace());
+                }
+            String ident = distributor.get().makeRequest(request);
+            logger.info("post {}", ident);
             return request;
         }
 
         @Override
         public IAmmoRequest publish() throws RemoteException {
             AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.PUBLISH, this);
-            distributor.makeRequest(request);
+            distributor.get().makeRequest(request);
             return request;
         }
 
         @Override
         public IAmmoRequest retrieve() throws RemoteException {
             AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.RETRIEVAL, this);
-            distributor.makeRequest(request);
+            distributor.get().makeRequest(request);
             return request;
         }
         @Override
         public IAmmoRequest subscribe() throws RemoteException {
             AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.SUBSCRIBE, this);
-            distributor.makeRequest(request);
+            distributor.get().makeRequest(request);
             return request;
         }
 
