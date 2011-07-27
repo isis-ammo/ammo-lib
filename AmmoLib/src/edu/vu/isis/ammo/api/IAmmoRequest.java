@@ -37,10 +37,12 @@ public interface IAmmoRequest {
         public Builder payload(String val);
         public Builder payload(byte[] val);
         public Builder payload(ContentValues val);
+        public Builder payload(AmmoValues val);
         public enum TopicEncoding { STR, OID };
 
         public Builder topic(String val);
-        public Builder topic(Oid val);  // V:2.0
+        public Builder topic(Oid val); 
+        // \availability{2.0}
 
         public static final String DEFAULT_TOPIC = "";
 
@@ -51,8 +53,10 @@ public interface IAmmoRequest {
         public Builder expire(TimeInterval val);
         public Builder expire(TimeStamp val);
 
-        public static final TimeInterval UNLIMITED_EXPIRE = new TimeInterval(TimeInterval.UNLIMITED);
-        public static final TimeInterval DEFAULT_EXPIRE = new TimeInterval(TimeInterval.Unit.HOUR);
+        public static final TimeInterval UNLIMITED_EXPIRE = 
+              new TimeInterval(TimeInterval.UNLIMITED);
+        public static final TimeInterval DEFAULT_EXPIRE = 
+              new TimeInterval(TimeInterval.Unit.HOUR);
 
         public static final int VOLATILE_DURABILITY = 1;
         public static final int PERSISTENT_DURABILITY = 2;
@@ -91,7 +95,8 @@ public interface IAmmoRequest {
         public Builder start(TimeStamp val); 
         public Builder start(TimeInterval val); 
 
-        public static final TimeInterval DEFAULT_START = new TimeInterval(TimeInterval.Unit.MINUTE);
+        public static final TimeInterval DEFAULT_START = 
+             new TimeInterval(TimeInterval.Unit.MINUTE);
 
         public enum DeliveryScope {
            IMMEDIATE, LOCAL, GLOBAL, RECIPIENT 

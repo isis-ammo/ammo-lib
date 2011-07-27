@@ -342,7 +342,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
                     Thread.sleep(2000);
                 } catch (InterruptedException ex) {
                     // TODO Auto-generated catch block
-                	logger.info("post failed {}", ex.getStackTrace());
+                    logger.info("post failed {}", ex.getStackTrace());
                 }
             String ident = distributor.get().makeRequest(request);
             logger.info("post {}", ident);
@@ -459,6 +459,13 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
             this.payload_cv = val;
             return this;
         }
+        
+
+        @Override
+        public Builder payload(AmmoValues val) {
+            return this.payload(val.asContentValues());
+        }
+
 
         @Override
         public Builder priority(int val) {

@@ -1,8 +1,13 @@
 package edu.vu.isis.ammo.api;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +21,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * see https://ammo.isis.vanderbilt.edu/redmine/boards/2/topicTypes/3
@@ -108,14 +114,11 @@ public class AmmoDispatch  {
      * @throws RemoteException 
        */
     public boolean post(String topicType, ContentValues value, Calendar expiration, double worth) throws RemoteException {
-        try {
-            Gson gson = new Gson();
-            String serializedString = gson.toJson(value.valueSet());
-            return post(topicType, serializedString, expiration, worth);
-        } catch (IllegalAccessError ex) {
-            logger.error("gson library error {}", ex.getStackTrace());
-        }
-        return false;
+        Gson gson = new Gson();
+        Set<Entry<String,Object>> set = value.valueSet();
+        Type collectionType = new TypeToken<Set<Entry<String,Object>>>(){}.getType();
+        String serializedString = gson.toJson(set, collectionType);
+        return post(topicType, serializedString, expiration, worth);
     }
 
 
@@ -165,7 +168,18 @@ public class AmmoDispatch  {
        * @return
        */
     public List<Map<String,String>> postal() {
-        return null;
+        return newSampleResult();
+    }
+    
+    /**
+     * @return a sample result when no real results are available.
+     */
+    private List<Map<String,String>> newSampleResult() {
+		List<Map<String,String>> result = new ArrayList<Map<String,String>>(2);
+		Map<String,String> map_A = new HashMap<String,String>();
+		map_A.put("sample", "sample value");
+		result.add(map_A);
+		return result;
     }
 
     /**
@@ -313,7 +327,7 @@ public class AmmoDispatch  {
        * @return
        */
     public List<Map<String,String>> retrieval() {
-        return null;
+    	return newSampleResult();
     }
 
     /**
@@ -461,7 +475,7 @@ public class AmmoDispatch  {
 //            tuples.add(tuple);
 //        }
 //        return tuples;
-        return null;
+    	return newSampleResult();
     }
 
     
