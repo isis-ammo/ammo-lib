@@ -378,7 +378,7 @@ public class AmmoDispatcher {
 	 * additional information the interest expressing service needs.
 	 * 
 	 * e.g. 
-	 *   Suppose there is a table 'people' in content provider 'nevada' with sponsor 'com.aterrasys.nevada'.
+	 *   Suppose there is a table 'people' in content provider 'nevada' with sponsor 'edu.vu.isis.ammo.exercise'.
 	 *   The client program wishes to initialize the table with a request to service.
 	 *   
 	 *   In preparation the service has expressed interest in the type
