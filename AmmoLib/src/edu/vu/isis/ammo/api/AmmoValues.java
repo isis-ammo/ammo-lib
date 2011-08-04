@@ -16,7 +16,7 @@ import android.os.Parcelable;
  * - instrumentation
  */
 public class AmmoValues {
-    private ContentValues cv;
+    private final ContentValues cv;
 
     public AmmoValues() {
         this.cv = new ContentValues();
@@ -43,8 +43,10 @@ public class AmmoValues {
     }
 
     public AmmoValues(ContentValues from) {
-        this.cv = new ContentValues(cv);
+        this.cv = new ContentValues(from);
     }
+    
+    public ContentValues asContentValues() { return this.cv; }
 
     @Override
     public boolean equals(Object object) {

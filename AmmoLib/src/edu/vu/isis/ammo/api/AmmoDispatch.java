@@ -1,8 +1,13 @@
 package edu.vu.isis.ammo.api;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +21,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * see https://ammo.isis.vanderbilt.edu/redmine/boards/2/topicTypes/3
@@ -32,8 +38,8 @@ public class AmmoDispatch  {
         this.resolver = context.getContentResolver();
     }
     private AmmoDispatch(Context context, IBinder service) {
-    	this.ab = AmmoRequest.newBuilder(service);
-    	this.resolver = context.getContentResolver();
+        this.ab = AmmoRequest.newBuilder(service);
+        this.resolver = context.getContentResolver();
     }
     public static AmmoDispatch newInstance(Context context) {
         return new AmmoDispatch(context);
@@ -109,7 +115,9 @@ public class AmmoDispatch  {
        */
     public boolean post(String topicType, ContentValues value, Calendar expiration, double worth) throws RemoteException {
         Gson gson = new Gson();
-        String serializedString = gson.toJson(value.valueSet());
+        Set<Entry<String,Object>> set = value.valueSet();
+        Type collectionType = new TypeToken<Set<Entry<String,Object>>>(){}.getType();
+        String serializedString = gson.toJson(set, collectionType);
         return post(topicType, serializedString, expiration, worth);
     }
 
@@ -136,7 +144,7 @@ public class AmmoDispatch  {
     }
 
     public boolean post(Uri provider, Calendar expiration, double worth) throws RemoteException {
-    	return post(provider,this.resolver.getType(provider),expiration,worth,null);
+        return post(provider,this.resolver.getType(provider),expiration,worth,null);
     }
 
     public boolean post(Uri provider, String topicType, Calendar expiration, double worth, PendingIntent notice) throws RemoteException {
@@ -160,22 +168,33 @@ public class AmmoDispatch  {
        * @return
        */
     public List<Map<String,String>> postal() {
-        return null;
+        return newSampleResult();
+    }
+    
+    /**
+     * @return a sample result when no real results are available.
+     */
+    private List<Map<String,String>> newSampleResult() {
+		List<Map<String,String>> result = new ArrayList<Map<String,String>>(2);
+		Map<String,String> map_A = new HashMap<String,String>();
+		map_A.put("sample", "sample value");
+		result.add(map_A);
+		return result;
     }
 
-	/**
-	 * Pulling with explicit expiration, worth, and query.
-	 *  
-	 * @param uri
-	 * @param expiration
-	 * @param worth
-	 * @param query
-	 * @return
-	 * @throws RemoteException 
-	 */
-	public boolean pull(Uri uri, Calendar expiration, double worth, String query) throws RemoteException {
-		return this.pull(uri, this.resolver.getType(uri), expiration, worth, query, null);
-	}
+    /**
+     * Pulling with explicit expiration, worth, and query.
+     *  
+     * @param uri
+     * @param expiration
+     * @param worth
+     * @param query
+     * @return
+     * @throws RemoteException 
+     */
+    public boolean pull(Uri uri, Calendar expiration, double worth, String query) throws RemoteException {
+        return this.pull(uri, this.resolver.getType(uri), expiration, worth, query, null);
+    }
     /**
        * Sets the lifetime in seconds.
        *
@@ -263,7 +282,7 @@ public class AmmoDispatch  {
        * additional information the interest expressing service needs.
        *
        * e.g.
-       *   Suppose there is a table 'people' in content provider 'nevada' with sponsor 'com.aterrasys.nevada'.
+       *   Suppose there is a table 'people' in content provider 'nevada' with sponsor 'edu.vu.isis.ammo.exercise'.
        *   The client program wishes to initialize the table with a request to service.
        *
        *   In preparation the service has expressed interest in the type
@@ -308,7 +327,7 @@ public class AmmoDispatch  {
        * @return
        */
     public List<Map<String,String>> retrieval() {
-        return null;
+    	return newSampleResult();
     }
 
     /**
@@ -456,7 +475,7 @@ public class AmmoDispatch  {
 //            tuples.add(tuple);
 //        }
 //        return tuples;
-        return null;
+    	return newSampleResult();
     }
 
     
