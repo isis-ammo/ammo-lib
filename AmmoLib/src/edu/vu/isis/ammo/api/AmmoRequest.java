@@ -551,6 +551,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         @Override
         public IAmmoRequest post() throws RemoteException {
             AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.POSTAL, this);
+            if (distributor.get() == null) throw new RemoteException();
             String ident = distributor.get().makeRequest(request);
             logger.info("post {}", ident);
             return request;
