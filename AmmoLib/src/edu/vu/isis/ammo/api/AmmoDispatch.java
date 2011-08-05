@@ -82,12 +82,12 @@ public class AmmoDispatch  {
         }
 
         IAmmoRequest ar = this.ab
-                          .topic(topicType)
-                          .payload(payload)
-                          .expire(new TimeStamp(expiration))
-                          //.worth(worth)
-                          //.notice(notice)
-                          .post();
+              .topic(topicType)
+              .payload(payload)
+              .expire(new TimeStamp(expiration))
+              //.worth(worth)
+              //.notice(notice)
+              .post();
         return ar != null;
     }
 
@@ -153,12 +153,12 @@ public class AmmoDispatch  {
         if (provider == null) return false;
 
         IAmmoRequest ar = this.ab
-                          .topic(topicType)
-                          .provider(provider)
-                          .expire(new TimeStamp(expiration))
-                          //.worth(worth)
-                          //.notice(notice)
-                          .post();
+          .topic(topicType)
+          .provider(provider)
+          .expire(new TimeStamp(expiration))
+          //.worth(worth)
+          //.notice(notice)
+          .post();
         return ar != null;
     }
 
@@ -175,11 +175,11 @@ public class AmmoDispatch  {
      * @return a sample result when no real results are available.
      */
     private List<Map<String,String>> newSampleResult() {
-		List<Map<String,String>> result = new ArrayList<Map<String,String>>(2);
-		Map<String,String> map_A = new HashMap<String,String>();
-		map_A.put("sample", "sample value");
-		result.add(map_A);
-		return result;
+        List<Map<String,String>> result = new ArrayList<Map<String,String>>(2);
+        Map<String,String> map_A = new HashMap<String,String>();
+        map_A.put("sample", "sample value");
+        result.add(map_A);
+        return result;
     }
 
     /**
@@ -313,12 +313,12 @@ public class AmmoDispatch  {
         }
 
         IAmmoRequest ar = this.ab
-                          .topic(topicType)
-                          .provider(provider)
-                          .expire(new TimeStamp(expiration))
-                          .select(new AmmoRequest.Query(query))
-                          // .notice(notice)
-                          .retrieve();
+              .topic(topicType)
+              .provider(provider)
+              .expire(new TimeStamp(expiration))
+              .select(new AmmoRequest.Query(query))
+              // .notice(notice)
+              .retrieve();
         return ar != null;
     }
 
@@ -327,7 +327,7 @@ public class AmmoDispatch  {
        * @return
        */
     public List<Map<String,String>> retrieval() {
-    	return newSampleResult();
+        return newSampleResult();
     }
 
     /**
@@ -421,12 +421,12 @@ public class AmmoDispatch  {
         }
 
         IAmmoRequest ar = this.ab
-                          .topic(topicType)
-                          .provider(provider)
-                          .expire(new TimeStamp(expiration))
-                          .filter(filter)
-                          // .notice(notice)
-                          .subscribe();
+              .topic(topicType)
+              .provider(provider)
+              .expire(new TimeStamp(expiration))
+              .filter(filter)
+              // .notice(notice)
+              .subscribe();
         return ar != null;
     }
 
@@ -447,12 +447,12 @@ public class AmmoDispatch  {
         expiration.add(field, lifetime);
         if (topicType == null) topicType = this.resolver.getType(provider);
         IAmmoRequest ar = this.ab
-                          .topic(topicType)
-                          .provider(provider)
-                          .expire(new TimeStamp(expiration))
-                          .filter(filter)
-                          // .notice(notice)
-                          .subscribe();
+          .topic(topicType)
+          .provider(provider)
+          .expire(new TimeStamp(expiration))
+          .filter(filter)
+          // .notice(notice)
+          .subscribe();
         return ar != null;
     }
 
@@ -475,7 +475,7 @@ public class AmmoDispatch  {
 //            tuples.add(tuple);
 //        }
 //        return tuples;
-    	return newSampleResult();
+        return newSampleResult();
     }
 
     
@@ -516,9 +516,9 @@ public class AmmoDispatch  {
             expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
         }
         IAmmoRequest ar = this.ab
-                          .provider(provider)
-                          .expire(new TimeStamp(expiration))
-                          .publish();
+          .provider(provider)
+          .expire(new TimeStamp(expiration))
+          .publish();
         return ar != null;
     }
 
