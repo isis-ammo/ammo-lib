@@ -17,11 +17,13 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
-import android.os.IBinder;
 import android.os.RemoteException;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import edu.vu.isis.ammo.api.type.Query;
+import edu.vu.isis.ammo.api.type.TimeStamp;
 
 /**
  * see https://ammo.isis.vanderbilt.edu/redmine/boards/2/topicTypes/3
@@ -37,16 +39,16 @@ public class AmmoDispatch  {
         this.ab = AmmoRequest.newBuilder(context);
         this.resolver = context.getContentResolver();
     }
-    private AmmoDispatch(Context context, IBinder service) {
-        this.ab = AmmoRequest.newBuilder(service);
-        this.resolver = context.getContentResolver();
-    }
+//    private AmmoDispatch(Context context, IBinder service) {
+//        this.ab = AmmoRequest.newBuilder(service);
+//        this.resolver = context.getContentResolver();
+//    }
     public static AmmoDispatch newInstance(Context context) {
         return new AmmoDispatch(context);
     }
-    public static AmmoDispatch newInstance(Context context, IBinder service) {
-        return new AmmoDispatch(context, service);
-    }
+//    public static AmmoDispatch newInstance(Context context, IBinder service) {
+//        return new AmmoDispatch(context, service);
+//    }
 
 
     /**
@@ -316,7 +318,7 @@ public class AmmoDispatch  {
               .topic(topicType)
               .provider(provider)
               .expire(new TimeStamp(expiration))
-              .select(new AmmoRequest.Query(query))
+              .select(new Query(query))
               // .notice(notice)
               .retrieve();
         return ar != null;

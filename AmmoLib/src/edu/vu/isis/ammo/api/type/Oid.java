@@ -1,4 +1,4 @@
-package edu.vu.isis.ammo.api;
+package edu.vu.isis.ammo.api.type;
 
 import java.util.Collection;
 import java.util.Iterator;

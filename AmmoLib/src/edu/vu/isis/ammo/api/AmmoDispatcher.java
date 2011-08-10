@@ -81,11 +81,8 @@ public class AmmoDispatcher {
         return instance;
     }
 
-    final private Context context;
-
     final private ContentResolver resolver;
     private AmmoDispatcher(Context context, ContentResolver resolver) {
-        this.context = context;
         this.resolver = resolver;
     }
     

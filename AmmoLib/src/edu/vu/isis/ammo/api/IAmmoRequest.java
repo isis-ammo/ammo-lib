@@ -5,9 +5,15 @@ import java.util.Map;
 
 import android.content.ContentValues;
 import android.net.Uri;
+import android.os.Parcel;
 import android.os.RemoteException;
+import edu.vu.isis.ammo.api.type.DeliveryScope;
+import edu.vu.isis.ammo.api.type.Oid;
+import edu.vu.isis.ammo.api.type.TimeInterval;
+import edu.vu.isis.ammo.api.type.TimeStamp;
 
 public interface IAmmoRequest {
+
    public String uuid();  
    public IAmmoRequest replace(IAmmoRequest req) throws RemoteException;
    public IAmmoRequest replace(String uuid) throws RemoteException;
@@ -17,12 +23,9 @@ public interface IAmmoRequest {
    public void resetMetrics(int val);
    public Event[] eventSet(); 
    public static final Uri DEFAULT_PROVIDER = null;
-   public enum PayloadType { NONE, STR, BYTE, CV };
    public static final String DEFAULT_PAYLOAD = "";
-   public enum TopicEncoding { STR, OID };
-
+   
    public static final String DEFAULT_TOPIC = "";
-   public enum ExpireType { ABS, REL };
 
    public static final TimeInterval UNLIMITED_EXPIRE = 
          new TimeInterval(TimeInterval.UNLIMITED);
@@ -45,7 +48,6 @@ public interface IAmmoRequest {
 
    public static final int DEFAULT_ORDER = OLDEST_FIRST_ORDER;
    public static final int DEFAULT_WORTH = 100;
-   public enum StartType { ABS, REL };
 
    public static final TimeInterval DEFAULT_START = 
         new TimeInterval(TimeInterval.Unit.MINUTE);
@@ -53,7 +55,6 @@ public interface IAmmoRequest {
 
    public static String[] DEFAULT_PROJECT = ALL_PROJECT;
    public static final Query ALL_SELECT = null;
-   public enum SelectType { QUERY, FORM };
 
    public static final Query DEFAULT_SELECT = ALL_SELECT;
    public static Form DEFAULT_FORM = null;
@@ -63,12 +64,9 @@ public interface IAmmoRequest {
    public static final int NO_DOWNSAMPLE = 0;
    public static final int DEFAULT_DOWNSAMPLE = NO_DOWNSAMPLE;
    public static final Notice DEFAULT_NOTICE = null;
-   public static final Anon ANY_ANON = null;
-   public static final Anon DEFAULT_RECIPIENT = ANY_ANON;
-   public static final Anon DEFAULT_ORIGINATOR = ANY_ANON;
-   public enum DeliveryScope {
-      IMMEDIATE, LOCAL, GLOBAL, RECIPIENT 
-   };
+   public static final IAnon ANY_ANON = null;
+   public static final IAnon DEFAULT_RECIPIENT = ANY_ANON;
+   public static final IAnon DEFAULT_ORIGINATOR = ANY_ANON;
 
    public static final DeliveryScope DEFAULT_SCOPE = DeliveryScope.GLOBAL;
    public static final int UNLIMITED_THROTTLE = -1;
@@ -80,11 +78,11 @@ public interface IAmmoRequest {
    public static final int DEFAULT_LIMIT = UN_LIMIT;
 
    public interface Builder {
-      public IAmmoRequest duplicate();
+      public IAmmoRequest duplicate() throws RemoteException;
       public Builder reset();
       public IAmmoRequest post() throws RemoteException;
-      public IAmmoRequest directedSubscribe(Anon originator) throws RemoteException;
-      public IAmmoRequest directedPost(Anon recipient) throws RemoteException;
+      public IAmmoRequest directedSubscribe(IAnon originator) throws RemoteException;
+      public IAmmoRequest directedPost(IAnon recipient) throws RemoteException;
       public IAmmoRequest publish() throws RemoteException;
       public IAmmoRequest subscribe() throws RemoteException;
       public IAmmoRequest retrieve() throws RemoteException;
@@ -101,8 +99,10 @@ public interface IAmmoRequest {
         public Builder expire(TimeInterval val);
         public Builder expire(TimeStamp val);
         public Builder durability(int val);
-        public Builder recipient(Anon val);
-        public Builder originator(Anon val);
+        public Builder recipient(IAnon val);
+        public Builder recipient(String val); 
+        public Builder originator(IAnon val);
+        public Builder originator(String val); 
         public Builder priority(int val);
         public Builder order(int val);
         public Builder order(String[] val);
@@ -115,7 +115,8 @@ public interface IAmmoRequest {
         public Builder downsample(int maxSize); 
         public Builder project(String[] val);
         public Builder select(Query val);
-        public Builder select(Form val); 
+        public Builder select(Form val);
+		
    }
    public enum Action {
      POSTAL, DIRECTED_POSTAL, PUBLISH, RETRIEVAL, SUBSCRIBE, DIRECTED_SUBSCRIBE;
@@ -133,20 +134,28 @@ public interface IAmmoRequest {
              return null;
          }
      }
+
+	static public void writeToParcel(Parcel dest, Action action) {
+		dest.writeInt(action.ordinal());
+	}
+	static public Action getInstance(Parcel in) { 
+		return Action.values()[in.readInt()];
+	}
+
    };
 
-   public interface Anon {
+   public interface IAnon {
       public String name(); // canonical name
    }
 
-   public interface Warfighter extends Anon {
+   public interface Warfighter extends IAnon {
       public String callSign();
       public String[] groups();
       public String tigr(); 
    }
 
-   public interface Group extends Anon {}
-   public interface Server extends Anon {}
+   public interface Group extends IAnon {}
+   public interface Server extends IAnon {}
    public interface Query {
       public String select();
       public String[] args();
@@ -159,6 +168,7 @@ public interface IAmmoRequest {
       DELIVERED, COMPLETED 
    };
    public enum DeliveryState { SUCCESS, FAIL,  UNKNOWN, REJECTED };
+   
    public interface Event {
       public DeliveryProgress progress();
       public Event progress(DeliveryProgress val);
@@ -166,6 +176,7 @@ public interface IAmmoRequest {
       public DeliveryState state();
       public Event state(DeliveryState val);
    }
+   
    public interface Notice {
       public Event target();
       public Notice target(Event val);

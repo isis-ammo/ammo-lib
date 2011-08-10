@@ -1,4 +1,4 @@
-package edu.vu.isis.ammo.api;
+package edu.vu.isis.ammo.api.type;
 
 import android.os.Parcel;
 import android.os.Parcelable;
