@@ -10,8 +10,14 @@ public class DeliveryScope implements Parcelable {
   
     final private Type type;
     
+    public DeliveryScope(String val) {
+        this.type = (val.contains("G") || val.contains("g")) 
+            ? Type.GLOBAL
+            : Type.LOCAL;
+    }
+    
     public DeliveryScope(Type val) {
-    	this.type = val;
+        this.type = val;
     }
     
     public Type type() { return this.type; }

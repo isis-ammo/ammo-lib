@@ -1,6 +1,7 @@
 package edu.vu.isis.ammo.api;
 
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -341,6 +342,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         private String[] project;
         private Selection select;
         
+        private int worth;
+        
         @SuppressWarnings("unused")
         private String uid;
 
@@ -434,6 +437,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
             return this;
         }
         
+        public Builder downsample(String max) {
+            if (max == null) return this;
+            this.downsample = Integer.parseInt(max);
+            return this;
+        }
+        
         @Override
         public Builder downsample(int maxSize) {
             this.downsample = maxSize;
@@ -446,7 +455,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
             return this;
         }
 
-
+        public Builder order(String val) {
+            if (this.order == null) return this;
+            // this.order[0] = val;
+            return this;
+        }
+        
         @Override
         public Builder order(int val) {
             if (this.order == null) this.order = new Integer[2];
@@ -460,6 +474,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
             return this;
         }
 
+        
         @Override
         public Builder originator(IAmmoRequest.IAnon val) {
             this.originator = (Anon) val;
@@ -468,12 +483,27 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         
         @Override
         public Builder originator(String val) {
+            if (val == null) return this;
             this.originator =  new Anon(val);
             return this;
         }
 
         @Override
+        public Builder recipient(IAmmoRequest.IAnon val) {
+            this.recipient = (Anon) val;
+            return this;
+        }
+        
+        @Override
+        public Builder recipient(String val) {
+            if (val == null) return this;
+            this.recipient =  new Anon(val);
+            return this;
+        }
+
+        @Override
         public Builder payload(String val) {
+            if (val == null) return this;
             this.payload = new Payload(val);
             return this;
         }
@@ -497,49 +527,45 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         }
 
 
+        public Builder priority(String val) {
+            if (val == null) return this;
+            return this.priority(Integer.parseInt(val));
+        }
+        
         @Override
         public Builder priority(int val) {
             this.priority = val;
             return this;
         }
 
+        public Builder provider(String val) {
+            if (val == null) return this;
+            return this.provider(Uri.parse(val));
+        }
+        
         @Override
         public Builder provider(Uri val) {
             this.provider = new Provider(val);
             return this;
         }
 
-        @Override
-        public Builder recipient(IAmmoRequest.IAnon val) {
-            this.recipient = (Anon) val;
-            return this;
+        public Builder scope(String val) {
+            if (val == null) return this;
+            return this.scope(new DeliveryScope(val));
         }
         
-        @Override
-        public Builder recipient(String val) {
-            this.recipient =  new Anon(val);
-            return this;
-        }
-
         @Override
         public Builder scope(DeliveryScope val) {
             this.scope = val;
             return this;
         }
 
-        @Override
-        public Builder start(TimeStamp val) {
-            this.start = new StartTime(val);
+        public Builder throttle(String val) {
+            if (val == null) return this;
+            this.throttle = Integer.parseInt(val);
             return this;
         }
-
-        @Override
-        public Builder start(TimeInterval val) {
-            this.start = new StartTime(val);
-            return this;
-        }
-
-
+        
         @Override
         public Builder throttle(int val) {
             this.throttle = val;
@@ -564,6 +590,29 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
             return this;
         }
 
+
+        public Builder start(String val) {
+            if (val == null) return this;
+            return this.start(new TimeStamp(val)); 
+        }
+        
+        @Override
+        public Builder start(TimeStamp val) {
+            this.start = new StartTime(val);
+            return this;
+        }
+
+        @Override
+        public Builder start(TimeInterval val) {
+            this.start = new StartTime(val);
+            return this;
+        }
+
+        public Builder expire(String val) {
+            if (val == null) return this;
+            return this.expire(new TimeStamp(val)); 
+        }
+        
         @Override
         public Builder expire(TimeInterval val) {
             this.expire = new StartTime(val);
@@ -576,38 +625,55 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
             return this;
         }
 
+        public Builder project(String val) {
+            if (val == null) return this;
+            if (val.length() < 1) return this;
+            this.project( val.substring(1).split(val.substring(0, 1)) );
+            return this;
+        }
+        
         @Override
         public Builder project(String[] val) {
             this.project = val;
             return this;
         }
 
+        public Builder select(String val) {
+            if (val == null) return this;
+            this.select = new Selection(val);
+            return this;
+        }
+        
         @Override
-        public Builder select(IAmmoRequest.Query val) {
+        public Builder select(Query val) {
             this.select = new Selection(val);
             return this;
         }
 
         @Override
-        public Builder select(IAmmoRequest.Form val) {
+        public Builder select(Form val) {
             this.select = new Selection(val);
             return this;
         }
 
         @Override
         public Builder filter(String val) {
-            // TODO this.filter = val;
+            // this.filter = new Filter(val);
             return this;
         }
 
+        public Builder worth(String val) {
+            if (val == null) return this;
+            this.worth = Integer.parseInt(val);
+            return null;
+        }
+        
         @Override
-        public IAmmoRequest.Builder worth(int val) {
-            // TODO Auto-generated method stub
+        public Builder worth(int val) {
+            this.worth = val;
             return null;
         }
 
-
     }
-
 
 }

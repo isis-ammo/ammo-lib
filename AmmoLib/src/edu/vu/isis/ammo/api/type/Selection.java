@@ -27,6 +27,12 @@ public class Selection implements Parcelable {
     final public IAmmoRequest.Query query;
     final public IAmmoRequest.Form form;
 
+    public Selection(String val) {
+        this.type = Type.QUERY;
+        this.query = new Query(val);
+        this.form = null;
+    }
+    
     public Selection(IAmmoRequest.Query val) {
         this.type = Type.QUERY;
         this.query = val;
