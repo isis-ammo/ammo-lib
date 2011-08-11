@@ -10,38 +10,54 @@ public class DistributorSchema extends DistributorSchemaBase {
 
          protected PostalTableSchema() { super(); }
 
-         public static final String PRIORITY_SORT_ORDER = 
-        	 BaseColumns._ID + " ASC";
-               //PostalTableSchemaBase.EXPIRATION + " DESC, " +
-               //PostalTableSchemaBase.MODIFIED_DATE + " DESC ";
+         public static final String PRIORITY_SORT_ORDER;
+         static {
+            StringBuilder sb = new StringBuilder();
+            sb.append('"').append(PostalTableSchemaBase.PRIORITY).append('"').append(" DESC ");
+            sb.append(',');
+            sb.append('"').append(BaseColumns._ID).append('"').append(" ASC ");
+            PRIORITY_SORT_ORDER = sb.toString();
+         }
       }    
     
       public static class RetrievalTableSchema extends RetrievalTableSchemaBase {
 
          protected RetrievalTableSchema() { super(); }
 
-         public static final String PRIORITY_SORT_ORDER = 
-        	 BaseColumns._ID + " ASC";
-             //  RetrievalTableSchemaBase.EXPIRATION + " DESC, " +
-             //  RetrievalTableSchemaBase.MODIFIED_DATE + " DESC ";
+         public static final String PRIORITY_SORT_ORDER;
+         static {
+            StringBuilder sb = new StringBuilder();
+            sb.append('"').append(RetrievalTableSchemaBase.PRIORITY).append('"').append(" DESC ");
+            sb.append(',');
+            sb.append('"').append(BaseColumns._ID).append('"').append(" ASC ");
+            PRIORITY_SORT_ORDER = sb.toString();
+         }
       }    
       public static class PublicationTableSchema extends PublicationTableSchemaBase {
 
          protected PublicationTableSchema() { super(); }
 
-         public static final String PRIORITY_SORT_ORDER = 
-        	 BaseColumns._ID + " ASC";
-             //  PublicationTableSchemaBase.EXPIRATION + " DESC, " +
-             //  PublicationTableSchemaBase.MODIFIED_DATE + " DESC ";
+         public static final String PRIORITY_SORT_ORDER;
+         static {
+            StringBuilder sb = new StringBuilder();
+            sb.append('"').append(PostalTableSchemaBase.PRIORITY).append('"').append(" DESC ");
+            sb.append(',');
+            sb.append('"').append(BaseColumns._ID).append('"').append(" ASC ");
+            PRIORITY_SORT_ORDER = sb.toString();
+         }
       }    
       public static class SubscriptionTableSchema extends SubscriptionTableSchemaBase {
 
          protected SubscriptionTableSchema() { super(); }
 
-         public static final String PRIORITY_SORT_ORDER = 
-        	 BaseColumns._ID + " ASC";
-             //  SubscriptionTableSchemaBase.EXPIRATION + " DESC, " +
-             //  SubscriptionTableSchemaBase.MODIFIED_DATE + " DESC ";
+         public static final String PRIORITY_SORT_ORDER;
+         static {
+            StringBuilder sb = new StringBuilder();
+            sb.append('"').append(PostalTableSchemaBase.PRIORITY).append('"').append(" DESC ");
+            sb.append(',');
+            sb.append('"').append(BaseColumns._ID).append('"').append(" ASC ");
+            PRIORITY_SORT_ORDER = sb.toString();
+         }
       }    
       
 }
