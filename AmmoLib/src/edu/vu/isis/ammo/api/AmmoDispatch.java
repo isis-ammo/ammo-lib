@@ -39,16 +39,10 @@ public class AmmoDispatch  {
         this.ab = AmmoRequest.newBuilder(context);
         this.resolver = context.getContentResolver();
     }
-//    private AmmoDispatch(Context context, IBinder service) {
-//        this.ab = AmmoRequest.newBuilder(service);
-//        this.resolver = context.getContentResolver();
-//    }
+
     public static AmmoDispatch newInstance(Context context) {
         return new AmmoDispatch(context);
     }
-//    public static AmmoDispatch newInstance(Context context, IBinder service) {
-//        return new AmmoDispatch(context, service);
-//    }
 
 
     /**
