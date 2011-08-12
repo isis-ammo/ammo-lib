@@ -449,6 +449,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
             return this;
         }
 
+        public Builder durability(String val) {
+        	if (val == null) return this;
+            this.durability = Integer.parseInt(val);
+            return this;
+        }
+        
         @Override
         public Builder durability(int val) {
             this.durability = val;
