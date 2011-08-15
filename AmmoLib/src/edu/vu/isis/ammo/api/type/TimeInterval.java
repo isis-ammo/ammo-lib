@@ -1,4 +1,4 @@
-package edu.vu.isis.ammo.api;
+package edu.vu.isis.ammo.api.type;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -32,6 +32,11 @@ public class TimeInterval implements Parcelable {
         this.quantity = 1;
     }
 
+    public TimeInterval(String seconds) {
+        this.units = Unit.SECOND;
+        this.quantity = Long.parseLong(seconds);
+    }
+    
     public TimeInterval(long seconds) {
         this.units = Unit.SECOND;
         this.quantity = seconds;
