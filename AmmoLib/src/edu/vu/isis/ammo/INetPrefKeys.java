@@ -12,9 +12,7 @@ public interface INetPrefKeys extends edu.vu.isis.ammo.IPrefKeys {
 	
 // keys for network configuration
 	
-	public static final String CORE_IP_ADDR = "CORE_IP_ADDRESS";
-	public static final String CORE_IP_PORT = "CORE_IP_PORT";
-	public static final String CORE_SOCKET_TIMEOUT = "CORE_SOCKET_TIMEOUT";
+
 	public static final String PREF_TRANSMISSION_TIMEOUT = "CORE_TRANSMISSION_TIMEOUT";
 	public static final String CORE_IS_JOURNALED = "CORE_IS_JOURNALED";
 	
@@ -49,10 +47,21 @@ public interface INetPrefKeys extends edu.vu.isis.ammo.IPrefKeys {
 	public static final String NET_CONN_PREF_SHOULD_USE = NET_CONN_PREF + NET_SHOULD_USE;
 	public static final String NET_CONN_PREF_IS_ACTIVE = NET_CONN_PREF + NET_IS_ACTIVE;
 	
-	public static final String NET_CONN_FLAT_LINE_TIME = NET_CONN_PREF + "FLAT_LINE_TIME";
-	
-	public static final String GATEWAY_SHOULD_USE = "GATEWAY_SHOULD_USE";
 
+
+	
+	/*
+	 * Gateway Network Settings
+	 */
+	public static final String NET_CONN_FLAT_LINE_TIME = NET_CONN_PREF + "FLAT_LINE_TIME";
+	public static final String GATEWAY_SHOULD_USE = "GATEWAY_SHOULD_USE";
+	public static final String CORE_IP_ADDR = "CORE_IP_ADDRESS";
+	public static final String CORE_IP_PORT = "CORE_IP_PORT";
+	public static final String CORE_SOCKET_TIMEOUT = "CORE_SOCKET_TIMEOUT";
+	
+	/*
+	 * Multicast Network Settings
+	 */
 	public static final String MULTICAST_SHOULD_USE = "MULTICAST_SHOULD_USE";
 	public static final String MULTICAST_IP_ADDRESS = "MULTICAST_IP_ADDRESS";
 	public static final String MULTICAST_PORT = "MULTICAST_PORT";

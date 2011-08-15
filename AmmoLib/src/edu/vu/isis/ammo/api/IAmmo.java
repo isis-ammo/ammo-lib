@@ -1,8 +1,8 @@
 // IAmmo.java
 package edu.vu.isis.ammo.api;
 
-import edu.vu.isis.ammo.api.TimeInterval;
-import edu.vu.isis.ammo.api.TimeStamp;
+import edu.vu.isis.ammo.api.type.TimeInterval;
+import edu.vu.isis.ammo.api.type.TimeStamp;
 
 public interface IAmmo {
   public interface Identity {

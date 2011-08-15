@@ -1,6 +1,7 @@
-package edu.vu.isis.ammo.api;
+package edu.vu.isis.ammo.api.type;
 
 import java.util.Calendar;
+
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,6 +15,11 @@ public class TimeStamp implements Parcelable {
     public TimeStamp() {
         this.millis = System.currentTimeMillis();
         this.interval = new TimeInterval(0);
+    }
+    
+    public TimeStamp(String val) {
+        this.millis = System.currentTimeMillis();
+        this.interval = new TimeInterval(val);
     }
     
     public TimeStamp(Calendar cal) {
