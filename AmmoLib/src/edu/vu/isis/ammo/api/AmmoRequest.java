@@ -1,7 +1,6 @@
 package edu.vu.isis.ammo.api;
 
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +60,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
     
     final public String[] project;
     final public Selection select;
+    
+    final public int worth;
     
     @Override
     public String toString() {
@@ -134,6 +135,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         
         this.project = in.createStringArray();
         this.select = in.readParcelable(Selection.class.getClassLoader());
+        
+        this.worth = (Integer) in.readValue(Integer.class.getClassLoader());
     }
 
     /**
@@ -171,6 +174,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         dest.writeStringArray(this.project);
         dest.writeParcelable(this.select, flags);
         
+        dest.writeValue(this.worth);
+        
         // final byte[] show = dest.marshall();
     }
     
@@ -200,8 +205,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         this.throttle = builder.throttle;
         
         this.project = builder.project;
-        
         this.select = builder.select;
+        
+        this.worth = builder.worth;
         
         this.uuid = generateUuid();
     }
@@ -434,6 +440,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
             this.project(DEFAULT_PROJECT);
             this.select(DEFAULT_SELECT);
             this.filter(DEFAULT_FILTER);
+            this.worth(DEFAULT_WORTH);
             return this;
         }
         
