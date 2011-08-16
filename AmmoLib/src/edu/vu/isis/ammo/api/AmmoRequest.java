@@ -56,12 +56,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
     final public StartTime expire;
     
     final public DeliveryScope scope;
-    final public int throttle;
+    final public Integer throttle;
     
     final public String[] project;
     final public Selection select;
     
-    final public int worth;
+    final public Integer worth;
     
     @Override
     public String toString() {
@@ -297,28 +297,19 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
             this.prepareDistributorConnection();
         }
         
-//        private Builder(IBinder service) {
-//            this(service.)
-//            this.distributor = new AtomicReference<IDistributorService>(null);
-//            this.distributor.set((IDistributorService) service);
-//            logger.info("is the service bound?");
-//        }
-        
-
-        
         private boolean prepareDistributorConnection() {
-            if (distributor.get() != null) return true;
+            if (this.distributor.get() != null) return true;
             // throw new RemoteException();
             final ServiceConnection conn = new ServiceConnection() {
                 @Override
                 public void onServiceConnected(ComponentName name, IBinder service) {
                     logger.trace("service connected");
-                    distributor.set(IDistributorService.Stub.asInterface(service));
+                    Builder.this.distributor.set(IDistributorService.Stub.asInterface(service));
                 }
                 @Override
                 public void onServiceDisconnected(ComponentName name) {
                     logger.trace("service {} disconnected", name.flattenToShortString());
-                    distributor.set(null);
+                    Builder.this.distributor.set(null);
                 }
             };
             boolean isBound = context.bindService(DISTRIBUTOR_SERVICE, conn, Context.BIND_AUTO_CREATE);
@@ -343,12 +334,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         private StartTime expire;
         
         private DeliveryScope scope;
-        private int throttle;
+        private Integer throttle;
         
         private String[] project;
         private Selection select;
         
-        private int worth;
+        private Integer worth;
         
         @SuppressWarnings("unused")
         private String uid;
@@ -361,7 +352,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         public IAmmoRequest directedPost(IAmmoRequest.IAnon recipient) throws RemoteException {
             if (!prepareDistributorConnection()) throw new RemoteException();
             AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.DIRECTED_POSTAL, this);
-            distributor.get().makeRequest(request);
+            this.distributor.get().makeRequest(request);
             return request;
         }
 
@@ -375,7 +366,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         public IAmmoRequest post() throws RemoteException {
             if (!prepareDistributorConnection()) throw new RemoteException();
             AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.POSTAL, this);
-            String ident = distributor.get().makeRequest(request);
+            String ident = this.distributor.get().makeRequest(request);
             logger.info("post {}", ident);
             return request;
         }
@@ -384,7 +375,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         public IAmmoRequest publish() throws RemoteException {
             if (!prepareDistributorConnection()) throw new RemoteException();
             AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.PUBLISH, this);
-            distributor.get().makeRequest(request);
+            this.distributor.get().makeRequest(request);
             return request;
         }
 
@@ -392,14 +383,14 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         public IAmmoRequest retrieve() throws RemoteException {
             if (!prepareDistributorConnection()) throw new RemoteException();
             AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.RETRIEVAL, this);
-            distributor.get().makeRequest(request);
+            this.distributor.get().makeRequest(request);
             return request;
         }
         @Override
         public IAmmoRequest subscribe() throws RemoteException {
             if (!prepareDistributorConnection()) throw new RemoteException();
             AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.SUBSCRIBE, this);
-            distributor.get().makeRequest(request);
+            this.distributor.get().makeRequest(request);
             return request;
         }
 
@@ -684,7 +675,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         @Override
         public Builder worth(int val) {
             this.worth = val;
-            return null;
+            return this;
         }
 
     }
