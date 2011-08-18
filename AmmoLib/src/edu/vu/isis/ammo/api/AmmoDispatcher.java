@@ -130,7 +130,8 @@ public class AmmoDispatcher {
 //        }
         if (expiration == null) {
             expiration = Calendar.getInstance();
-            expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
+            long seconds = System.currentTimeMillis() + (1 * 60 * 60 * 1000);
+            expiration.setTimeInMillis(seconds);
         }
         
         ContentValues values = new ContentValues();
@@ -257,7 +258,8 @@ public class AmmoDispatcher {
         
         if (expiration == null) {
             expiration = Calendar.getInstance();
-            expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
+            long seconds = System.currentTimeMillis() + (1 * 60 * 60 * 1000);
+            expiration.setTimeInMillis(seconds);
         }
         
         ContentValues values = new ContentValues();
@@ -409,7 +411,8 @@ public class AmmoDispatcher {
     {
         if (expiration == null) {
             expiration = Calendar.getInstance();
-            expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
+            long seconds = System.currentTimeMillis() + (1 * 60 * 60 * 1000);
+            expiration.setTimeInMillis(seconds);
         }
         ContentValues values = new ContentValues();
         values.put(RetrievalTableSchemaBase.MIME, mimeType);
@@ -543,7 +546,8 @@ public class AmmoDispatcher {
     private boolean subscribe(Uri uri, String mimeType, Calendar expiration, double worth, String filter, PendingIntent notice) {
         if (expiration == null) {
             expiration = Calendar.getInstance();
-            expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
+            long seconds = System.currentTimeMillis() + (12 * 60 * 60 * 1000);
+            expiration.setTimeInMillis(seconds);
         }
         Log.d("AmmoDispatcher", "::subscribe with uri: " + uri.toString() + " mime: " + mimeType);
         
@@ -663,7 +667,8 @@ public class AmmoDispatcher {
     public boolean publish(Uri uri, String mimeType, Calendar expiration) {
         if (expiration == null) {
             expiration = Calendar.getInstance();
-            expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
+            long seconds = System.currentTimeMillis() + (1 * 60 * 60 * 1000);
+            expiration.setTimeInMillis(seconds);
         }
         ContentValues values = new ContentValues();
         values.put(PublicationTableSchema.MIME, mimeType);

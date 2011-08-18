@@ -44,14 +44,12 @@ import org.slf4j.spi.MDCAdapter;
  */
 public class BasicMDCAdapter implements MDCAdapter {
 
-    @SuppressWarnings("unchecked")
-    private InheritableThreadLocal inheritableThreadLocal = new InheritableThreadLocal();
+    private InheritableThreadLocal<HashMap<String, String>> inheritableThreadLocal = 
+    		new InheritableThreadLocal<HashMap<String, String>>();
 
-    @SuppressWarnings("unchecked")
     private HashMap<String, String> getHashMap() {
         return (HashMap<String, String>) inheritableThreadLocal.get();
     }
-    @SuppressWarnings("unchecked")
     private void setHashMap(HashMap<String, String> hashMap) {
         inheritableThreadLocal.set(hashMap);
     }
@@ -144,8 +142,7 @@ public class BasicMDCAdapter implements MDCAdapter {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void setContextMap(Map contextMap) {
+    public void setContextMap(Map<String, String> contextMap) {
         HashMap<String,String> hashMap = this.getHashMap();
         if (hashMap != null) {
             hashMap.clear();
