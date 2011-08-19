@@ -414,24 +414,24 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         // **************
         @Override
         public Builder reset() {
-            this.downsample(DEFAULT_DOWNSAMPLE);
-            this.durability(DEFAULT_DURABILITY);
-            this.order(DEFAULT_ORDER);
-            this.originator(DEFAULT_ORIGINATOR);
-            this.payload(DEFAULT_PAYLOAD);
-            this.priority(DEFAULT_PRIORITY);
-            this.provider(DEFAULT_PROVIDER);
-            this.recipient(DEFAULT_RECIPIENT);
-            this.scope(DEFAULT_SCOPE);
-            this.start(DEFAULT_START);
-            this.throttle(DEFAULT_THROTTLE);
-            this.topic(DEFAULT_TOPIC);
-            this.uid(DEFAULT_UID);
-            this.expire(DEFAULT_EXPIRE);
-            this.project(DEFAULT_PROJECT);
-            this.select(DEFAULT_SELECT);
-            this.filter(DEFAULT_FILTER);
-            this.worth(DEFAULT_WORTH);
+            this.downsample(DOWNSAMPLE_DEFAULT);
+            this.durability(DURABILITY_DEFAULT);
+            this.order(ORDER_DEFAULT);
+            this.originator(ORIGINATOR_DEFAULT);
+            this.payload(PAYLOAD_DEFAULT);
+            this.priority(PRIORITY_DEFAULT);
+            this.provider(PROVIDER_DEFAULT);
+            this.recipient(RECIPIENT_DEFAULT);
+            this.scope(SCOPE_DEFAULT);
+            this.start(START_DEFAULT);
+            this.throttle(THROTTLE_DEFAULT);
+            this.topic(TOPIC_DEFAULT);
+            this.uid(UID_DEFAULT);
+            this.expire(EXPIRE_DEFAULT);
+            this.project(PROJECT_DEFAULT);
+            this.select(SELECT_DEFAULT);
+            this.filter(FILTER_DEFAULT);
+            this.worth(WORTH_DEFAULT);
             return this;
         }
         

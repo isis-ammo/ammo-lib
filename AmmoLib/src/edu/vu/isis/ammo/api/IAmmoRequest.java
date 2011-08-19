@@ -22,60 +22,60 @@ public interface IAmmoRequest {
    public TimeStamp lastMessage();
    public void resetMetrics(int val);
    public Event[] eventSet(); 
-   public static final Uri DEFAULT_PROVIDER = null;
-   public static final String DEFAULT_PAYLOAD = "";
+   public static final Uri PROVIDER_DEFAULT  = null;
+   public static final String PAYLOAD_DEFAULT  = "";
    
-   public static final String DEFAULT_TOPIC = "";
+   public static final String TOPIC_DEFAULT  = "";
 
-   public static final TimeInterval UNLIMITED_EXPIRE = 
+   public static final TimeInterval EXPIRE_UNLIMITED  = 
          new TimeInterval(TimeInterval.UNLIMITED);
-   public static final TimeInterval DEFAULT_EXPIRE = 
+   public static final TimeInterval EXPIRE_DEFAULT  = 
          new TimeInterval(TimeInterval.Unit.HOUR);
-   public static final int VOLATILE_DURABILITY = 1;
-   public static final int PERSISTENT_DURABILITY = 2;
+   public static final int DURABILITY_VOLATILE  = 1;
+   public static final int DURABILITY_PERSISTENT  = 2;
 
-   public static final int DEFAULT_DURABILITY = PERSISTENT_DURABILITY;
-   public static final int BACKGROUND_PRIORITY = -1000;
-   public static final int LOW_PRIORITY = -10;
-   public static final int NORMAL_PRIORITY = 0;
-   public static final int HIGH_PRIORITY = 10;
-   public static final int URGENT_PRIORITY = 1000;
+   public static final int DURABILITY_DEFAULT  = DURABILITY_PERSISTENT; 
+   public static final int PRIORITY_BACKGROUND  = -1000;
+   public static final int PRIORITY_LOW  = -10;
+   public static final int PRIORITY_NORMAL  = 0;
+   public static final int PRIORITY_HIGH  = 10;
+   public static final int PRIORITY_URGENT  = 1000;
 
-   public static final int DEFAULT_PRIORITY = NORMAL_PRIORITY;
-   public static final int OLDEST_FIRST_ORDER = 1;
-   public static final int NEWEST_ONLY_ORDER = 2;
-   public static final int NEWEST_FIRST_ORDER = 3;
+   public static final int PRIORITY_DEFAULT  = PRIORITY_NORMAL ;
+   public static final int ORDER_OLDEST_FIRST  = 1;
+   public static final int ORDER_NEWEST_ONLY  = 2;
+   public static final int ORDER_NEWEST_FIRST  = 3;
 
-   public static final int DEFAULT_ORDER = OLDEST_FIRST_ORDER;
-   public static final int DEFAULT_WORTH = 100;
+   public static final int ORDER_DEFAULT  = ORDER_OLDEST_FIRST ;
+   public static final int WORTH_DEFAULT  = 100;
 
-   public static final TimeInterval DEFAULT_START = 
+   public static final TimeInterval START_DEFAULT  = 
         new TimeInterval(TimeInterval.Unit.MINUTE);
-   public static String[] ALL_PROJECT = null;
+   public static String[] PROJECT_ALL  = null;
 
-   public static String[] DEFAULT_PROJECT = ALL_PROJECT;
-   public static final Query ALL_SELECT = null;
+   public static String[] PROJECT_DEFAULT  = PROJECT_ALL; 
+   public static final Query SELECT_ALL  = null;
 
-   public static final Query DEFAULT_SELECT = ALL_SELECT;
-   public static Form DEFAULT_FORM = null;
-   public static final String NO_FILTER = "";
+   public static final Query SELECT_DEFAULT  = SELECT_ALL ;
+   public static Form FORM_DEFAULT  = null;
+   public static final String FILTER_NO  = "";
 
-   public static final String DEFAULT_FILTER = NO_FILTER;
-   public static final int NO_DOWNSAMPLE = 0;
-   public static final int DEFAULT_DOWNSAMPLE = NO_DOWNSAMPLE;
-   public static final Notice DEFAULT_NOTICE = null;
-   public static final IAnon ANY_ANON = null;
-   public static final IAnon DEFAULT_RECIPIENT = ANY_ANON;
-   public static final IAnon DEFAULT_ORIGINATOR = ANY_ANON;
+   public static final String FILTER_DEFAULT  = FILTER_NO ;
+   public static final int DOWNSAMPLE_NO  = 0;
+   public static final int DOWNSAMPLE_DEFAULT  = DOWNSAMPLE_NO ;
+   public static final Notice NOTICE_DEFAULT  = null;
+   public static final IAnon ANON_ANY  = null;
+   public static final IAnon RECIPIENT_DEFAULT  = ANON_ANY ;
+   public static final IAnon ORIGINATOR_DEFAULT  = ANON_ANY ;
 
-   public static final DeliveryScope DEFAULT_SCOPE = DeliveryScope.GLOBAL;
-   public static final int UNLIMITED_THROTTLE = -1;
+   public static final DeliveryScope SCOPE_DEFAULT  = DeliveryScope.GLOBAL;
+   public static final int THROTTLE_UNLIMITED  = -1;
 
-   public static final int DEFAULT_THROTTLE = UNLIMITED_THROTTLE;
-   public static final String DEFAULT_UID = "";
-   public static final int DEFAULT_DEPTH = 0;
-   public static final int UN_LIMIT = -1;
-   public static final int DEFAULT_LIMIT = UN_LIMIT;
+   public static final int THROTTLE_DEFAULT  = THROTTLE_UNLIMITED ;
+   public static final String UID_DEFAULT  = "";
+   public static final int DEPTH_DEFAULT  = 0;
+   public static final int LIMIT_UN  = -1;
+   public static final int LIMIT_DEFAULT  = LIMIT_UN ;
 
    public interface Builder {
       public IAmmoRequest duplicate() throws RemoteException;
