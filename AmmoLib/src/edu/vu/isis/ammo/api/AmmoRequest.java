@@ -241,13 +241,13 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
     // CONTROL
     // **************
     @Override
-    public void metricTimespan(int val) {
+    public void metricTimespan(Integer val) {
         // TODO Auto-generated method stub
 
     }
     
     @Override
-    public void resetMetrics(int val) {
+    public void resetMetrics(Integer val) {
         // TODO Auto-generated method stub
     }
     
@@ -442,7 +442,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         }
         
         @Override
-        public Builder downsample(int maxSize) {
+        public Builder downsample(Integer maxSize) {
             this.downsample = maxSize;
             return this;
         }
@@ -454,7 +454,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         }
         
         @Override
-        public Builder durability(int val) {
+        public Builder durability(Integer val) {
             this.durability = val;
             return this;
         }
@@ -466,7 +466,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         }
         
         @Override
-        public Builder order(int val) {
+        public Builder order(Integer val) {
             if (this.order == null) this.order = new Integer[2];
             this.order[0] = val;
             return this;
@@ -514,12 +514,14 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
         @Override
         public Builder payload(byte[] val) {
+        	if (val == null) return this;
             this.payload = new Payload(val);
             return this;
         }
 
         @Override
         public Builder payload(ContentValues val) {
+        	if (val == null) return this;
             this.payload = new Payload(val);
             return this;
         }
@@ -527,6 +529,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
         @Override
         public Builder payload(AmmoValues val) {
+        	if (val == null) return this;
             return this.payload(val.asContentValues());
         }
 
@@ -537,7 +540,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         }
         
         @Override
-        public Builder priority(int val) {
+        public Builder priority(Integer val) {
             this.priority = val;
             return this;
         }
@@ -571,7 +574,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         }
         
         @Override
-        public Builder throttle(int val) {
+        public Builder throttle(Integer val) {
             this.throttle = val;
             return this;
         }
@@ -673,7 +676,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         }
         
         @Override
-        public Builder worth(int val) {
+        public Builder worth(Integer val) {
             this.worth = val;
             return this;
         }

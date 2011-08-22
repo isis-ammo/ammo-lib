@@ -18,9 +18,9 @@ public interface IAmmoRequest {
    public IAmmoRequest replace(IAmmoRequest req) throws RemoteException;
    public IAmmoRequest replace(String uuid) throws RemoteException;
    public Event[] cancel(); 
-   public void metricTimespan(int val);
+   public void metricTimespan(Integer val);
    public TimeStamp lastMessage();
-   public void resetMetrics(int val);
+   public void resetMetrics(Integer val);
    public Event[] eventSet(); 
    public static final Uri PROVIDER_DEFAULT = null;
    public static final String PAYLOAD_DEFAULT = "";
@@ -31,23 +31,23 @@ public interface IAmmoRequest {
          new TimeInterval(TimeInterval.UNLIMITED);
    public static final TimeInterval EXPIRE_DEFAULT = 
          new TimeInterval(TimeInterval.Unit.HOUR);
-   public static final int DURABILITY_VOLATILE = 1;
-   public static final int DURABILITY_PERSISTENT = 2;
+   public static final Integer DURABILITY_VOLATILE = 1;
+   public static final Integer DURABILITY_PERSISTENT = 2;
 
-   public static final int DURABILITY_DEFAULT = DURABILITY_PERSISTENT ;
-   public static final int PRIORITY_BACKGROUND = -1000;
-   public static final int PRIORITY_LOW = -10;
-   public static final int PRIORITY_NORMAL = 0;
-   public static final int PRIORITY_HIGH = 10;
-   public static final int PRIORITY_URGENT = 1000;
+   public static final Integer DURABILITY_DEFAULT = DURABILITY_PERSISTENT ;
+   public static final Integer PRIORITY_BACKGROUND = -1000;
+   public static final Integer PRIORITY_LOW = -10;
+   public static final Integer PRIORITY_NORMAL = 0;
+   public static final Integer PRIORITY_HIGH = 10;
+   public static final Integer PRIORITY_URGENT = 1000;
 
-   public static final int PRIORITY_DEFAULT = PRIORITY_NORMAL ;
-   public static final int ORDER_OLDEST_FIRST = 1;
-   public static final int ORDER_NEWEST_ONLY = 2;
-   public static final int ORDER_NEWEST_FIRST = 3;
+   public static final Integer PRIORITY_DEFAULT = PRIORITY_NORMAL ;
+   public static final Integer ORDER_OLDEST_FIRST = 1;
+   public static final Integer ORDER_NEWEST_ONLY = 2;
+   public static final Integer ORDER_NEWEST_FIRST = 3;
 
-   public static final int ORDER_DEFAULT = ORDER_OLDEST_FIRST ;
-   public static final int WORTH_DEFAULT = 100;
+   public static final Integer ORDER_DEFAULT = ORDER_OLDEST_FIRST ;
+   public static final Integer WORTH_DEFAULT = 100;
 
    public static final TimeInterval START_DEFAULT = 
         new TimeInterval(TimeInterval.Unit.MINUTE);
@@ -61,21 +61,21 @@ public interface IAmmoRequest {
    public static final String FILTER_NO = "";
 
    public static final String FILTER_DEFAULT = FILTER_NO ;
-   public static final int DOWNSAMPLE_NO = 0;
-   public static final int DOWNSAMPLE_DEFAULT = DOWNSAMPLE_NO ;
+   public static final Integer DOWNSAMPLE_NO = 0;
+   public static final Integer DOWNSAMPLE_DEFAULT = DOWNSAMPLE_NO ;
    public static final Notice NOTICE_DEFAULT = null;
    public static final IAnon ANON_ANY = null;
    public static final IAnon RECIPIENT_DEFAULT = ANON_ANY ;
    public static final IAnon ORIGINATOR_DEFAULT = ANON_ANY ;
 
    public static final DeliveryScope SCOPE_DEFAULT = DeliveryScope.GLOBAL;
-   public static final int THROTTLE_UNLIMITED = -1;
+   public static final Integer THROTTLE_UNLIMITED = -1;
 
-   public static final int THROTTLE_DEFAULT = THROTTLE_UNLIMITED ;
+   public static final Integer THROTTLE_DEFAULT = THROTTLE_UNLIMITED ;
    public static final String UID_DEFAULT = "";
-   public static final int DEPTH_DEFAULT = 0;
-   public static final int LIMIT_NONE = -1;
-   public static final int LIMIT_DEFAULT = LIMIT_NONE ;
+   public static final Integer DEPTH_DEFAULT = 0;
+   public static final Integer LIMIT_NONE = -1;
+   public static final Integer LIMIT_DEFAULT = LIMIT_NONE ;
 
    public interface Builder {
       public IAmmoRequest duplicate() throws RemoteException;
@@ -98,21 +98,21 @@ public interface IAmmoRequest {
         public Builder uid(String val);
         public Builder expire(TimeInterval val);
         public Builder expire(TimeStamp val);
-        public Builder durability(int val);
+        public Builder durability(Integer val);
         public Builder recipient(IAnon val);
         public Builder recipient(String val);
         public Builder originator(IAnon val);
         public Builder originator(String val);
-        public Builder priority(int val);
-        public Builder order(int val);
+        public Builder priority(Integer val);
+        public Builder order(Integer val);
         public Builder order(String[] val);
-        public Builder worth(int val);
+        public Builder worth(Integer val);
         public Builder start(TimeStamp val); 
         public Builder start(TimeInterval val); 
         public Builder scope(DeliveryScope val);
-        public Builder throttle(int val);
+        public Builder throttle(Integer val);
         public Builder filter(String val); 
-        public Builder downsample(int maxSize); 
+        public Builder downsample(Integer maxSize); 
         public Builder project(String[] val);
         public Builder select(Query val);
         public Builder select(Form val); 
