@@ -117,6 +117,7 @@ public interface IAmmoRequest {
         public Builder select(Query val);
         public Builder select(Form val); 
    }
+   
    public enum Action {
      POSTAL, DIRECTED_POSTAL, PUBLISH, RETRIEVAL, SUBSCRIBE, DIRECTED_SUBSCRIBE;
 
