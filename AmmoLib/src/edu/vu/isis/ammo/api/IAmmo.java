@@ -28,9 +28,9 @@ public interface IAmmo {
     public GatewayState state();
     public Gateway setMetricTimespan(TimeInterval span);
     public float liveness();
-    public int latency();
+    public Integer latency();
     public float throughput();
-    public int activeConnectionCount();
+    public Integer activeConnectionCount();
     public NetworkInterface[] networkLinks();
     public TimeStamp time();
     public float worth();
@@ -71,13 +71,13 @@ public interface IAmmo {
      public Distributor maxSize(long val);
      public Distributor queueServiceOrder(int[] val);
      public Distributor priorityQueueWeights(int[] val);
-     public Distributor typePriority(String type, int priority);
-     public int state(long val);
-     public int managedDataStore(int val);
+     public Distributor typePriority(String type, Integer priority);
+     public Integer state(long val);
+     public Integer managedDataStore(Integer val);
   }
     public interface DistributorStore {
        public Distributor remove(int rowid);
-       public Distributor priority(int rowid, int priority);
+       public Distributor priority(int rowid, Integer priority);
        public Distributor queueOrder(int rowid, int order);
        public int pendingItemCount();
        public int pendingItemSize();
@@ -97,7 +97,7 @@ public interface IAmmo {
   public interface NetworkService {
      public NetworkService linksToUse(String[] val);
      // public NetworkService channelToLink(Pair<String,String>[] val);
-     public NetworkService distribution(int val);
+     public NetworkService distribution(Integer val);
      public int state();
      public int[] hasConnection();
      public int[] activeLinks();
