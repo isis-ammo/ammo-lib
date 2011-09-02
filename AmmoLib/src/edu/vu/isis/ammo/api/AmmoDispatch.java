@@ -29,7 +29,7 @@ import edu.vu.isis.ammo.api.type.TimeStamp;
  * see https://ammo.isis.vanderbilt.edu/redmine/boards/2/topicTypes/3
  */
 public class AmmoDispatch  {
-	private static final Logger logger = LoggerFactory.getLogger(AmmoDispatcher.class);
+	private static final Logger logger = LoggerFactory.getLogger("ammo:api-d");
 
 
 	final private AmmoRequest.Builder ab;
