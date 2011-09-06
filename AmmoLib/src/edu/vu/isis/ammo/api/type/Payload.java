@@ -143,4 +143,12 @@ public class Payload extends AmmoType {
 		}
 		return null;
 	}
+
+	public boolean hasContent() {
+		switch (this.type){
+		case STR: return (this.str != null && this.str.length() > 0);
+		case BYTE: return (this.bytes != null);
+		}
+		return false;
+	}
 }

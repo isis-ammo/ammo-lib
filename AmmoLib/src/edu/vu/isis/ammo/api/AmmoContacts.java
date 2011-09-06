@@ -2,29 +2,19 @@ package edu.vu.isis.ammo.api;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.lang.Throwable;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.ContentUris;
 import android.content.Context;
-import android.net.Uri;
-import android.content.UriMatcher;
-
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
-
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
-
 import android.util.Log;
-
 import edu.vu.isis.ammo.launch.constants.Constants;
 
 
