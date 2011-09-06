@@ -43,6 +43,10 @@ public class AmmoDispatch  {
 	public static AmmoDispatch newInstance(Context context) {
 		return new AmmoDispatch(context);
 	}
+	
+	public void releaseInstance() {
+		this.ab.releaseInstance();
+	}
 
 
 	/**

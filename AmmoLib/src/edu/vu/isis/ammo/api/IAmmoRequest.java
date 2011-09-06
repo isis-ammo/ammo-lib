@@ -87,6 +87,7 @@ public interface IAmmoRequest {
       public IAmmoRequest subscribe() throws RemoteException;
       public IAmmoRequest retrieve() throws RemoteException;
       public IAmmoRequest getInstance(String uuid) throws RemoteException;
+      public void releaseInstance(); 
         public Builder provider(Uri val);
         public Builder payload(String val);
         public Builder payload(byte[] val);
@@ -115,7 +116,8 @@ public interface IAmmoRequest {
         public Builder downsample(Integer maxSize); 
         public Builder project(String[] val);
         public Builder select(Query val);
-        public Builder select(Form val); 
+        public Builder select(Form val);
+		
    }
    
    public enum Action {

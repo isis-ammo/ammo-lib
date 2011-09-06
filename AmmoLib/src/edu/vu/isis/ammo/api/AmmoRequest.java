@@ -239,7 +239,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	}
 
 	private String generateUuid() {
-		return "a uuid";
+		return "a-uuid";
 	}
 	@Override
 	public IAmmoRequest replace(IAmmoRequest req) {
@@ -323,10 +323,11 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.prepareDistributorConnection();
 		}
 
+		private ServiceConnection conn;
 		private boolean prepareDistributorConnection() {
 			if (this.distributor.get() != null) return true;
 			// throw new RemoteException();
-			final ServiceConnection conn = new ServiceConnection() {
+			this.conn = new ServiceConnection() {
 				@Override
 				public void onServiceConnected(ComponentName name, IBinder service) {
 					logger.trace("service connected");
@@ -338,10 +339,11 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 					Builder.this.distributor.set(null);
 				}
 			};
-			boolean isBound = context.bindService(DISTRIBUTOR_SERVICE, conn, Context.BIND_AUTO_CREATE);
+			boolean isBound = this.context.bindService(DISTRIBUTOR_SERVICE, this.conn, Context.BIND_AUTO_CREATE);
 			logger.info("is the service bound? {}", isBound);
 			return false;
 		}
+		
 
 		private Provider provider;
 		private Payload payload;
@@ -432,6 +434,11 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			if (!prepareDistributorConnection()) throw new RemoteException();
 			// TODO Auto-generated method stub
 			return null;
+		}
+		
+		@Override
+		public void releaseInstance() {
+			this.context.unbindService(this.conn);
 		}
 
 
