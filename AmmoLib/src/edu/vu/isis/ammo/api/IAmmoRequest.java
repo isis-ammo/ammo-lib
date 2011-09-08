@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.os.Parcel;
 
+import edu.vu.isis.ammo.api.AmmoRequest.Builder;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Oid;
 import edu.vu.isis.ammo.api.type.TimeInterval;
@@ -95,6 +96,7 @@ public interface IAmmoRequest {
         public Builder payload(AmmoValues val);
         public Builder topic(String val);
         public Builder topic(Oid val); 
+        public Builder topic(Uri val);
         // \availability{2.0}
         public Builder uid(String val);
         public Builder expire(TimeInterval val);
@@ -117,6 +119,7 @@ public interface IAmmoRequest {
         public Builder project(String[] val);
         public Builder select(Query val);
         public Builder select(Form val);
+		
 		
    }
    

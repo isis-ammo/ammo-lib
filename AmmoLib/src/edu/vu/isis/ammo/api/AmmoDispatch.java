@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -35,14 +36,23 @@ public class AmmoDispatch  {
 	final private AmmoRequest.Builder ab;
 	final private ContentResolver resolver;
 
-	private AmmoDispatch(Context context) {
+	private AmmoDispatch(Context context, BroadcastReceiver receiver) {
+		if (receiver == null) {
 		this.ab = AmmoRequest.newBuilder(context);
+		} else {
+			this.ab = AmmoRequest.newBuilder(context, receiver);
+		}
 		this.resolver = context.getContentResolver();
 	}
 
 	public static AmmoDispatch newInstance(Context context) {
-		return new AmmoDispatch(context);
+		return new AmmoDispatch(context, null);
 	}
+
+	public static AmmoDispatch newInstance(Context context, BroadcastReceiver receiver) {
+		return new AmmoDispatch(context, receiver);
+	}
+
 	
 	public void releaseInstance() {
 		this.ab.releaseInstance();

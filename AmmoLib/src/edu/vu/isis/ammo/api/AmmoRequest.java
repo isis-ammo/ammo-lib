@@ -5,10 +5,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ReceiverCallNotAllowedException;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.IBinder;
@@ -102,7 +104,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		plogger.debug("marshall ammo request {} {}", this.uuid, this.action);
 		dest.writeValue(this.uuid);
 		Action.writeToParcel(dest, this.action);
-		
+
 		plogger.debug("provider {}", this.provider);
 		Provider.writeToParcel(this.provider, dest, flags);
 		plogger.debug("payload {}", this.payload);
@@ -136,14 +138,18 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		dest.writeValue(this.throttle);
 		plogger.debug("worth {}", this.worth);
 		dest.writeValue(this.worth);
-		
+
 
 		plogger.debug("selection {}", this.select);
 		Selection.writeToParcel(this.select, dest, flags);
 		plogger.debug("projection {}", this.project);
 		dest.writeStringArray(this.project);
 
-		plogger.trace("parcel {}", dest.marshall());
+		try {
+		    plogger.trace("parcel {}", dest.marshall());
+		} catch (RuntimeException ex) {
+			logger.error("could not marshall {}", dest);
+		}
 	}
 
 
@@ -152,12 +158,17 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * @param in
 	 */
 	private AmmoRequest(Parcel in) {
-		plogger.trace("parcel {}", in.marshall());
 		
+		try {
+			plogger.trace("parcel {}", in.marshall());
+		} catch (RuntimeException ex) {
+			logger.error("could not marshall {}", in);
+		}
+
 		this.uuid = (String) in.readValue(Integer.class.getClassLoader());
 		this.action = Action.getInstance(in);
 		plogger.debug("unmarshall ammo request {} {}", this.uuid, this.action);
-		
+
 		this.provider = Provider.readFromParcel(in);
 		plogger.debug("provider {}", this.provider);
 		this.payload = Payload.readFromParcel(in);
@@ -257,6 +268,10 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		return new AmmoRequest.Builder(context).reset();
 	}
 
+	public static Builder newBuilder(Context context, BroadcastReceiver receiver) {
+		return new AmmoRequest.Builder(context, receiver).reset();
+	}
+
 	//    public static Builder newBuilder(IBinder service) {
 	//        return new AmmoRequest.Builder(service).reset();
 	//    }
@@ -309,41 +324,64 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * The builder makes requests to the Distributor via AIDL methods.
 	 *
 	 */
-	private static final Intent DISTRIBUTOR_SERVICE = new Intent(IDistributorService.class.getName());
-
+	private static final Intent DISTRIBUTOR_SERVICE = new Intent(IDistributorService.class.getCanonicalName());
+	private static final Intent MAKE_DISTRIBUTOR_REQUEST = new Intent("edu.vu.isis.ammo.api.MAKE_REQUEST");
 
 	public static class Builder implements IAmmoRequest.Builder {
 
+		private enum ConnectionMode {
+			BIND, PEEK, COMMAND, NONE;
+		}
+		
+		private final AtomicReference<ConnectionMode> mode;
 		private final AtomicReference<IDistributorService> distributor;
 		private final Context context;
 
-		private Builder(Context context) {
+		private Builder(Context context, BroadcastReceiver receiver) {
+
+			this.mode = new AtomicReference<ConnectionMode>(ConnectionMode.COMMAND);
 			this.distributor = new AtomicReference<IDistributorService>(null);
 			this.context = context;
-			this.prepareDistributorConnection();
+
+			final IBinder service = receiver.peekService(context, DISTRIBUTOR_SERVICE);
+			if (service == null) {
+				logger.warn("ammo not peekable");
+				return;
+			}
+			logger.warn("ammo available");
+			this.distributor.set(IDistributorService.Stub.asInterface(service));
+			this.mode.set(ConnectionMode.PEEK);
 		}
 
-		private ServiceConnection conn;
-		private boolean prepareDistributorConnection() {
-			if (this.distributor.get() != null) return true;
-			// throw new RemoteException();
-			this.conn = new ServiceConnection() {
-				@Override
-				public void onServiceConnected(ComponentName name, IBinder service) {
-					logger.trace("service connected");
-					Builder.this.distributor.set(IDistributorService.Stub.asInterface(service));
-				}
-				@Override
-				public void onServiceDisconnected(ComponentName name) {
-					logger.trace("service {} disconnected", name.flattenToShortString());
-					Builder.this.distributor.set(null);
-				}
-			};
-			boolean isBound = this.context.bindService(DISTRIBUTOR_SERVICE, this.conn, Context.BIND_AUTO_CREATE);
-			logger.info("is the service bound? {}", isBound);
-			return false;
+		final private ServiceConnection conn = new ServiceConnection() {
+			@Override
+			public void onServiceConnected(ComponentName name, IBinder service) {
+				logger.trace("service connected");
+				Builder.this.distributor.set(IDistributorService.Stub.asInterface(service));
+				Builder.this.mode.set(ConnectionMode.BIND);
+			}
+			@Override
+			public void onServiceDisconnected(ComponentName name) {
+				logger.trace("service {} disconnected", name.flattenToShortString());
+				Builder.this.mode.set(ConnectionMode.COMMAND);
+				Builder.this.distributor.set(null);
+			}
+		};
+
+		private Builder(Context context) {
+			this.mode = new AtomicReference<ConnectionMode>(ConnectionMode.COMMAND);
+			this.distributor = new AtomicReference<IDistributorService>(null);
+			this.context = context;
+			try {
+				final boolean isBound = this.context.bindService(DISTRIBUTOR_SERVICE, 
+						this.conn, Context.BIND_AUTO_CREATE);
+				logger.info("is the service bound? {}", isBound);
+			} catch (ReceiverCallNotAllowedException ex) {
+				logger.info("the service cannot be bound");
+				
+			}
 		}
-		
+
 
 		private Provider provider;
 		private Payload payload;
@@ -376,66 +414,76 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		// ACTIONS
 		// ***************
 
+		/**
+		 * Generally the BIND approach should be used as it has the best performance.
+		 * Sometimes this is not possible and the getService()/COMMAND method must be
+		 * used (in the case of BroadcastReceiver).
+		 * There are cases where the PEEK method may be used (BroadcastReceiver) but
+		 * it is not particularly reliable so the fall-back to COMMAND is necessary.
+		 * It may also be the case that the service has not yet started and 
+		 * the binder has not yet been obtained.
+		 * In that interim case the COMMAND mode should be used.
+		 * 
+		 */
+		private IAmmoRequest makeRequest(final AmmoRequest request) throws RemoteException {
+			switch (this.mode.get()){
+			case BIND:
+			case PEEK:
+				final String ident = this.distributor.get().makeRequest(request);
+				logger.info("request {} {}", request, ident);
+				break;
+			case COMMAND:
+			default:
+				final Intent parcelIntent = MAKE_DISTRIBUTOR_REQUEST.cloneFilter();
+				parcelIntent.putExtra("request", request);
+				this.context.startService(parcelIntent);
+				logger.info("service command : {}", parcelIntent);
+				break;
+			}
+			return request;
+		}
+
 		@Override
 		public IAmmoRequest directedPost(IAmmoRequest.IAnon recipient) throws RemoteException {
-			if (!prepareDistributorConnection()) throw new RemoteException();
-			AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.DIRECTED_POSTAL, this);
-			this.distributor.get().makeRequest(request);
-			return request;
+			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.DIRECTED_POSTAL, this));
 		}
 
 		@Override
 		public IAmmoRequest directedSubscribe(IAmmoRequest.IAnon originator) throws RemoteException {
-			if (!prepareDistributorConnection()) throw new RemoteException();
-			return new AmmoRequest(IAmmoRequest.Action.DIRECTED_SUBSCRIBE, this);
+			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.DIRECTED_SUBSCRIBE, this));
 		}
 
 		@Override
 		public IAmmoRequest post() throws RemoteException {
-			if (!prepareDistributorConnection()) throw new RemoteException();
-			AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.POSTAL, this);
-			String ident = this.distributor.get().makeRequest(request);
-			logger.info("post {}", ident);
-			return request;
+			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.POSTAL, this));
 		}
 
 		@Override
 		public IAmmoRequest publish() throws RemoteException {
-			if (!prepareDistributorConnection()) throw new RemoteException();
-			AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.PUBLISH, this);
-			this.distributor.get().makeRequest(request);
-			return request;
+			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.PUBLISH, this));
 		}
 
 		@Override
 		public IAmmoRequest retrieve() throws RemoteException {
-			if (!prepareDistributorConnection()) throw new RemoteException();
-			AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.RETRIEVAL, this);
-			this.distributor.get().makeRequest(request);
-			return request;
+			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.RETRIEVAL, this));
 		}
 		@Override
 		public IAmmoRequest subscribe() throws RemoteException {
-			if (!prepareDistributorConnection()) throw new RemoteException();
-			AmmoRequest request = new AmmoRequest(IAmmoRequest.Action.SUBSCRIBE, this);
-			this.distributor.get().makeRequest(request);
-			return request;
+			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.SUBSCRIBE, this));
 		}
 
 		@Override
 		public IAmmoRequest duplicate() throws RemoteException {
-			if (!prepareDistributorConnection()) throw new RemoteException();
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public IAmmoRequest getInstance(String uuid) throws RemoteException {
-			if (!prepareDistributorConnection()) throw new RemoteException();
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
+
 		@Override
 		public void releaseInstance() {
 			this.context.unbindService(this.conn);
@@ -621,6 +669,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		@Override
 		public Builder topic(Oid val) {
 			this.topic = new Topic(val);
+			return this;
+		}
+
+		@Override
+		public Builder topic(Uri val) {
+			this.topic = new Topic(val.toString());
 			return this;
 		}
 
