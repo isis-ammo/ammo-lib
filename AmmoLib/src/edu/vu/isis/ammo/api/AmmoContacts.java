@@ -46,6 +46,11 @@ public class AmmoContacts {
         }
     }
 
+    //========================================================
+    //
+    // Contact class
+    //
+    //========================================================
     static public class Contact {
         public Contact() { }
 
@@ -207,7 +212,11 @@ public class AmmoContacts {
 
     }
 
-
+    //========================================================
+    // 
+    // updateContactEntry()
+    // 
+    //========================================================
     public Uri updateContactEntry(Contact lw) {
 
         Log.d(TAG,"updateContactEntry() ");
@@ -386,6 +395,11 @@ public class AmmoContacts {
 
     }
 
+    //========================================================
+    //
+    // searchForContact()
+    // 
+    //========================================================
     public ArrayList<Contact> searchForContact(String searchTerm) {
 	if (Log.isLoggable(TAG, Log.VERBOSE)) {
 	    Log.d(TAG,"searchForContact() ");
@@ -491,6 +505,11 @@ public class AmmoContacts {
         return results;
     }
 
+    //========================================================
+    // 
+    // getDataForContact()
+    // 
+    //========================================================
     private ArrayList<HashMap<String, String>> getDataForContact(String contactId, String[] projection) {
 	if (Log.isLoggable(TAG, Log.VERBOSE)) {
 	    Log.d(TAG, "getDataForContact() ");
@@ -543,6 +562,11 @@ public class AmmoContacts {
 	}
     }
 
+    //========================================================
+    // 
+    // getAllContacts()
+    // 
+    //========================================================
     public ArrayList<Contact> getAllContacts() {
 	if (Log.isLoggable(TAG, Log.VERBOSE)) {
 	    Log.d(TAG,"searchForContact() ");
@@ -606,6 +630,11 @@ public class AmmoContacts {
 	return results;
     }
 
+    //========================================================
+    // 
+    // lookupContact()
+    // 
+    //========================================================
     public Contact lookupContact(String lookupKey) {
         // Retrieve contact with provided uri
 	Log.d(TAG,"lookupContact() ");
@@ -625,6 +654,15 @@ public class AmmoContacts {
 	    lw.setName(names[0]); 
 	    lw.setLastName(names[1]);
 	    Log.d(TAG,"Found contact: " + displayName);
+	    
+	    // TODO: Get "other" data for this contact, i.e. with data query
+	    /*
+	    String[] dataProjection = {"mimetype","data1","data2","data3","data4"};
+	    ArrayList<HashMap<String, String>> extraData = getDataForContact(contactId, dataProjection);
+	    if (extraData != null) {
+		// populate other portions of Contact object
+	    }
+	    */
         } finally {
             c.close();
         }
