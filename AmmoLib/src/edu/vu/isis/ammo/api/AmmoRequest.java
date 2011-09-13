@@ -20,6 +20,7 @@ import android.os.RemoteException;
 import edu.vu.isis.ammo.api.type.Anon;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Oid;
+import edu.vu.isis.ammo.api.type.Order;
 import edu.vu.isis.ammo.api.type.Payload;
 import edu.vu.isis.ammo.api.type.Provider;
 import edu.vu.isis.ammo.api.type.Selection;
@@ -53,7 +54,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	final public Anon originator;
 
 	final public Integer priority;
-	final public Integer order;
+	final public Order order;
 
 	final public TimeTrigger start;
 	final public TimeTrigger expire;
@@ -125,7 +126,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		plogger.debug("priority {}", this.priority);
 		dest.writeValue(this.priority);
 		plogger.debug("order {}", this.order);
-		dest.writeValue(this.order);
+		Order.writeToParcel(this.order, dest, flags);
 
 		plogger.debug("start {}", this.start);
 		TimeTrigger.writeToParcel(this.start, dest, flags);
@@ -188,7 +189,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		this.priority = (Integer) in.readValue(Integer.class.getClassLoader());
 		plogger.debug("priority {}", this.priority);
-		this.order = (Integer) in.readValue(Integer.class.getClassLoader());
+		this.order = Order.readFromParcel(in);
 		plogger.debug("order {}", this.order);
 
 		this.start = TimeTrigger.readFromParcel(in);
@@ -233,7 +234,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		this.originator = builder.originator;
 
 		this.priority = builder.priority;
-		this.order = 0; // TODO builder.order;
+		this.order = builder.order;
 
 		this.start = builder.start;
 		this.expire = builder.expire;
@@ -394,7 +395,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		private Anon originator;
 
 		private Integer priority;
-		private Integer[] order;
+		private Order order;
 
 		private TimeTrigger start;
 		private TimeTrigger expire;
@@ -540,22 +541,16 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			return this;
 		}
 
+
+		@Override
 		public Builder order(String val) {
-			if (this.order == null) return this;
-			// this.order[0] = val;
-			return this;
+			if (val == null) return this;
+			return this.order(new Order(val));
 		}
 
 		@Override
-		public Builder order(Integer val) {
-			if (this.order == null) this.order = new Integer[2];
-			this.order[0] = val;
-			return this;
-		}
-
-		@Override
-		public Builder order(String[] val) {
-			// TODO this.order = val;
+		public Builder order(Order val) {
+			this.order = val;
 			return this;
 		}
 

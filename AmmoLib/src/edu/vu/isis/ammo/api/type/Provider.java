@@ -16,6 +16,10 @@ public class Provider extends AmmoType {
 		this.type = Type.URI;
 		this.uri = val;
 	}
+	
+	public String cv() {
+		return this.uri.toString();
+	}
 
 	// *********************************
 	// Parcelable Support

@@ -11,6 +11,7 @@ import android.os.Parcel;
 import edu.vu.isis.ammo.api.AmmoRequest.Builder;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Oid;
+import edu.vu.isis.ammo.api.type.Order;
 import edu.vu.isis.ammo.api.type.TimeInterval;
 import edu.vu.isis.ammo.api.type.TimeStamp;
 
@@ -47,7 +48,7 @@ public interface IAmmoRequest {
    public static final Integer ORDER_NEWEST_ONLY = 2;
    public static final Integer ORDER_NEWEST_FIRST = 3;
 
-   public static final Integer ORDER_DEFAULT = ORDER_OLDEST_FIRST ;
+   public static final Order ORDER_DEFAULT = Order.OLDEST_FIRST ;
    public static final Integer WORTH_DEFAULT = 100;
 
    public static final TimeInterval START_DEFAULT = 
@@ -107,8 +108,8 @@ public interface IAmmoRequest {
         public Builder originator(IAnon val);
         public Builder originator(String val);
         public Builder priority(Integer val);
-        public Builder order(Integer val);
-        public Builder order(String[] val);
+        public Builder order(Order val);
+        public Builder order(String val);
         public Builder worth(Integer val);
         public Builder start(TimeStamp val); 
         public Builder start(TimeInterval val); 
