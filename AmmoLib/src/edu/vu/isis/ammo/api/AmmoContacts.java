@@ -358,7 +358,6 @@ public class AmmoContacts {
         // Set the display name. Use, in order of preference, either the callsign or the full name.
         // (In future we should prob. change this to include rank, role, etc.)
         String displayName = "";
-        if (displayName == null) displayName = "";
         if (displayName.length() < 1) {
             if (callsign != null && callsign.length() > 0) {
                 displayName = callsign;

@@ -71,6 +71,12 @@ public class Provider extends AmmoType {
 	// *********************************
 	// Standard Methods
 	// *********************************
+	
+	public Provider(String val) {
+		this.type = Type.URI;
+		this.uri = Uri.parse(val);
+	}
+	
 	@Override
 	public String toString() {
 		if (this.type == null) {
