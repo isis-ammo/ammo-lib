@@ -15,6 +15,7 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.Parcel;
+import android.os.ParcelFormatException;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import edu.vu.isis.ammo.api.type.Anon;
@@ -100,57 +101,54 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * rather Class.writeToParcel(this.provider, dest, flags) so 
 	 * that when the null will will be handled correctly.
 	 */
+	private final byte VERSION = (byte)0x01;
+	
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		plogger.debug("marshall ammo request {} {}", this.uuid, this.action);
+		plogger.trace("marshall ammo request {} {}", this.uuid, this.action);
+		dest.writeByte(VERSION);
+		
 		dest.writeValue(this.uuid);
 		Action.writeToParcel(dest, this.action);
 
-		plogger.debug("provider {}", this.provider);
+		plogger.trace("provider {}", this.provider);
 		Provider.writeToParcel(this.provider, dest, flags);
-		plogger.debug("payload {}", this.payload);
+		plogger.trace("payload {}", this.payload);
 		Payload.writeToParcel(this.payload, dest, flags);
-		plogger.debug("topic {}", this.topic);
+		plogger.trace("topic {}", this.topic);
 		Topic.writeToParcel(this.topic, dest, flags);
 
-		plogger.debug("recipient {}", this.recipient);
+		plogger.trace("recipient {}", this.recipient);
 		Anon.writeToParcel(this.recipient, dest, flags);
-		plogger.debug("originator {}", this.originator);
+		plogger.trace("originator {}", this.originator);
 		Anon.writeToParcel(this.originator, dest, flags);
 
-		plogger.debug("downsample {}", this.downsample);
+		plogger.trace("downsample {}", this.downsample);
 		dest.writeValue(this.downsample);
-		plogger.debug("durabliity {}", this.durability);
+		plogger.trace("durabliity {}", this.durability);
 		dest.writeValue(this.durability);
 
-		plogger.debug("priority {}", this.priority);
+		plogger.trace("priority {}", this.priority);
 		dest.writeValue(this.priority);
-		plogger.debug("order {}", this.order);
+		plogger.trace("order {}", this.order);
 		Order.writeToParcel(this.order, dest, flags);
 
-		plogger.debug("start {}", this.start);
+		plogger.trace("start {}", this.start);
 		TimeTrigger.writeToParcel(this.start, dest, flags);
-		plogger.debug("expire {}", this.expire);
+		plogger.trace("expire {}", this.expire);
 		TimeTrigger.writeToParcel(this.expire, dest, flags);
 
-		plogger.debug("scope {}", this.scope);
+		plogger.trace("scope {}", this.scope);
 		DeliveryScope.writeToParcel(this.scope, dest, flags);
-		plogger.debug("throttle {}", this.throttle);
+		plogger.trace("throttle {}", this.throttle);
 		dest.writeValue(this.throttle);
-		plogger.debug("worth {}", this.worth);
+		plogger.trace("worth {}", this.worth);
 		dest.writeValue(this.worth);
 
-
-		plogger.debug("selection {}", this.select);
+		plogger.trace("selection {}", this.select);
 		Selection.writeToParcel(this.select, dest, flags);
-		plogger.debug("projection {}", this.project);
+		plogger.trace("projection {}", this.project);
 		dest.writeStringArray(this.project);
-
-		try {
-		    plogger.trace("parcel {}", dest.marshall());
-		} catch (RuntimeException ex) {
-			logger.error("could not marshall {}", dest);
-		}
 	}
 
 
@@ -159,55 +157,55 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * @param in
 	 */
 	private AmmoRequest(Parcel in) {
-		
-		try {
-			plogger.trace("parcel {}", in.marshall());
-		} catch (RuntimeException ex) {
-			logger.error("could not marshall {}", in);
+		final byte version = in.readByte();
+		if (version != VERSION) {
+			logger.error("AMMO REQUEST VERSION MISMATCH, received {}, expected {}",
+					version, VERSION);
+			throw new ParcelFormatException("AMMO REQUEST VERSION MISMATCH");
 		}
-
+		
 		this.uuid = (String) in.readValue(Integer.class.getClassLoader());
 		this.action = Action.getInstance(in);
-		plogger.debug("unmarshall ammo request {} {}", this.uuid, this.action);
+		plogger.trace("unmarshall ammo request {} {}", this.uuid, this.action);
 
 		this.provider = Provider.readFromParcel(in);
-		plogger.debug("provider {}", this.provider);
+		plogger.trace("provider {}", this.provider);
 		this.payload = Payload.readFromParcel(in);
-		plogger.debug("payload {}", this.payload);
+		plogger.trace("payload {}", this.payload);
 		this.topic = Topic.readFromParcel(in);
-		plogger.debug("topic {}", this.topic);
+		plogger.trace("topic {}", this.topic);
 
 		this.recipient = Anon.readFromParcel(in);
-		plogger.debug("recipient {}", this.recipient);
+		plogger.trace("recipient {}", this.recipient);
 		this.originator = Anon.readFromParcel(in);
-		plogger.debug("originator {}", this.originator);
+		plogger.trace("originator {}", this.originator);
 
 		this.downsample = (Integer) in.readValue(Integer.class.getClassLoader());
-		plogger.debug("downsample {}", this.downsample);
+		plogger.trace("downsample {}", this.downsample);
 		this.durability = (Integer) in.readValue(Integer.class.getClassLoader());
-		plogger.debug("durability {}", this.durability);
+		plogger.trace("durability {}", this.durability);
 
 		this.priority = (Integer) in.readValue(Integer.class.getClassLoader());
-		plogger.debug("priority {}", this.priority);
+		plogger.trace("priority {}", this.priority);
 		this.order = Order.readFromParcel(in);
-		plogger.debug("order {}", this.order);
+		plogger.trace("order {}", this.order);
 
 		this.start = TimeTrigger.readFromParcel(in);
-		plogger.debug("start {}", this.start);
+		plogger.trace("start {}", this.start);
 		this.expire = TimeTrigger.readFromParcel(in);
-		plogger.debug("expire {}", this.expire);
+		plogger.trace("expire {}", this.expire);
 
 		this.scope = DeliveryScope.readFromParcel(in);
-		plogger.debug("scope {}", this.scope);
+		plogger.trace("scope {}", this.scope);
 		this.throttle = (Integer) in.readValue(Integer.class.getClassLoader());
-		plogger.debug("throttle {}", this.throttle);
+		plogger.trace("throttle {}", this.throttle);
 		this.worth = (Integer) in.readValue(Integer.class.getClassLoader());
-		plogger.debug("worth {}", this.worth);
+		plogger.trace("worth {}", this.worth);
 
 		this.select = Selection.readFromParcel(in);
-		plogger.debug("selection {}", this.select);
+		plogger.trace("selection {}", this.select);
 		this.project = in.createStringArray();
-		plogger.debug("projection {}", this.project);
+		plogger.trace("projection {}", this.project);
 	}
 
 	@Override
