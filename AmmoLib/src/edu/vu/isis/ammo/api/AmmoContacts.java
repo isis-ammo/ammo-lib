@@ -2,19 +2,29 @@ package edu.vu.isis.ammo.api;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.lang.Throwable;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.ContentUris;
 import android.content.Context;
+import android.net.Uri;
+import android.content.UriMatcher;
+
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
-import android.net.Uri;
+
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
+
 import android.util.Log;
+
 import edu.vu.isis.ammo.launch.constants.Constants;
 
 
@@ -38,13 +48,26 @@ public class AmmoContacts {
         }
     }
 
-    public void setContentResolver(ContentResolver cr) {
+    private void setContentResolver(ContentResolver cr) {
         if (cr != null) {
-            mResolver = cr;
+            this.mResolver = cr;
         } else {
             Log.e(TAG,"Attempt to set content resolver with a null reference");
         }
     }
+
+
+    private AmmoContacts(Context context) {
+	//this.setContentResolver(context.getContentResolver());
+	this.mContext = context;
+        this.mResolver = context.getContentResolver();
+    }
+
+    public static AmmoContacts newInstance(Context context) {
+        return new AmmoContacts(context);
+    }
+
+
 
     //========================================================
     //
@@ -205,6 +228,15 @@ public class AmmoContacts {
             return this;
         }
 
+	private String userIdNum;
+	public String getUserIdNumber() {
+            return this.userIdNum;
+        }
+	public Contact setUserIdNumber(String val) {
+            this.userIdNum = val;
+            return this;
+        }
+
         // The following items will arrive as blobs.
         //
         // std::vector<unsigned char> photo;
@@ -325,6 +357,15 @@ public class AmmoContacts {
                     .withValue(ContactsContract.Data.DATA1, userId)
                     .build());
 
+	String userIdNum = lw.getUserIdNumber();
+        if (userIdNum == null) userIdNum = "";
+        if (userIdNum.length() > 0)
+            ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE, Constants.MIME_USERID_NUM)
+                    .withValue(ContactsContract.Data.DATA1, userIdNum)
+                    .build());
+
         String rank = lw.getRank();
         if (rank == null) rank = "";
         if (rank != null && rank.length() > 0)
@@ -358,6 +399,7 @@ public class AmmoContacts {
         // Set the display name. Use, in order of preference, either the callsign or the full name.
         // (In future we should prob. change this to include rank, role, etc.)
         String displayName = "";
+        if (displayName == null) displayName = "";
         if (displayName.length() < 1) {
             if (callsign != null && callsign.length() > 0) {
                 displayName = callsign;
@@ -414,11 +456,18 @@ public class AmmoContacts {
         ArrayList<Contact> results = new ArrayList<Contact>();
 
         // Perform a query
+	Cursor c = null;
 	String[] projection = {Contacts._ID, Contacts.DISPLAY_NAME, Contacts.LOOKUP_KEY};
-        Cursor c = mResolver.query(filterUri, projection, null,null,null);
-	if (c == null) {
-            return null;
-        }
+	try {
+	    c = mResolver.query(filterUri, projection, null,null,null);
+	    if (c == null) {
+		return null;
+	    }
+	} catch (Throwable e) {
+	    Log.e(TAG, "Exception: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	}
 	
 	// Get data from the returned cursor
 	try {
@@ -448,39 +497,7 @@ public class AmmoContacts {
 		    // If the data query failed (null), just keep what we've 
 		    // got so far (name and lookup) and go on to the next row.
 		    // Otherwise get data, put in container.
-		    
-		    Iterator<HashMap<String, String>> it = extraData.iterator();
-		    while (it.hasNext()) {
-			try {
-			    HashMap<String, String> f = it.next();
-			    if (f != null) {
-				if (Log.isLoggable(TAG, Log.VERBOSE)) {
-				    Log.d(TAG, " ITERATOR: " + String.valueOf(f.size()));
-				    for (String d : f.keySet()) {
-					Log.d(TAG, "     " + d + "= " + f.get(d));
-				    }
-				}
-				
-				if (Constants.MIME_CALLSIGN.equals(f.get("mimetype"))) {
-				    lw.setCallSign(f.get("data1") );
-				}
-				if (Constants.MIME_RANK.equals(f.get("mimetype"))) {
-				    lw.setRank(f.get("data1") );
-				}
-				if (Constants.MIME_UNIT_NAME.equals(f.get("mimetype"))) {
-				    lw.setUnit(f.get("data1") );
-				}
-				if (Constants.MIME_USERID.equals(f.get("mimetype"))) {
-				    lw.setTigrUid(f.get("data1") );
-				}
-
-			    }
-			} catch (NoSuchElementException e) {
-			    Log.e(TAG, "NoSuchElementException: " + e.getMessage());
-			    e.printStackTrace();
-			    continue;
-			}
-		    }
+		    populateContactData(extraData, lw);
 		}
 		results.add(lw);
 	    }
@@ -502,6 +519,50 @@ public class AmmoContacts {
 
         // Return the container of results
         return results;
+    }
+
+    //========================================================
+    // 
+    // populateContactData()
+    // 
+    //========================================================
+    private void populateContactData(ArrayList<HashMap<String, String>> extraData, AmmoContacts.Contact lw) {
+	Iterator<HashMap<String, String>> it = extraData.iterator();
+	while (it.hasNext()) {
+	    try {
+		HashMap<String, String> f = it.next();
+		if (f != null) {
+		    if (Log.isLoggable(TAG, Log.VERBOSE)) {
+			Log.d(TAG, " ITERATOR: " + String.valueOf(f.size()));
+			for (String d : f.keySet()) {
+			    Log.d(TAG, "     " + d + "= " + f.get(d));
+			}
+		    }
+		    
+		    if (Constants.MIME_CALLSIGN.equals(f.get("mimetype"))) {
+			lw.setCallSign(f.get("data1") );
+		    }
+		    if (Constants.MIME_RANK.equals(f.get("mimetype"))) {
+			lw.setRank(f.get("data1") );
+		    }
+		    if (Constants.MIME_UNIT_NAME.equals(f.get("mimetype"))) {
+			lw.setUnit(f.get("data1") );
+		    }
+		    if (Constants.MIME_USERID.equals(f.get("mimetype"))) {
+			lw.setTigrUid(f.get("data1") );
+		    }
+		    
+		    if (Constants.MIME_USERID_NUM.equals(f.get("mimetype"))) {
+			lw.setUserIdNumber(f.get("data1") );
+		    }
+		    
+		}
+	    } catch (NoSuchElementException e) {
+		Log.e(TAG, "NoSuchElementException: " + e.getMessage());
+		e.printStackTrace();
+		continue;
+	    }
+	}
     }
 
     //========================================================
@@ -568,7 +629,7 @@ public class AmmoContacts {
     //========================================================
     public ArrayList<Contact> getAllContacts() {
 	if (Log.isLoggable(TAG, Log.VERBOSE)) {
-	    Log.d(TAG,"searchForContact() ");
+	    Log.d(TAG,"getAllContacts() ");
 	}
 	Uri contactsUri = Contacts.CONTENT_URI;
 
@@ -606,6 +667,13 @@ public class AmmoContacts {
 		lw.setName(names[0]); 
 		lw.setLastName(names[1]);
 		lw.setLookup(lookupKey);
+		
+		String[] dataProjection = {"mimetype","data1","data2","data3","data4"};
+		ArrayList<HashMap<String, String>> extraData = getDataForContact(contactId, dataProjection);
+		if (extraData != null) {
+		    // populate other portions of Contact object
+		    populateContactData(extraData, lw);
+		}
 
 		results.add(lw);
 	    }
@@ -641,8 +709,8 @@ public class AmmoContacts {
         ContentResolver cr = mResolver;
 
         Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
-
-        Cursor c = cr.query(lookupUri, new String[]{Contacts.DISPLAY_NAME}, null,null,null);
+	
+        Cursor c = cr.query(lookupUri, new String[]{Contacts.DISPLAY_NAME,Contacts._ID}, null,null,null);
 
 	AmmoContacts.Contact lw = new AmmoContacts.Contact();
         try {
@@ -652,20 +720,57 @@ public class AmmoContacts {
 	    String[] names = displayName.split(" ");
 	    lw.setName(names[0]); 
 	    lw.setLastName(names[1]);
-	    Log.d(TAG,"Found contact: " + displayName);
+	    String contactId = c.getString(1);
+	    Log.d(TAG,"Found contact: " + displayName + "  id=" + contactId);
 	    
-	    // TODO: Get "other" data for this contact, i.e. with data query
-	    /*
+	    // Get other data for this contact, i.e. with data query
 	    String[] dataProjection = {"mimetype","data1","data2","data3","data4"};
 	    ArrayList<HashMap<String, String>> extraData = getDataForContact(contactId, dataProjection);
 	    if (extraData != null) {
-		// populate other portions of Contact object
+		populateContactData(extraData, lw);
 	    }
-	    */
+	    
         } finally {
             c.close();
         }
 	return lw;
+    }
+
+    //========================================================
+    // 
+    // getContactByIdNumber()
+    // 
+    //========================================================
+    public Contact getContactByIdNumber(long idNumber) {
+	// Retrieve contact with provided unique ID number
+	Log.d(TAG,"getContactByIdNumber() ");
+
+	ArrayList<Contact> allContacts = getAllContacts();
+
+	if (allContacts == null) {
+	    Log.d(TAG, "Query returned no results (null)");
+	    return null;
+	} else {
+	    Contact rval = null;
+	    Log.d(TAG, "Found " + String.valueOf(allContacts.size()) + " results");
+	    Iterator<AmmoContacts.Contact> it = allContacts.iterator();
+	    while (it.hasNext()) {
+		try {
+		    Contact f = it.next();
+		    String idnum = f.getUserIdNumber();
+		    // compare idnum and idNumber
+		    if (idnum.equals(String.valueOf(idNumber) )) {
+			rval = f;
+			break;
+		    }
+		} catch (NoSuchElementException e) {
+		    Log.e(TAG, "NoSuchElementException: " + e.getMessage());
+		    e.printStackTrace();
+		    continue;
+		}
+	    }
+	    return rval;
+	}	
     }
 
     /*
