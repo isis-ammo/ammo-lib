@@ -22,6 +22,8 @@ import android.database.CursorIndexOutOfBoundsException;
 
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
+import android.provider.ContactsContract.Data;
+import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 
 import android.util.Log;
 
@@ -532,13 +534,14 @@ public class AmmoContacts {
 	    try {
 		HashMap<String, String> f = it.next();
 		if (f != null) {
+		    /*
 		    if (Log.isLoggable(TAG, Log.VERBOSE)) {
 			Log.d(TAG, " ITERATOR: " + String.valueOf(f.size()));
 			for (String d : f.keySet()) {
 			    Log.d(TAG, "     " + d + "= " + f.get(d));
 			}
 		    }
-		    
+		    */
 		    if (Constants.MIME_CALLSIGN.equals(f.get("mimetype"))) {
 			lw.setCallSign(f.get("data1") );
 		    }
@@ -554,6 +557,11 @@ public class AmmoContacts {
 		    
 		    if (Constants.MIME_USERID_NUM.equals(f.get("mimetype"))) {
 			lw.setUserIdNumber(f.get("data1") );
+		    }
+		    
+		    if (StructuredName.CONTENT_ITEM_TYPE.equals(f.get("mimetype"))) {
+			lw.setName(f.get("data2"));
+			lw.setLastName(f.get("data3"));
 		    }
 		    
 		}
@@ -702,7 +710,7 @@ public class AmmoContacts {
     // lookupContact()
     // 
     //========================================================
-    public Contact lookupContact(String lookupKey) {
+    public Contact getContactByLookupKey(String lookupKey) {
         // Retrieve contact with provided uri
 	Log.d(TAG,"lookupContact() ");
 
@@ -745,32 +753,64 @@ public class AmmoContacts {
 	// Retrieve contact with provided unique ID number
 	Log.d(TAG,"getContactByIdNumber() ");
 
-	ArrayList<Contact> allContacts = getAllContacts();
+	ContentResolver cr = mResolver;
+	Uri dataUri = Data.CONTENT_URI;  
+	Log.d(TAG, "data uri = " + dataUri.toString());
+	String[] projection = {Data.RAW_CONTACT_ID, Data.DATA1};
+	String selection=Data.MIMETYPE+"=? AND " + Data.DATA1+"=?";
+	String[] selectionArgs={Constants.MIME_USERID_NUM, String.valueOf(idNumber)};
 
-	if (allContacts == null) {
-	    Log.d(TAG, "Query returned no results (null)");
-	    return null;
-	} else {
-	    Contact rval = null;
-	    Log.d(TAG, "Found " + String.valueOf(allContacts.size()) + " results");
-	    Iterator<AmmoContacts.Contact> it = allContacts.iterator();
-	    while (it.hasNext()) {
-		try {
-		    Contact f = it.next();
-		    String idnum = f.getUserIdNumber();
-		    // compare idnum and idNumber
-		    if (idnum.equals(String.valueOf(idNumber) )) {
-			rval = f;
-			break;
-		    }
-		} catch (NoSuchElementException e) {
-		    Log.e(TAG, "NoSuchElementException: " + e.getMessage());
-		    e.printStackTrace();
-		    continue;
-		}
+	// Query the contacts content provider
+	Cursor c = null;
+	try {
+	    c = cr.query(dataUri, projection, selection, selectionArgs,null);
+	    if (c == null) {
+		Log.e(TAG, "getContactByIdNumber() -- cursor is null");
+		return null;
 	    }
-	    return rval;
-	}	
+	} catch (Throwable e) {
+	    Log.e(TAG, "Exception: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	}
+
+	// Process the query's output
+	try {
+	    int count = c.getCount();	    
+	    //Log.d(TAG, "getContactByIdNumber() -- returned " + String.valueOf(count) + " rows");
+	    if (count < 1) {
+		return null;
+	    }
+
+	    c.moveToFirst();
+	    String contactId = c.getString(0);
+
+	    AmmoContacts.Contact lw = new AmmoContacts.Contact();
+	    lw.setUserIdNumber(c.getString(1) );
+
+	    // Get other data for this contact
+	    String[] dataProjection = {"mimetype","data1","data2","data3","data4"};
+	    ArrayList<HashMap<String, String>> otherData = getDataForContact(contactId, dataProjection);
+	    if (otherData != null) {
+		populateContactData(otherData, lw);
+	    }
+
+	    return lw;
+	} catch (IllegalArgumentException e) { 
+	    Log.e(TAG, "IllegalArgumentException: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} catch (CursorIndexOutOfBoundsException e) {
+	    Log.e(TAG, "Cursor out of bounds: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} catch (Throwable e) {
+	    Log.e(TAG, "Exception: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} finally {
+            c.close();
+        }
     }
 
     /*
