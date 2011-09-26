@@ -60,5 +60,4 @@ public abstract class AmmoType implements Parcelable {
 
 	@Override
 	public int describeContents() { return 0; }
-
 }
