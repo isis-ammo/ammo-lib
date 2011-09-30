@@ -45,6 +45,10 @@ public class TimeStamp extends AmmoType {
 		this.interval = TimeInterval.readFromParcel(in);
 		plogger.trace("unmarshall time stamp {}", this);
 	}
+	
+	public long cv() {
+		return this.millis + this.interval.cv();
+	}
 	// *********************************
 	// Standard Methods
 	// *********************************

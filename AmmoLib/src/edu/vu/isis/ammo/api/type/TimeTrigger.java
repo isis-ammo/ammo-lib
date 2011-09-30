@@ -71,6 +71,20 @@ public class TimeTrigger extends AmmoType {
 			}
 		plogger.trace("unmarshall time trigger {}", this);
 	}
+	
+	public long cv() {
+		if (this.type == null) {
+			return System.currentTimeMillis();
+		} else
+			switch (this.type) {
+			case ABS:
+				return this.abs.cv();
+			case REL:
+				return System.currentTimeMillis() + this.rel.cv();
+			default:
+				return System.currentTimeMillis();
+			}
+	}
 	// *********************************
 	// Standard Methods
 	// *********************************

@@ -9,7 +9,7 @@ import android.os.Parcelable;
 public class TimeInterval extends AmmoType {
 	
     public enum Unit {
-        MILLISEC, SECOND, MINUTE, HOUR, DAY, MONTH, YEAR
+        MILLISEC, SECOND, MINUTE, HOUR, DAY, YEAR
     };
     static public final int UNLIMITED = Integer.MAX_VALUE;
 
@@ -50,6 +50,21 @@ public class TimeInterval extends AmmoType {
         this.units = Unit.values()[in.readInt()];
         this.quantity = in.readLong();
     	plogger.trace("unmarshall time interval {}", this);
+    }
+    
+    public long cv() {
+    	long millis = this.quantity;
+    	switch (this.units) {
+    	case YEAR: millis *= 365.25;
+    	case DAY: millis *= 24;
+    	case HOUR: millis *= 60;
+    	case MINUTE: millis *= 60;
+    	case SECOND: millis *= 1000;
+    	case MILLISEC:
+    		return millis;
+    	default:
+    			return 0;
+    	}
     }
 	// *********************************
 	// Standard Methods
