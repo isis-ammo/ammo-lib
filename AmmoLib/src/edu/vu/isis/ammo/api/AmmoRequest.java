@@ -1,5 +1,6 @@
 package edu.vu.isis.ammo.api;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
@@ -249,7 +250,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	}
 
 	private String generateUuid() {
-		return "a-uuid";
+		return UUID.randomUUID().toString();
 	}
 	@Override
 	public IAmmoRequest replace(IAmmoRequest req) {
