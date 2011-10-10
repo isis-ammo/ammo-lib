@@ -3,6 +3,9 @@ package edu.vu.isis.ammo.api.type;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * Specifies the order in which queued items are to be processed.
+ */
 public class Order extends AmmoType {
 
     public enum Type {

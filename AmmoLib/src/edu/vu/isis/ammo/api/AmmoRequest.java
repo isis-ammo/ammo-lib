@@ -21,6 +21,7 @@ import android.os.Parcelable;
 import android.os.RemoteException;
 import edu.vu.isis.ammo.api.type.Anon;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
+import edu.vu.isis.ammo.api.type.Limit;
 import edu.vu.isis.ammo.api.type.Oid;
 import edu.vu.isis.ammo.api.type.Order;
 import edu.vu.isis.ammo.api.type.Payload;
@@ -60,6 +61,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 	final public TimeTrigger start;
 	final public TimeTrigger expire;
+	final public Limit limit;
 
 	final public DeliveryScope scope;
 	final public Integer throttle;
@@ -138,6 +140,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		TimeTrigger.writeToParcel(this.start, dest, flags);
 		plogger.trace("expire {}", this.expire);
 		TimeTrigger.writeToParcel(this.expire, dest, flags);
+		plogger.trace("limit {}", this.limit);
+		Limit.writeToParcel(this.limit, dest, flags);
 
 		plogger.trace("scope {}", this.scope);
 		DeliveryScope.writeToParcel(this.scope, dest, flags);
@@ -195,6 +199,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		plogger.trace("start {}", this.start);
 		this.expire = TimeTrigger.readFromParcel(in);
 		plogger.trace("expire {}", this.expire);
+		this.limit = Limit.readFromParcel(in);
+		plogger.trace("limit {}", this.limit);
 
 		this.scope = DeliveryScope.readFromParcel(in);
 		plogger.trace("scope {}", this.scope);
@@ -237,6 +243,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		this.start = builder.start;
 		this.expire = builder.expire;
+		this.limit = builder.limit;
 
 		this.scope = builder.scope;
 		this.throttle = builder.throttle;
@@ -398,6 +405,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		private TimeTrigger start;
 		private TimeTrigger expire;
+		private Limit limit;
 
 		private DeliveryScope scope;
 		private Integer throttle;
@@ -540,8 +548,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			return this;
 		}
 
-
-		@Override
 		public Builder order(String val) {
 			if (val == null) return this;
 			return this.order(new Order(val));
@@ -667,12 +673,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		@Override
-		public Builder topic(Uri val) {
-			this.topic = new Topic(val.toString());
-			return this;
-		}
-
-		@Override
 		public Builder uid(String val) {
 			this.uid = val;
 			return this;
@@ -712,6 +712,24 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.expire = new TimeTrigger(val);
 			return this;
 		}
+		
+		public Builder limit(String val) {
+			this.limit = new Limit(val);
+			return null;
+		}
+		
+		@Override
+		public Builder limit(int val) {
+			this.limit = new Limit(Limit.Type.NEWEST, val);
+			return this;
+		}
+
+		@Override
+		public Builder limit(Limit val) {
+			this.limit = val;
+			return this;
+		}
+
 
 		public Builder project(String val) {
 			if (val == null) return this;

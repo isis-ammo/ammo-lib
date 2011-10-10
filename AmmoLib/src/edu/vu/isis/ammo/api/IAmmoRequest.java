@@ -8,8 +8,8 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.os.Parcel;
 
-import edu.vu.isis.ammo.api.AmmoRequest.Builder;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
+import edu.vu.isis.ammo.api.type.Limit;
 import edu.vu.isis.ammo.api.type.Oid;
 import edu.vu.isis.ammo.api.type.Order;
 import edu.vu.isis.ammo.api.type.TimeInterval;
@@ -44,11 +44,10 @@ public interface IAmmoRequest {
    public static final Integer PRIORITY_URGENT = 1000;
 
    public static final Integer PRIORITY_DEFAULT = PRIORITY_NORMAL ;
-   public static final Integer ORDER_OLDEST_FIRST = 1;
-   public static final Integer ORDER_NEWEST_ONLY = 2;
-   public static final Integer ORDER_NEWEST_FIRST = 3;
+   public static final Order ORDER_OLDEST_FIRST = Order.OLDEST_FIRST;
+   public static final Order ORDER_NEWEST_FIRST = Order.NEWEST_FIRST;
 
-   public static final Order ORDER_DEFAULT = Order.OLDEST_FIRST ;
+   public static final Order ORDER_DEFAULT = ORDER_OLDEST_FIRST ;
    public static final Integer WORTH_DEFAULT = 100;
 
    public static final TimeInterval START_DEFAULT = 
@@ -75,9 +74,8 @@ public interface IAmmoRequest {
 
    public static final Integer THROTTLE_DEFAULT = THROTTLE_UNLIMITED ;
    public static final String UID_DEFAULT = "";
-   public static final Integer DEPTH_DEFAULT = 0;
-   public static final Integer LIMIT_NONE = -1;
-   public static final Integer LIMIT_DEFAULT = LIMIT_NONE ;
+   public static final Limit LIMIT_NONE = new Limit();
+   public static final Limit LIMIT_DEFAULT = LIMIT_NONE ;
 
    public interface Builder {
       public IAmmoRequest duplicate() throws RemoteException;
@@ -89,7 +87,7 @@ public interface IAmmoRequest {
       public IAmmoRequest subscribe() throws RemoteException;
       public IAmmoRequest retrieve() throws RemoteException;
       public IAmmoRequest getInstance(String uuid) throws RemoteException;
-      public void releaseInstance(); 
+      public void releaseInstance();
         public Builder provider(Uri val);
         public Builder payload(String val);
         public Builder payload(byte[] val);
@@ -97,11 +95,12 @@ public interface IAmmoRequest {
         public Builder payload(AmmoValues val);
         public Builder topic(String val);
         public Builder topic(Oid val); 
-        public Builder topic(Uri val);
         // \availability{2.0}
         public Builder uid(String val);
         public Builder expire(TimeInterval val);
         public Builder expire(TimeStamp val);
+        public Builder limit(int val);
+        public Builder limit(Limit val);
         public Builder durability(Integer val);
         public Builder recipient(IAnon val);
         public Builder recipient(String val);
@@ -109,7 +108,6 @@ public interface IAmmoRequest {
         public Builder originator(String val);
         public Builder priority(Integer val);
         public Builder order(Order val);
-        public Builder order(String val);
         public Builder worth(Integer val);
         public Builder start(TimeStamp val); 
         public Builder start(TimeInterval val); 
@@ -119,11 +117,8 @@ public interface IAmmoRequest {
         public Builder downsample(Integer maxSize); 
         public Builder project(String[] val);
         public Builder select(Query val);
-        public Builder select(Form val);
-		
-		
+        public Builder select(Form val); 
    }
-   
    public enum Action {
      POSTAL, DIRECTED_POSTAL, PUBLISH, RETRIEVAL, SUBSCRIBE, DIRECTED_SUBSCRIBE;
 

@@ -3,6 +3,9 @@ package edu.vu.isis.ammo.api.type;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * This identifies how far the message is to diffuse.
+ */
 public class DeliveryScope extends AmmoType {
 
     public enum Type {
