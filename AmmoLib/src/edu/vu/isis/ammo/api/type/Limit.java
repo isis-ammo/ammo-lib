@@ -79,6 +79,11 @@ public class Limit extends AmmoType {
         this.count = count;
     }
     
+    public Limit(int count) {
+        this.type = Type.NEWEST;
+        this.count = count;
+    }
+    
     public Limit() {
         this.type = Type.NEWEST;
         this.count = -1;

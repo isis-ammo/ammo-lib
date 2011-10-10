@@ -104,7 +104,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * rather Class.writeToParcel(this.provider, dest, flags) so 
 	 * that when the null will will be handled correctly.
 	 */
-	private final byte VERSION = (byte)0x01;
+	private final byte VERSION = (byte)0x02;
 	
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
