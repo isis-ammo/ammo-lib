@@ -22,6 +22,8 @@ import android.database.CursorIndexOutOfBoundsException;
 
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
+import android.provider.ContactsContract.Data;
+import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 
 import android.util.Log;
 
@@ -48,13 +50,26 @@ public class AmmoContacts {
         }
     }
 
-    public void setContentResolver(ContentResolver cr) {
+    private void setContentResolver(ContentResolver cr) {
         if (cr != null) {
-            mResolver = cr;
+            this.mResolver = cr;
         } else {
             Log.e(TAG,"Attempt to set content resolver with a null reference");
         }
     }
+
+
+    private AmmoContacts(Context context) {
+	//this.setContentResolver(context.getContentResolver());
+	this.mContext = context;
+        this.mResolver = context.getContentResolver();
+    }
+
+    public static AmmoContacts newInstance(Context context) {
+        return new AmmoContacts(context);
+    }
+
+
 
     //========================================================
     //
@@ -215,6 +230,15 @@ public class AmmoContacts {
             return this;
         }
 
+	private String userIdNum;
+	public String getUserIdNumber() {
+            return this.userIdNum;
+        }
+	public Contact setUserIdNumber(String val) {
+            this.userIdNum = val;
+            return this;
+        }
+
         // The following items will arrive as blobs.
         //
         // std::vector<unsigned char> photo;
@@ -335,6 +359,15 @@ public class AmmoContacts {
                     .withValue(ContactsContract.Data.DATA1, userId)
                     .build());
 
+	String userIdNum = lw.getUserIdNumber();
+        if (userIdNum == null) userIdNum = "";
+        if (userIdNum.length() > 0)
+            ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE, Constants.MIME_USERID_NUM)
+                    .withValue(ContactsContract.Data.DATA1, userIdNum)
+                    .build());
+
         String rank = lw.getRank();
         if (rank == null) rank = "";
         if (rank != null && rank.length() > 0)
@@ -425,11 +458,18 @@ public class AmmoContacts {
         ArrayList<Contact> results = new ArrayList<Contact>();
 
         // Perform a query
+	Cursor c = null;
 	String[] projection = {Contacts._ID, Contacts.DISPLAY_NAME, Contacts.LOOKUP_KEY};
-        Cursor c = mResolver.query(filterUri, projection, null,null,null);
-	if (c == null) {
-            return null;
-        }
+	try {
+	    c = mResolver.query(filterUri, projection, null,null,null);
+	    if (c == null) {
+		return null;
+	    }
+	} catch (Throwable e) {
+	    Log.e(TAG, "Exception: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	}
 	
 	// Get data from the returned cursor
 	try {
@@ -459,39 +499,7 @@ public class AmmoContacts {
 		    // If the data query failed (null), just keep what we've 
 		    // got so far (name and lookup) and go on to the next row.
 		    // Otherwise get data, put in container.
-		    
-		    Iterator<HashMap<String, String>> it = extraData.iterator();
-		    while (it.hasNext()) {
-			try {
-			    HashMap<String, String> f = it.next();
-			    if (f != null) {
-				if (Log.isLoggable(TAG, Log.VERBOSE)) {
-				    Log.d(TAG, " ITERATOR: " + String.valueOf(f.size()));
-				    for (String d : f.keySet()) {
-					Log.d(TAG, "     " + d + "= " + f.get(d));
-				    }
-				}
-				
-				if (Constants.MIME_CALLSIGN.equals(f.get("mimetype"))) {
-				    lw.setCallSign(f.get("data1") );
-				}
-				if (Constants.MIME_RANK.equals(f.get("mimetype"))) {
-				    lw.setRank(f.get("data1") );
-				}
-				if (Constants.MIME_UNIT_NAME.equals(f.get("mimetype"))) {
-				    lw.setUnit(f.get("data1") );
-				}
-				if (Constants.MIME_USERID.equals(f.get("mimetype"))) {
-				    lw.setTigrUid(f.get("data1") );
-				}
-
-			    }
-			} catch (NoSuchElementException e) {
-			    Log.e(TAG, "NoSuchElementException: " + e.getMessage());
-			    e.printStackTrace();
-			    continue;
-			}
-		    }
+		    populateContactData(extraData, lw);
 		}
 		results.add(lw);
 	    }
@@ -513,6 +521,56 @@ public class AmmoContacts {
 
         // Return the container of results
         return results;
+    }
+
+    //========================================================
+    // 
+    // populateContactData()
+    // 
+    //========================================================
+    private void populateContactData(ArrayList<HashMap<String, String>> extraData, AmmoContacts.Contact lw) {
+	Iterator<HashMap<String, String>> it = extraData.iterator();
+	while (it.hasNext()) {
+	    try {
+		HashMap<String, String> f = it.next();
+		if (f != null) {
+		    /*
+		    if (Log.isLoggable(TAG, Log.VERBOSE)) {
+			Log.d(TAG, " ITERATOR: " + String.valueOf(f.size()));
+			for (String d : f.keySet()) {
+			    Log.d(TAG, "     " + d + "= " + f.get(d));
+			}
+		    }
+		    */
+		    if (Constants.MIME_CALLSIGN.equals(f.get("mimetype"))) {
+			lw.setCallSign(f.get("data1") );
+		    }
+		    if (Constants.MIME_RANK.equals(f.get("mimetype"))) {
+			lw.setRank(f.get("data1") );
+		    }
+		    if (Constants.MIME_UNIT_NAME.equals(f.get("mimetype"))) {
+			lw.setUnit(f.get("data1") );
+		    }
+		    if (Constants.MIME_USERID.equals(f.get("mimetype"))) {
+			lw.setTigrUid(f.get("data1") );
+		    }
+		    
+		    if (Constants.MIME_USERID_NUM.equals(f.get("mimetype"))) {
+			lw.setUserIdNumber(f.get("data1") );
+		    }
+		    
+		    if (StructuredName.CONTENT_ITEM_TYPE.equals(f.get("mimetype"))) {
+			lw.setName(f.get("data2"));
+			lw.setLastName(f.get("data3"));
+		    }
+		    
+		}
+	    } catch (NoSuchElementException e) {
+		Log.e(TAG, "NoSuchElementException: " + e.getMessage());
+		e.printStackTrace();
+		continue;
+	    }
+	}
     }
 
     //========================================================
@@ -579,7 +637,7 @@ public class AmmoContacts {
     //========================================================
     public ArrayList<Contact> getAllContacts() {
 	if (Log.isLoggable(TAG, Log.VERBOSE)) {
-	    Log.d(TAG,"searchForContact() ");
+	    Log.d(TAG,"getAllContacts() ");
 	}
 	Uri contactsUri = Contacts.CONTENT_URI;
 
@@ -617,6 +675,13 @@ public class AmmoContacts {
 		lw.setName(names[0]); 
 		lw.setLastName(names[1]);
 		lw.setLookup(lookupKey);
+		
+		String[] dataProjection = {"mimetype","data1","data2","data3","data4"};
+		ArrayList<HashMap<String, String>> extraData = getDataForContact(contactId, dataProjection);
+		if (extraData != null) {
+		    // populate other portions of Contact object
+		    populateContactData(extraData, lw);
+		}
 
 		results.add(lw);
 	    }
@@ -645,15 +710,15 @@ public class AmmoContacts {
     // lookupContact()
     // 
     //========================================================
-    public Contact lookupContact(String lookupKey) {
+    public Contact getContactByLookupKey(String lookupKey) {
         // Retrieve contact with provided uri
 	Log.d(TAG,"lookupContact() ");
 
         ContentResolver cr = mResolver;
 
         Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
-
-        Cursor c = cr.query(lookupUri, new String[]{Contacts.DISPLAY_NAME}, null,null,null);
+	
+        Cursor c = cr.query(lookupUri, new String[]{Contacts.DISPLAY_NAME,Contacts._ID}, null,null,null);
 
 	AmmoContacts.Contact lw = new AmmoContacts.Contact();
         try {
@@ -663,20 +728,89 @@ public class AmmoContacts {
 	    String[] names = displayName.split(" ");
 	    lw.setName(names[0]); 
 	    lw.setLastName(names[1]);
-	    Log.d(TAG,"Found contact: " + displayName);
+	    String contactId = c.getString(1);
+	    Log.d(TAG,"Found contact: " + displayName + "  id=" + contactId);
 	    
-	    // TODO: Get "other" data for this contact, i.e. with data query
-	    /*
+	    // Get other data for this contact, i.e. with data query
 	    String[] dataProjection = {"mimetype","data1","data2","data3","data4"};
 	    ArrayList<HashMap<String, String>> extraData = getDataForContact(contactId, dataProjection);
 	    if (extraData != null) {
-		// populate other portions of Contact object
+		populateContactData(extraData, lw);
 	    }
-	    */
+	    
         } finally {
             c.close();
         }
 	return lw;
+    }
+
+    //========================================================
+    // 
+    // getContactByIdNumber()
+    // 
+    //========================================================
+    public Contact getContactByIdNumber(long idNumber) {
+	// Retrieve contact with provided unique ID number
+	Log.d(TAG,"getContactByIdNumber() ");
+
+	ContentResolver cr = mResolver;
+	Uri dataUri = Data.CONTENT_URI;  
+	Log.d(TAG, "data uri = " + dataUri.toString());
+	String[] projection = {Data.RAW_CONTACT_ID, Data.DATA1};
+	String selection=Data.MIMETYPE+"=? AND " + Data.DATA1+"=?";
+	String[] selectionArgs={Constants.MIME_USERID_NUM, String.valueOf(idNumber)};
+
+	// Query the contacts content provider
+	Cursor c = null;
+	try {
+	    c = cr.query(dataUri, projection, selection, selectionArgs,null);
+	    if (c == null) {
+		Log.e(TAG, "getContactByIdNumber() -- cursor is null");
+		return null;
+	    }
+	} catch (Throwable e) {
+	    Log.e(TAG, "Exception: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	}
+
+	// Process the query's output
+	try {
+	    int count = c.getCount();	    
+	    //Log.d(TAG, "getContactByIdNumber() -- returned " + String.valueOf(count) + " rows");
+	    if (count < 1) {
+		return null;
+	    }
+
+	    c.moveToFirst();
+	    String contactId = c.getString(0);
+
+	    AmmoContacts.Contact lw = new AmmoContacts.Contact();
+	    lw.setUserIdNumber(c.getString(1) );
+
+	    // Get other data for this contact
+	    String[] dataProjection = {"mimetype","data1","data2","data3","data4"};
+	    ArrayList<HashMap<String, String>> otherData = getDataForContact(contactId, dataProjection);
+	    if (otherData != null) {
+		populateContactData(otherData, lw);
+	    }
+
+	    return lw;
+	} catch (IllegalArgumentException e) { 
+	    Log.e(TAG, "IllegalArgumentException: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} catch (CursorIndexOutOfBoundsException e) {
+	    Log.e(TAG, "Cursor out of bounds: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} catch (Throwable e) {
+	    Log.e(TAG, "Exception: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} finally {
+            c.close();
+        }
     }
 
     /*

@@ -1,5 +1,6 @@
 package edu.vu.isis.ammo.api.type;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -8,146 +9,10 @@ import java.util.ListIterator;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Oid implements List<Integer>, Parcelable {
+public class Oid extends AmmoType implements List<Integer> {
 
-    @Override
-    public boolean add(Integer arg0) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public void add(int location, Integer object) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends Integer> arg0) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean addAll(int arg0, Collection<? extends Integer> arg1) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public void clear() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public boolean contains(Object object) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> arg0) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public Integer get(int location) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public int indexOf(Object object) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public Iterator<Integer> iterator() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public int lastIndexOf(Object object) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public ListIterator<Integer> listIterator() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ListIterator<Integer> listIterator(int location) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Integer remove(int location) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public boolean remove(Object object) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> arg0) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> arg0) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public Integer set(int location, Integer object) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public int size() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public List<Integer> subList(int start, int end) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Object[] toArray() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public <T> T[] toArray(T[] array) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
+	private final List<Integer> backing;
+	
     // *********************************
     // Parcelable Support
     // *********************************
@@ -164,23 +29,157 @@ public class Oid implements List<Integer>, Parcelable {
         public Oid[] newArray(int size) {
             return new Oid[size];
         }
-
     };
-    
-    private Oid(Parcel in) {
-    	// TODO Auto-generated method stub
+    public Oid readFromParcel(Parcel source) {
+    	if (AmmoType.isNull(source)) return null;
+        return new Oid(source);
     }
     
 	@Override
-	public int describeContents() {
-		// TODO Auto-generated method stub
-		return 0;
+	public void writeToParcel(Parcel dest, int flags) {
+		plogger.trace("marshall oid {}", this);
+		final int[] array = new int[this.backing.size()];
+		int ix=0;
+		for (Integer item : this.backing) array[ix++] = item.intValue();
+		dest.writeIntArray(array);
+	}
+	
+    private Oid(Parcel in) {
+    	final int[] array = in.createIntArray();
+    	this.backing = new ArrayList<Integer>(array.length);
+    	for (int item : array) this.backing.add(item);
+        plogger.trace("unmarshall oid {}", this);
+    }
+	// *********************************
+	// Standard Methods
+	// *********************************
+	@Override
+	public String toString() {
+		return this.backing.toString();
 	}
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		// TODO Auto-generated method stub
-		
+    // *********************************
+    // IAmmoRequest Support
+    // *********************************
+	
+	private Oid() {
+		this.backing = new ArrayList<Integer>();
 	}
+
+    @Override
+    public boolean add(Integer arg0) {
+        return this.backing.add(arg0);
+    }
+
+    @Override
+    public void add(int location, Integer object) {
+    	this.backing.add(location, object);
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends Integer> arg0) {
+    	return this.backing.addAll(arg0);
+    }
+
+    @Override
+    public boolean addAll(int arg0, Collection<? extends Integer> arg1) {
+    	return this.backing.addAll(arg1);
+    }
+
+    @Override
+    public void clear() {
+        this.backing.clear();
+    }
+
+    @Override
+    public boolean contains(Object object) {
+    	return this.backing.contains(object);
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> arg0) {
+    	return this.backing.containsAll(arg0);
+    }
+
+    @Override
+    public Integer get(int location) {
+    	return this.backing.get(location);
+    }
+
+    @Override
+    public int indexOf(Object object) {
+    	return this.backing.indexOf(object);
+    }
+
+    @Override
+    public boolean isEmpty() {
+    	return this.backing.isEmpty();
+    }
+
+    @Override
+    public Iterator<Integer> iterator() {
+    	return this.backing.iterator();
+    }
+
+    @Override
+    public int lastIndexOf(Object object) {
+    	return this.backing.lastIndexOf(object);
+    }
+
+    @Override
+    public ListIterator<Integer> listIterator() {
+    	return this.backing.listIterator();
+    }
+
+    @Override
+    public ListIterator<Integer> listIterator(int location) {
+    	return this.backing.listIterator(location);
+    }
+
+    @Override
+    public Integer remove(int location) {
+    	return this.backing.remove(location);
+    }
+
+    @Override
+    public boolean remove(Object object) {
+        return this.backing.remove(object);
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> arg0) {
+    	return this.backing.removeAll(arg0);
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> arg0) {
+    	return this.backing.retainAll(arg0);
+    }
+
+    @Override
+    public Integer set(int location, Integer object) {
+    	return this.backing.set(location, object);
+    }
+
+    @Override
+    public int size() {
+    	return this.backing.size();
+    }
+
+    @Override
+    public List<Integer> subList(int start, int end) {
+    	return this.backing.subList(start, end);
+    }
+
+    @Override
+    public Object[] toArray() {
+    	return this.backing.toArray();
+    }
+
+    @Override
+    public <T> T[] toArray(T[] array) {
+    	return this.backing.toArray(array);
+    }
+    
 
 }
