@@ -32,13 +32,12 @@ import edu.vu.isis.ammo.api.type.TimeInterval;
 import edu.vu.isis.ammo.api.type.TimeStamp;
 import edu.vu.isis.ammo.api.type.Topic;
 
-
 /**
  * see docs/dev-guide/developer-guide.pdf
  */
 public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcelable {
 	private static final Logger logger = LoggerFactory.getLogger(AmmoRequest.class);
-	private static final Logger plogger = LoggerFactory.getLogger( "ammo-parcel" );
+	private static final Logger plogger = LoggerFactory.getLogger("ammo-parcel");
 
 	// **********************
 	// PUBLIC PROPERTIES
@@ -80,13 +79,11 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		return sb.toString();
 	}
 
-
 	// ****************************
 	// Parcelable Support
 	// ****************************
 
-	public static final Parcelable.Creator<AmmoRequest> CREATOR = 
-			new Parcelable.Creator<AmmoRequest>() {
+	public static final Parcelable.Creator<AmmoRequest> CREATOR = new Parcelable.Creator<AmmoRequest>() {
 
 		@Override
 		public AmmoRequest createFromParcel(Parcel source) {
@@ -100,17 +97,17 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	};
 
 	/**
-	 * The this.provider.writeToParcel(dest, flags) form is not used
-	 * rather Class.writeToParcel(this.provider, dest, flags) so 
-	 * that when the null will will be handled correctly.
+	 * The this.provider.writeToParcel(dest, flags) form is not used rather
+	 * Class.writeToParcel(this.provider, dest, flags) so that when the null
+	 * will will be handled correctly.
 	 */
-	private final byte VERSION = (byte)0x02;
-	
+	private final byte VERSION = (byte) 0x02;
+
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("marshall ammo request {} {}", this.uuid, this.action);
 		dest.writeByte(VERSION);
-		
+
 		dest.writeValue(this.uuid);
 		Action.writeToParcel(dest, this.action);
 
@@ -156,7 +153,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		dest.writeStringArray(this.project);
 	}
 
-
 	/**
 	 * 
 	 * @param in
@@ -164,9 +160,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	private AmmoRequest(Parcel in) {
 		final byte version = in.readByte();
 		if (version != VERSION) {
-			logger.error("AMMO REQUEST VERSION MISMATCH, received {}, expected {}",
+			logger.warn("AMMO REQUEST VERSION MISMATCH, received {}, expected {}",
 					version, VERSION);
-			throw new ParcelFormatException("AMMO REQUEST VERSION MISMATCH");
+//			throw new ParcelFormatException("AMMO REQUEST VERSION MISMATCH");
 		}
 		
 		this.uuid = (String) in.readValue(Integer.class.getClassLoader());
@@ -199,7 +195,14 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		plogger.trace("start {}", this.start);
 		this.expire = TimeTrigger.readFromParcel(in);
 		plogger.trace("expire {}", this.expire);
-		this.limit = Limit.readFromParcel(in);
+		
+		// If the version we're dealing with is older it may not have a limit field. Check for this
+		// and set the limit manually if needed.
+		if (version < (byte)2) {
+			this.limit = new Limit(100);
+		} else {
+			this.limit = Limit.readFromParcel(in);
+		}
 		plogger.trace("limit {}", this.limit);
 
 		this.scope = DeliveryScope.readFromParcel(in);
@@ -216,12 +219,13 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	}
 
 	@Override
-	public int describeContents() { return 0; }
+	public int describeContents() {
+		return 0;
+	}
 
 	// *********************************
 	// IAmmoReques Support
 	// *********************************
-
 
 	private AmmoRequest(IAmmoRequest.Action action, Builder builder) {
 		this.action = action;
@@ -230,7 +234,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		this.payload = builder.payload;
 
 		this.topic = builder.topic;
-
 
 		this.downsample = builder.downsample;
 		this.durability = builder.durability;
@@ -259,6 +262,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	private String generateUuid() {
 		return UUID.randomUUID().toString();
 	}
+
 	@Override
 	public IAmmoRequest replace(IAmmoRequest req) {
 		// TODO Auto-generated method stub
@@ -279,11 +283,10 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		return new AmmoRequest.Builder(context, receiver).reset();
 	}
 
-	//    public static Builder newBuilder(IBinder service) {
-	//        return new AmmoRequest.Builder(service).reset();
-	//    }
+	// public static Builder newBuilder(IBinder service) {
+	// return new AmmoRequest.Builder(service).reset();
+	// }
 	//  
-
 
 	// **************
 	// CONTROL
@@ -325,11 +328,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		return null;
 	}
 
-
-
 	/**
 	 * The builder makes requests to the Distributor via AIDL methods.
-	 *
+	 * 
 	 */
 	private static final Intent DISTRIBUTOR_SERVICE = new Intent(IDistributorService.class.getCanonicalName());
 	private static final Intent MAKE_DISTRIBUTOR_REQUEST = new Intent("edu.vu.isis.ammo.api.MAKE_REQUEST");
@@ -339,7 +340,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		private enum ConnectionMode {
 			BIND, PEEK, COMMAND, NONE;
 		}
-		
+
 		private final AtomicReference<ConnectionMode> mode;
 		private final AtomicReference<IDistributorService> distributor;
 		private final Context context;
@@ -367,6 +368,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 				Builder.this.distributor.set(IDistributorService.Stub.asInterface(service));
 				Builder.this.mode.set(ConnectionMode.BIND);
 			}
+
 			@Override
 			public void onServiceDisconnected(ComponentName name) {
 				logger.trace("service {} disconnected", name.flattenToShortString());
@@ -380,15 +382,13 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.distributor = new AtomicReference<IDistributorService>(null);
 			this.context = context;
 			try {
-				final boolean isBound = this.context.bindService(DISTRIBUTOR_SERVICE, 
-						this.conn, Context.BIND_AUTO_CREATE);
+				final boolean isBound = this.context.bindService(DISTRIBUTOR_SERVICE, this.conn, Context.BIND_AUTO_CREATE);
 				logger.info("is the service bound? {}", isBound);
 			} catch (ReceiverCallNotAllowedException ex) {
 				logger.info("the service cannot be bound");
-				
+
 			}
 		}
-
 
 		private Provider provider;
 		private Payload payload;
@@ -423,18 +423,18 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		// ***************
 
 		/**
-		 * Generally the BIND approach should be used as it has the best performance.
-		 * Sometimes this is not possible and the getService()/COMMAND method must be
-		 * used (in the case of BroadcastReceiver).
-		 * There are cases where the PEEK method may be used (BroadcastReceiver) but
-		 * it is not particularly reliable so the fall-back to COMMAND is necessary.
-		 * It may also be the case that the service has not yet started and 
-		 * the binder has not yet been obtained.
+		 * Generally the BIND approach should be used as it has the best
+		 * performance. Sometimes this is not possible and the
+		 * getService()/COMMAND method must be used (in the case of
+		 * BroadcastReceiver). There are cases where the PEEK method may be used
+		 * (BroadcastReceiver) but it is not particularly reliable so the
+		 * fall-back to COMMAND is necessary. It may also be the case that the
+		 * service has not yet started and the binder has not yet been obtained.
 		 * In that interim case the COMMAND mode should be used.
 		 * 
 		 */
 		private IAmmoRequest makeRequest(final AmmoRequest request) throws RemoteException {
-			switch (this.mode.get()){
+			switch (this.mode.get()) {
 			case BIND:
 			case PEEK:
 				final String ident = this.distributor.get().makeRequest(request);
@@ -475,6 +475,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		public IAmmoRequest retrieve() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.RETRIEVAL, this));
 		}
+
 		@Override
 		public IAmmoRequest subscribe() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.SUBSCRIBE, this));
@@ -496,7 +497,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		public void releaseInstance() {
 			this.context.unbindService(this.conn);
 		}
-
 
 		// **************
 		// SET PROPERTIES
@@ -525,7 +525,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		public Builder downsample(String max) {
-			if (max == null) return this;
+			if (max == null)
+				return this;
 			this.downsample = Integer.parseInt(max);
 			return this;
 		}
@@ -537,7 +538,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		public Builder durability(String val) {
-			if (val == null) return this;
+			if (val == null)
+				return this;
 			this.durability = Integer.parseInt(val);
 			return this;
 		}
@@ -549,7 +551,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		public Builder order(String val) {
-			if (val == null) return this;
+			if (val == null)
+				return this;
 			return this.order(new Order(val));
 		}
 
@@ -559,7 +562,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			return this;
 		}
 
-
 		@Override
 		public Builder originator(IAmmoRequest.IAnon val) {
 			this.originator = (Anon) val;
@@ -568,8 +570,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		@Override
 		public Builder originator(String val) {
-			if (val == null) return this;
-			this.originator =  new Anon(val);
+			if (val == null)
+				return this;
+			this.originator = new Anon(val);
 			return this;
 		}
 
@@ -581,42 +584,46 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		@Override
 		public Builder recipient(String val) {
-			if (val == null) return this;
-			this.recipient =  new Anon(val);
+			if (val == null)
+				return this;
+			this.recipient = new Anon(val);
 			return this;
 		}
 
 		@Override
 		public Builder payload(String val) {
-			if (val == null) return this;
+			if (val == null)
+				return this;
 			this.payload = new Payload(val);
 			return this;
 		}
 
 		@Override
 		public Builder payload(byte[] val) {
-			if (val == null) return this;
+			if (val == null)
+				return this;
 			this.payload = new Payload(val);
 			return this;
 		}
 
 		@Override
 		public Builder payload(ContentValues val) {
-			if (val == null) return this;
+			if (val == null)
+				return this;
 			this.payload = new Payload(val);
 			return this;
 		}
 
-
 		@Override
 		public Builder payload(AmmoValues val) {
-			if (val == null) return this;
+			if (val == null)
+				return this;
 			return this.payload(val.asContentValues());
 		}
 
-
 		public Builder priority(String val) {
-			if (val == null) return this;
+			if (val == null)
+				return this;
 			return this.priority(Integer.parseInt(val));
 		}
 
@@ -627,7 +634,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		public Builder provider(String val) {
-			if (val == null) return this;
+			if (val == null)
+				return this;
 			return this.provider(Uri.parse(val));
 		}
 
@@ -638,7 +646,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		public Builder scope(String val) {
-			if (val == null) return this;
+			if (val == null)
+				return this;
 			return this.scope(new DeliveryScope(val));
 		}
 
@@ -649,7 +658,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		public Builder throttle(String val) {
-			if (val == null) return this;
+			if (val == null)
+				return this;
 			this.throttle = Integer.parseInt(val);
 			return this;
 		}
@@ -678,10 +688,10 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			return this;
 		}
 
-
 		public Builder start(String val) {
-			if (val == null) return this;
-			return this.start(new TimeStamp(val)); 
+			if (val == null)
+				return this;
+			return this.start(new TimeStamp(val));
 		}
 
 		@Override
@@ -697,8 +707,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		public Builder expire(String val) {
-			if (val == null) return this;
-			return this.expire(new TimeStamp(val)); 
+			if (val == null)
+				return this;
+			return this.expire(new TimeStamp(val));
 		}
 
 		@Override
@@ -712,12 +723,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.expire = new TimeTrigger(val);
 			return this;
 		}
-		
+
 		public Builder limit(String val) {
 			this.limit = new Limit(val);
 			return null;
 		}
-		
+
 		@Override
 		public Builder limit(int val) {
 			this.limit = new Limit(Limit.Type.NEWEST, val);
@@ -730,11 +741,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			return this;
 		}
 
-
 		public Builder project(String val) {
-			if (val == null) return this;
-			if (val.length() < 1) return this;
-			this.project( val.substring(1).split(val.substring(0, 1)) );
+			if (val == null)
+				return this;
+			if (val.length() < 1)
+				return this;
+			this.project(val.substring(1).split(val.substring(0, 1)));
 			return this;
 		}
 
@@ -745,7 +757,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		public Builder select(String val) {
-			if (val == null) return this;
+			if (val == null)
+				return this;
 			this.select = new Selection(val);
 			return this;
 		}
@@ -769,7 +782,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		public Builder worth(String val) {
-			if (val == null) return this;
+			if (val == null)
+				return this;
 			this.worth = Integer.parseInt(val);
 			return null;
 		}
