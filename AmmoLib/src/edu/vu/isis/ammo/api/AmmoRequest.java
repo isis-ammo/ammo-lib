@@ -16,7 +16,6 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.Parcel;
-import android.os.ParcelFormatException;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import edu.vu.isis.ammo.api.type.Anon;
@@ -27,16 +26,16 @@ import edu.vu.isis.ammo.api.type.Order;
 import edu.vu.isis.ammo.api.type.Payload;
 import edu.vu.isis.ammo.api.type.Provider;
 import edu.vu.isis.ammo.api.type.Selection;
-import edu.vu.isis.ammo.api.type.TimeTrigger;
 import edu.vu.isis.ammo.api.type.TimeInterval;
 import edu.vu.isis.ammo.api.type.TimeStamp;
+import edu.vu.isis.ammo.api.type.TimeTrigger;
 import edu.vu.isis.ammo.api.type.Topic;
 
 /**
  * see docs/dev-guide/developer-guide.pdf
  */
 public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcelable {
-	private static final Logger logger = LoggerFactory.getLogger(AmmoRequest.class);
+	private static final Logger logger = LoggerFactory.getLogger("ammo-rqst");
 	private static final Logger plogger = LoggerFactory.getLogger("ammo-parcel");
 
 	// **********************
