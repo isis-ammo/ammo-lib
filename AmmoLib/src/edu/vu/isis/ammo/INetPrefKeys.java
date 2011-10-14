@@ -67,15 +67,17 @@ public interface INetPrefKeys extends edu.vu.isis.ammo.IPrefKeys {
 	public static final String MULTICAST_PORT = "MULTICAST_PORT";
 	public static final String MULTICAST_NET_CONN_TIMEOUT = "MULTICAST_NET_CONN_TIMEOUT";
 	public static final String MULTICAST_CONN_IDLE_TIMEOUT = "MULTICAST_CONN_IDLE_TIMEOUT";
-	
+
 	/*
 	 * Serial Network Settings
 	 */
-	public static final String SERIAL_SHOULD_USE = "SERIAL_SHOULD_USE";
-	public static final String SERIAL_DEVICE = "SERIAL_DEVICE";
-	public static final String SERIAL_BAUD_RATE = "SERIAL_BAUD_RATE";
-	public static final String SERIAL_SLOT_NUMBER = "SERIAL_SLOT_NUMBER";
-	public static final String SERIAL_DEBUG_PERIOD = "SERIAL_DEBUG_PERIOD";
-	public static final String SERIAL_SEND_ENABLED = "SERIAL_SEND_ENABLED";
-	public static final String SERIAL_RECEIVE_ENABLED = "SERIAL_RECEIVE_ENABLED";
+	public static final String SERIAL_SHOULD_USE        = "SERIAL_SHOULD_USE";
+	public static final String SERIAL_DEVICE            = "SERIAL_DEVICE";
+	public static final String SERIAL_BAUD_RATE         = "SERIAL_BAUD_RATE";
+	public static final String SERIAL_SLOT_NUMBER       = "SERIAL_SLOT_NUMBER";
+	public static final String SERIAL_RADIOS_IN_GROUP   = "SERIAL_RADIOS_IN_GROUP";
+	public static final String SERIAL_SLOT_DURATION     = "SERIAL_SLOT_DURATION";
+	public static final String SERIAL_TRANSMIT_DURATION = "SERIAL_TRANSMIT_DURATION";
+	public static final String SERIAL_SEND_ENABLED      = "SERIAL_SEND_ENABLED";
+	public static final String SERIAL_RECEIVE_ENABLED   = "SERIAL_RECEIVE_ENABLED";
 }
