@@ -1,13 +1,10 @@
 package edu.vu.isis.ammo.api;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +16,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.RemoteException;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import edu.vu.isis.ammo.api.type.Query;
 import edu.vu.isis.ammo.api.type.TimeStamp;
 
@@ -124,11 +117,14 @@ public class AmmoDispatch  {
 	 * @throws RemoteException 
 	 */
 	public boolean post(String topicType, ContentValues value, Calendar expiration, double worth) throws RemoteException {
-		Gson gson = new Gson();
-		Set<Entry<String,Object>> set = value.valueSet();
-		Type collectionType = new TypeToken<Set<Entry<String,Object>>>(){}.getType();
-		String serializedString = gson.toJson(set, collectionType);
-		return post(topicType, serializedString, expiration, worth);
+		final IAmmoRequest ar = this.ab
+				.topic(topicType)
+				.payload(value)
+				.expire(new TimeStamp(expiration))
+				//.worth(worth)
+				//.notice(notice)
+				.post();
+		return ar != null;
 	}
 
 
@@ -162,7 +158,7 @@ public class AmmoDispatch  {
 		// check that the provider is valid
 		if (provider == null) return false;
 
-		IAmmoRequest ar = this.ab
+		final IAmmoRequest ar = this.ab
 				.topic(topicType)
 				.provider(provider)
 				.expire(new TimeStamp(expiration))
