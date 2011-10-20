@@ -250,10 +250,30 @@ public class AmmoContacts {
     // 
     // updateContactEntry()
     // 
+    // Update (save changes to) an existing contact in the 
+    // contacts storage provider.
     //========================================================
     public Uri updateContactEntry(Contact lw) {
 
         Log.d(TAG,"updateContactEntry() ");
+        Log.d(TAG, "Updating person: " + lw.getName() + " " + lw.getLastName() + " ... " + lw.getTigrUid() );
+	
+	// TODO: Updating is non-straightforward. For now just
+	// create a new contact (all existing test cases do this
+	// anyway).
+	return insertContactEntry(lw);
+    }
+
+    //========================================================
+    // 
+    // insertContactEntry()
+    // 
+    // Add a new contact to the contacts storage provider.
+    // 
+    //========================================================
+    public Uri insertContactEntry(Contact lw) {
+
+        Log.d(TAG,"insertContactEntry() ");
         Log.d(TAG, "Adding person: " + lw.getName() + " " + lw.getLastName() + " ... " + lw.getTigrUid() );
 
         ContentResolver cr = mResolver;
@@ -435,8 +455,8 @@ public class AmmoContacts {
         }
 
         return null;
-
     }
+
 
     //========================================================
     //
