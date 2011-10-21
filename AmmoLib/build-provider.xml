@@ -7,7 +7,7 @@
         <echo>for running within eclipse, instead of bash script.</echo>
         <echo>Generating content provider source</echo>
         <mkdir dir="gen"/>
-        <ant antfile="build.xml" dir="${repo-root}/AmmoGenerator/content_provider" target="promote"/>
+        <ant antfile="build.xml" dir="${repo-root}/AmmoGenerator" target="promote"/>
     </target>
 
     <target name="version">
