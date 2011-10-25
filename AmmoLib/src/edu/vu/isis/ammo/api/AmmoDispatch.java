@@ -53,11 +53,11 @@ public class AmmoDispatch  {
 
 
 	/**
-	 * Posting with implicit expiration and worth, delivery is ASAP.
+	 * Posting with implicit lifetime and worth, delivery is ASAP.
 	 *
 	 * @param topicType
-	 * @param value
-	 * @return
+	 * @param serializedString
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
 	public boolean post(String topicType, String serializedString) throws RemoteException {
@@ -68,26 +68,26 @@ public class AmmoDispatch  {
 	 * Directly post a string.
 	 *
 	 * @param topicType
-	 * @param value
-	 * @param expiration
+	 * @param payload
+	 * @param lifetime
 	 * @param worth
-	 * @return
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
-	public boolean post(String topicType, String payload, Calendar expiration, double worth) throws RemoteException {
-		return post(topicType, payload, expiration, worth, null);
+	public boolean post(String topicType, String payload, Calendar lifetime, double worth) throws RemoteException {
+		return post(topicType, payload, lifetime, worth, null);
 	}
-	public boolean post(String topicType, String payload, Calendar expiration, double worth, PendingIntent notice) throws RemoteException {
-		logger.trace("post payload {} {} {} {} {}", new Object[] {topicType, payload, expiration, worth, notice});
-		if (expiration == null) {
-			expiration = Calendar.getInstance();
-			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
+	public boolean post(String topicType, String payload, Calendar lifetime, double worth, PendingIntent notice) throws RemoteException {
+		logger.trace("post payload {} {} {} {} {}", new Object[] {topicType, payload, lifetime, worth, notice});
+		if (lifetime == null) {
+			lifetime = Calendar.getInstance();
+			lifetime.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
 		}
 
 		IAmmoRequest ar = this.ab
 				.topic(topicType)
 				.payload(payload)
-				.expire(new TimeStamp(expiration))
+				.expire(new TimeStamp(lifetime))
 				//.worth(worth)
 				//.notice(notice)
 				.post();
@@ -95,32 +95,32 @@ public class AmmoDispatch  {
 	}
 
 	/**
-	 * Posting with implicit expiration and worth, delivery is ASAP.
+	 * Posting with implicit lifetime and worth, delivery is ASAP.
 	 *
 	 * @param topicType
-	 * @param value
-	 * @return
+	 * @param payload
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
-	public boolean post(String topicType, ContentValues value) throws RemoteException {
-		return this.post(topicType, value, null, Double.NaN);
+	public boolean post(String topicType, ContentValues payload) throws RemoteException {
+		return this.post(topicType, payload, null, Double.NaN);
 	}
 
 	/**
 	 * Directly post a set of content values.
 	 *
 	 * @param topicType
-	 * @param value
-	 * @param expiration
+	 * @param payload
+	 * @param lifetime
 	 * @param worth
-	 * @return
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
-	public boolean post(String topicType, ContentValues value, Calendar expiration, double worth) throws RemoteException {
+	public boolean post(String topicType, ContentValues payload, Calendar lifetime, double worth) throws RemoteException {
 		final IAmmoRequest ar = this.ab
 				.topic(topicType)
-				.payload(value)
-				.expire(new TimeStamp(expiration))
+				.payload(payload)
+				.expire(new TimeStamp(lifetime))
 				//.worth(worth)
 				//.notice(notice)
 				.post();
@@ -133,13 +133,13 @@ public class AmmoDispatch  {
 	 *
 	 * @param provider of the specific item to be posted, the content provider tuple identifier
 	 * @param topicType the topicType type of the tuple being posted, used for distribution by the gateway
-	 * @param expiration how long before the item must be posted, the journal time
+	 * @param lifetime how long before the item must be posted, the journal time
 	 * @param worth how valuable is the information
 	 * @return was the distribution content provider updated correctly.
 	 * @throws RemoteException 
 	 */
-	public boolean post(Uri provider, String topicType, Calendar expiration, double worth) throws RemoteException {
-		return post(provider,topicType,expiration,worth,null);
+	public boolean post(Uri provider, String topicType, Calendar lifetime, double worth) throws RemoteException {
+		return post(provider,topicType,lifetime,worth,null);
 	}
 
 	public boolean post(Uri provider) throws RemoteException {
@@ -149,19 +149,19 @@ public class AmmoDispatch  {
 		return post(provider,topicType,null,Double.NaN,null);
 	}
 
-	public boolean post(Uri provider, Calendar expiration, double worth) throws RemoteException {
-		return post(provider,this.resolver.getType(provider),expiration,worth,null);
+	public boolean post(Uri provider, Calendar lifetime, double worth) throws RemoteException {
+		return post(provider,this.resolver.getType(provider),lifetime,worth,null);
 	}
 
-	public boolean post(Uri provider, String topicType, Calendar expiration, double worth, PendingIntent notice) throws RemoteException {
-		logger.trace("post provider {} {} {} {} {}", new Object[] {topicType, provider, expiration, worth, notice});
+	public boolean post(Uri provider, String topicType, Calendar lifetime, double worth, PendingIntent notice) throws RemoteException {
+		logger.trace("post provider {} {} {} {} {}", new Object[] {topicType, provider, lifetime, worth, notice});
 		// check that the provider is valid
 		if (provider == null) return false;
 
 		final IAmmoRequest ar = this.ab
 				.topic(topicType)
 				.provider(provider)
-				.expire(new TimeStamp(expiration))
+				.expire(new TimeStamp(lifetime))
 				//.worth(worth)
 				//.notice(notice)
 				.post();
@@ -171,7 +171,7 @@ public class AmmoDispatch  {
 
 	/**
 	 * Get the status of items in the retrieval table.
-	 * @return
+	 * @return a list of sample results
 	 */
 	public List<Map<String,String>> postal() {
 		return newSampleResult();
@@ -189,17 +189,17 @@ public class AmmoDispatch  {
 	}
 
 	/**
-	 * Pulling with explicit expiration, worth, and query.
+	 * Pulling with explicit lifetime, worth, and query.
 	 *  
 	 * @param uri
-	 * @param expiration
+	 * @param lifetime
 	 * @param worth
 	 * @param query
-	 * @return
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
-	public boolean pull(Uri uri, Calendar expiration, double worth, String query) throws RemoteException {
-		return this.pull(uri, this.resolver.getType(uri), expiration, worth, query, null);
+	public boolean pull(Uri uri, Calendar lifetime, double worth, String query) throws RemoteException {
+		return this.pull(uri, this.resolver.getType(uri), lifetime, worth, query, null);
 	}
 	/**
 	 * Sets the lifetime in seconds.
@@ -208,7 +208,7 @@ public class AmmoDispatch  {
 	 * @param lifetime
 	 * @param worth
 	 * @param query
-	 * @return
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
 	public boolean pull(Uri provider, int lifetime, double worth, String query) throws RemoteException {
@@ -227,10 +227,10 @@ public class AmmoDispatch  {
 	 *
 	 * @param provider
 	 * @param field {@link Calendar}
-	 * @param expiration
+	 * @param lifetime
 	 * @param worth
 	 * @param query
-	 * @return
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
 	public boolean pull(Uri provider, int field, int lifetime, double worth, String query) throws RemoteException {
@@ -244,10 +244,8 @@ public class AmmoDispatch  {
 	 *
 	 *
 	 * @param provider
-	 * @param lifetime
-	 * @param worth
-	 * @param query
-	 * @return
+	 * @param topicType
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
 	public boolean pull(Uri provider, String topicType) throws RemoteException {
@@ -268,7 +266,7 @@ public class AmmoDispatch  {
 	 * @param lifetime
 	 * @param worth
 	 * @param query
-	 * @return
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
 	public boolean pull(Uri provider, String topicType, int field, int lifetime, double worth, String query) throws RemoteException {
@@ -282,7 +280,7 @@ public class AmmoDispatch  {
 	 * The provider is the name of the content provider which will deserialize the response.
 	 * The topicType is the name in which the target service has expressed an interest.
 	 *
-	 * The expiration indicates when the the pull request is no longer relevant.
+	 * The lifetime indicates when the the pull request is no longer relevant.
 	 * The worth indicates the value of the data requested.
 	 * The query will typically be a json string and will contain whatever
 	 * additional information the interest expressing service needs.
@@ -305,23 +303,23 @@ public class AmmoDispatch  {
 	 *
 	 * @param provider of the the content provider to receive the tuples
 	 * @param topicType the topicType type of the tuples being requested, used for retrieval by the gateway
-	 * @param expiration how long does the subscription last?
+	 * @param lifetime how long does the subscription last?
 	 * @param worth how valuable is the information
 	 * @param query
 	 * @return was the subscriber content provider updated correctly.
 	 * @throws RemoteException 
 	 */
-	private boolean pull(Uri provider, String topicType, Calendar expiration, double worth, String query, PendingIntent notice) throws RemoteException {
-		logger.trace("pull {} {} {} {} {} {}", new Object[] {topicType, provider, expiration, worth, query, notice});
-		if (expiration == null) {
-			expiration = Calendar.getInstance();
-			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
+	private boolean pull(Uri provider, String topicType, Calendar lifetime, double worth, String query, PendingIntent notice) throws RemoteException {
+		logger.trace("pull {} {} {} {} {} {}", new Object[] {topicType, provider, lifetime, worth, query, notice});
+		if (lifetime == null) {
+			lifetime = Calendar.getInstance();
+			lifetime.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
 		}
 
 		IAmmoRequest ar = this.ab
 				.topic(topicType)
 				.provider(provider)
-				.expire(new TimeStamp(expiration))
+				.expire(new TimeStamp(lifetime))
 				.select(new Query(query))
 				// .notice(notice)
 				.retrieve();
@@ -330,24 +328,24 @@ public class AmmoDispatch  {
 
 	/**
 	 * Get the status of items in the retrieval table.
-	 * @return
+	 * @return true if successful
 	 */
 	public List<Map<String,String>> retrieval() {
 		return newSampleResult();
 	}
 
 	/**
-	 * Subscribing with explicit expiration, worth, and filter.
+	 * Subscribing with explicit lifetime, worth, and filter.
 	 *
 	 * @param provider
-	 * @param expiration
+	 * @param lifetime
 	 * @param worth
 	 * @param filter
-	 * @return
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
-	public boolean subscribe(Uri provider, Calendar expiration, double worth, String filter) throws RemoteException {
-		return this.subscribe(provider, this.resolver.getType(provider), expiration, worth, filter);
+	public boolean subscribe(Uri provider, Calendar lifetime, double worth, String filter) throws RemoteException {
+		return this.subscribe(provider, this.resolver.getType(provider), lifetime, worth, filter);
 	}
 
 
@@ -358,7 +356,7 @@ public class AmmoDispatch  {
 	 * @param lifetime
 	 * @param worth
 	 * @param filter
-	 * @return
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
 	public boolean subscribe(Uri provider, int lifetime, double worth, String filter) throws RemoteException {
@@ -375,10 +373,10 @@ public class AmmoDispatch  {
 	 *
 	 * @param provider
 	 * @param field {@link Calendar}
-	 * @param expiration
+	 * @param lifetime
 	 * @param worth
 	 * @param filter
-	 * @return
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
 	public boolean subscribe(Uri provider, int field, int lifetime, double worth, String filter) throws RemoteException {
@@ -388,10 +386,8 @@ public class AmmoDispatch  {
 	 * Defaults for pretty much everything.
 	 *
 	 * @param provider
-	 * @param lifetime
-	 * @param worth
-	 * @param filter
-	 * @return
+	 * @param topicType
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
 	public boolean subscribe(Uri provider, String topicType) throws RemoteException {
@@ -409,27 +405,27 @@ public class AmmoDispatch  {
 	 *
 	 * @param provider of the the content provider to receive the tuples
 	 * @param topicType the topicType type of the tuples being requested, used for retrieval by the gateway
-	 * @param expiration how long does the subscription last?
+	 * @param lifetime how long does the subscription last?
 	 * @param worth how valuable is the information
 	 * @param filter
 	 * @return was the subscriber content provider updated correctly.
 	 * @throws RemoteException 
 	 */
-	private boolean subscribe(Uri provider, String topicType, Calendar expiration, double worth, String filter) throws RemoteException {
-		return subscribe(provider, topicType, expiration, worth, filter, null);
+	private boolean subscribe(Uri provider, String topicType, Calendar lifetime, double worth, String filter) throws RemoteException {
+		return subscribe(provider, topicType, lifetime, worth, filter, null);
 	}
 
-	private boolean subscribe(Uri provider, String topicType, Calendar expiration, double worth, String filter, PendingIntent notice) throws RemoteException {
-		logger.trace("subscribe {} {} {} {} {} {}", new Object[] {topicType, provider, expiration, worth, filter, notice});
-		if (expiration == null) {
-			expiration = Calendar.getInstance();
-			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
+	private boolean subscribe(Uri provider, String topicType, Calendar lifetime, double worth, String filter, PendingIntent notice) throws RemoteException {
+		logger.trace("subscribe {} {} {} {} {} {}", new Object[] {topicType, provider, lifetime, worth, filter, notice});
+		if (lifetime == null) {
+			lifetime = Calendar.getInstance();
+			lifetime.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
 		}
 
-		IAmmoRequest ar = this.ab
+		final IAmmoRequest ar = this.ab
 				.topic(topicType)
 				.provider(provider)
-				.expire(new TimeStamp(expiration))
+				.expire(new TimeStamp(lifetime))
 				.filter(filter)
 				// .notice(notice)
 				.subscribe();
@@ -445,14 +441,14 @@ public class AmmoDispatch  {
 	 * @param lifetime
 	 * @param worth
 	 * @param filter
-	 * @return
+	 * @return true if successful
 	 * @throws RemoteException 
 	 */
 	public boolean subscribe(Uri provider, String topicType, int field, int lifetime, double worth, String filter) throws RemoteException {
-		Calendar expiration = Calendar.getInstance();
+		final Calendar expiration = Calendar.getInstance();
 		expiration.add(field, lifetime);
 		if (topicType == null) topicType = this.resolver.getType(provider);
-		IAmmoRequest ar = this.ab
+		final IAmmoRequest ar = this.ab
 				.topic(topicType)
 				.provider(provider)
 				.expire(new TimeStamp(expiration))
@@ -465,7 +461,7 @@ public class AmmoDispatch  {
 
 	/**
 	 * For getting the status of items in the subscription table.
-	 * @return
+	 * @return true if successful
 	 */
 	public List<Map<String,String>> subscription() {
 		//        Cursor queryCursor = resolver.query(SubscriptionTableSchema.CONTENT_URI, null, null, null, null);
@@ -508,22 +504,21 @@ public class AmmoDispatch  {
 	 *
 	 * @param provider of the the content provider to receive the tuples
 	 * @param topicType the topicType type of the tuples being requested, used for retrieval by the gateway
-	 * @param expiration how long does the subscription last?
 	 * @return was the published content provider updated correctly?
 	 * @throws RemoteException 
 	 */
 	public boolean publish(Uri provider, String topicType) throws RemoteException {
 		return this.publish(provider, topicType, (Calendar) null);
 	}
-	public boolean publish(Uri provider, String topicType, Calendar expiration) throws RemoteException {
-		logger.trace("publish {} {} {}", new Object[] {topicType, provider, expiration});
-		if (expiration == null) {
-			expiration = Calendar.getInstance();
-			expiration.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
+	public boolean publish(Uri provider, String topicType, Calendar lifetime) throws RemoteException {
+		logger.trace("publish {} {} {}", new Object[] {topicType, provider, lifetime});
+		if (lifetime == null) {
+			lifetime = Calendar.getInstance();
+			lifetime.setTimeInMillis(System.currentTimeMillis() + (120 * 1000));
 		}
 		IAmmoRequest ar = this.ab
 				.provider(provider)
-				.expire(new TimeStamp(expiration))
+				.expire(new TimeStamp(lifetime))
 				.publish();
 		return ar != null;
 	}
