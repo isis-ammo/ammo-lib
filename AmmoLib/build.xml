@@ -40,6 +40,7 @@
         <pathelement path="${sdk.dir}/tools/lib/anttasks.jar" />
         <pathelement path="${sdk.dir}/tools/lib/sdklib.jar" />
         <pathelement path="${sdk.dir}/tools/lib/androidprefs.jar" />
+        <pathelement path="${sdk.dir}/platforms/android-8/android.jar" />
     </path>
 
     <taskdef name="setup"
@@ -55,6 +56,22 @@
         <delete dir="gen"/>
     </target>
 
+    <target name="javadoc">
+        <echo>making docs</echo>
+        <javadoc 
+           destdir="javadoc"
+           author="true" version="true" verbose="false" use="true"
+           windowtitle="Documentation for the AMMO APKs"
+           classpathref="android.antlibs" >
+
+           <fileset dir="src" defaultexcludes="yes">
+             <include name="**/*.java"/>
+             <exclude name="**/IDistributorService.java"/>
+           </fileset>
+
+        </javadoc>
+        <echo>made docs</echo>
+    </target>
 
 <!-- extension targets. Uncomment the ones where you want to do custom work
      in between standard targets -->

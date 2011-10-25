@@ -372,23 +372,6 @@ public class AmmoValues {
         this.cv.writeToParcel(parcel, flags);
     }
 
-    /**
-     * Unsupported, here until we get proper bulk insert APIs. {@hide}
-     */
-    // @Deprecated
-    // public void putStringArrayList(String key, ArrayList<String> value) {
-    // this.cv.putStringArrayList(key, value);
-    // }
-
-    /**
-     * Unsupported, here until we get proper bulk insert APIs. {@hide}
-     */
-    // @SuppressWarnings("unchecked")
-    // @Deprecated
-    // public ArrayList<String> getStringArrayList(String key) {
-    // return (ArrayList<String>) mValues.get(key);
-    // }
-
     @Override
     public String toString() {
         return this.cv.toString();

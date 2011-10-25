@@ -110,7 +110,7 @@ public interface Marker extends Serializable {
      *
      * If 'name' is null the returned value is always false.
      *
-     * @param other
+     * @param name
      *                The marker to test for inclusion.
      * @return Whether this marker contains the other marker.
      */
