@@ -56,8 +56,8 @@
         <delete dir="gen"/>
     </target>
 
-    <target name="javadoc">
-        <echo>making docs</echo>
+    <target name="javadoc"
+        description="making java documentation for ammo lib">
         <javadoc 
            destdir="javadoc"
            author="true" version="true" verbose="false" use="true"
@@ -70,7 +70,18 @@
            </fileset>
 
         </javadoc>
-        <echo>made docs</echo>
+    </target>
+    
+    <target name="build-jar"
+        description="making java jar for ammo lib">
+        <jar destfile="${basedir}/ammolib.jar" 
+             basedir="${basedir}/bin/classes">
+           <manifest>
+             <attribute name="Implementation-Vendor" value="Vanderbilt/ISIS"/>
+             <attribute name="Implementation-Title" value="AMMO"/>
+             <attribute name="Implementation-Version" value="${version}"/>
+          </manifest>
+        </jar>
     </target>
 
 <!-- extension targets. Uncomment the ones where you want to do custom work
