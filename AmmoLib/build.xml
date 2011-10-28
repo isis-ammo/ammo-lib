@@ -40,6 +40,7 @@
         <pathelement path="${sdk.dir}/tools/lib/anttasks.jar" />
         <pathelement path="${sdk.dir}/tools/lib/sdklib.jar" />
         <pathelement path="${sdk.dir}/tools/lib/androidprefs.jar" />
+        <pathelement path="${sdk.dir}/platforms/android-8/android.jar" />
     </path>
 
     <taskdef name="setup"
@@ -55,6 +56,33 @@
         <delete dir="gen"/>
     </target>
 
+    <target name="javadoc"
+        description="making java documentation for ammo lib">
+        <javadoc 
+           destdir="javadoc"
+           author="true" version="true" verbose="false" use="true"
+           windowtitle="Documentation for the AMMO APKs"
+           classpathref="android.antlibs" >
+
+           <fileset dir="src" defaultexcludes="yes">
+             <include name="**/*.java"/>
+             <exclude name="**/IDistributorService.java"/>
+           </fileset>
+
+        </javadoc>
+    </target>
+    
+    <target name="build-jar"
+        description="making java jar for ammo lib">
+        <jar destfile="${basedir}/ammolib.jar" 
+             basedir="${basedir}/bin/classes">
+           <manifest>
+             <attribute name="Implementation-Vendor" value="Vanderbilt/ISIS"/>
+             <attribute name="Implementation-Title" value="AMMO"/>
+             <attribute name="Implementation-Version" value="${version}"/>
+          </manifest>
+        </jar>
+    </target>
 
 <!-- extension targets. Uncomment the ones where you want to do custom work
      in between standard targets -->
