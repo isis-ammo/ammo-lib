@@ -67,6 +67,7 @@ public interface INetPrefKeys extends edu.vu.isis.ammo.IPrefKeys {
 	public static final String MULTICAST_PORT = "MULTICAST_PORT";
 	public static final String MULTICAST_NET_CONN_TIMEOUT = "MULTICAST_NET_CONN_TIMEOUT";
 	public static final String MULTICAST_CONN_IDLE_TIMEOUT = "MULTICAST_CONN_IDLE_TIMEOUT";
+	public static final String MULTICAST_TTL = "MULTICAST_TTL";
 
 	/*
 	 * Serial Network Settings
