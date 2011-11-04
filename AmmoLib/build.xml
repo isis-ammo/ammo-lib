@@ -78,6 +78,28 @@
         </jar>
     </target>
 
+    <target name="-pre-build">
+        <symlink taskname="add-slf4j-lib" action="single" overwrite="true" 
+              link="${basedir}/libs/slf4j.jar" 
+              resource="/usr/local/share/slf4j/slf4j-api-1.6.2.jar"/>
+
+        <symlink taskname="add-logback-lib" action="single" overwrite="true" 
+              link="${basedir}/libs/logback.jar" 
+              resource="/usr/local/share/slf4j/logback-android-0.9.30-RC4.jar"/>
+
+        <fail message="Files are missing.">
+           <condition>
+               <not>
+                   <resourcecount count="2">
+                       <fileset id="simlinks" dir="libs">
+                         <include name="slf4j.jar"/>
+                         <include name="logback.jar"/>
+                       </fileset>
+                   </resourcecount>
+               </not>
+           </condition>
+        </fail>
+    </target>
 <!-- extension targets. Uncomment the ones where you want to do custom work
      in between standard targets -->
 <!--
