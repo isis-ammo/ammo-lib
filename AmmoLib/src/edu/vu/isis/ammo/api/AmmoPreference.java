@@ -58,15 +58,23 @@ public class AmmoPreference {
 	 * Preference type is stored in selection.
 	 */
 	public String getString(String key, String defaultValue) {
-		String[] projection = {key};
-		String selection = PreferenceSchema.AMMO_PREF_TYPE_STRING;
-		String[] selectionArgs = {defaultValue};
-		String sortOrder = null;
+		final String[] projection = {key};
+		final String selection = PreferenceSchema.AMMO_PREF_TYPE_STRING;
+		final String[] selectionArgs = {defaultValue};
+		final String sortOrder = null;
 
-		Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection, 
+		final Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection, 
 				selection, selectionArgs, sortOrder);
 		cur.moveToFirst();
-		String value = cur.getString(cur.getColumnIndex(key));
+		if (cur.getCount() < 1) {
+			cur.close();
+			return defaultValue;
+		}
+		if (cur.getColumnIndex(key) < 0) {
+			cur.close();
+			return defaultValue;
+		}
+		final String value = cur.getString(cur.getColumnIndex(key));
 		cur.close();
 		return value;
 	}
@@ -74,13 +82,21 @@ public class AmmoPreference {
 	// Cursors don't support boolean type. Cast as string until value retrieved
 	// and then cast back.
 	public boolean getBoolean(String key, boolean defaultValue) {
-		String[] projection = {key};
-		String selection = PreferenceSchema.AMMO_PREF_TYPE_BOOLEAN;
-		String[] selectionArgs = {String.valueOf(defaultValue)};
-		String sortOrder = null;
-		Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection, 
+		final String[] projection = {key};
+		final String selection = PreferenceSchema.AMMO_PREF_TYPE_BOOLEAN;
+		final String[] selectionArgs = {String.valueOf(defaultValue)};
+		final String sortOrder = null;
+		final Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection, 
 				selection, selectionArgs, sortOrder);
 		cur.moveToFirst();
+		if (cur.getCount() < 1) {
+			cur.close();
+			return defaultValue;
+		}
+		if (cur.getColumnIndex(key) < 0) {
+			cur.close();
+			return defaultValue;
+		}
 		boolean value = Boolean.valueOf(cur.getString(cur.getColumnIndex(key)));
 		cur.close();
 		return value;
@@ -93,6 +109,14 @@ public class AmmoPreference {
 		Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection, 
 				selection, selectionArgs, null);
 		cur.moveToFirst();
+		if (cur.getCount() < 1) {
+			cur.close();
+			return defaultValue;
+		}
+		if (cur.getColumnIndex(key) < 0) {
+			cur.close();
+			return defaultValue;
+		}
 		long value = cur.getLong(cur.getColumnIndex(key));
 		cur.close();
 		return value;
@@ -105,6 +129,14 @@ public class AmmoPreference {
 		Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection, 
 				selection, selectionArgs, null);
 		cur.moveToFirst();
+		if (cur.getCount() < 1) {
+			cur.close();
+			return defaultValue;
+		}
+		if (cur.getColumnIndex(key) < 0) {
+			cur.close();
+			return defaultValue;
+		}
 		float value = cur.getFloat(cur.getColumnIndex(key));
 		cur.close();
 		return value;
@@ -117,6 +149,14 @@ public class AmmoPreference {
 		Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection, 
 				selection, selectionArgs, null);
 		cur.moveToFirst();
+		if (cur.getCount() < 1) {
+			cur.close();
+			return defaultValue;
+		}
+		if (cur.getColumnIndex(key) < 0) {
+			cur.close();
+			return defaultValue;
+		}
 		int value = cur.getInt(cur.getColumnIndex(key));
 		cur.close();
 		return value;

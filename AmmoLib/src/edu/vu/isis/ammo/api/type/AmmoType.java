@@ -10,19 +10,20 @@ import android.os.Parcelable;
  * It is expected that there will be a CREATOR static variable 
  * for each child of this class and that it will be of the form...
  * 
- * public static final Parcelable.Creator<Anon> CREATOR = 
-			new Parcelable.Creator<Anon>() {
-
-		@Override
-		public Anon createFromParcel(Parcel source) {
-			if (AmmoType.isNull(source)) return null;
-			return new X(source);
-		}
-		@Override
-		public Anon[] newArray(int size) {
-			return new X[size];
-		}
-	};
+ * public static final Parcelable.Creator&lt;Anon&gt; CREATOR = 
+ *		new Parcelable.Creator&lt;Anon&gt;() {
+ *
+ *	&at;Override
+ *	public Anon createFromParcel(Parcel source) {
+ *		if (AmmoType.isNull(source)) return null;
+ *		return new X(source);
+ *	}
+ *	&at;Override
+ *	public Anon[] newArray(int size) {
+ *		return new X[size];
+ *	}
+ * };
+ *
  * Where 'X' is the name of the child class.
  * Note the null check which matches up with the null check in 'writeToParcel' below.
  * 

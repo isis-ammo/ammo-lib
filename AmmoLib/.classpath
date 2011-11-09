@@ -4,5 +4,7 @@
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="lib" path="libs/logback.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j.jar"/>
+	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
