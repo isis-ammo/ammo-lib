@@ -100,7 +100,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * Class.writeToParcel(this.provider, dest, flags) so that when the null
 	 * will will be handled correctly.
 	 */
-	private final byte VERSION = (byte) 0x02;
+	private final byte VERSION = (byte) 0x01;
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
@@ -136,8 +136,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		TimeTrigger.writeToParcel(this.start, dest, flags);
 		plogger.trace("expire {}", this.expire);
 		TimeTrigger.writeToParcel(this.expire, dest, flags);
-		plogger.trace("limit {}", this.limit);
-		Limit.writeToParcel(this.limit, dest, flags);
+		//plogger.trace("limit {}", this.limit);
+		//Limit.writeToParcel(this.limit, dest, flags);
 
 		plogger.trace("scope {}", this.scope);
 		DeliveryScope.writeToParcel(this.scope, dest, flags);
@@ -197,12 +197,16 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		
 		// If the version we're dealing with is older it may not have a limit field. Check for this
 		// and set the limit manually if needed.
+		
+		this.limit = new Limit(100);
+		/*
 		if (version < (byte)2) {
 			this.limit = new Limit(100);
 		} else {
 			this.limit = Limit.readFromParcel(in);
 		}
 		plogger.trace("limit {}", this.limit);
+		*/
 
 		this.scope = DeliveryScope.readFromParcel(in);
 		plogger.trace("scope {}", this.scope);
