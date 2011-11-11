@@ -2,8 +2,8 @@
 <project name="AmmoLib" default="help">
 
     <!-- The local.properties file is created and updated by the 'android' tool.
-     It contains the path to the SDK. It should *NOT* be checked into
-     Version Control Systems. -->
+         It contains the path to the SDK. It should *NOT* be checked into
+         Version Control Systems. -->
     <loadproperties srcFile="local.properties" />
 
     <!-- The ant.properties file can be created by you. It is only edited by the
@@ -15,6 +15,7 @@
              The name of the source directory. Default is 'src'.
          out.dir
              The name of the output directory. Default is 'bin'.
+
          For other overridable properties, look at the beginning of the rules
          files in the SDK, at tools/ant/build.xml
 
@@ -29,9 +30,11 @@
 
     <!-- The project.properties file is created and updated by the 'android'
          tool, as well as ADT.
+
          This contains project specific properties such as project target, and library
          dependencies. Lower level build properties are stored in ant.properties
          (or in .classpath for Eclipse projects).
+
          This file is an integral part of the build system for your
          application and should be checked into Version Control Systems. -->
     <loadproperties srcFile="project.properties" />
@@ -106,15 +109,13 @@
     </target>
 
     /* This is typically used for code obfuscation.
-     Compiled code location: ${out.classes.absolute.dir}
+       Compiled code location: ${out.classes.absolute.dir}
        If this is not done in place, override ${out.dex.input.absolute.dir} */
     <target name="-post-compile">
     </target>
 -->
 
     <!-- Import the actual build file.
-
-     
 
          To customize existing targets, there are two options:
          - Customize only one target:
@@ -125,6 +126,7 @@
              - copy/paste the content of the rules files (minus the top node)
                into this file, replacing the <import> task.
              - customize to your needs.
+
          ***********************
          ****** IMPORTANT ******
          ***********************
