@@ -4,7 +4,6 @@
     android:versionName="@string/ammo_version_name" >
 <!-- the version code is set via the 'version.code' variable in the ant script -->
     
-    
     <application android:icon="@drawable/brand_icon" android:label="Dispatcher">
 		<activity android:name="MyTest" android:label="Dispatcher Test">
 			<intent-filter>
@@ -12,8 +11,9 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-
 	</application>
+	
     <uses-sdk android:minSdkVersion="8" />
+    
 
 </manifest> 
