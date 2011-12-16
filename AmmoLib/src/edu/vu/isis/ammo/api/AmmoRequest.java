@@ -443,8 +443,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			default:
 				final Intent parcelIntent = MAKE_DISTRIBUTOR_REQUEST.cloneFilter();
 				parcelIntent.putExtra("request", request);
-				this.context.startService(parcelIntent);
-				logger.info("service command : {}", parcelIntent);
+				ComponentName componentName = this.context.startService(parcelIntent);
+				if (componentName != null) {
+					logger.debug("service command : {}", componentName.getClassName());
+				} else {
+					logger.error("service command : {}", parcelIntent);
+				}
 				break;
 			}
 			return request;
@@ -494,7 +498,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		@Override
 		public void releaseInstance() {
-			this.context.unbindService(this.conn);
+			try {
+				this.context.unbindService(this.conn);	
+			} catch (IllegalArgumentException e) {
+				logger.warn("the service is not bound or registered {}", e.getLocalizedMessage());
+			}
+			
 		}
 
 		// **************
