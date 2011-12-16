@@ -5,9 +5,8 @@ import java.util.Map;
 
 import android.content.ContentValues;
 import android.net.Uri;
-import android.os.RemoteException;
 import android.os.Parcel;
-
+import android.os.RemoteException;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Limit;
 import edu.vu.isis.ammo.api.type.Oid;

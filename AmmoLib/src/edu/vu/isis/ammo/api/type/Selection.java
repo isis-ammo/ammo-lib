@@ -1,8 +1,8 @@
 package edu.vu.isis.ammo.api.type;
 
-import edu.vu.isis.ammo.api.IAmmoRequest;
 import android.os.Parcel;
 import android.os.Parcelable;
+import edu.vu.isis.ammo.api.IAmmoRequest;
 
 public class Selection extends AmmoType {
 
