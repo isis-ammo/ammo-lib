@@ -2,31 +2,21 @@ package edu.vu.isis.ammo.api;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.lang.Throwable;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.ContentUris;
 import android.content.Context;
-import android.net.Uri;
-import android.content.UriMatcher;
-
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
-
+import android.net.Uri;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.Data;
-import android.provider.ContactsContract.CommonDataKinds.StructuredName;
-
 import android.util.Log;
-
 import edu.vu.isis.ammo.launch.constants.Constants;
 
 
@@ -34,34 +24,14 @@ public class AmmoContacts {
 
     private static final String TAG = "AmmoContacts";
 
-    private Context mContext;
     private ContentResolver mResolver;
 
-    public void AmmoContacts() {
-        mContext = null;
+    public AmmoContacts() {
         mResolver = null;
-    }
-
-    public void setContext(Context m) {
-        if (m != null) {
-            mContext = m;
-        } else {
-            Log.e(TAG,"Attempt to set context with a null reference");
-        }
-    }
-
-    private void setContentResolver(ContentResolver cr) {
-        if (cr != null) {
-            this.mResolver = cr;
-        } else {
-            Log.e(TAG,"Attempt to set content resolver with a null reference");
-        }
     }
 
 
     private AmmoContacts(Context context) {
-	//this.setContentResolver(context.getContentResolver());
-	this.mContext = context;
         this.mResolver = context.getContentResolver();
     }
 
@@ -421,7 +391,6 @@ public class AmmoContacts {
         // Set the display name. Use, in order of preference, either the callsign or the full name.
         // (In future we should prob. change this to include rank, role, etc.)
         String displayName = "";
-        if (displayName == null) displayName = "";
         if (displayName.length() < 1) {
             if (callsign != null && callsign.length() > 0) {
                 displayName = callsign;
@@ -602,8 +571,7 @@ public class AmmoContacts {
 	if (Log.isLoggable(TAG, Log.VERBOSE)) {
 	    Log.d(TAG, "getDataForContact() ");
 	}
-	ContentResolver cr = mResolver;
-
+	
 	// Form the data URI for this contact
 	Uri dataUri = Uri.withAppendedPath(Uri.withAppendedPath(Contacts.CONTENT_URI, contactId), "data");
 	if (Log.isLoggable(TAG, Log.VERBOSE)) {
