@@ -80,20 +80,25 @@
 
     <target name="-pre-build">
         <symlink taskname="add-slf4j-lib" action="single" overwrite="true" 
-              link="${basedir}/libs/slf4j.jar" 
-              resource="/usr/local/lib/slf4j-api-1.6.4.jar"/>
+              link="${basedir}/libs/slf4j-api.jar" 
+              resource="/usr/local/share/java/slf4j-api.jar"/>
 
         <symlink taskname="add-logback-lib" action="single" overwrite="true" 
-              link="${basedir}/libs/logback.jar" 
-              resource="/usr/local/lib/logback-android-1.0.0-2.jar"/>
+              link="${basedir}/libs/logback-android.jar" 
+              resource="/usr/local/share/java/logback-android.jar"/>
+
+        <symlink taskname="add-tasettings-lib" action="single" overwrite="true" 
+              link="${basedir}/libs/tasettings-api.jar" 
+              resource="/usr/local/share/java/tasettingsapi.jar"/>
 
         <fail message="Files are missing.">
            <condition>
                <not>
-                   <resourcecount count="2">
+                   <resourcecount count="3">
                        <fileset id="simlinks" dir="libs">
-                         <include name="slf4j.jar"/>
-                         <include name="logback.jar"/>
+                          <include name="slf4j-api.jar"/>
+                          <include name="logback-android.jar"/>
+                          <include name="tasettings-api.jar"/>
                        </fileset>
                    </resourcecount>
                </not>

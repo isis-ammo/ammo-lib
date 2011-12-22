@@ -5,7 +5,7 @@ package edu.vu.isis.ammo;
  * @author Demetri Miller
  *
  */
-public interface INetPrefKeys extends edu.vu.isis.ammo.IPrefKeys {
+public interface INetPrefKeys {
 	// ====================================
 	// Ammo Core
 	// ====================================	
