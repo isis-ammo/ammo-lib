@@ -80,22 +80,22 @@
         </jar>
     </target>
 
-    <target name="-localize-jars-by-get" if="env.IS_JENKINS"
+    <target name="-localize-jars-jenkins" if="env.IS_JENKINS"
           description="get java jar libraries" >
-       <get src="https://ammo.isis.vanderbilt.edu/builds/externals/logback-android-1.0.0-4.jar" 
-            dest="${basedir}/libs/logback-android.jar"
-            verbose="true" usetimestamp="true"/>
+        <symlink taskname="add-slf4j-lib" action="single" overwrite="true" 
+              link="${basedir}/libs/slf4j-api.jar" 
+              resource="/isis/builds/externals/slf4j-api-1.6.4.jar"/>
 
-       <get src="https://ammo.isis.vanderbilt.edu/builds/externals/slf4j-api-1.6.4.jar" 
-            dest="${basedir}/libs/slf4j-api.jar"
-            verbose="true" usetimestamp="true"/>
+        <symlink taskname="add-logback-lib" action="single" overwrite="true" 
+              link="${basedir}/libs/logback-android.jar" 
+              resource="/isis/builds/externals/logback-android-1.0.0-4.jar"/>
 
-       <get src="https://ammo.isis.vanderbilt.edu/builds/externals/tasettingsapi-2011-12-21.jar" 
-            dest="${basedir}/libs/tasettings-api.jar"
-            verbose="true" usetimestamp="true"/>
+        <symlink taskname="add-tasettings-lib" action="single" overwrite="true" 
+              link="${basedir}/libs/tasettings-api.jar" 
+              resource="/isis/builds/externals/tasettingsapi-2011-12-21.jar"/>
     </target>
 
-    <target name="-localize-jars-by-symlink" unless="env.IS_JENKINS"
+    <target name="-localize-jars-developer" unless="env.IS_JENKINS"
           description="get java jar libraries" >
         <symlink taskname="add-slf4j-lib" action="single" overwrite="true" 
               link="${basedir}/libs/slf4j-api.jar" 
@@ -110,7 +110,7 @@
               resource="/usr/local/share/java/tasettingsapi.jar"/>
     </target>
 
-    <target name="-pre-build" depends="-localize-jars-by-get, -localize-jars-by-symlink">
+    <target name="-pre-build" depends="-localize-jars-jenkins, -localize-jars-developer">
         <fail message="Files are missing.">
            <condition>
                <not>
