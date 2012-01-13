@@ -8,7 +8,17 @@ perform, display, or disclose computer software or computer software
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
 */
-package edu.vu.isis.ammo.api;
+package edu.vu.isis.ammo;
 
-abstract public class AmmoRequestBase {
+/**
+ * This is extended in edu.vu.isis.ammo.core
+ *
+ */
+public interface IntentNames {
+	public static final String CORE_OPERATOR_ID = "CORE_OPERATOR_ID";
+	public static final String AMMO_LOGIN = "AMMO_LOGIN";
+	public static final String AMMO_READY = "AMMO_READY";
+	public static final String AMMO_CONNECTED = "AMMO_CONNECTED";
+	
+	public static final String RESET_CATEGORY = "AMMO_RESET_CATEGORY";
 }

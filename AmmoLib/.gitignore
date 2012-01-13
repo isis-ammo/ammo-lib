@@ -1,3 +1,8 @@
 *SchemaBase.java
 javadoc/
 ammolib.jar
+
+logback-android.jar
+slf4j-api.jar
+tasettings-api.jar
+
