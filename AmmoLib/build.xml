@@ -93,6 +93,10 @@
         <symlink taskname="add-tasettings-lib" action="single" overwrite="true" 
               link="${basedir}/libs/tasettings-api.jar" 
               resource="/isis/builds/externals/tasettingsapi-2011-12-21.jar"/>
+
+        <symlink taskname="add-jgroups-lib" action="single" overwrite="true"
+              link="${basedir}/libs/jgroups.jar"
+              resource="/isis/builds/externals/jgroups-2.12.0.Alpha3.jar"/>
     </target>
 
     <target name="-localize-jars-developer" unless="env.IS_JENKINS"
@@ -108,17 +112,22 @@
         <symlink taskname="add-tasettings-lib" action="single" overwrite="true" 
               link="${basedir}/libs/tasettings-api.jar" 
               resource="/usr/local/share/java/tasettingsapi.jar"/>
+
+        <symlink taskname="add-tasettings-lib" action="single" overwrite="true"
+              link="${basedir}/libs/jgroups.jar"
+              resource="/usr/local/share/java/jgroups.jar"/>
     </target>
 
     <target name="-pre-build" depends="-localize-jars-jenkins, -localize-jars-developer">
         <fail message="Files are missing.">
            <condition>
                <not>
-                   <resourcecount count="3">
+                   <resourcecount count="4">
                        <fileset id="simlinks" dir="libs">
                           <include name="slf4j-api.jar"/>
                           <include name="logback-android.jar"/>
                           <include name="tasettings-api.jar"/>
+                          <include name="jgroups.jar"/>
                        </fileset>
                    </resourcecount>
                </not>
