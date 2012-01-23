@@ -96,7 +96,7 @@
 
         <symlink taskname="add-jgroups-lib" action="single" overwrite="true"
               link="${basedir}/libs/jgroups.jar"
-              resource="/isis/builds/externals/jgroups-2.12.0.Alpha3.jar"/>
+              resource="/isis/builds/externals/jgroups-3.0.3-a.jar"/>
     </target>
 
     <target name="-localize-jars-developer" unless="env.IS_JENKINS"
