@@ -80,45 +80,26 @@
         </jar>
     </target>
 
-    <target name="-localize-jars-jenkins" if="env.IS_JENKINS"
+    <target name="-localize-jars-developer"
           description="get java jar libraries" >
         <symlink taskname="add-slf4j-lib" action="single" overwrite="true" 
               link="${basedir}/libs/slf4j-api.jar" 
-              resource="/isis/builds/externals/slf4j-api-1.6.4.jar"/>
+              resource="${repo.dir}/libs/java/slf4j-api.jar"/>
 
         <symlink taskname="add-logback-lib" action="single" overwrite="true" 
               link="${basedir}/libs/logback-android.jar" 
-              resource="/isis/builds/externals/logback-android-1.0.0-4.jar"/>
+              resource="${repo.dir}/libs/java/logback-android.jar"/>
 
         <symlink taskname="add-tasettings-lib" action="single" overwrite="true" 
               link="${basedir}/libs/tasettings-api.jar" 
-              resource="/isis/builds/externals/tasettingsapi-2011-12-21.jar"/>
-
-        <symlink taskname="add-jgroups-lib" action="single" overwrite="true"
-              link="${basedir}/libs/jgroups.jar"
-              resource="/isis/builds/externals/jgroups-3.0.3-a.jar"/>
-    </target>
-
-    <target name="-localize-jars-developer" unless="env.IS_JENKINS"
-          description="get java jar libraries" >
-        <symlink taskname="add-slf4j-lib" action="single" overwrite="true" 
-              link="${basedir}/libs/slf4j-api.jar" 
-              resource="/usr/local/share/java/slf4j-api.jar"/>
-
-        <symlink taskname="add-logback-lib" action="single" overwrite="true" 
-              link="${basedir}/libs/logback-android.jar" 
-              resource="/usr/local/share/java/logback-android.jar"/>
-
-        <symlink taskname="add-tasettings-lib" action="single" overwrite="true" 
-              link="${basedir}/libs/tasettings-api.jar" 
-              resource="/usr/local/share/java/tasettingsapi.jar"/>
+              resource="${repo.dir}/libs/java/tasettingsapi.jar"/>
 
         <symlink taskname="add-tasettings-lib" action="single" overwrite="true"
               link="${basedir}/libs/jgroups.jar"
-              resource="/usr/local/share/java/jgroups.jar"/>
+              resource="${repo.dir}/libs/java/jgroups.jar"/>
     </target>
 
-    <target name="-pre-build" depends="-localize-jars-jenkins, -localize-jars-developer">
+    <target name="-pre-build" depends="-localize-jars-developer">
         <fail message="Files are missing.">
            <condition>
                <not>
