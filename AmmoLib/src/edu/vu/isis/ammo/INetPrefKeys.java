@@ -80,6 +80,16 @@ public interface INetPrefKeys {
 	public static final String MULTICAST_TTL = "MULTICAST_TTL";
 
 	/*
+	 * ReliableMulticast Network Settings
+	 */
+	public static final String RELIABLE_MULTICAST_SHOULD_USE = "RELIABLE_MULTICAST_SHOULD_USE";
+	public static final String RELIABLE_MULTICAST_IP_ADDRESS = "RELIABLE_MULTICAST_IP_ADDRESS";
+	public static final String RELIABLE_MULTICAST_PORT = "RELIABLE_MULTICAST_PORT";
+	public static final String RELIABLE_MULTICAST_NET_CONN_TIMEOUT = "RELIABLE_MULTICAST_NET_CONN_TIMEOUT";
+	public static final String RELIABLE_MULTICAST_CONN_IDLE_TIMEOUT = "RELIABLE_MULTICAST_CONN_IDLE_TIMEOUT";
+	public static final String RELIABLE_MULTICAST_TTL = "RELIABLE_MULTICAST_TTL";
+
+	/*
 	 * Serial Network Settings
 	 */
 	public static final String SERIAL_SHOULD_USE        = "SERIAL_SHOULD_USE";
