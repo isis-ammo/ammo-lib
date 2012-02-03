@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="lib" path="/usr/local/share/java/logback-android.jar"/>
-	<classpathentry kind="lib" path="/usr/local/share/java/slf4j-api.jar"/>
+	<classpathentry kind="lib" path="/opt/ammo/libs/java/logback-android.jar" sourcepath="/opt/logback-android"/>
+	<classpathentry kind="lib" path="/opt/ammo/libs/java/slf4j-api.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
