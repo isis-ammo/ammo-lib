@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="edu.vu.ammo.misc"
+    package="edu.vu.isis.ammo"
     android:versionName="@string/ammo_version_name" >
 <!-- the version code is set via the 'version.code' variable in the ant script -->
-    
-    <application android:icon="@drawable/brand_icon" android:label="Dispatcher">
-		<activity android:name="MyTest" android:label="Dispatcher Test">
+    <uses-sdk android:minSdkVersion="8" />
+      
+    <application android:icon="@drawable/brand_icon" android:label="Library Test">
+		<activity android:name="AmmoLib" android:label="Library Test">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 	</application>
-	
-    <uses-sdk android:minSdkVersion="8" />
-    
 
 </manifest> 

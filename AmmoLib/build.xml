@@ -84,19 +84,19 @@
           description="get java jar libraries" >
         <symlink taskname="add-slf4j-lib" action="single" overwrite="true" 
               link="${basedir}/libs/slf4j-api.jar" 
-              resource="${repo.dir}/libs/java/slf4j-api.jar"/>
+              resource="${repo.dir}/Android-libs/java/slf4j-api.jar"/>
 
         <symlink taskname="add-logback-lib" action="single" overwrite="true" 
               link="${basedir}/libs/logback-android.jar" 
-              resource="${repo.dir}/libs/java/logback-android.jar"/>
+              resource="${repo.dir}/Android-libs/java/logback-android.jar"/>
 
         <symlink taskname="add-tasettings-lib" action="single" overwrite="true" 
               link="${basedir}/libs/tasettings-api.jar" 
-              resource="${repo.dir}/libs/java/tasettingsapi.jar"/>
+              resource="${repo.dir}/Android-libs/java/tasettingsapi.jar"/>
 
         <symlink taskname="add-tasettings-lib" action="single" overwrite="true"
               link="${basedir}/libs/jgroups.jar"
-              resource="${repo.dir}/libs/java/jgroups.jar"/>
+              resource="${repo.dir}/Android-libs/java/jgroups.jar"/>
     </target>
 
     <target name="-pre-build" depends="-localize-jars-developer">
