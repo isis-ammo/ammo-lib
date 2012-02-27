@@ -1,13 +1,3 @@
-/*Copyright (C) 2010-2012 Institute for Software Integrated Systems (ISIS)
-This software was developed by the Institute for Software Integrated
-Systems (ISIS) at Vanderbilt University, Tennessee, USA for the 
-Transformative Apps program under DARPA, Contract # HR011-10-C-0175.
-The United States Government has unlimited rights to this software. 
-The US government has the right to use, modify, reproduce, release, 
-perform, display, or disclose computer software or computer software 
-documentation in whole or in part, in any manner and for any 
-purpose whatsoever, and to have or authorize others to do so.
-*/
 // IAmmoRequest.java
 // See docs/java/ammo-api.nw for documentation
 package edu.vu.isis.ammo.api;
@@ -15,12 +5,14 @@ import java.util.Map;
 
 import android.content.ContentValues;
 import android.net.Uri;
-import android.os.Parcel;
 import android.os.RemoteException;
+import android.os.Parcel;
+
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Limit;
 import edu.vu.isis.ammo.api.type.Oid;
 import edu.vu.isis.ammo.api.type.Order;
+import edu.vu.isis.ammo.api.type.Moment;
 import edu.vu.isis.ammo.api.type.TimeInterval;
 import edu.vu.isis.ammo.api.type.TimeStamp;
 
@@ -35,6 +27,11 @@ public interface IAmmoRequest {
    public Event[] eventSet(); 
    public static final Uri PROVIDER_DEFAULT = null;
    public static final String PAYLOAD_DEFAULT = "";
+   public static final Moment MOMENT_APRIORI = Moment.APRIORI;
+   public static final Moment MOMENT_EAGER = Moment.EAGER;
+   public static final Moment MOMENT_LAZY = Moment.LAZY;
+
+   public static final Moment MOMENT_DEFAULT = MOMENT_LAZY ;
 
    public static final String TOPIC_DEFAULT = "";
 
@@ -57,6 +54,12 @@ public interface IAmmoRequest {
    public static final Order ORDER_NEWEST_FIRST = Order.NEWEST_FIRST;
 
    public static final Order ORDER_DEFAULT = ORDER_OLDEST_FIRST ;
+   public static final Notices NOTICE_NONE = Notices.NONE;
+   public static final Notices NOTICE_RECEIVED = Notices.RECEIVED;
+   public static final Notices NOTICE_GATEWAY = Notices.GATEWAY;
+   public static final Notices NOTICE_ARCHIVAL = Notices.ARCHIVAL;
+
+   public static final Notices NOTICE_DEFAULT = NOTICE_NONE ;
    public static final Integer WORTH_DEFAULT = 100;
 
    public static final TimeInterval START_DEFAULT = 
@@ -111,12 +114,15 @@ public interface IAmmoRequest {
         public Builder limit(int val);
         public Builder limit(Limit val);
         public Builder durability(Integer val);
+        public Builder moment(String val);
+        public Builder moment(Moment val);
         public Builder recipient(IAnon val);
         public Builder recipient(String val);
         public Builder originator(IAnon val);
         public Builder originator(String val);
         public Builder priority(Integer val);
         public Builder order(Order val);
+        public Builder notices(Notices val);
         public Builder worth(Integer val);
         public Builder start(TimeStamp val); 
         public Builder start(TimeInterval val); 

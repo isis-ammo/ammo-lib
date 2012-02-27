@@ -31,6 +31,7 @@ import android.os.RemoteException;
 import edu.vu.isis.ammo.api.type.Anon;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Limit;
+import edu.vu.isis.ammo.api.type.Moment;
 import edu.vu.isis.ammo.api.type.Oid;
 import edu.vu.isis.ammo.api.type.Order;
 import edu.vu.isis.ammo.api.type.Payload;
@@ -56,6 +57,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 	final public Provider provider;
 	final public Payload payload;
+	final public Moment moment;
 	final public Topic topic;
 
 	final public Integer downsample;
@@ -110,7 +112,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * Class.writeToParcel(this.provider, dest, flags) so that when the null
 	 * will will be handled correctly.
 	 */
-	private final byte VERSION = (byte) 0x02;
+	private final byte VERSION = (byte) 0x03;
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
@@ -124,6 +126,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		Provider.writeToParcel(this.provider, dest, flags);
 		plogger.trace("payload {}", this.payload);
 		Payload.writeToParcel(this.payload, dest, flags);
+		plogger.trace("moment {}", this.moment);
+		Moment.writeToParcel(this.moment, dest, flags);
 		plogger.trace("topic {}", this.topic);
 		Topic.writeToParcel(this.topic, dest, flags);
 
@@ -181,7 +185,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		this.provider = Provider.readFromParcel(in);
 		plogger.trace("provider {}", this.provider);
 		this.payload = Payload.readFromParcel(in);
-		plogger.trace("payload {}", this.payload);
+		plogger.trace("payload {}", this.payload);	
+		this.moment = (version < (byte) 3) ? Moment.LAZY : Moment.readFromParcel(in);
+		plogger.trace("moment {}", this.moment);
 		this.topic = Topic.readFromParcel(in);
 		plogger.trace("topic {}", this.topic);
 
@@ -205,13 +211,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		this.expire = TimeTrigger.readFromParcel(in);
 		plogger.trace("expire {}", this.expire);
 		
-		// If the version we're dealing with is older it may not have a limit field. Check for this
-		// and set the limit manually if needed.
-		if (version < (byte)2) {
-			this.limit = new Limit(100);
-		} else {
-			this.limit = Limit.readFromParcel(in);
-		}
+		this.limit = (version < (byte)2) ? new Limit(100) : Limit.readFromParcel(in);
 		plogger.trace("limit {}", this.limit);
 
 		this.scope = DeliveryScope.readFromParcel(in);
@@ -241,6 +241,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		this.provider = builder.provider;
 		this.payload = builder.payload;
+		this.moment = builder.moment;
 
 		this.topic = builder.topic;
 
@@ -401,6 +402,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		private Provider provider;
 		private Payload payload;
+		private Moment moment;
 		private Topic topic;
 
 		private Integer downsample;
@@ -526,6 +528,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.order(ORDER_DEFAULT);
 			this.originator(ORIGINATOR_DEFAULT);
 			this.payload(PAYLOAD_DEFAULT);
+			this.moment(MOMENT_DEFAULT);
 			this.priority(PRIORITY_DEFAULT);
 			this.provider(PROVIDER_DEFAULT);
 			this.recipient(RECIPIENT_DEFAULT);
@@ -638,6 +641,20 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 				return this;
 			return this.payload(val.asContentValues());
 		}
+		
+		@Override
+		public Builder moment(String val) {
+			if (val == null)
+				return this;
+			return this.moment(new Moment(val));
+		}
+
+		@Override
+		public Builder moment(Moment val) {
+			this.moment = val;
+			return this;
+		}
+
 
 		public Builder priority(String val) {
 			if (val == null)
@@ -660,6 +677,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		@Override
 		public Builder provider(Uri val) {
 			this.provider = new Provider(val);
+			this.moment = Moment.APRIORI;
 			return this;
 		}
 
