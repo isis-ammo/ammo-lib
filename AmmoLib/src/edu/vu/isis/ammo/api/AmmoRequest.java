@@ -52,7 +52,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	// PUBLIC PROPERTIES
 	// **********************
 	final public IAmmoRequest.Action action;
-	final public String uuid;
+	final public String uuid; // the request globally unique identifier
+	final public String uid;  // the application object unique identifier
 
 	final public Provider provider;
 	final public Payload payload;
@@ -84,6 +85,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.action.toString()).append(" Request ");
 		sb.append(this.uuid).append(" ");
+		sb.append(this.uid).append(" ");
 		sb.append(this.topic).append(' ');
 		return sb.toString();
 	}
@@ -118,6 +120,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		dest.writeByte(VERSION);
 
 		dest.writeValue(this.uuid);
+		dest.writeValue(this.uid);
 		Action.writeToParcel(dest, this.action);
 
 		plogger.trace("provider {}", this.provider);
@@ -174,7 +177,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 //			throw new ParcelFormatException("AMMO REQUEST VERSION MISMATCH");
 		}
 		
-		this.uuid = (String) in.readValue(Integer.class.getClassLoader());
+		this.uuid = (String) in.readValue(String.class.getClassLoader());
+		this.uid  = (version < (byte)2) ? null : (String) in.readValue(String.class.getClassLoader());
+		
 		this.action = Action.getInstance(in);
 		plogger.trace("unmarshall ammo request {} {}", this.uuid, this.action);
 
@@ -238,6 +243,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 	private AmmoRequest(IAmmoRequest.Action action, Builder builder) {
 		this.action = action;
+		this.uid = builder.uid;
 
 		this.provider = builder.provider;
 		this.payload = builder.payload;
@@ -265,11 +271,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		this.worth = builder.worth;
 
-		this.uuid = generateUuid();
-	}
-
-	private String generateUuid() {
-		return UUID.randomUUID().toString();
+		this.uuid = UUID.randomUUID().toString();
 	}
 
 	@Override
@@ -399,6 +401,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			}
 		}
 
+		private String uid;
+		
 		private Provider provider;
 		private Payload payload;
 		private Topic topic;
@@ -423,9 +427,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		private Selection select;
 
 		private Integer worth;
-
-		@SuppressWarnings("unused")
-		private String uid;
 
 		// ***************
 		// ACTIONS
