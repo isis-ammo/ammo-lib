@@ -314,11 +314,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	}
 
 	@Override
-	public String uuid() {
-		return this.uuid;
-	}
-
-	@Override
 	public Event[] cancel() {
 		// TODO Auto-generated method stub
 		return null;

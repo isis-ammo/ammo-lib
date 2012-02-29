@@ -15,8 +15,9 @@ import java.util.Map;
 
 import android.content.ContentValues;
 import android.net.Uri;
-import android.os.Parcel;
 import android.os.RemoteException;
+import android.os.Parcel;
+
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Limit;
 import edu.vu.isis.ammo.api.type.Oid;
@@ -25,7 +26,6 @@ import edu.vu.isis.ammo.api.type.TimeInterval;
 import edu.vu.isis.ammo.api.type.TimeStamp;
 
 public interface IAmmoRequest {
-   public String uuid();  
    public IAmmoRequest replace(IAmmoRequest req) throws RemoteException;
    public IAmmoRequest replace(String uuid) throws RemoteException;
    public Event[] cancel(); 
