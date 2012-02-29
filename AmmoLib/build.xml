@@ -66,6 +66,8 @@
            </fileset>
 
         </javadoc>
+
+        <jar jarfile="${basedir}/ammolib-javadoc.jar" basedir="javadoc"/>
     </target>
     
     <target name="build-jar"
