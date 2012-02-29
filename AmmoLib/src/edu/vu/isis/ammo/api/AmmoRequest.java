@@ -99,9 +99,14 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		@Override
 		public AmmoRequest createFromParcel(Parcel source) {
 		    try {
-			return new AmmoRequest(source);
-		    } catch (Throwable e) {
-			return null;
+			    return new AmmoRequest(source);
+		    } catch (Throwable ex) {
+		    	final int capacity = source.dataCapacity();
+		    	final byte[] data = new byte[capacity];
+		    	source.unmarshall(data, 0, capacity);
+				plogger.error("PARCEL UNMARSHALLING PROBLEM: {} {}", 
+						data, ex); 
+			    return null;
 		    }
 		}
 
@@ -173,8 +178,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * 
 	 * @param in
 	 */
-	private AmmoRequest(Parcel in) throws Throwable {
-	    try {
+	private AmmoRequest(Parcel in)  {
+	    
 		final byte version = in.readByte();
 		//if (version != VERSION) {
 			logger.warn("AMMO REQUEST VERSION MISMATCH, received {}, expected {}",
@@ -235,11 +240,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		plogger.trace("selection {}", this.select);
 		this.project = in.createStringArray();
 		plogger.trace("projection {}", this.project);
-	    } catch (Throwable e) {
-		plogger.error("PARCEL UNMARSHALLING PROBLEM: {}", in);
-		e.printStackTrace();
-		throw e;
-	    }
+	   
 	}
 
 	@Override
