@@ -669,9 +669,22 @@ public class AmmoContacts {
 		
 		// Populate results container 
 		AmmoContacts.Contact lw = new AmmoContacts.Contact();
-		String[] names = displayName.split(" ");
-		lw.setName(names[0]); 
-		lw.setLastName(names[1]);
+		if (displayName != null) {
+		    String[] names = displayName.split(" ");
+		    if (names.length > 0) {
+			if (names[0] != null) {
+			    lw.setName(names[0]); 
+			}
+		    }
+		    if (names.length > 1) {
+			if (names[1] != null) {
+			    lw.setLastName(names[1]);
+			}
+		    }
+		} else {
+		    Log.e(TAG, "Error retrieving name for contact " + contactId);
+		    continue;
+		}
 		lw.setLookup(lookupKey);
 		
 		String[] dataProjection = {"mimetype","data1","data2","data3","data4"};
@@ -722,10 +735,23 @@ public class AmmoContacts {
         try {
 	    Log.d(TAG, "   rows = " + String.valueOf(c.getCount()));
             c.moveToFirst();
-            String displayName = c.getString(0);
-	    String[] names = displayName.split(" ");
-	    lw.setName(names[0]); 
-	    lw.setLastName(names[1]);
+            String displayName = c.getString(0);	    
+	    if (displayName != null) {
+		String[] names = displayName.split(" ");
+		if (names.length > 0) {
+		    if (names[0] != null) {
+			lw.setName(names[0]); 
+		    }
+		}
+		if (names.length > 1) {
+		    if (names[1] != null) {
+			lw.setLastName(names[1]);
+		    }
+		}
+	    } else {
+		Log.e(TAG, "Error retrieving name for contact: display name is null");
+	    }
+
 	    String contactId = c.getString(1);
 	    Log.d(TAG,"Found contact: " + displayName + "  id=" + contactId);
 	    
