@@ -98,7 +98,11 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		@Override
 		public AmmoRequest createFromParcel(Parcel source) {
+		    try {
 			return new AmmoRequest(source);
+		    } catch (Throwable e) {
+			return null;
+		    }
 		}
 
 		@Override
@@ -112,7 +116,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * Class.writeToParcel(this.provider, dest, flags) so that when the null
 	 * will will be handled correctly.
 	 */
-	private final byte VERSION = (byte) 0x02;
+	private final byte VERSION = (byte) 0x03;
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
@@ -169,16 +173,17 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * 
 	 * @param in
 	 */
-	private AmmoRequest(Parcel in) {
+	private AmmoRequest(Parcel in) throws Throwable {
+	    try {
 		final byte version = in.readByte();
-		if (version != VERSION) {
+		//if (version != VERSION) {
 			logger.warn("AMMO REQUEST VERSION MISMATCH, received {}, expected {}",
 					version, VERSION);
 //			throw new ParcelFormatException("AMMO REQUEST VERSION MISMATCH");
-		}
+			//}
 		
 		this.uuid = (String) in.readValue(String.class.getClassLoader());
-		this.uid  = (version < (byte)2) ? null : (String) in.readValue(String.class.getClassLoader());
+		this.uid  = (version < (byte)3) ? this.uuid : (String) in.readValue(String.class.getClassLoader());
 		
 		this.action = Action.getInstance(in);
 		plogger.trace("unmarshall ammo request {} {}", this.uuid, this.action);
@@ -230,6 +235,11 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		plogger.trace("selection {}", this.select);
 		this.project = in.createStringArray();
 		plogger.trace("projection {}", this.project);
+	    } catch (Throwable e) {
+		plogger.error("PARCEL UNMARSHALLING PROBLEM: {}", in);
+		e.printStackTrace();
+		throw e;
+	    }
 	}
 
 	@Override
