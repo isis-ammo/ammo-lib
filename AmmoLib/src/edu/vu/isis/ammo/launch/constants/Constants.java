@@ -44,5 +44,5 @@ public class Constants {
 	public static final String MIME_USERID_NUM = "vnd.android.cursor.item/usernumber";
 	public static final String MIME_RANK = "vnd.android.cursor.item/rank";
 	public static final String MIME_UNIT_NAME = "vnd.android.cursor.item/unitname";
-	
+	public static final String MIME_DESIGNATOR = "vnd.android.cursor.item/designator";
 }

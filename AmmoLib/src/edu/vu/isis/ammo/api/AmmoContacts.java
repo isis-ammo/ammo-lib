@@ -219,10 +219,22 @@ public class AmmoContacts {
             return this;
         }
 
-        // The following items will arrive as blobs.
-        //
-        // std::vector<unsigned char> photo;
-        // std::vector<unsigned char> insignia;
+	private String designator;
+	public String getDesignator() {
+            return this.designator;
+        }
+	public char[] getDesignatorAsCharArray() {
+            return this.designator.toCharArray();
+        }
+	public Contact setDesignator(String val) {
+	    // Designator is defined as only two characters -- enforce this
+	    if (val.length() <= 2) {
+		this.designator = val;
+	    } else {
+		this.designator = val.substring(0,1);
+	    }
+            return this;
+        }
 
     }
 
@@ -366,6 +378,15 @@ public class AmmoContacts {
                     .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
                     .withValue(ContactsContract.Data.MIMETYPE, Constants.MIME_USERID_NUM)
                     .withValue(ContactsContract.Data.DATA1, userIdNum)
+                    .build());
+
+	String designator = lw.getDesignator();
+        if (designator == null) designator = "";
+        if (designator.length() > 0)
+            ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE, Constants.MIME_DESIGNATOR)
+                    .withValue(ContactsContract.Data.DATA1, designator)
                     .build());
 
         String rank = lw.getRank();
@@ -553,11 +574,13 @@ public class AmmoContacts {
 		    if (Constants.MIME_USERID.equals(f.get("mimetype"))) {
 			lw.setTigrUid(f.get("data1") );
 		    }
-		    
 		    if (Constants.MIME_USERID_NUM.equals(f.get("mimetype"))) {
 			lw.setUserIdNumber(f.get("data1") );
 		    }
-		    
+		    if (Constants.MIME_DESIGNATOR.equals(f.get("mimetype"))) {
+			lw.setDesignator(f.get("data1") );
+		    }
+
 		    if (StructuredName.CONTENT_ITEM_TYPE.equals(f.get("mimetype"))) {
 			lw.setName(f.get("data2"));
 			lw.setLastName(f.get("data3"));
@@ -595,7 +618,7 @@ public class AmmoContacts {
             return null;
         }
 
-	// Debuggery
+	// Debugging
 	/*
 	Log.d(TAG, "   rows = " + String.valueOf(c.getCount()));
 	for (String d : c.getColumnNames()) {

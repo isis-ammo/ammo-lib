@@ -52,7 +52,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	// PUBLIC PROPERTIES
 	// **********************
 	final public IAmmoRequest.Action action;
-	final public String uuid;
+	final public String uuid; // the request globally unique identifier
+	final public String uid;  // the application object unique identifier
 
 	final public Provider provider;
 	final public Payload payload;
@@ -84,6 +85,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.action.toString()).append(" Request ");
 		sb.append(this.uuid).append(" ");
+		sb.append(this.uid).append(" ");
 		sb.append(this.topic).append(' ');
 		return sb.toString();
 	}
@@ -96,7 +98,16 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		@Override
 		public AmmoRequest createFromParcel(Parcel source) {
-			return new AmmoRequest(source);
+		    try {
+			    return new AmmoRequest(source);
+		    } catch (Throwable ex) {
+		    	final int capacity = source.dataCapacity();
+		    	final byte[] data = new byte[capacity];
+		    	source.unmarshall(data, 0, capacity);
+				plogger.error("PARCEL UNMARSHALLING PROBLEM: {} {}", 
+						data, ex); 
+			    return null;
+		    }
 		}
 
 		@Override
@@ -110,7 +121,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * Class.writeToParcel(this.provider, dest, flags) so that when the null
 	 * will will be handled correctly.
 	 */
-	private final byte VERSION = (byte) 0x02;
+	private final byte VERSION = (byte) 0x03;
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
@@ -118,6 +129,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		dest.writeByte(VERSION);
 
 		dest.writeValue(this.uuid);
+		dest.writeValue(this.uid);
 		Action.writeToParcel(dest, this.action);
 
 		plogger.trace("provider {}", this.provider);
@@ -166,15 +178,18 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * 
 	 * @param in
 	 */
-	private AmmoRequest(Parcel in) {
+	private AmmoRequest(Parcel in)  {
+	    
 		final byte version = in.readByte();
-		if (version != VERSION) {
+		//if (version != VERSION) {
 			logger.warn("AMMO REQUEST VERSION MISMATCH, received {}, expected {}",
 					version, VERSION);
 //			throw new ParcelFormatException("AMMO REQUEST VERSION MISMATCH");
-		}
+			//}
 		
-		this.uuid = (String) in.readValue(Integer.class.getClassLoader());
+		this.uuid = (String) in.readValue(String.class.getClassLoader());
+		this.uid  = (version < (byte)3) ? this.uuid : (String) in.readValue(String.class.getClassLoader());
+		
 		this.action = Action.getInstance(in);
 		plogger.trace("unmarshall ammo request {} {}", this.uuid, this.action);
 
@@ -225,6 +240,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		plogger.trace("selection {}", this.select);
 		this.project = in.createStringArray();
 		plogger.trace("projection {}", this.project);
+	   
 	}
 
 	@Override
@@ -238,6 +254,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 	private AmmoRequest(IAmmoRequest.Action action, Builder builder) {
 		this.action = action;
+		this.uid = builder.uid;
 
 		this.provider = builder.provider;
 		this.payload = builder.payload;
@@ -265,11 +282,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		this.worth = builder.worth;
 
-		this.uuid = generateUuid();
-	}
-
-	private String generateUuid() {
-		return UUID.randomUUID().toString();
+		this.uuid = UUID.randomUUID().toString();
 	}
 
 	@Override
@@ -309,11 +322,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	@Override
 	public void resetMetrics(Integer val) {
 		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public String uuid() {
-		return this.uuid;
 	}
 
 	@Override
@@ -399,6 +407,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			}
 		}
 
+		private String uid;
+		
 		private Provider provider;
 		private Payload payload;
 		private Topic topic;
@@ -423,9 +433,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		private Selection select;
 
 		private Integer worth;
-
-		@SuppressWarnings("unused")
-		private String uid;
 
 		// ***************
 		// ACTIONS
