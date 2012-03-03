@@ -99,14 +99,14 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		@Override
 		public AmmoRequest createFromParcel(Parcel source) {
 		    try {
-			    return new AmmoRequest(source);
+			return new AmmoRequest(source);
 		    } catch (Throwable ex) {
 		    	final int capacity = source.dataCapacity();
 		    	final byte[] data = new byte[capacity];
 		    	source.unmarshall(data, 0, capacity);
-				plogger.error("PARCEL UNMARSHALLING PROBLEM: {} {}", 
-						data, ex); 
-			    return null;
+			plogger.error("PARCEL UNMARSHALLING PROBLEM: {} {}", 
+				data, ex); 
+			return null;
 		    }
 		}
 
@@ -181,17 +181,20 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	private AmmoRequest(Parcel in)  {
 	    
 		final byte version = in.readByte();
-		//if (version != VERSION) {
-			logger.warn("AMMO REQUEST VERSION MISMATCH, received {}, expected {}",
-					version, VERSION);
+		if (version != VERSION) {
+		    plogger.warn("AMMO REQUEST VERSION MISMATCH, received {}, expected {}",
+				version, VERSION);
 //			throw new ParcelFormatException("AMMO REQUEST VERSION MISMATCH");
-			//}
+                } else {
+		    plogger.warn("AMMO REQUEST VERSION MATCH {}", version);
+		}
 		
 		this.uuid = (String) in.readValue(String.class.getClassLoader());
 		this.uid  = (version < (byte)3) ? this.uuid : (String) in.readValue(String.class.getClassLoader());
+		plogger.trace("unmarshall ammo request {} {}", this.uuid, this.uid);
 		
 		this.action = Action.getInstance(in);
-		plogger.trace("unmarshall ammo request {} {}", this.uuid, this.action);
+		plogger.trace("action {}", this.action);
 
 		this.provider = Provider.readFromParcel(in);
 		plogger.trace("provider {}", this.provider);
