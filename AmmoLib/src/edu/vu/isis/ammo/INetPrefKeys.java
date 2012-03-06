@@ -44,31 +44,31 @@ public interface INetPrefKeys {
 	 * 
 	 * External Keys
 	 * 
-	 * JOURNAL_SHOULD_USE : Indicates that the user wishes to make use if possible.
+	 * JOURNAL_DISABLED : Indicates that the user wishes to make use if possible.
 	 */
-	public static final String JOURNAL_SHOULD_USE = Keys.NetworkingKeys.JOURNAL_SHOULD_USE;
+	public static final String JOURNAL_DISABLED = Keys.NetworkingKeys.JOURNAL_DISABLED;
 	
 	// VALUES
-	public static final boolean DEFAULT_JOURNAL_SHOULD_USE = Keys.NetworkingKeys.DEFAULT_JOURNAL_SHOULD_USE;
+	public static final boolean DEFAULT_JOURNAL_DISABLED = Keys.NetworkingKeys.DEFAULT_JOURNAL_DISABLED;
 	
 	/**
 	 * Gateway Channel and TCP Link Settings
 	 *
 	 * External Keys
 	 * 
-	 * GATEWAY_SHOULD_USE : Indicates that the user wishes to make use if possible.
+	 * GATEWAY_DISABLED : Indicates that the user wishes to make use if possible.
 	 * GATEWAY_HOST : The IP address of the gateway host
 	 * GATEWAY_PORT : The listening port
 	 * 
 	 */
-	public static final String GATEWAY_SHOULD_USE = Keys.NetworkingKeys.GATEWAY_SHOULD_USE;
+	public static final String GATEWAY_DISABLED = Keys.NetworkingKeys.GATEWAY_DISABLED;
 	public static final String GATEWAY_HOST = Keys.NetworkingKeys.GATEWAY_HOST;
 	public static final String GATEWAY_PORT = "CORE_IP_PORT";
 	public static final String GATEWAY_FLAT_LINE_TIME = "FLAT_LINE_TIME";
 	public static final String GATEWAY_TIMEOUT = "CORE_SOCKET_TIMEOUT";
 	
 	// VALUES
-	public static final boolean DEFAULT_GATEWAY_SHOULD_USE = Keys.NetworkingKeys.DEFAULT_GATEWAY_SHOULD_USE;
+	public static final boolean DEFAULT_GATEWAY_DISABLED = Keys.NetworkingKeys.DEFAULT_GATEWAY_DISABLED;
 	public static final String DEFAULT_GATEWAY_HOST        = Keys.NetworkingKeys.DEFAULT_GATEWAY_HOST;
 	public static final int DEFAULT_GATEWAY_PORT           = 33289;
 	public static final int DEFAULT_GW_FLAT_LINE_TIME      = 20; // 20 minutes
@@ -79,12 +79,12 @@ public interface INetPrefKeys {
 	 * 
 	 * External Keys
 	 * 
-	 * MULTICAST_SHOULD_USE : Indicates that the user wishes to make use if possible.
+	 * MULTICAST_DISABLED : Indicates that the user wishes to make use if possible.
 	 * MULTICAST_HOST : The IP address of the gateway host
 	 * MULTICAST_PORT : The listening port
 	 * 
 	 */
-	public static final String MULTICAST_SHOULD_USE = Keys.NetworkingKeys.MULTICAST_SHOULD_USE;
+	public static final String MULTICAST_DISABLED = Keys.NetworkingKeys.MULTICAST_DISABLED;
 	public static final String MULTICAST_HOST = "MULTICAST_IP_ADDRESS";
 	public static final String MULTICAST_PORT = "MULTICAST_PORT";
 	public static final String MULTICAST_NET_CONN_TIMEOUT = "MULTICAST_NET_CONN_TIMEOUT";
@@ -92,7 +92,7 @@ public interface INetPrefKeys {
 	public static final String MULTICAST_TTL = "MULTICAST_TTL";
 	
 	// VALUES
-	public static final boolean DEFAULT_MULTICAST_SHOULD_USE = Keys.NetworkingKeys.DEFAULT_MULTICAST_SHOULD_USE;
+	public static final boolean DEFAULT_MULTICAST_DISABLED = Keys.NetworkingKeys.DEFAULT_MULTICAST_DISABLED;
 	public static final String DEFAULT_MULTICAST_HOST        = "228.10.10.90";
 	public static final String DEFAULT_MULTICAST_PORT        = "9982";
 	public static final String DEFAULT_MULTICAST_NET_CONN    = "20";
@@ -105,9 +105,9 @@ public interface INetPrefKeys {
 	 * 
 	 * External Keys
 	 * 
-	 * SERIAL_SHOULD_USE : Indicates that the user wishes to make use if possible.
+	 * SERIAL_DISABLED : Indicates that the user wishes to make use if possible.
 	 */
-	public static final String RELIABLE_MULTICAST_SHOULD_USE = Keys.NetworkingKeys.RELIABLE_MULTICAST_SHOULD_USE;
+	public static final String RELIABLE_MULTICAST_DISABLED = Keys.NetworkingKeys.RELIABLE_MULTICAST_DISABLED;
 
 	/** Internal KEYS
 	 * The remaining keys are still in flux.
@@ -119,7 +119,7 @@ public interface INetPrefKeys {
 	public static final String RELIABLE_MULTICAST_TTL = "RELIABLE_MULTICAST_TTL";
 	
 	// VALUES
-	public static final boolean DEFAULT_RELIABLE_MULTICAST_SHOULD_USE = Keys.NetworkingKeys.DEFAULT_RELIABLE_MULTICAST_SHOULD_USE;
+	public static final boolean DEFAULT_RELIABLE_MULTICAST_DISABLED = Keys.NetworkingKeys.DEFAULT_RELIABLE_MULTICAST_DISABLED;
 	public static final String DEFAULT_RELIABLE_MULTICAST_HOST        = "228.10.10.91";
 	public static final String DEFAULT_RELIABLE_MULTICAST_PORT        = "9982";
 	public static final String DEFAULT_RELIABLE_MULTICAST_NET_CONN    = "20";
@@ -132,12 +132,12 @@ public interface INetPrefKeys {
 	 * 
 	 * External Keys
 	 * 
-	 * SERIAL_SHOULD_USE : Indicates that the user wishes to make use if possible.
+	 * SERIAL_DISABLED : Indicates that the user wishes to make use if possible.
 	 * SERIAL_RADIOS_IN_GROUP : the number of slots
 	 * SERIAL_SLOT_NUMBER : The slot assigned to the link.
 	 * SERIAL_SLOT_DURATION : time allocated to each slot.
 	 */
-	public static final String SERIAL_SHOULD_USE        = Keys.NetworkingKeys.SERIAL_SHOULD_USE;
+	public static final String SERIAL_DISABLED        = Keys.NetworkingKeys.SERIAL_DISABLED;
 	public static final String SERIAL_SLOT_NUMBER       = Keys.NetworkingKeys.SLOT_ID;
 	public static final String SERIAL_RADIOS_IN_GROUP   = Keys.NetworkingKeys.SLOT_COUNT;
 	public static final String SERIAL_SLOT_DURATION     = "SERIAL_SLOT_DURATION";
@@ -152,12 +152,12 @@ public interface INetPrefKeys {
 	 */
 	public static final String SERIAL_DEVICE            = "SERIAL_DEVICE";
 	public static final String SERIAL_SEND_ENABLED      = "SERIAL_SEND_ENABLED";
-    public static final String SERIAL_BAUD_RATE         = "SERIAL_BAUD_RATE";
+	public static final String SERIAL_BAUD_RATE         = "SERIAL_BAUD_RATE";
 	public static final String SERIAL_RECEIVE_ENABLED   = "SERIAL_RECEIVE_ENABLED";
 	public static final String SERIAL_TRANSMIT_DURATION = "SERIAL_TRANSMIT_DURATION";
 	
 	// VALUES
-	public static final boolean DEFAULT_SERIAL_SHOULD_USE       = false;
+	public static final boolean DEFAULT_SERIAL_DISABLED       = Keys.NetworkingKeys.DEFAULT_SERIAL_DISABLED;
 	public static final String DEFAULT_SERIAL_DEVICE            = "/dev/ttyUSB0";
 	public static final String DEFAULT_SERIAL_BAUD_RATE         = "9600";
 	public static final String DEFAULT_SERIAL_SLOT_NUMBER       = "8";

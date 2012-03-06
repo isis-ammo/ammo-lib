@@ -6,6 +6,5 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="lib" path="/Android-libs/java/logback-android.jar"/>
 	<classpathentry kind="lib" path="/Android-libs/java/slf4j-api.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/tasettings-api"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

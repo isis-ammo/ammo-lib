@@ -94,7 +94,7 @@
 
         <symlink taskname="add-tasettings-lib" action="single" overwrite="true" 
               link="${basedir}/libs/tasettings-api.jar" 
-              resource="${repo.dir}/Android-libs/java/tasettings-api-0.0.2.jar"/>
+              resource="${repo.dir}/Android-libs/java/tasettings-api-0.0.3.jar"/>
 
         <symlink taskname="add-tasettings-lib" action="single" overwrite="true"
               link="${basedir}/libs/jgroups.jar"
