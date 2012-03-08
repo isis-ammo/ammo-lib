@@ -26,6 +26,7 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.Parcel;
+import android.os.ParcelFormatException;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import edu.vu.isis.ammo.api.type.Anon;
@@ -181,12 +182,15 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	private AmmoRequest(Parcel in)  {
 	    
 		final byte version = in.readByte();
-		if (version != VERSION) {
+		if (version < VERSION) {
 		    plogger.warn("AMMO REQUEST VERSION MISMATCH, received {}, expected {}",
 				version, VERSION);
-//			throw new ParcelFormatException("AMMO REQUEST VERSION MISMATCH");
-                } else {
-		    plogger.warn("AMMO REQUEST VERSION MATCH {}", version);
+        } else if (version > VERSION ){
+		    plogger.warn("AMMO REQUEST VERSION MISMATCH, received {}, expected {}",
+				version, VERSION);
+			throw new ParcelFormatException("AMMO REQUEST VERSION MISMATCH");
+        } else {
+		    plogger.info("AMMO REQUEST VERSION MATCH {}", version);
 		}
 		
 		this.uuid = (String) in.readValue(String.class.getClassLoader());
