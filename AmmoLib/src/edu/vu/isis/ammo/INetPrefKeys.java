@@ -167,4 +167,5 @@ public interface INetPrefKeys {
 	public static final boolean DEFAULT_SERIAL_SEND_ENABLED     = true;
 	public static final boolean DEFAULT_SERIAL_RECEIVE_ENABLED  = true;
 
+	
 }
