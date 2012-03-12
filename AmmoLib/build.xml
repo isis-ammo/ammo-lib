@@ -66,6 +66,8 @@
            </fileset>
 
         </javadoc>
+
+        <jar jarfile="${basedir}/ammolib-javadoc.jar" basedir="javadoc"/>
     </target>
     
     <target name="build-jar"
@@ -92,7 +94,7 @@
 
         <symlink taskname="add-tasettings-lib" action="single" overwrite="true" 
               link="${basedir}/libs/tasettings-api.jar" 
-              resource="${repo.dir}/Android-libs/java/tasettingsapi.jar"/>
+              resource="${repo.dir}/Android-libs/java/tasettings-api-0.0.4.jar"/>
 
         <symlink taskname="add-tasettings-lib" action="single" overwrite="true"
               link="${basedir}/libs/jgroups.jar"

@@ -10,69 +10,121 @@ purpose whatsoever, and to have or authorize others to do so.
 */
 package edu.vu.isis.ammo.api.type;
 
-import android.app.PendingIntent;
+import edu.vu.isis.ammo.api.IAmmoRequest.Event;
+import edu.vu.isis.ammo.api.IAmmoRequest.INotice;
 import android.os.Parcel;
 import android.os.Parcelable;
-import edu.vu.isis.ammo.api.IAmmoRequest;
-import edu.vu.isis.ammo.api.IAmmoRequest.Event;
 
 /**
- * The notify is used to specify actions to perform
- * as certain places are traversed.
+ * Specifies the Notice in which queued items are to be processed.
  */
+public class Notice extends AmmoType implements INotice {
 
-public class Notice extends AmmoType implements IAmmoRequest.Notice {
+    public enum Type {
+      	NONE(0, "no action"),
+      	SENT(1, "Pre serialized"),
+    	ARCHIVED(2, "stored long term"),
+    	RECEIVED(3, "received by a subscriber");
+    	
+    	private final int o;
+    	private final String d;
+    	
+    	private Type(int ordinal, String description) {
+    		this.o = ordinal;
+    		this.d = description;
+    	}
+    }
+    
 
-	private final PendingIntent intent;
+    final private Type type;
+    
+   	public int cv() {
+		return this.type.o;
+	}
+  
+    // *********************************
+    // Parcelable Support
+    // *********************************
+
+    public static final Parcelable.Creator<Notice> CREATOR = 
+        new Parcelable.Creator<Notice>() {
+
+        @Override
+        public Notice createFromParcel(Parcel source) {
+            return new Notice(source);
+        }
+
+        @Override
+        public Notice[] newArray(int size) {
+            return new Notice[size];
+        }
+    };
+    public static Notice readFromParcel(Parcel source) {
+    	if (AmmoType.isNull(source)) return null;
+        return new Notice(source);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+    	plogger.trace("marshall Notice {}", this);
+        dest.writeInt(this.type.ordinal());
+    }
+
+    private Notice(Parcel in) {
+        this.type = Type.values()[in.readInt()];
+    	plogger.trace("unmarshall Notice []", this);
+    }
 
 	// *********************************
-	// Parcelable Support
-	// *********************************
-
-	public static final Parcelable.Creator<Notice> CREATOR = 
-			new Parcelable.Creator<Notice>() {
-
-		@Override
-		public Notice createFromParcel(Parcel source) {
-			return new Notice(source);
-		}
-		@Override
-		public Notice[] newArray(int size) {
-			return new Notice[size];
-		}
-	};
+    // IAmmoRequest Support
+    // *********************************
 	
-	public Notice readFromParcel(Parcel source) {
-		if (AmmoType.isNull(source)) return null;
-		return new Notice(source);
+    public Notice(String val) {
+    	if (val.contains("N")) { this.type = Type.NONE; return; }
+        if (val.contains("S")) { this.type = Type.SENT; return; }
+        if (val.contains("R")) { this.type = Type.RECEIVED; return; }
+        if (val.contains("A")) { this.type = Type.ARCHIVED; return; }
+        this.type = Type.NONE;
+    }
+    
+    public Notice(Type val) {
+        this.type = val;
+    }
+    
+    public Type type() { return this.type; }
+    
+    final public static Notice NONE = new Notice(Type.NONE);
+    final public static Notice SENT = new Notice(Type.SENT);
+    final public static Notice RECEIVED = new Notice(Type.RECEIVED);
+    final public static Notice ARCHIVED = new Notice(Type.ARCHIVED);
+    
+    @Override
+    public String toString() {
+    	return new StringBuilder().append(this.type.d).toString();
+    }
+
+	@Override
+	public Event target() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		plogger.trace("marshall notice {}", this);
-		this.intent.writeToParcel(dest, flags);
+	public Notice target(Event val) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	private Notice(Parcel in) {
-		this.intent = PendingIntent.CREATOR.createFromParcel(in);
-		plogger.trace("unmarshall notice {}", this);
-	}
-
-	// *********************************
-	// Standard Methods
-	// *********************************
 	@Override
-	public String toString() {
-		return this.intent.toString();
+	public Event source() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	// *********************************
-	// IAmmoReques Support
-	// *********************************
-
-
-	private Notice(PendingIntent intent) {
-		this.intent = intent;
+	@Override
+	public Notice source(Event val) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -93,27 +145,5 @@ public class Notice extends AmmoType implements IAmmoRequest.Notice {
 		return null;
 	}
 
-	@Override
-	public Event source() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Notice source(Event val) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Event target() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Notice target(Event val) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
+

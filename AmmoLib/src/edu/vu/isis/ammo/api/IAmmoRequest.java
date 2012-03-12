@@ -13,11 +13,11 @@ import edu.vu.isis.ammo.api.type.Limit;
 import edu.vu.isis.ammo.api.type.Oid;
 import edu.vu.isis.ammo.api.type.Order;
 import edu.vu.isis.ammo.api.type.Moment;
+import edu.vu.isis.ammo.api.type.Notice;
 import edu.vu.isis.ammo.api.type.TimeInterval;
 import edu.vu.isis.ammo.api.type.TimeStamp;
 
 public interface IAmmoRequest {
-   public String uuid();  
    public IAmmoRequest replace(IAmmoRequest req) throws RemoteException;
    public IAmmoRequest replace(String uuid) throws RemoteException;
    public Event[] cancel(); 
@@ -54,12 +54,12 @@ public interface IAmmoRequest {
    public static final Order ORDER_NEWEST_FIRST = Order.NEWEST_FIRST;
 
    public static final Order ORDER_DEFAULT = ORDER_OLDEST_FIRST ;
-   public static final Notices NOTICE_NONE = Notices.NONE;
-   public static final Notices NOTICE_RECEIVED = Notices.RECEIVED;
-   public static final Notices NOTICE_GATEWAY = Notices.GATEWAY;
-   public static final Notices NOTICE_ARCHIVAL = Notices.ARCHIVAL;
+   public static final Notice NOTICE_NONE = Notice.NONE;
+   public static final Notice NOTICE_RECEIVED = Notice.RECEIVED;
+   public static final Notice NOTICE_GATEWAY = Notice.SENT;
+   public static final Notice NOTICE_ARCHIVAL = Notice.ARCHIVED;
 
-   public static final Notices NOTICE_DEFAULT = NOTICE_NONE ;
+   public static final Notice NOTICE_DEFAULT = NOTICE_NONE ;
    public static final Integer WORTH_DEFAULT = 100;
 
    public static final TimeInterval START_DEFAULT = 
@@ -76,7 +76,7 @@ public interface IAmmoRequest {
    public static final String FILTER_DEFAULT = FILTER_NO ;
    public static final Integer DOWNSAMPLE_NO = 0;
    public static final Integer DOWNSAMPLE_DEFAULT = DOWNSAMPLE_NO ;
-   public static final Notice NOTICE_DEFAULT = null;
+   
    public static final IAnon ANON_ANY = null;
    public static final IAnon RECIPIENT_DEFAULT = ANON_ANY ;
    public static final IAnon ORIGINATOR_DEFAULT = ANON_ANY ;
@@ -122,7 +122,7 @@ public interface IAmmoRequest {
         public Builder originator(String val);
         public Builder priority(Integer val);
         public Builder order(Order val);
-        public Builder notices(Notices val);
+        public Builder notices(Notice val);
         public Builder worth(Integer val);
         public Builder start(TimeStamp val); 
         public Builder start(TimeInterval val); 
@@ -190,7 +190,7 @@ public interface IAmmoRequest {
       public DeliveryState state();
       public Event state(DeliveryState val);
    }
-   public interface Notice {
+   public interface INotice {
       public Event target();
       public Notice target(Event val);
 
