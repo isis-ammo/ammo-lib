@@ -631,7 +631,38 @@ public class AmmoContacts {
     // Delete an existing contact in the local contacts storage.
     //========================================================
     public Uri deleteContactEntry(Contact lw) {
-	return null;
+	if (Log.isLoggable(TAG, Log.VERBOSE)) {
+	    Log.d(TAG, "    deleteContactEntry");
+	}
+	
+	ContentResolver cr = mResolver;
+
+	// First find existing record so we can delete it
+	Uri uriToDelete = findExistingContact(lw);
+	if (uriToDelete == null) {
+	    return null;
+	}
+	if (Log.isLoggable(TAG, Log.VERBOSE)) {
+	    Log.d(TAG, "      got back: " + uriToDelete.toString());
+	}
+
+	// Then make a ContentProviderOperation to delete this contact
+	ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+	ops.add(ContentProviderOperation.newDelete(uriToDelete).build());
+
+	// TODO: withValue() bits to delete all of contact's data
+	// (...)
+	
+	try {
+            ContentProviderResult[] cpres = cr.applyBatch(ContactsContract.AUTHORITY, ops);
+	    uriToDelete = cpres[0].uri;
+        } catch (Exception ex) {
+            Log.e(TAG, "Exception encoutered while deleting contact: " + ex.toString());
+	    return null;
+        }
+
+	return uriToDelete;
+
     }
 
 
