@@ -11,6 +11,7 @@ purpose whatsoever, and to have or authorize others to do so.
 package edu.vu.isis.ammo.api;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -246,14 +247,180 @@ public class AmmoContacts {
     // contacts storage provider.
     //========================================================
     public Uri updateContactEntry(Contact lw) {
-
         Log.d(TAG,"updateContactEntry() ");
-        Log.d(TAG, "Updating person: " + lw.getName() + " " + lw.getLastName() + " ... " + lw.getTigrUid() );
+        Log.d(TAG, "Updating person: " + lw.getName() + " " 
+	      + lw.getLastName() + " ... " + lw.getTigrUid() );
 	
-	// TODO: Updating is non-straightforward. For now just
-	// create a new contact (all existing test cases do this
-	// anyway).
-	return insertContactEntry(lw);
+	ContentResolver cr = mResolver;
+
+	// First find existing record so we can modify it
+	Uri uriToModify = findExistingContact(lw);
+	
+	// If the contact isn't found, add it ("upsert" functionality)
+	if (uriToModify == null) {
+	    Log.d(TAG, "       failed to find existing user, inserting new contact ");
+	    return insertContactEntry(lw);
+	} else { 
+	    if (Log.isLoggable(TAG, Log.VERBOSE)) {
+		Log.d(TAG, "       found existing user URI: " + uriToModify.toString());
+	    }
+	}
+
+	// Parse the contact id out of the URI (we know it's the 
+	// last segment of the URI just returned)
+	List<String> ps = uriToModify.getPathSegments();
+	int contactId = -1;
+	try {
+	    contactId = Integer.parseInt(ps.get(ps.size() -1));
+	} catch(NumberFormatException nfe) {
+	    Log.e(TAG, "Could not parse " + nfe);
+	    return null;
+	} 
+	if (Log.isLoggable(TAG, Log.VERBOSE)) {
+	    Log.d(TAG, "    contact id = " + String.valueOf(contactId));
+	}
+	if (!(contactId > 0)) return null;
+
+	// Then make a ContentProviderOperation to update this contact
+	ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+
+	String callsign = lw.getCallSign();
+        if (callsign == null) callsign = "";
+        if (callsign.length() > 0) {
+            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
+				   new String[] {String.valueOf(contactId), Constants.MIME_CALLSIGN,})
+                    .withValue(ContactsContract.Data.DATA1, callsign)
+                    .build());
+	}
+
+	// userid is a special case -- don't allow updates (but keep this snippet for future use)
+	/*
+	String userId = lw.getTigrUid();
+        if (userId == null) userId = "";
+        if (userId.length() > 0) {
+            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+		    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
+				   new String[] {String.valueOf(contactId), Constants.MIME_USERID,})
+                    .withValue(ContactsContract.Data.DATA1, userId)
+                    .build());
+	}
+	*/
+
+	String userIdNum = lw.getUserIdNumber();
+        if (userIdNum == null) userIdNum = "";
+        if (userIdNum.length() > 0) {
+            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+		    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
+				   new String[] {String.valueOf(contactId), Constants.MIME_USERID_NUM,})
+                    .withValue(ContactsContract.Data.DATA1, userIdNum)
+                    .build());
+	}
+        String rank = lw.getRank();
+        if (rank == null) rank = "";
+        if (rank != null && rank.length() > 0) {
+            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
+				   new String[] {String.valueOf(contactId), Constants.MIME_RANK,})
+                    .withValue(ContactsContract.Data.DATA1, rank)
+                    .build());
+	}
+	String designator = lw.getDesignator();
+        if (designator == null) designator = "";
+        if (designator != null && designator.length() > 0) {
+            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
+				   new String[] {String.valueOf(contactId), Constants.MIME_DESIGNATOR,})
+                    .withValue(ContactsContract.Data.DATA1, designator)
+                    .build());
+	}
+
+	// Structured name
+	ContentProviderOperation.Builder snb = ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+	    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
+			   new String[] {String.valueOf(contactId), 
+					 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,});
+        String firstname = lw.getName();
+        if (firstname == null) firstname = "";
+        if (firstname.length() > 0) {
+            snb.withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, firstname);
+	}
+        String lastname = lw.getLastName();
+        if (lastname == null) lastname = "";
+        if (lastname.length() > 0) {
+            snb.withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, lastname);
+	}
+        String middlename = lw.getMiddleName();
+        if (middlename == null) middlename = "";
+        if (middlename.length() > 0) {
+            snb.withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, middlename);
+	}
+	ops.add(snb.build());
+
+	// Unit info
+	String unit = lw.getUnit();
+        if (unit == null) unit = "";
+        if (unit.length() > 0)
+            {
+                ContentProviderOperation.Builder opbld = ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI);
+		opbld.withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
+			   new String[] {String.valueOf(contactId), Constants.MIME_UNIT_NAME });
+                opbld.withValue(ContactsContract.Data.DATA1, unit);
+
+                String division = lw.getUnitDivision();
+                if (division == null) division = "";
+                if (division.length() > 0)
+                    {
+                        opbld.withValue(ContactsContract.Data.DATA2, division);
+                    }
+
+                String brigade = lw.getUnitBrigade();
+                if (brigade == null) brigade = "";
+                if (brigade.length() > 0)
+                    {
+                        opbld.withValue(ContactsContract.Data.DATA3, brigade);
+                    }
+
+                String battalion = lw.getUnitBattalion();
+                if (battalion == null) battalion = "";
+                if (battalion.length() > 0)
+                    {
+                        opbld.withValue(ContactsContract.Data.DATA4, battalion);
+                    }
+
+                String company = lw.getUnitCompany();
+                if (company == null) company = "";
+                if (company.length() > 0)
+                    {
+                        opbld.withValue(ContactsContract.Data.DATA5, company);
+                    }
+
+                String platoon = lw.getUnitPlatoon();
+                if (platoon == null) platoon = "";
+                if (platoon.length() > 0)
+                    {
+                        opbld.withValue(ContactsContract.Data.DATA6, platoon);
+                    }
+
+                String squad = lw.getUnitSquad();
+                if (squad == null) squad = "";
+                if (squad.length() > 0)
+                    {
+                        opbld.withValue(ContactsContract.Data.DATA7, squad);
+                    }
+                ops.add(opbld.build());
+            }
+
+	// Apply the content provider operations
+	try {
+            ContentProviderResult[] cpres = cr.applyBatch(ContactsContract.AUTHORITY, ops);
+	    uriToModify = cpres[0].uri;
+        } catch (Exception ex) {
+            Log.e(TAG, "Exception encoutered while updating contact: " + ex.toString());
+	    return null;
+        }
+
+	return uriToModify;
     }
 
     //========================================================
@@ -457,6 +624,16 @@ public class AmmoContacts {
         return null;
     }
 
+    //========================================================
+    // 
+    // deleteContactEntry()
+    // 
+    // Delete an existing contact in the local contacts storage.
+    //========================================================
+    public Uri deleteContactEntry(Contact lw) {
+	return null;
+    }
+
 
     //========================================================
     //
@@ -548,7 +725,8 @@ public class AmmoContacts {
     // populateContactData()
     // 
     //========================================================
-    private void populateContactData(ArrayList<HashMap<String, String>> extraData, AmmoContacts.Contact lw) {
+    private void populateContactData(ArrayList<HashMap<String, String>> extraData, 
+				     AmmoContacts.Contact lw) {
 	Iterator<HashMap<String, String>> it = extraData.iterator();
 	while (it.hasNext()) {
 	    try {
@@ -600,7 +778,8 @@ public class AmmoContacts {
     // getDataForContact()
     // 
     //========================================================
-    private ArrayList<HashMap<String, String>> getDataForContact(String contactId, String[] projection) {
+    private ArrayList<HashMap<String, String>> getDataForContact(String contactId, 
+								 String[] projection) {
 	if (Log.isLoggable(TAG, Log.VERBOSE)) {
 	    Log.d(TAG, "getDataForContact() ");
 	}
@@ -741,12 +920,12 @@ public class AmmoContacts {
 
     //========================================================
     // 
-    // lookupContact()
+    // getContactByLookupKey()
     // 
     //========================================================
     public Contact getContactByLookupKey(String lookupKey) {
         // Retrieve contact with provided uri
-	Log.d(TAG,"lookupContact() ");
+	Log.d(TAG,"getContactByLookupKey() ");
 
         ContentResolver cr = mResolver;
 
@@ -860,12 +1039,77 @@ public class AmmoContacts {
         }
     }
 
-    /*
-    public void deleteContact(Uri contactUri) {
-        // Retrieve contact with provided uri
-        ContentResolver cr = mResolver;
-        cr.delete(contactUri, null, null);
+    //========================================================
+    // 
+    // getContactByUserId()
+    // 
+    //========================================================
+    public Contact getContactByUserId(String userId) {
+	Log.d(TAG,"getContactByUserId() ");
+	return null;
     }
-    */
+
+    //========================================================
+    // 
+    // findExistingContact()
+    // 
+    // Internal utility function to get the URI for an existing 
+    // contact in the database.
+    //========================================================
+    private Uri findExistingContact(Contact lw) {
+	Uri rval = null;
+	Log.d(TAG, "findExistingContact");
+	
+	// Not the nice way to do this...
+	Uri f = Uri.parse("content://" + ContactsContract.AUTHORITY 
+			  + "/data/userid/filter/" + lw.getTigrUid());
+	Log.d(TAG, "  searching for uri = " + f.toString());
+
+	int contactId = -1;
+	try {
+	    String[] projection = {"contact_id", "lookup"};  // more...
+	    Cursor cursor = mResolver.query(f, projection, null, null, null);
+	    if (cursor != null) {
+
+		// <DEBUG>
+		Log.d(TAG, "   cursor size = " + String.valueOf(cursor.getCount()) );
+		Log.d(TAG, " -- examine cursor -- ");
+		for (String proj : cursor.getColumnNames() ) {
+		    Log.d(TAG, "       has column = " + proj + " -- index = "
+			  + cursor.getColumnIndex(proj) );
+		}
+		int dc = cursor.getCount();
+		Log.d(TAG, "       cursor rows: " + String.valueOf(dc));
+		if (dc > 0) {
+		    while (cursor.moveToNext() && (cursor.getPosition() < dc) ) {
+			Log.d(TAG, "          row " + String.valueOf(cursor.getPosition()));
+			// Thing of interest
+			contactId = cursor.getInt(cursor.getColumnIndex("contact_id"));
+			Log.d(TAG, "            contact id: " + String.valueOf(contactId));
+		    }
+		}
+		// </DEBUG>
+	    } else {
+		Log.d(TAG, "null");
+	    }
+	} catch (IllegalArgumentException e) {
+	    Log.e(TAG, "IllegalArgumentException caught: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} catch (Throwable e) {
+	    Log.e(TAG, "An exception occurred: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	}
+	
+	if (contactId > 0) {
+	    rval = Uri.parse("content://com.android.contacts/raw_contacts/" + String.valueOf(contactId));
+	}
+	if (rval != null) {
+	    Log.d(TAG, "            existing contact uri: " + rval.toString());
+	}
+	return rval;
+    }
+
 }
 
