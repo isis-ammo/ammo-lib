@@ -35,8 +35,11 @@ public interface INetPrefKeys {
 	
 	// VALUES
 	public static final String DEFAULT_CORE_DEVICE_ID = null;
-	public static final String DEFAULT_CORE_OPERATOR_KEY = Keys.UserKeys.DEFAULT_PASSWORD;
-	public static final String DEFAULT_CORE_OPERATOR_ID = Keys.UserKeys.DEFAULT_USERNAME;
+	public static final String DEFAULT_CORE_OPERATOR_KEY = 
+			(Keys.UserKeys.DEFAULT_PASSWORD == null) 
+			    ? "" : Keys.UserKeys.DEFAULT_PASSWORD;
+	public static final String DEFAULT_CORE_OPERATOR_ID = 
+			Keys.UserKeys.DEFAULT_USERNAME;
 	
 
 	/**
@@ -94,10 +97,10 @@ public interface INetPrefKeys {
 	// VALUES
 	public static final boolean DEFAULT_MULTICAST_DISABLED = Keys.NetworkingKeys.DEFAULT_MULTICAST_DISABLED;
 	public static final String DEFAULT_MULTICAST_HOST        = "228.10.10.90";
-	public static final String DEFAULT_MULTICAST_PORT        = "9982";
-	public static final String DEFAULT_MULTICAST_NET_CONN    = "20";
-	public static final String DEFAULT_MULTICAST_IDLE_TIME   = "3";
-	public static final String DEFAULT_MULTICAST_TTL         = "1";
+	public static final int DEFAULT_MULTICAST_PORT        = 9982;
+	public static final int DEFAULT_MULTICAST_NET_CONN    = 20;
+	public static final int DEFAULT_MULTICAST_IDLE_TIME   = 3;
+	public static final int DEFAULT_MULTICAST_TTL         = 1;
 
 	
 	/**
@@ -121,10 +124,10 @@ public interface INetPrefKeys {
 	// VALUES
 	public static final boolean DEFAULT_RELIABLE_MULTICAST_DISABLED = Keys.NetworkingKeys.DEFAULT_RELIABLE_MULTICAST_DISABLED;
 	public static final String DEFAULT_RELIABLE_MULTICAST_HOST        = "228.10.10.91";
-	public static final String DEFAULT_RELIABLE_MULTICAST_PORT        = "9982";
-	public static final String DEFAULT_RELIABLE_MULTICAST_NET_CONN    = "20";
-	public static final String DEFAULT_RELIABLE_MULTICAST_IDLE_TIME   = "3";
-	public static final String DEFAULT_RELIABLE_MULTICAST_TTL         = "1";
+	public static final int DEFAULT_RELIABLE_MULTICAST_PORT        = 9982;
+	public static final int DEFAULT_RELIABLE_MULTICAST_NET_CONN    = 20;
+	public static final int DEFAULT_RELIABLE_MULTICAST_IDLE_TIME   = 3;
+	public static final int DEFAULT_RELIABLE_MULTICAST_TTL         = 1;
 
 	/**
 	 * Serial Channel and USB Link Settings
@@ -159,11 +162,11 @@ public interface INetPrefKeys {
 	// VALUES
 	public static final boolean DEFAULT_SERIAL_DISABLED       = Keys.NetworkingKeys.DEFAULT_SERIAL_DISABLED;
 	public static final String DEFAULT_SERIAL_DEVICE            = "/dev/ttyUSB0";
-	public static final String DEFAULT_SERIAL_BAUD_RATE         = "9600";
-	public static final String DEFAULT_SERIAL_SLOT_NUMBER       = "8";
-	public static final String DEFAULT_SERIAL_RADIOS_IN_GROUP   = "16";
-	public static final String DEFAULT_SERIAL_SLOT_DURATION     = "125";
-	public static final String DEFAULT_SERIAL_TRANSMIT_DURATION = "50";
+	public static final int DEFAULT_SERIAL_BAUD_RATE         = 9600;
+	public static final int DEFAULT_SERIAL_SLOT_NUMBER       = 8;
+	public static final int DEFAULT_SERIAL_RADIOS_IN_GROUP   = 16;
+	public static final int DEFAULT_SERIAL_SLOT_DURATION     = 125;
+	public static final int DEFAULT_SERIAL_TRANSMIT_DURATION = 50;
 	public static final boolean DEFAULT_SERIAL_SEND_ENABLED     = true;
 	public static final boolean DEFAULT_SERIAL_RECEIVE_ENABLED  = true;
 
