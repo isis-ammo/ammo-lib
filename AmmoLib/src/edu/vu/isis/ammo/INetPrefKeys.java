@@ -15,6 +15,7 @@ import transapps.settings.Keys;
 
 /**
  * Collection of all preference values used by Ammo.
+ * MAKE SURE THESE CONFORM WITH res/values/preference_keys.xml
  *
  */
 public interface INetPrefKeys {
@@ -67,7 +68,7 @@ public interface INetPrefKeys {
 	public static final String GATEWAY_DISABLED = Keys.NetworkingKeys.GATEWAY_DISABLED;
 	public static final String GATEWAY_HOST = Keys.NetworkingKeys.GATEWAY_HOST;
 	public static final String GATEWAY_PORT = "CORE_IP_PORT";
-	public static final String GATEWAY_FLAT_LINE_TIME = "FLAT_LINE_TIME";
+	public static final String GATEWAY_FLAT_LINE_TIME = "CORE_FLAT_LINE_TIME";
 	public static final String GATEWAY_TIMEOUT = "CORE_SOCKET_TIMEOUT";
 	
 	// VALUES
