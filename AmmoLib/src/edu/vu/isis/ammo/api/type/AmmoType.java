@@ -52,13 +52,16 @@ public abstract class AmmoType implements Parcelable {
 	// Parcelable Support
 	// *********************************
 
-	static public boolean isNull(Parcel source) {
-		return (source.readInt() == 0) ? true : false;
-	}
-	
     /**
 	* Note the null check which matches up with the null check in 'createFromParcel' 
     * mentioned above and implemented in each child class.
+    * There is an expectation that the implementation classes will
+    * have a method like...
+    * 
+    * public static T readFromParcel(Parcel source) {
+	*	if (AmmoType.isNull(source)) return null;
+	*	return new T(source);
+	* }
 	*/
 	static public void writeToParcel(AmmoType that, Parcel dest, int flags) {
 		if (that == null) {
@@ -68,6 +71,11 @@ public abstract class AmmoType implements Parcelable {
 		dest.writeInt( 1 );
 		that.writeToParcel(dest, flags);
 	}
+	
+	static public boolean isNull(Parcel source) {
+		return (source.readInt() == 0) ? true : false;
+	}
+	
 
 	@Override
 	public int describeContents() { return 0; }

@@ -10,140 +10,183 @@ purpose whatsoever, and to have or authorize others to do so.
 */
 package edu.vu.isis.ammo.api.type;
 
-import edu.vu.isis.ammo.api.IAmmoRequest.Event;
-import edu.vu.isis.ammo.api.IAmmoRequest.INotice;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Specifies the Notice in which queued items are to be processed.
+ * The Notice is used to specify intents to generate
+ * as certain thresholds are crossed, and the 
+ * delivery mode to use.
+ * 
+ * A Notice.Item consists of two parts:
+ *  the [[threshold]], which may trigger the notification, and 
+ *  the associated [[mode]].
+ *  
  */
-public class Notice extends AmmoType implements INotice {
 
-    public enum Type {
-      	NONE(0, "no action"),
-      	SENT(1, "Pre serialized"),
-    	ARCHIVED(2, "stored long term"),
-    	RECEIVED(3, "received by a subscriber");
-    	
-    	private final int o;
-    	private final String d;
-    	
-    	private Type(int ordinal, String description) {
-    		this.o = ordinal;
-    		this.d = description;
-    	}
-    }
-    
+public class Notice extends AmmoType  {
+      
+	public class Item {	   
+		public final Threshold threshold;
+		public final Mode mode;
+		
+		private Item(Threshold threshold, Mode mode) {
+			this.threshold = threshold;
+			this.mode = mode;
+		}
 
-    final private Type type;
-    
-   	public int cv() {
-		return this.type.o;
+		@Override
+		public String toString() {
+		return new StringBuilder()
+			.append("threshold [").append(this.threshold).append("], ")
+			.append("mode [").append(this.mode).append("]")
+			.toString();
+		}
 	}
-  
-    // *********************************
-    // Parcelable Support
-    // *********************************
-
-    public static final Parcelable.Creator<Notice> CREATOR = 
-        new Parcelable.Creator<Notice>() {
-
-        @Override
-        public Notice createFromParcel(Parcel source) {
-            return new Notice(source);
-        }
-
-        @Override
-        public Notice[] newArray(int size) {
-            return new Notice[size];
-        }
+	
+	final private List<Item> items;
+	
+	public static Notice newInstance() {
+		return new Notice();
+	}
+	
+	public Item newItem(Threshold threshold, Mode mode) {
+		final Item item = new Item(threshold, mode);
+		this.items.add(item);
+		return item;
+	}
+	/**
+	 * 
+	\paragraph
+	The request progresses through the system.   
+	As it does, it crosses certain thresholds.
+	These thresholds specify triggers where acknowledgements may be generated.
+	\begin{table}[h]
+	\center
+	\begin{tabular}{rl}
+	  Name & Meaning \\ \hline
+	  NONE         & placed under the control of the distributor \\
+	  SENT         & sent over a channel \\
+	  DISPATCHED   & placed under the control of an Android plugin \\
+	  DELIVERED    & a plugin acknowledges delivery of a message  \\
+	  RECEIVED     & a target device acknowledges receipt of a message \\
+	\end{tabular}
+	\caption{message thresholds indicating progress}
+	\end{table}
+	
+	*/
+    public enum Threshold { 
+      SENT, DISPATCHED, 
+      DELIVERED, RECEIVED 
     };
-    public static Notice readFromParcel(Parcel source) {
-    	if (AmmoType.isNull(source)) return null;
-        return new Notice(source);
-    }
+   
+    /**
+     * 
+    \paragraph
+    As acknowledgements of the message are generated they
+    will contain the threshold status.
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-    	plogger.trace("marshall Notice {}", this);
-        dest.writeInt(this.type.ordinal());
-    }
-
-    private Notice(Parcel in) {
-        this.type = Type.values()[in.readInt()];
-    	plogger.trace("unmarshall Notice []", this);
-    }
+    \begin{table}[h]
+    \center
+    \begin{tabular}{rl}
+      Name & Meaning \\ \hline
+      SUCCESS   & the place was reached without incident \\
+      FAIL      & the place was reached, but the request failed and will be canceled   \\
+      UNKNOWN   & the request is of an indeterminate disposition \\
+      REJECTED  & the place rejected the request, another may yet accept it \\
+    \end{tabular}
+    \caption{message acknowlegement states}
+    \end{table}
+    */
+    public enum DeliveryState { SUCCESS, FAIL,  UNKNOWN, REJECTED };
+    
+    /**
+     *  
+	As the request reaches the places mentioned,
+	it will be marked in one of several delivery states.
+	These are all final delivery state, with the exception of "REJECTED".
+	"REJECTED" is mutable because although one target rejects a task, 
+	another receiver may accept.
+	
+	\begin{description}
+	  \item[ACTIVITY] start an activity with the intent
+	  \item[BROADCAST] broadcast the intent  
+	  \item[SERVICE] start a service with the intent
+	\end{description}
+	
+	The structure of the intent varies based on the NoticeThreshold type.
+	*/
+    
+    public enum Mode { NONE, ACTIVITY, BROADCAST, SERVICE };
+ 
 
 	// *********************************
-    // IAmmoRequest Support
-    // *********************************
+	// Parcelable Support
+	// *********************************
+
+	public static final Parcelable.Creator<Notice> CREATOR = 
+			new Parcelable.Creator<Notice>() {
+
+		@Override
+		public Notice createFromParcel(Parcel source) {
+			return new Notice(source);
+		}
+		@Override
+		public Notice[] newArray(int size) {
+			return new Notice[size];
+		}
+	};
 	
-    public Notice(String val) {
-    	if (val.contains("N")) { this.type = Type.NONE; return; }
-        if (val.contains("S")) { this.type = Type.SENT; return; }
-        if (val.contains("R")) { this.type = Type.RECEIVED; return; }
-        if (val.contains("A")) { this.type = Type.ARCHIVED; return; }
-        this.type = Type.NONE;
-    }
-    
-    public Notice(Type val) {
-        this.type = val;
-    }
-    
-    public Type type() { return this.type; }
-    
-    final public static Notice NONE = new Notice(Type.NONE);
-    final public static Notice SENT = new Notice(Type.SENT);
-    final public static Notice RECEIVED = new Notice(Type.RECEIVED);
-    final public static Notice ARCHIVED = new Notice(Type.ARCHIVED);
-    
-    @Override
-    public String toString() {
-    	return new StringBuilder().append(this.type.d).toString();
-    }
-
-	@Override
-	public Event target() {
-		// TODO Auto-generated method stub
-		return null;
+	public static Notice readFromParcel(Parcel source) {
+		if (AmmoType.isNull(source)) return null;
+		return new Notice(source);
 	}
 
 	@Override
-	public Notice target(Event val) {
-		// TODO Auto-generated method stub
-		return null;
+	public void writeToParcel(Parcel dest, int flags) {
+		plogger.trace("marshall notice {}", this);
+		dest.writeInt(this.items.size());
+		for (Item item : this.items ) {
+			dest.writeInt(item.threshold.ordinal());
+			dest.writeInt(item.mode.ordinal());
+		}
 	}
 
-	@Override
-	public Event source() {
-		// TODO Auto-generated method stub
-		return null;
+	private Notice(Parcel in) {
+		final int count = in.readInt();
+		this.items = new ArrayList<Item>(count);
+		for (int ix = 0; ix < count; ++ix) {
+			final Threshold threshold = Threshold.values()[in.readInt()];
+			final Mode mode = Mode.values()[in.readInt()];
+			this.items.add(new Item(threshold, mode));
+		}
+		plogger.trace("unmarshall notice {}", this);
 	}
 
+	// *********************************
+	// Standard Methods
+	// *********************************
 	@Override
-	public Notice source(Event val) {
-		// TODO Auto-generated method stub
-		return null;
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+	        sb.append("notice :");
+		for (Item item : this.items){ 
+		    sb.append('\n')
+		      .append("@ [").append(item.threshold).append("]")
+			  .append("->[").append(item.mode).append("]");
+		}
+		return sb.toString();
 	}
 
-	@Override
-	public boolean act() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	// *********************************
+	// IAmmoReques Support
+	// *********************************
 
-	@Override
-	public Object action() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Notice action(Object val) {
-		// TODO Auto-generated method stub
-		return null;
+	private Notice() {
+		this.items = new ArrayList<Item>();
 	}
 
 }
-

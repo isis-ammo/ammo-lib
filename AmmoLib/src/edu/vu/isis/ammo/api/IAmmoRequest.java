@@ -20,11 +20,10 @@ import edu.vu.isis.ammo.api.type.TimeStamp;
 public interface IAmmoRequest {
    public IAmmoRequest replace(IAmmoRequest req) throws RemoteException;
    public IAmmoRequest replace(String uuid) throws RemoteException;
-   public Event[] cancel(); 
+   public void cancel(); 
    public void metricTimespan(Integer val);
    public TimeStamp lastMessage();
    public void resetMetrics(Integer val);
-   public Event[] eventSet(); 
    public static final Uri PROVIDER_DEFAULT = null;
    public static final String PAYLOAD_DEFAULT = "";
    public static final Moment MOMENT_APRIORI = Moment.APRIORI;
@@ -34,6 +33,7 @@ public interface IAmmoRequest {
    public static final Moment MOMENT_DEFAULT = MOMENT_LAZY ;
 
    public static final String TOPIC_DEFAULT = "";
+   public static final String SUBTOPIC_DEFAULT = "";
 
    public static final TimeInterval EXPIRE_UNLIMITED = 
          new TimeInterval(TimeInterval.UNLIMITED);
@@ -54,12 +54,6 @@ public interface IAmmoRequest {
    public static final Order ORDER_NEWEST_FIRST = Order.NEWEST_FIRST;
 
    public static final Order ORDER_DEFAULT = ORDER_OLDEST_FIRST ;
-   public static final Notice NOTICE_NONE = Notice.NONE;
-   public static final Notice NOTICE_RECEIVED = Notice.RECEIVED;
-   public static final Notice NOTICE_GATEWAY = Notice.SENT;
-   public static final Notice NOTICE_ARCHIVAL = Notice.ARCHIVED;
-
-   public static final Notice NOTICE_DEFAULT = NOTICE_NONE ;
    public static final Integer WORTH_DEFAULT = 100;
 
    public static final TimeInterval START_DEFAULT = 
@@ -76,7 +70,7 @@ public interface IAmmoRequest {
    public static final String FILTER_DEFAULT = FILTER_NO ;
    public static final Integer DOWNSAMPLE_NO = 0;
    public static final Integer DOWNSAMPLE_DEFAULT = DOWNSAMPLE_NO ;
-   
+   public static final Notice NOTICE_DEFAULT = null;
    public static final IAnon ANON_ANY = null;
    public static final IAnon RECIPIENT_DEFAULT = ANON_ANY ;
    public static final IAnon ORIGINATOR_DEFAULT = ANON_ANY ;
@@ -100,13 +94,22 @@ public interface IAmmoRequest {
       public IAmmoRequest retrieve() throws RemoteException;
       public IAmmoRequest getInstance(String uuid) throws RemoteException;
       public void releaseInstance();
+      public Builder notice(Notice.Threshold threshold, Notice.Mode mode);
+      public Builder notice(Notice val);
         public Builder provider(Uri val);
         public Builder payload(String val);
         public Builder payload(byte[] val);
         public Builder payload(ContentValues val);
         public Builder payload(AmmoValues val);
         public Builder topic(String val);
+        public Builder subtopic(String val);
+        public Builder topic(String major, String minor);
+
         public Builder topic(Oid val); 
+        public Builder subtopic(Oid val);
+        public Builder topic(Oid major, Oid minor); 
+
+
         // \availability{2.0}
         public Builder uid(String val);
         public Builder expire(TimeInterval val);
@@ -122,7 +125,6 @@ public interface IAmmoRequest {
         public Builder originator(String val);
         public Builder priority(Integer val);
         public Builder order(Order val);
-        public Builder notices(Notice val);
         public Builder worth(Integer val);
         public Builder start(TimeStamp val); 
         public Builder start(TimeInterval val); 
@@ -178,28 +180,5 @@ public interface IAmmoRequest {
       public Query args(String[] val);
    }
    public interface Form extends Map<String, String> {}
-   public enum DeliveryProgress { 
-      DISPATCHED, DISTRIBUTED, 
-      DELIVERED, COMPLETED 
-   };
-   public enum DeliveryState { SUCCESS, FAIL,  UNKNOWN, REJECTED };
-   public interface Event {
-      public DeliveryProgress progress();
-      public Event progress(DeliveryProgress val);
-      
-      public DeliveryState state();
-      public Event state(DeliveryState val);
-   }
-   public interface INotice {
-      public Event target();
-      public Notice target(Event val);
-
-      public Event source();
-      public Notice source(Event val);
-         
-      public boolean act();
-      public Object action();
-      public Notice action(Object val);
-   }
 
 }

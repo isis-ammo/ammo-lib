@@ -62,6 +62,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	final public Payload payload;
 	final public Moment moment;
 	final public Topic topic;
+	final public Topic subtopic;
 
 	final public Integer downsample;
 	final public Integer durability;
@@ -83,6 +84,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	final public Selection select;
 
 	final public Integer worth;
+	final public Notice notice;
 
 	@Override
 	public String toString() {
@@ -108,7 +110,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		    	final int capacity = source.dataCapacity();
 		    	final byte[] data = new byte[capacity];
 		    	source.unmarshall(data, 0, capacity);
-			plogger.error("PARCEL UNMARSHALLING PROBLEM: {} {}", 
+			    plogger.error("PARCEL UNMARSHALLING PROBLEM: {} {}", 
 				data, ex); 
 			return null;
 		    }
@@ -144,6 +146,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		Moment.writeToParcel(this.moment, dest, flags);
 		plogger.trace("topic {}", this.topic);
 		Topic.writeToParcel(this.topic, dest, flags);
+		Topic.writeToParcel(this.subtopic, dest, flags);
 
 		plogger.trace("recipient {}", this.recipient);
 		Anon.writeToParcel(this.recipient, dest, flags);
@@ -173,7 +176,10 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		dest.writeValue(this.throttle);
 		plogger.trace("worth {}", this.worth);
 		dest.writeValue(this.worth);
-
+		
+		plogger.trace("notice {}", this.notice);
+		Notice.writeToParcel(this.notice, dest, flags);
+		
 		plogger.trace("selection {}", this.select);
 		Selection.writeToParcel(this.select, dest, flags);
 		plogger.trace("projection {}", this.project);
@@ -213,6 +219,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		plogger.trace("moment {}", this.moment);
 		this.topic = Topic.readFromParcel(in);
 		plogger.trace("topic {}", this.topic);
+		this.subtopic = Topic.readFromParcel(in);
+		plogger.trace("subtopic {}", this.subtopic);
 
 		this.recipient = Anon.readFromParcel(in);
 		plogger.trace("recipient {}", this.recipient);
@@ -244,6 +252,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		this.worth = (Integer) in.readValue(Integer.class.getClassLoader());
 		plogger.trace("worth {}", this.worth);
 
+		this.notice = Notice.readFromParcel(in);
+		plogger.trace("notice {}", this.notice);
+		
 		this.select = Selection.readFromParcel(in);
 		plogger.trace("selection {}", this.select);
 		this.project = in.createStringArray();
@@ -269,6 +280,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		this.moment = builder.moment;
 
 		this.topic = builder.topic;
+		this.subtopic = builder.subtopic;
 
 		this.downsample = builder.downsample;
 		this.durability = builder.durability;
@@ -290,6 +302,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		this.select = builder.select;
 
 		this.worth = builder.worth;
+		this.notice = builder.notice;
 
 		this.uuid = UUID.randomUUID().toString();
 	}
@@ -333,20 +346,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public Event[] cancel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	// **************
 	// STATISTICS
 	// **************
-	@Override
-	public Event[] eventSet() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public TimeStamp lastMessage() {
@@ -422,6 +424,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		private Payload payload;
 		private Moment moment;
 		private Topic topic;
+		private Topic subtopic;
 
 		private Integer downsample;
 		private Integer durability;
@@ -443,6 +446,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		private Selection select;
 
 		private Integer worth;
+		private Notice notice;
 
 		// ***************
 		// ACTIONS
@@ -551,6 +555,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.start(START_DEFAULT);
 			this.throttle(THROTTLE_DEFAULT);
 			this.topic(TOPIC_DEFAULT);
+			this.subtopic(SUBTOPIC_DEFAULT);
 			this.uid(UID_DEFAULT);
 			this.expire(EXPIRE_DEFAULT);
 			this.project(PROJECT_DEFAULT);
@@ -733,6 +738,32 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			return this;
 		}
 
+
+		@Override
+		public Builder subtopic(String val) {
+			this.subtopic = new Topic(val);
+			return this;
+		}
+
+		@Override
+		public Builder subtopic(Oid val) {
+			this.subtopic = new Topic(val);
+			return this;
+		}
+
+		@Override
+		public Builder topic(String topic, String subtopic) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Builder topic(Oid topic, Oid subtopic) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		
 		@Override
 		public Builder uid(String val) {
 			this.uid = val;
@@ -844,13 +875,34 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.worth = val;
 			return this;
 		}
-
-		@Override
-		public edu.vu.isis.ammo.api.IAmmoRequest.Builder notices(Notice val) {
-			// TODO Auto-generated method stub
-			return null;
+		
+		/**
+		 *  This notice method is cumulative.
+		 *  To clear the notice use the other notice().
+		 */
+		public Builder notice(Notice.Threshold threshold, Notice.Mode mode) {
+			if (this.notice == null) this.notice = Notice.newInstance();
+			this.notice.newItem(threshold, mode);
+			return this;
 		}
 
+		/**
+		 *  This notice method is *not* cumulative.
+		 *  It replaces the current notice object with the argument.
+		 *  The notice set can be cleared by using this method
+		 *  with a null object.
+		 */
+		@Override
+		public Builder notice(Notice val) {
+			this.notice = val;
+			return this;
+		}
+	}
+
+	@Override
+	public void cancel() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
