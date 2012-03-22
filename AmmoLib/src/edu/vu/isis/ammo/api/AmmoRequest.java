@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -721,6 +722,13 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			return this;
 		}
 
+		public Builder topicFromProvider() {
+			final ContentResolver cr = this.context.getContentResolver();
+			final String val = cr.getType(this.provider.asUri());
+			this.topic = new Topic(val);
+			return this;
+		}
+		
 		@Override
 		public Builder topic(String val) {
 			this.topic = new Topic(val);
