@@ -71,10 +71,7 @@ public interface IAmmoRequest {
    public static final Integer DOWNSAMPLE_NO = 0;
    public static final Integer DOWNSAMPLE_DEFAULT = DOWNSAMPLE_NO ;
    public static final Notice NOTICE_DEFAULT = null;
-   public static final IAnon ANON_ANY = null;
-   public static final IAnon RECIPIENT_DEFAULT = ANON_ANY ;
-   public static final IAnon ORIGINATOR_DEFAULT = ANON_ANY ;
-
+   
    public static final DeliveryScope SCOPE_DEFAULT = DeliveryScope.GLOBAL;
    public static final Integer THROTTLE_UNLIMITED = -1;
 
@@ -87,14 +84,12 @@ public interface IAmmoRequest {
       public IAmmoRequest duplicate() throws RemoteException;
       public Builder reset();
       public IAmmoRequest post() throws RemoteException;
-      public IAmmoRequest directedSubscribe(IAnon originator) throws RemoteException;
-      public IAmmoRequest directedPost(IAnon recipient) throws RemoteException;
-      public IAmmoRequest publish() throws RemoteException;
+      public IAmmoRequest interest() throws RemoteException;
       public IAmmoRequest subscribe() throws RemoteException;
       public IAmmoRequest retrieve() throws RemoteException;
       public IAmmoRequest getInstance(String uuid) throws RemoteException;
       public void releaseInstance();
-      public Builder notice(Notice.Threshold threshold, Notice.Mode mode);
+      public Builder notice(Notice.Threshold threshold, Notice.Via via);
       public Builder notice(Notice val);
         public Builder provider(Uri val);
         public Builder payload(String val);
@@ -119,10 +114,6 @@ public interface IAmmoRequest {
         public Builder durability(Integer val);
         public Builder moment(String val);
         public Builder moment(Moment val);
-        public Builder recipient(IAnon val);
-        public Builder recipient(String val);
-        public Builder originator(IAnon val);
-        public Builder originator(String val);
         public Builder priority(Integer val);
         public Builder order(Order val);
         public Builder worth(Integer val);
@@ -137,17 +128,14 @@ public interface IAmmoRequest {
         public Builder select(Form val); 
    }
    public enum Action {
-     POSTAL, DIRECTED_POSTAL, PUBLISH, RETRIEVAL, SUBSCRIBE, DIRECTED_SUBSCRIBE;
+     POSTAL, RETRIEVAL, INTEREST;
 
      @Override
      public String toString() {
          switch (this) {
          case POSTAL: return "POSTAL";
-         case DIRECTED_POSTAL: return "DIRECTED POST";
-         case PUBLISH: return "PUBLISH";
          case RETRIEVAL: return "RETRIEVAL";
-         case SUBSCRIBE: return "SUBSCRIBE";
-         case DIRECTED_SUBSCRIBE: return "DIRECTED SUBSCRIBE";
+         case INTEREST: return "INTEREST";
          default: 
              return null;
          }
@@ -161,18 +149,6 @@ public interface IAmmoRequest {
      }
    };
 
-   public interface IAnon {
-      public String name(); // canonical name
-   }
-
-   public interface Warfighter extends IAnon {
-      public String callSign();
-      public String[] groups();
-      public String tigr(); 
-   }
-
-   public interface Group extends IAnon {}
-   public interface Server extends IAnon {}
    public interface Query {
       public String select();
       public String[] args();

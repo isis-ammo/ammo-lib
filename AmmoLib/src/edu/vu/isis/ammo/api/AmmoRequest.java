@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -30,7 +29,6 @@ import android.os.Parcel;
 import android.os.ParcelFormatException;
 import android.os.Parcelable;
 import android.os.RemoteException;
-import edu.vu.isis.ammo.api.type.Anon;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Limit;
 import edu.vu.isis.ammo.api.type.Moment;
@@ -67,9 +65,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 	final public Integer downsample;
 	final public Integer durability;
-
-	final public Anon recipient;
-	final public Anon originator;
 
 	final public Integer priority;
 	final public Order order;
@@ -149,11 +144,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		Topic.writeToParcel(this.topic, dest, flags);
 		Topic.writeToParcel(this.subtopic, dest, flags);
 
-		plogger.trace("recipient {}", this.recipient);
-		Anon.writeToParcel(this.recipient, dest, flags);
-		plogger.trace("originator {}", this.originator);
-		Anon.writeToParcel(this.originator, dest, flags);
-
 		plogger.trace("downsample {}", this.downsample);
 		dest.writeValue(this.downsample);
 		plogger.trace("durabliity {}", this.durability);
@@ -223,11 +213,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		this.subtopic = Topic.readFromParcel(in);
 		plogger.trace("subtopic {}", this.subtopic);
 
-		this.recipient = Anon.readFromParcel(in);
-		plogger.trace("recipient {}", this.recipient);
-		this.originator = Anon.readFromParcel(in);
-		plogger.trace("originator {}", this.originator);
-
 		this.downsample = (Integer) in.readValue(Integer.class.getClassLoader());
 		plogger.trace("downsample {}", this.downsample);
 		this.durability = (Integer) in.readValue(Integer.class.getClassLoader());
@@ -285,9 +270,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		this.downsample = builder.downsample;
 		this.durability = builder.durability;
-
-		this.recipient = builder.recipient;
-		this.originator = builder.originator;
 
 		this.priority = builder.priority;
 		this.order = builder.order;
@@ -430,9 +412,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		private Integer downsample;
 		private Integer durability;
 
-		private Anon recipient;
-		private Anon originator;
-
 		private Integer priority;
 		private Order order;
 
@@ -487,24 +466,10 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		@Override
-		public IAmmoRequest directedPost(IAmmoRequest.IAnon recipient) throws RemoteException {
-			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.DIRECTED_POSTAL, this));
-		}
-
-		@Override
-		public IAmmoRequest directedSubscribe(IAmmoRequest.IAnon originator) throws RemoteException {
-			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.DIRECTED_SUBSCRIBE, this));
-		}
-
-		@Override
 		public IAmmoRequest post() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.POSTAL, this));
 		}
 
-		@Override
-		public IAmmoRequest publish() throws RemoteException {
-			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.PUBLISH, this));
-		}
 
 		@Override
 		public IAmmoRequest retrieve() throws RemoteException {
@@ -513,7 +478,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		@Override
 		public IAmmoRequest subscribe() throws RemoteException {
-			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.SUBSCRIBE, this));
+			return this.interest();
+		}
+		
+		@Override
+		public IAmmoRequest interest() throws RemoteException {
+			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.INTEREST, this));
 		}
 
 		@Override
@@ -546,12 +516,10 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.downsample(DOWNSAMPLE_DEFAULT);
 			this.durability(DURABILITY_DEFAULT);
 			this.order(ORDER_DEFAULT);
-			this.originator(ORIGINATOR_DEFAULT);
 			this.payload(PAYLOAD_DEFAULT);
 			this.moment(MOMENT_DEFAULT);
 			this.priority(PRIORITY_DEFAULT);
 			this.provider(PROVIDER_DEFAULT);
-			this.recipient(RECIPIENT_DEFAULT);
 			this.scope(SCOPE_DEFAULT);
 			this.start(START_DEFAULT);
 			this.throttle(THROTTLE_DEFAULT);
@@ -601,34 +569,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		@Override
 		public Builder order(Order val) {
 			this.order = val;
-			return this;
-		}
-
-		@Override
-		public Builder originator(IAmmoRequest.IAnon val) {
-			this.originator = (Anon) val;
-			return this;
-		}
-
-		@Override
-		public Builder originator(String val) {
-			if (val == null)
-				return this;
-			this.originator = new Anon(val);
-			return this;
-		}
-
-		@Override
-		public Builder recipient(IAmmoRequest.IAnon val) {
-			this.recipient = (Anon) val;
-			return this;
-		}
-
-		@Override
-		public Builder recipient(String val) {
-			if (val == null)
-				return this;
-			this.recipient = new Anon(val);
 			return this;
 		}
 
@@ -727,13 +667,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			return this;
 		}
 
-		public Builder topicFromProvider() {
-			final ContentResolver cr = this.context.getContentResolver();
-			final String val = cr.getType(this.provider.asUri());
-			this.topic = new Topic(val);
-			return this;
-		}
-		
 		@Override
 		public Builder topic(String val) {
 			this.topic = new Topic(val);
@@ -888,9 +821,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		 *  This notice method is cumulative.
 		 *  To clear the notice use the other notice().
 		 */
-		public Builder notice(Notice.Threshold threshold, Notice.Mode mode) {
+		public Builder notice(Notice.Threshold threshold, Notice.Via mode) {
 			if (this.notice == null) this.notice = Notice.newInstance();
-			this.notice.newItem(threshold, mode);
+			this.notice.setItem(threshold, mode);
 			return this;
 		}
 

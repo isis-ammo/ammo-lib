@@ -31,9 +31,9 @@ public class Notice extends AmmoType  {
       
 	public class Item {	   
 		public final Threshold threshold;
-		public final Mode mode;
+		public final Via mode;
 		
-		private Item(Threshold threshold, Mode mode) {
+		private Item(Threshold threshold, Via mode) {
 			this.threshold = threshold;
 			this.mode = mode;
 		}
@@ -47,17 +47,10 @@ public class Notice extends AmmoType  {
 		}
 	}
 	
-	final private List<Item> items;
-	
 	public static Notice newInstance() {
 		return new Notice();
 	}
-	
-	public Item newItem(Threshold threshold, Mode mode) {
-		final Item item = new Item(threshold, mode);
-		this.items.add(item);
-		return item;
-	}
+
 	/**
 	 * 
 	\paragraph
@@ -82,11 +75,42 @@ public class Notice extends AmmoType  {
       SENT, DISPATCHED, 
       DELIVERED, RECEIVED 
     };
-   
+    
+    final private List<Item> items;
+ 	private Item whenSent; 
+ 	private Item whenDispatched;
+ 	private Item whenDelivered; 
+ 	private Item whenReceived;
+ 	
+ 	public Item whenSent() { return whenSent; }
+ 	public Item whenDispatched() { return whenDispatched; }
+ 	public Item whenDelivered() { return whenDelivered; }
+ 	public Item whenReceived() { return whenReceived; }
+	
+	public Item setItem(Threshold threshold, Via via) {
+		final Item item = new Item(threshold, via);
+		//this.items.add(item);
+		switch (threshold) {
+		case SENT:
+			whenSent = item;
+			break;
+		case DISPATCHED:
+			whenDispatched = item;
+			break;
+		case DELIVERED:
+			whenDelivered = item;
+			break;
+		case RECEIVED:
+			whenReceived = item;
+		    break;
+		}
+		return item;
+	}
+	
     /**
      * 
     \paragraph
-    As acknowledgements of the message are generated they
+    As acknowledgments of the message are generated they
     will contain the threshold status.
 
     \begin{table}[h]
@@ -98,7 +122,7 @@ public class Notice extends AmmoType  {
       UNKNOWN   & the request is of an indeterminate disposition \\
       REJECTED  & the place rejected the request, another may yet accept it \\
     \end{tabular}
-    \caption{message acknowlegement states}
+    \caption{message acknowledgment states}
     \end{table}
     */
     public enum DeliveryState { SUCCESS, FAIL,  UNKNOWN, REJECTED };
@@ -120,7 +144,7 @@ public class Notice extends AmmoType  {
 	The structure of the intent varies based on the NoticeThreshold type.
 	*/
     
-    public enum Mode { NONE, ACTIVITY, BROADCAST, SERVICE };
+    public enum Via { NONE, ACTIVITY, BROADCAST, SERVICE };
  
 
 	// *********************************
@@ -149,6 +173,7 @@ public class Notice extends AmmoType  {
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("marshall notice {}", this);
 		dest.writeInt(this.items.size());
+		
 		for (Item item : this.items ) {
 			dest.writeInt(item.threshold.ordinal());
 			dest.writeInt(item.mode.ordinal());
@@ -160,8 +185,8 @@ public class Notice extends AmmoType  {
 		this.items = new ArrayList<Item>(count);
 		for (int ix = 0; ix < count; ++ix) {
 			final Threshold threshold = Threshold.values()[in.readInt()];
-			final Mode mode = Mode.values()[in.readInt()];
-			this.items.add(new Item(threshold, mode));
+			final Via via = Via.values()[in.readInt()];
+			this.items.add(this.setItem(threshold, via));
 		}
 		plogger.trace("unmarshall notice {}", this);
 	}
@@ -187,6 +212,10 @@ public class Notice extends AmmoType  {
 
 	private Notice() {
 		this.items = new ArrayList<Item>();
+		this.setItem(Threshold.SENT, Via.NONE);
+	 	this.setItem(Threshold.DISPATCHED, Via.NONE);
+	 	this.setItem(Threshold.DELIVERED, Via.NONE);
+	 	this.setItem(Threshold.RECEIVED, Via.NONE);
 	}
 
 }
