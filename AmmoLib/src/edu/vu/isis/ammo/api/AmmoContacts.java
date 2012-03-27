@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.lang.ArrayIndexOutOfBoundsException;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
@@ -234,6 +235,15 @@ public class AmmoContacts {
 	    } else {
 		this.designator = val.substring(0,1);
 	    }
+            return this;
+        }
+
+	private int rawContactId;
+	public int getRawContactId() {
+            return this.rawContactId;
+        }
+	public Contact setRawContactId(int val) {
+            this.rawContactId = val;
             return this;
         }
 
@@ -716,9 +726,19 @@ public class AmmoContacts {
 		// Populate results container 
 		AmmoContacts.Contact lw = new AmmoContacts.Contact();
 		String[] names = displayName.split(" ");
-		lw.setName(names[0]); 
-		lw.setLastName(names[1]);
+		if (names.length > 0) {
+		    if (names[0] != null) {
+			lw.setName(names[0]); 
+		    }
+		}
+		if (names.length > 1) {
+		    if (names[1] != null) {
+			lw.setLastName(names[1]);
+		    }
+		}
+
 		lw.setLookup(lookupKey);
+		lw.setRawContactId(Integer.parseInt(contactId));
 
 		// Get "other" data for this contact, i.e. with data query
 		String[] dataProjection = {"mimetype","data1","data2","data3","data4"};
@@ -739,6 +759,9 @@ public class AmmoContacts {
 	    Log.e(TAG, "Cursor out of bounds: " + e.getMessage());
 	    e.printStackTrace();
 	    return null;
+	} catch (ArrayIndexOutOfBoundsException e) {
+	    Log.e(TAG, "Array index out of bounds: " + e.getMessage());
+	    e.printStackTrace();
 	} catch (Throwable e) {
 	    Log.e(TAG, "Exception: " + e.getMessage());
 	    e.printStackTrace();
@@ -919,6 +942,7 @@ public class AmmoContacts {
 		    continue;
 		}
 		lw.setLookup(lookupKey);
+		lw.setRawContactId(Integer.parseInt(contactId)); 
 		
 		String[] dataProjection = {"mimetype","data1","data2","data3","data4"};
 		ArrayList<HashMap<String, String>> extraData = getDataForContact(contactId, dataProjection);
@@ -1091,6 +1115,55 @@ public class AmmoContacts {
 	Uri rval = null;
 	Log.d(TAG, "findExistingContact");
 	
+	// Brute force search of all existing contacts
+
+	// First get list of all contacts
+	//ArrayList<Contact> allContacts = getAllContacts();
+	ArrayList<Contact> allContacts = searchForContact(lw.getTigrUid());
+	if (allContacts == null) {
+	    Log.d(TAG, "  Query returned no results (null)");
+	    return rval;
+	}
+	
+	// Then search the list for a match with this contact
+	Log.d(TAG, "  Found " + String.valueOf(allContacts.size()) + " contacts");
+	Iterator<AmmoContacts.Contact> it = allContacts.iterator();
+	int contactId = -1;
+	while (it.hasNext()) {
+	    try {
+		Contact f = it.next();
+		String name = f.getName();
+		String lname = f.getLastName();
+		Contact g = getContactByLookupKey(f.getLookup());
+		if (Log.isLoggable(TAG, Log.VERBOSE)) {
+		    Log.d(TAG, "   " + name + " " + lname+ ";");
+		}
+
+		if (lw.getTigrUid().equals(g.getTigrUid())) {
+		    contactId = f.getRawContactId();
+		    if (Log.isLoggable(TAG, Log.VERBOSE)) {
+			Log.d(TAG, "   -> MATCH:   contact id = " + String.valueOf(contactId));
+		    }		    
+		    break;
+		}
+	    } catch (NoSuchElementException e) {
+		Log.e(TAG, "NoSuchElementException: " + e.getMessage());
+		e.printStackTrace();
+		continue;
+	    }
+	}
+
+	if (contactId > 0) {
+	    rval = Uri.parse("content://com.android.contacts/raw_contacts/" + String.valueOf(contactId));
+	}
+	if (rval != null) {
+	    if (Log.isLoggable(TAG, Log.VERBOSE)) {
+		Log.d(TAG, "            existing contact uri: " + rval.toString());
+	    }
+	}
+
+	// TODO: re-plumb the below to do a userid lookup rather than filter
+	/*
 	// Not the nice way to do this...
 	Uri f = Uri.parse("content://" + ContactsContract.AUTHORITY 
 			  + "/data/userid/filter/" + lw.getTigrUid());
@@ -1139,6 +1212,7 @@ public class AmmoContacts {
 	if (rval != null) {
 	    Log.d(TAG, "            existing contact uri: " + rval.toString());
 	}
+	*/
 	return rval;
     }
 
