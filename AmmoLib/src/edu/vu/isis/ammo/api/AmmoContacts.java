@@ -222,7 +222,7 @@ public class AmmoContacts {
         }
 
 	private String designator;
-	private final int designatorLength = 2;
+	private final int designatorLength = 3;
 	public String getDesignator() {
             return this.designator;
         }
