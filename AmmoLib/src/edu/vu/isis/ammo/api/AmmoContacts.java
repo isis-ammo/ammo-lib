@@ -1116,10 +1116,68 @@ public class AmmoContacts {
     // 
     // getContactByUserId()
     // 
+    // Given a contact's username, retrieve other data for this
+    // contact and return it in a Contact object.
     //========================================================
     public Contact getContactByUserId(String userId) {
 	Log.d(TAG,"getContactByUserId() ");
-	return null;
+	Uri rval = null;
+
+	Uri f = Uri.parse("content://" + ContactsContract.AUTHORITY 
+			  + "/data/userid/" + userId);
+	Log.d(TAG, "  searching for uri = " + f.toString());
+
+	int contactId = -1;
+	Cursor cursor = null;
+	try {
+	    String[] projection = {"contact_id", "lookup"};  // more...
+	    cursor = mResolver.query(f, projection, null, null, null);
+	    if (cursor == null) {
+		Log.e(TAG, "getContactByUserId() -- cursor is null");
+		return null;
+	    }
+	} catch (Throwable e) {
+	    Log.e(TAG, "An exception occurred: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	}
+	
+	// Process the query's output
+	try {
+	    int count = cursor.getCount();	    
+	    if (count < 1) {
+		return null;
+	    }
+
+	    cursor.moveToFirst();
+	    String contactIdStr = cursor.getString(0);
+
+	    AmmoContacts.Contact lw = new AmmoContacts.Contact();
+	    lw.setUserIdNumber(cursor.getString(1) );
+
+	    // Get other data for this contact
+	    String[] dataProjection = {"mimetype","data1","data2","data3","data4"};
+	    ArrayList<HashMap<String, String>> otherData = getDataForContact(contactIdStr, dataProjection);
+	    if (otherData != null) {
+		populateContactData(otherData, lw);
+	    }
+
+	    return lw;
+	} catch (IllegalArgumentException e) { 
+	    Log.e(TAG, "IllegalArgumentException: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} catch (CursorIndexOutOfBoundsException e) {
+	    Log.e(TAG, "Cursor out of bounds: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} catch (Throwable e) {
+	    Log.e(TAG, "Exception: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} finally {
+            cursor.close();
+        }
     }
 
     //========================================================
