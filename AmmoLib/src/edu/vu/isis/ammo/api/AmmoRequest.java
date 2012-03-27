@@ -694,14 +694,28 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		@Override
 		public Builder topic(String topic, String subtopic) {
-			// TODO Auto-generated method stub
-			return null;
+			this.topic(topic);
+			this.subtopic(subtopic);
+			return this;
 		}
 
 		@Override
 		public Builder topic(Oid topic, Oid subtopic) {
-			// TODO Auto-generated method stub
-			return null;
+			this.topic(topic);
+			this.subtopic(subtopic);
+			return this;
+		}
+		
+		public Builder topicFromProvider() {
+			if (this.provider == null) {
+				logger.error("you must first set the provider");
+				return this;
+			}
+			final String topic = this.context
+					 .getContentResolver()
+					 .getType(this.provider.asUri());
+			this.topic(topic);
+			return this;
 		}
 		
 		
