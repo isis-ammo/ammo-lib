@@ -222,6 +222,7 @@ public class AmmoContacts {
         }
 
 	private String designator;
+	private final int designatorLength = 2;
 	public String getDesignator() {
             return this.designator;
         }
@@ -229,11 +230,11 @@ public class AmmoContacts {
             return this.designator.toCharArray();
         }
 	public Contact setDesignator(String val) {
-	    // Designator is defined as only two characters -- enforce this
-	    if (val.length() <= 2) {
+	    // Designator is defined as exactly N characters -- enforce this
+	    if (val.length() <= designatorLength) {
 		this.designator = val;
 	    } else {
-		this.designator = val.substring(0,1);
+		this.designator = val.substring(0,designatorLength - 1);
 	    }
             return this;
         }
@@ -342,6 +343,15 @@ public class AmmoContacts {
                     .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
 				   new String[] {String.valueOf(contactId), Constants.MIME_DESIGNATOR,})
                     .withValue(ContactsContract.Data.DATA1, designator)
+                    .build());
+	}
+	String branch = lw.getBranch();
+        if (branch == null) branch = "";
+        if (branch != null && branch.length() > 0) {
+            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
+				   new String[] {String.valueOf(contactId), Constants.MIME_BRANCH,})
+                    .withValue(ContactsContract.Data.DATA1, branch)
                     .build());
 	}
 
@@ -575,6 +585,14 @@ public class AmmoContacts {
                     .withValue(ContactsContract.Data.DATA1, rank)
                     .build());
 
+	String branch = lw.getBranch();
+        if (branch == null) branch = "";
+        if (branch.length() > 0)
+            ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE, Constants.MIME_BRANCH)
+                    .withValue(ContactsContract.Data.DATA1, branch)
+                    .build());
 
         ContentProviderOperation.Builder snb = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
             .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
