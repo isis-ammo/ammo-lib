@@ -222,6 +222,7 @@ public class AmmoContacts {
         }
 
 	private String designator;
+	private final int designatorLength = 3;
 	public String getDesignator() {
             return this.designator;
         }
@@ -229,11 +230,11 @@ public class AmmoContacts {
             return this.designator.toCharArray();
         }
 	public Contact setDesignator(String val) {
-	    // Designator is defined as only two characters -- enforce this
-	    if (val.length() <= 2) {
+	    // Designator is defined as exactly N characters -- enforce this
+	    if (val.length() <= designatorLength) {
 		this.designator = val;
 	    } else {
-		this.designator = val.substring(0,1);
+		this.designator = val.substring(0,designatorLength - 1);
 	    }
             return this;
         }
@@ -342,6 +343,15 @@ public class AmmoContacts {
                     .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
 				   new String[] {String.valueOf(contactId), Constants.MIME_DESIGNATOR,})
                     .withValue(ContactsContract.Data.DATA1, designator)
+                    .build());
+	}
+	String branch = lw.getBranch();
+        if (branch == null) branch = "";
+        if (branch != null && branch.length() > 0) {
+            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
+				   new String[] {String.valueOf(contactId), Constants.MIME_BRANCH,})
+                    .withValue(ContactsContract.Data.DATA1, branch)
                     .build());
 	}
 
@@ -575,6 +585,14 @@ public class AmmoContacts {
                     .withValue(ContactsContract.Data.DATA1, rank)
                     .build());
 
+	String branch = lw.getBranch();
+        if (branch == null) branch = "";
+        if (branch.length() > 0)
+            ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                    .withValue(ContactsContract.Data.MIMETYPE, Constants.MIME_BRANCH)
+                    .withValue(ContactsContract.Data.DATA1, branch)
+                    .build());
 
         ContentProviderOperation.Builder snb = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
             .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
@@ -1098,10 +1116,68 @@ public class AmmoContacts {
     // 
     // getContactByUserId()
     // 
+    // Given a contact's username, retrieve other data for this
+    // contact and return it in a Contact object.
     //========================================================
     public Contact getContactByUserId(String userId) {
 	Log.d(TAG,"getContactByUserId() ");
-	return null;
+	Uri rval = null;
+
+	Uri f = Uri.parse("content://" + ContactsContract.AUTHORITY 
+			  + "/data/userid/" + userId);
+	Log.d(TAG, "  searching for uri = " + f.toString());
+
+	int contactId = -1;
+	Cursor cursor = null;
+	try {
+	    String[] projection = {"contact_id", "lookup"};  // more...
+	    cursor = mResolver.query(f, projection, null, null, null);
+	    if (cursor == null) {
+		Log.e(TAG, "getContactByUserId() -- cursor is null");
+		return null;
+	    }
+	} catch (Throwable e) {
+	    Log.e(TAG, "An exception occurred: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	}
+	
+	// Process the query's output
+	try {
+	    int count = cursor.getCount();	    
+	    if (count < 1) {
+		return null;
+	    }
+
+	    cursor.moveToFirst();
+	    String contactIdStr = cursor.getString(0);
+
+	    AmmoContacts.Contact lw = new AmmoContacts.Contact();
+	    lw.setUserIdNumber(cursor.getString(1) );
+
+	    // Get other data for this contact
+	    String[] dataProjection = {"mimetype","data1","data2","data3","data4"};
+	    ArrayList<HashMap<String, String>> otherData = getDataForContact(contactIdStr, dataProjection);
+	    if (otherData != null) {
+		populateContactData(otherData, lw);
+	    }
+
+	    return lw;
+	} catch (IllegalArgumentException e) { 
+	    Log.e(TAG, "IllegalArgumentException: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} catch (CursorIndexOutOfBoundsException e) {
+	    Log.e(TAG, "Cursor out of bounds: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} catch (Throwable e) {
+	    Log.e(TAG, "Exception: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} finally {
+            cursor.close();
+        }
     }
 
     //========================================================
