@@ -23,8 +23,6 @@ public class Quantifier extends AmmoType {
 		; }
 
 	final private Type type;
-	final private String str;
-	final private Oid oid;
 
 	// *********************************
 	// Parcelable Support
@@ -54,35 +52,12 @@ public class Quantifier extends AmmoType {
 		plogger.trace("marshall topic {}", this);
 		dest.writeInt(this.type.ordinal());
 
-		switch (this.type) {
-		case OID:
-			this.oid.writeToParcel(dest, flags);
-			return;
-		case STR:
-			dest.writeString(this.str);
-			return;
-		}
+		
 	}
 
 	public Quantifier(Parcel in) {
 		this.type = Type.values()[ in.readInt() ];
-		if (this.type == null) {
-			this.str = null;
-			this.oid = null;
-		} else
-			switch (this.type) {
-			case OID:
-				this.str = null;
-				this.oid = Oid.CREATOR.createFromParcel(in);
-				break;
-			case STR:
-				this.str = in.readString();
-				this.oid = null;
-				break;
-			default:
-				this.str = null;
-				this.oid = null;
-			}
+		
 		plogger.trace("unmarshall topic {}", this);
 	}
 	// *********************************
@@ -93,14 +68,7 @@ public class Quantifier extends AmmoType {
 		if (this.type == null) {
 			return "<no type>";
 		}
-		switch (this.type) {
-		case OID:
-			return this.oid.toString();
-		case STR:
-			return this.str;
-		default:
-			return "<unknown type>"+ this.type;
-		}
+		return this.type.name();
 	}
 
 	// *********************************
@@ -108,15 +76,22 @@ public class Quantifier extends AmmoType {
 	// *********************************
 
 	public Quantifier(String val) {
-		this.type = Type.STR;
-		this.str = val;
-		this.oid = null;
+		if (val.equalsIgnoreCase(Type.SINGLE.name())) {
+			this.type = Type.SINGLE;
+		} else
+		if (val.equalsIgnoreCase(Type.ROOM.name())) {
+			this.type = Type.ROOM;
+		} else
+		if (val.equalsIgnoreCase(Type.BULLETIN.name())) {
+			this.type = Type.BULLETIN;
+		} else
+		if (val.equalsIgnoreCase(Type.ALL.name())) {
+			this.type = Type.ALL;
+		} else {
+			this.type = Type.ALL;
+		}
 	}
-	public Quantifier(Oid val) {
-		this.type = Type.OID;
-		this.str = null;
-		this.oid = val;
-	}
+	
 
 	public String asString() { 
 		return this.toString();
