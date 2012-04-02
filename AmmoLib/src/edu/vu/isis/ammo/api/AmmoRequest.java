@@ -136,44 +136,43 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		plogger.trace("provider {}", this.provider);
 		Provider.writeToParcel(this.provider, dest, flags);
-		plogger.trace("payload {}", this.payload);
+		plogger.debug("payload {}", this.payload);
 		Payload.writeToParcel(this.payload, dest, flags);
 		plogger.trace("moment {}", this.moment);
 		Moment.writeToParcel(this.moment, dest, flags);
-		plogger.trace("topic {}", this.topic);
+		plogger.trace("topic {} = {}", this.topic, this.subtopic);
 		Topic.writeToParcel(this.topic, dest, flags);
 		Topic.writeToParcel(this.subtopic, dest, flags);
 
-		plogger.trace("downsample {}", this.downsample);
+		plogger.debug("downsample {}", this.downsample);
 		dest.writeValue(this.downsample);
-		plogger.trace("durabliity {}", this.durability);
+		plogger.debug("durabliity {}", this.durability);
 		dest.writeValue(this.durability);
 
-		plogger.trace("priority {}", this.priority);
+		plogger.debug("priority {}", this.priority);
 		dest.writeValue(this.priority);
-		plogger.trace("order {}", this.order);
+		plogger.debug("order {}", this.order);
 		Order.writeToParcel(this.order, dest, flags);
 
-		plogger.trace("start {}", this.start);
+		plogger.debug("start {}", this.start);
 		TimeTrigger.writeToParcel(this.start, dest, flags);
-		plogger.trace("expire {}", this.expire);
+		plogger.debug("expire {}", this.expire);
 		TimeTrigger.writeToParcel(this.expire, dest, flags);
-		plogger.trace("limit {}", this.limit);
+		plogger.debug("limit {}", this.limit);
 		Limit.writeToParcel(this.limit, dest, flags);
 
-		plogger.trace("scope {}", this.scope);
+		plogger.debug("scope {}", this.scope);
 		DeliveryScope.writeToParcel(this.scope, dest, flags);
-		plogger.trace("throttle {}", this.throttle);
+		plogger.debug("throttle {}", this.throttle);
 		dest.writeValue(this.throttle);
-		plogger.trace("worth {}", this.worth);
+		plogger.debug("worth {}", this.worth);
 		dest.writeValue(this.worth);
-		
 		plogger.trace("notice {}", this.notice);
 		Notice.writeToParcel(this.notice, dest, flags);
 		
 		plogger.trace("selection {}", this.select);
 		Selection.writeToParcel(this.select, dest, flags);
-		plogger.trace("projection {}", this.project);
+		plogger.debug("projection {}", this.project);
 		dest.writeStringArray(this.project);
 	}
 
@@ -192,7 +191,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 				version, VERSION);
 			throw new ParcelFormatException("AMMO REQUEST VERSION MISMATCH");
         } else {
-		    plogger.info("AMMO REQUEST VERSION MATCH {}", version);
+		    plogger.trace("AMMO REQUEST VERSION MATCH {}", version);
 		}
 		
 		this.uuid = (String) in.readValue(String.class.getClassLoader());
@@ -210,8 +209,15 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		plogger.trace("moment {}", this.moment);
 		this.topic = Topic.readFromParcel(in);
 		plogger.trace("topic {}", this.topic);
-		this.subtopic = Topic.readFromParcel(in);
-		plogger.trace("subtopic {}", this.subtopic);
+        if (version < (byte) 3)) {
+           this.recipient = Anon.readFromParcel(in);
+		   plogger.trace("recipient {}", this.recipient);
+		   this.originator = Anon.readFromParcel(in);
+		   plogger.trace("originator {}", this.originator);
+        } else {
+		   this.subtopic = Topic.readFromParcel(in);
+		   plogger.trace("subtopic {}", this.subtopic);
+        }
 
 		this.downsample = (Integer) in.readValue(Integer.class.getClassLoader());
 		plogger.trace("downsample {}", this.downsample);
@@ -238,7 +244,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		this.worth = (Integer) in.readValue(Integer.class.getClassLoader());
 		plogger.trace("worth {}", this.worth);
 
-		this.notice = Notice.readFromParcel(in);
+		this.notice = (version < 3) ? new Notice() : Notice.readFromParcel(in);
 		plogger.trace("notice {}", this.notice);
 		
 		this.select = Selection.readFromParcel(in);
@@ -394,9 +400,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.context = context;
 			try {
 				final boolean isBound = this.context.bindService(DISTRIBUTOR_SERVICE, this.conn, Context.BIND_AUTO_CREATE);
-				logger.info("is the service bound? {}", isBound);
+				logger.trace("is the service bound? {}", isBound);
 			} catch (ReceiverCallNotAllowedException ex) {
-				logger.info("the service cannot be bound");
+				logger.error("the service cannot be bound");
 
 			}
 		}
