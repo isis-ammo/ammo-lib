@@ -207,10 +207,10 @@ public class Notice extends AmmoType  {
 	}
 
 	// *********************************
-	// IAmmoReques Support
+	// IAmmoRequest Support
 	// *********************************
 
-	private Notice() {
+	public Notice() {
 		this.items = new ArrayList<Item>();
 		this.setItem(Threshold.SENT, Via.NONE);
 	 	this.setItem(Threshold.DISPATCHED, Via.NONE);

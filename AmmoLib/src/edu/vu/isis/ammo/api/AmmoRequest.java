@@ -209,15 +209,13 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		plogger.trace("moment {}", this.moment);
 		this.topic = Topic.readFromParcel(in);
 		plogger.trace("topic {}", this.topic);
-        if (version < (byte) 3)) {
-           this.recipient = Anon.readFromParcel(in);
-		   plogger.trace("recipient {}", this.recipient);
-		   this.originator = Anon.readFromParcel(in);
-		   plogger.trace("originator {}", this.originator);
-        } else {
-		   this.subtopic = Topic.readFromParcel(in);
-		   plogger.trace("subtopic {}", this.subtopic);
-        }
+		if (version < (byte) 3) {
+			// unused read slack bytes
+			this.subtopic = new Topic("");
+		} else {
+			this.subtopic = Topic.readFromParcel(in);
+			plogger.trace("subtopic {}", this.subtopic);
+		}
 
 		this.downsample = (Integer) in.readValue(Integer.class.getClassLoader());
 		plogger.trace("downsample {}", this.downsample);
