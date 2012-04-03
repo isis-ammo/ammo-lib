@@ -33,7 +33,6 @@ import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Limit;
 import edu.vu.isis.ammo.api.type.Moment;
 import edu.vu.isis.ammo.api.type.Notice;
-import edu.vu.isis.ammo.api.type.Notice.Stickiness;
 import edu.vu.isis.ammo.api.type.Notice.Via;
 import edu.vu.isis.ammo.api.type.Oid;
 import edu.vu.isis.ammo.api.type.Order;
@@ -48,6 +47,12 @@ import edu.vu.isis.ammo.api.type.Topic;
 
 /**
  * see docs/dev-guide/developer-guide.pdf
+ * 
+ * The request has many options.
+ * 
+ * Option usage:
+ *
+ * 
  */
 public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcelable {
 	private static final Logger logger = LoggerFactory.getLogger("ammo-rqst");
@@ -864,23 +869,24 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 		
 		/**
-		 *  This notice method is cumulative.
-		 *  To clear the notice use the other notice().
+		 *  To clear the notices use notice(null).
 		 */
-		public Builder notice(Notice.Threshold threshold, Stickiness stickiness, Via via) {
+		public Builder notice(Notice.Threshold threshold, Via via) {
 			if (this.notice == null) this.notice = Notice.newInstance();
-			this.notice.setItem(threshold, stickiness, via);
+			this.notice.setItem(threshold, via);
 			return this;
 		}
 
 		/**
-		 *  This notice method is *not* cumulative.
 		 *  It replaces the current notice object with the argument.
 		 *  The notice set can be cleared by using this method
 		 *  with a null object.
 		 */
 		@Override
 		public Builder notice(Notice val) {
+			if (val == null) {
+				
+			}
 			this.notice = val;
 			return this;
 		}

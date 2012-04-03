@@ -10,7 +10,6 @@ import android.os.Parcel;
 
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Limit;
-import edu.vu.isis.ammo.api.type.Notice.Stickiness;
 import edu.vu.isis.ammo.api.type.Notice.Via;
 import edu.vu.isis.ammo.api.type.Oid;
 import edu.vu.isis.ammo.api.type.Order;
@@ -93,7 +92,7 @@ public interface IAmmoRequest {
       public IAmmoRequest retrieve() throws RemoteException;
       public IAmmoRequest getInstance(String uuid) throws RemoteException;
       public void releaseInstance();
-      public Builder notice(Notice.Threshold threshold, Stickiness stickiness, Via via);
+      public Builder notice(Notice.Threshold threshold, Via via);
       public Builder notice(Notice val);
         public Builder provider(Uri val);
         public Builder payload(String val);
