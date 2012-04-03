@@ -13,13 +13,19 @@ package edu.vu.isis.ammo.api.type;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * The quantifier describes the extent to which
+ * the message is expected to spread.
+ *
+ *
+ */
 public class Quantifier extends AmmoType { 
 
 	public enum Type { 
-		SINGLE, 
-		ROOM, 
-		ALL,
-		BULLETIN,
+		SINGLE,   // only one recipient/subscriber is expected
+		ROOM,     // only multiple subscribers restricted on the sub-topic
+		ALL,      // expected to go to pretty much everybody, subtopic irrelevant
+		BULLETIN, // expected to be retrieved so distribution is not knowable
 		; }
 
 	final private Type type;
@@ -90,6 +96,10 @@ public class Quantifier extends AmmoType {
 		} else {
 			this.type = Type.ALL;
 		}
+	}
+	
+	public Quantifier(Type type) {
+		this.type = type;
 	}
 	
 

@@ -33,10 +33,13 @@ import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Limit;
 import edu.vu.isis.ammo.api.type.Moment;
 import edu.vu.isis.ammo.api.type.Notice;
+import edu.vu.isis.ammo.api.type.Notice.Stickiness;
+import edu.vu.isis.ammo.api.type.Notice.Via;
 import edu.vu.isis.ammo.api.type.Oid;
 import edu.vu.isis.ammo.api.type.Order;
 import edu.vu.isis.ammo.api.type.Payload;
 import edu.vu.isis.ammo.api.type.Provider;
+import edu.vu.isis.ammo.api.type.Quantifier;
 import edu.vu.isis.ammo.api.type.Selection;
 import edu.vu.isis.ammo.api.type.TimeInterval;
 import edu.vu.isis.ammo.api.type.TimeStamp;
@@ -62,6 +65,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	final public Moment moment;
 	final public Topic topic;
 	final public Topic subtopic;
+	final public Quantifier quantifier;
 
 	final public Integer downsample;
 	final public Integer durability;
@@ -143,6 +147,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		plogger.trace("topic {} = {}", this.topic, this.subtopic);
 		Topic.writeToParcel(this.topic, dest, flags);
 		Topic.writeToParcel(this.subtopic, dest, flags);
+		plogger.trace("quantifier {}", this.quantifier);
+		Notice.writeToParcel(this.quantifier, dest, flags);
 
 		plogger.debug("downsample {}", this.downsample);
 		dest.writeValue(this.downsample);
@@ -212,9 +218,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		if (version < (byte) 3) {
 			// unused read slack bytes
 			this.subtopic = new Topic("");
+			this.quantifier = new Quantifier(Quantifier.Type.BULLETIN);
 		} else {
 			this.subtopic = Topic.readFromParcel(in);
 			plogger.trace("subtopic {}", this.subtopic);
+			this.quantifier = Quantifier.readFromParcel(in);
+			plogger.trace("quantifier {}", this.quantifier);
 		}
 
 		this.downsample = (Integer) in.readValue(Integer.class.getClassLoader());
@@ -271,6 +280,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		this.topic = builder.topic;
 		this.subtopic = builder.subtopic;
+		this.quantifier = builder.quantifier;
 
 		this.downsample = builder.downsample;
 		this.durability = builder.durability;
@@ -412,6 +422,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		private Moment moment;
 		private Topic topic;
 		private Topic subtopic;
+		private Quantifier quantifier;
 
 		private Integer downsample;
 		private Integer durability;
@@ -529,6 +540,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.throttle(THROTTLE_DEFAULT);
 			this.topic(TOPIC_DEFAULT);
 			this.subtopic(SUBTOPIC_DEFAULT);
+			this.quantifier(QUANTIFIER_DEFAULT);
 			this.uid(UID_DEFAULT);
 			this.expire(EXPIRE_DEFAULT);
 			this.project(PROJECT_DEFAULT);
@@ -695,20 +707,36 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.subtopic = new Topic(val);
 			return this;
 		}
-
+		
 		@Override
-		public Builder topic(String topic, String subtopic) {
-			this.topic(topic);
-			this.subtopic(subtopic);
+		public Builder quantifier(String type) {
+			this.quantifier(type);
+			return this;
+		}
+		
+		@Override
+		public Builder quantifier(Quantifier.Type type) {
+			this.quantifier(type);
 			return this;
 		}
 
 		@Override
-		public Builder topic(Oid topic, Oid subtopic) {
+		public Builder topic(String topic, String subtopic, String quantifier) {
 			this.topic(topic);
 			this.subtopic(subtopic);
+			this.quantifier(quantifier);
 			return this;
 		}
+
+		@Override
+		public Builder topic(Oid topic, Oid subtopic, Quantifier.Type quantifier) {
+			this.topic(topic);
+			this.subtopic(subtopic);
+			this.quantifier(quantifier);
+			return this;
+		}
+		
+		
 		
 		public Builder topicFromProvider() {
 			if (this.provider == null) {
@@ -839,9 +867,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		 *  This notice method is cumulative.
 		 *  To clear the notice use the other notice().
 		 */
-		public Builder notice(Notice.Threshold threshold, Notice.Via mode) {
+		public Builder notice(Notice.Threshold threshold, Stickiness stickiness, Via via) {
 			if (this.notice == null) this.notice = Notice.newInstance();
-			this.notice.setItem(threshold, mode);
+			this.notice.setItem(threshold, stickiness, via);
 			return this;
 		}
 

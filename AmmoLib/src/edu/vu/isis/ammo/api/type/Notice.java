@@ -31,18 +31,20 @@ public class Notice extends AmmoType  {
       
 	public class Item {	   
 		public final Threshold threshold;
-		public final Via mode;
+		public final Stickiness stickiness;
+		public final Via via;
 		
-		private Item(Threshold threshold, Via mode) {
+		private Item(Threshold threshold, Stickiness stickiness, Via via) {
 			this.threshold = threshold;
-			this.mode = mode;
+			this.stickiness = stickiness;
+			this.via = via;
 		}
 
 		@Override
 		public String toString() {
 		return new StringBuilder()
 			.append("threshold [").append(this.threshold).append("], ")
-			.append("mode [").append(this.mode).append("]")
+			.append("mode [").append(this.stickiness).append("]")
 			.toString();
 		}
 	}
@@ -77,31 +79,31 @@ public class Notice extends AmmoType  {
     };
     
     final private List<Item> items;
- 	private Item whenSent; 
- 	private Item whenDispatched;
- 	private Item whenDelivered; 
- 	private Item whenReceived;
+ 	private Item atSend; 
+ 	private Item atDispatch;
+ 	private Item atDelivery; 
+ 	private Item atReceipt;
  	
- 	public Item whenSent() { return whenSent; }
- 	public Item whenDispatched() { return whenDispatched; }
- 	public Item whenDelivered() { return whenDelivered; }
- 	public Item whenReceived() { return whenReceived; }
+ 	public Item whenSent() { return atSend; }
+ 	public Item whenDispatched() { return atDispatch; }
+ 	public Item whenDelivered() { return atDelivery; }
+ 	public Item whenReceived() { return atReceipt; }
 	
-	public Item setItem(Threshold threshold, Via via) {
-		final Item item = new Item(threshold, via);
+	public Item setItem(Threshold threshold, Stickiness stickiness, Via via) {
+		final Item item = new Item(threshold, stickiness, via);
 		//this.items.add(item);
 		switch (threshold) {
 		case SENT:
-			whenSent = item;
+			atSend = item;
 			break;
 		case DISPATCHED:
-			whenDispatched = item;
+			atDispatch = item;
 			break;
 		case DELIVERED:
-			whenDelivered = item;
+			atDelivery = item;
 			break;
 		case RECEIVED:
-			whenReceived = item;
+			atReceipt = item;
 		    break;
 		}
 		return item;
@@ -145,6 +147,8 @@ public class Notice extends AmmoType  {
 	*/
     
     public enum Via { NONE, ACTIVITY, BROADCAST, SERVICE };
+    
+    public enum Stickiness { STICKY, NON_STICKY };
  
 
 	// *********************************
@@ -176,7 +180,7 @@ public class Notice extends AmmoType  {
 		
 		for (Item item : this.items ) {
 			dest.writeInt(item.threshold.ordinal());
-			dest.writeInt(item.mode.ordinal());
+			dest.writeInt(item.stickiness.ordinal());
 		}
 	}
 
@@ -185,8 +189,9 @@ public class Notice extends AmmoType  {
 		this.items = new ArrayList<Item>(count);
 		for (int ix = 0; ix < count; ++ix) {
 			final Threshold threshold = Threshold.values()[in.readInt()];
+			final Stickiness stickiness = Stickiness.values()[in.readInt()];
 			final Via via = Via.values()[in.readInt()];
-			this.items.add(this.setItem(threshold, via));
+			this.items.add(this.setItem(threshold, stickiness, via));
 		}
 		plogger.trace("unmarshall notice {}", this);
 	}
@@ -201,7 +206,7 @@ public class Notice extends AmmoType  {
 		for (Item item : this.items){ 
 		    sb.append('\n')
 		      .append("@ [").append(item.threshold).append("]")
-			  .append("->[").append(item.mode).append("]");
+			  .append("->[").append(item.stickiness).append("]");
 		}
 		return sb.toString();
 	}
@@ -212,10 +217,10 @@ public class Notice extends AmmoType  {
 
 	public Notice() {
 		this.items = new ArrayList<Item>();
-		this.setItem(Threshold.SENT, Via.NONE);
-	 	this.setItem(Threshold.DISPATCHED, Via.NONE);
-	 	this.setItem(Threshold.DELIVERED, Via.NONE);
-	 	this.setItem(Threshold.RECEIVED, Via.NONE);
+		this.setItem(Threshold.SENT, Stickiness.NON_STICKY, Via.NONE);
+	 	this.setItem(Threshold.DISPATCHED, Stickiness.NON_STICKY, Via.NONE);
+	 	this.setItem(Threshold.DELIVERED, Stickiness.NON_STICKY, Via.NONE);
+	 	this.setItem(Threshold.RECEIVED, Stickiness.NON_STICKY, Via.NONE);
 	}
 
 }

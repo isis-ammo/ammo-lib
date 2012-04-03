@@ -10,10 +10,13 @@ import android.os.Parcel;
 
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Limit;
+import edu.vu.isis.ammo.api.type.Notice.Stickiness;
+import edu.vu.isis.ammo.api.type.Notice.Via;
 import edu.vu.isis.ammo.api.type.Oid;
 import edu.vu.isis.ammo.api.type.Order;
 import edu.vu.isis.ammo.api.type.Moment;
 import edu.vu.isis.ammo.api.type.Notice;
+import edu.vu.isis.ammo.api.type.Quantifier;
 import edu.vu.isis.ammo.api.type.TimeInterval;
 import edu.vu.isis.ammo.api.type.TimeStamp;
 
@@ -34,6 +37,7 @@ public interface IAmmoRequest {
 
    public static final String TOPIC_DEFAULT = "";
    public static final String SUBTOPIC_DEFAULT = "";
+   public static final Quantifier.Type QUANTIFIER_DEFAULT = Quantifier.Type.BULLETIN;
 
    public static final TimeInterval EXPIRE_UNLIMITED = 
          new TimeInterval(TimeInterval.UNLIMITED);
@@ -89,7 +93,7 @@ public interface IAmmoRequest {
       public IAmmoRequest retrieve() throws RemoteException;
       public IAmmoRequest getInstance(String uuid) throws RemoteException;
       public void releaseInstance();
-      public Builder notice(Notice.Threshold threshold, Notice.Via via);
+      public Builder notice(Notice.Threshold threshold, Stickiness stickiness, Via via);
       public Builder notice(Notice val);
         public Builder provider(Uri val);
         public Builder payload(String val);
@@ -98,11 +102,13 @@ public interface IAmmoRequest {
         public Builder payload(AmmoValues val);
         public Builder topic(String val);
         public Builder subtopic(String val);
-        public Builder topic(String major, String minor);
+        public Builder quantifier(String val);
+        public Builder topic(String major, String minor, String quantifier);
 
         public Builder topic(Oid val); 
         public Builder subtopic(Oid val);
-        public Builder topic(Oid major, Oid minor); 
+        public Builder quantifier(Quantifier.Type quantifier);
+        public Builder topic(Oid major, Oid minor, Quantifier.Type quantifier); 
 
 
         // \availability{2.0}
