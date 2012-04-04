@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=1.3.4
+VERSION=1.4.4
 REPO_URI=http://fiddler.aterrasys.com:8081/nexus/content/repositories/vanderbilt/
 ARTIFACT=ammolib
 
@@ -8,9 +8,9 @@ mvn deploy:deploy-file \
   -DgroupId=edu.vu.isis \
   -DartifactId=${ARTIFACT} \
   -Dversion=${VERSION} \
+  -DpomFile=upload-pom.xml \
   -Dpackaging=jar \
   -DgeneratePom=false \
-  -DpomFile=update-pom.xml \
   -Dfile=${ARTIFACT}.jar \
   -Djavadoc=${ARTIFACT}-javadoc.jar \
   -DrepositoryId=nexus-vanderbilt \
