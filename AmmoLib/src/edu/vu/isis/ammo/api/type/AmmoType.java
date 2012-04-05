@@ -71,11 +71,10 @@ public abstract class AmmoType implements Parcelable {
 		dest.writeInt( 1 );
 		that.writeToParcel(dest, flags);
 	}
-	
+
 	static public boolean isNull(Parcel source) {
 		return (source.readInt() == 0) ? true : false;
 	}
-	
 
 	@Override
 	public int describeContents() { return 0; }
