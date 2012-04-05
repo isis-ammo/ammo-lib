@@ -21,6 +21,7 @@ import android.os.Parcelable;
  * This wrapper class makes up for some limitations of the Content Values class.
  * - double brace initialization (not a final class)
  * - instrumentation
+ * - data types
  */
 public class AmmoValues {
     private final ContentValues cv;
