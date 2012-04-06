@@ -36,10 +36,6 @@ public class Moment extends AmmoType {
 
     final private Type type;
     
-   	public int cv() {
-		return this.type.o;
-	}
-  
     // *********************************
     // Parcelable Support
     // *********************************
@@ -78,9 +74,20 @@ public class Moment extends AmmoType {
     // *********************************
 	
     public Moment(String val) {
-        if (val.contains("P")) { this.type = Type.APRIORI; return; }
-        if (val.contains("E")) { this.type = Type.EAGER; return; }
-        if (val.contains("L")) { this.type = Type.LAZY; return; }
+        if (val.startsWith("A")) { this.type = Type.APRIORI; return; }
+        if (val.startsWith("E")) { this.type = Type.EAGER; return; }
+        if (val.startsWith("L")) { this.type = Type.LAZY; return; }
+        this.type = Type.LAZY;
+    }
+    
+	public int cv() {
+		return this.type.o;
+	}
+  
+    public Moment(int cv) {
+    	if (cv == Type.APRIORI.o) { this.type = Type.APRIORI; return; }
+    	if (cv == Type.EAGER.o) { this.type = Type.EAGER; return; }
+    	if (cv == Type.LAZY.o) { this.type = Type.LAZY; return; }
         this.type = Type.LAZY;
     }
     

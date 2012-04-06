@@ -78,6 +78,7 @@ public class Notice extends AmmoType  {
 	public static Notice newInstance() {
 		return new Notice();
 	}
+	
 
 	/**
 	 * 
@@ -128,10 +129,28 @@ public class Notice extends AmmoType  {
 	 *        .putExtra(EXTRA_DEVICE, ack.device.toString());
 	 *        
 	*/
-    public enum Threshold { 
-      SENT, DISPATCHED, 
-      DELIVERED, RECEIVED 
-    };
+ 
+    public enum Threshold {
+    	SENT(1, "sent"),
+    	DISPATCHED(2, "dispatched"),
+    	DELIVERED(4, "delivered"),
+    	RECEIVED(4, "received");
+
+    	public final int p;
+    	public final String d;
+    	
+    	private Threshold(int bitpos, String description) {
+    		this.p = bitpos;
+    		this.d = description;
+    	}
+    }
+
+   	public int cv() {
+   		//int notice = 0;  // notice nothing
+   		//if (atSend.)
+		return 0;
+	}
+    
     
     final private List<Item> items;
  	private Item atSend; 
