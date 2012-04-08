@@ -82,19 +82,7 @@ public class TimeTrigger extends AmmoType {
 		plogger.trace("unmarshall time trigger {}", this);
 	}
 	
-	public long cv() {
-		if (this.type == null) {
-			return System.currentTimeMillis();
-		} else
-			switch (this.type) {
-			case ABS:
-				return this.abs.cv();
-			case REL:
-				return System.currentTimeMillis() + this.rel.cv();
-			default:
-				return System.currentTimeMillis();
-			}
-	}
+
 	// *********************************
 	// Standard Methods
 	// *********************************
@@ -130,6 +118,30 @@ public class TimeTrigger extends AmmoType {
 		this.type = Type.REL;
 		this.abs = null;
 		this.rel = val;
+	}
+	
+	/**
+	 * Methods for serializing for the database.
+	 * @param cv
+	 */
+	public TimeTrigger(long cv) {
+	    this.type = Type.ABS;
+	    this.abs = new TimeStamp(cv);
+	    this.rel = null;
+	}
+	
+	public long cv() {
+		if (this.type == null) {
+			return System.currentTimeMillis();
+		} else
+			switch (this.type) {
+			case ABS:
+				return this.abs.cv();
+			case REL:
+				return System.currentTimeMillis() + this.rel.cv();
+			default:
+				return System.currentTimeMillis();
+			}
 	}
 
 }

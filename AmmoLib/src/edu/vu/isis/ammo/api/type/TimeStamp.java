@@ -77,6 +77,10 @@ public class TimeStamp extends AmmoType {
 		this.interval = new TimeInterval(0);
 	}
 
+	public TimeStamp(long val) {
+		this.millis = val;
+		this.interval = new TimeInterval(0);
+	}
 	public TimeStamp(String val) {
 		this.millis = System.currentTimeMillis();
 		this.interval = new TimeInterval(val);
