@@ -73,6 +73,10 @@ public class Notice extends AmmoType  {
 			.append("via [").append(this.via).append("]")
 			.toString();
 		}
+		
+		public boolean isActive() {
+			return ! this.via.equals(Via.NONE);
+		}
 	}
 	
 	public static Notice newInstance() {
@@ -131,10 +135,11 @@ public class Notice extends AmmoType  {
 	*/
  
     public enum Threshold {
-    	SENT(1, "sent"),
-    	DISPATCHED(2, "dispatched"),
-    	DELIVERED(4, "delivered"),
-    	RECEIVED(4, "received");
+    	SENT(0x01, "sent"),                   // the message has left the hand held
+    	GATE_IN(0x02, "gateway in-bound"),    // hand held dispatches request to android plugin
+    	GATE_OUT(0x04, "gateway out-bound"),  // arrived at an outgoing gateway plugin
+    	DELIVERED(0x08, "delivered"),         // delivered to a hand held
+    	RECEIVED(0x10, "received");           // processed by a dispatcher on a handheld
 
     	public final int p;
     	public final String d;
@@ -154,12 +159,14 @@ public class Notice extends AmmoType  {
     
     final private List<Item> items;
  	private Item atSend; 
- 	private Item atDispatch;
+ 	private Item atGateIn;
+ 	private Item atGateOut;
  	private Item atDelivery; 
  	private Item atReceipt;
  	
  	public Item whenSent() { return atSend; }
- 	public Item whenDispatched() { return atDispatch; }
+ 	public Item whenGateIn() { return atGateIn; }
+ 	public Item whenGateOut() { return atGateOut; }
  	public Item whenDelivered() { return atDelivery; }
  	public Item whenReceived() { return atReceipt; }
 	
@@ -170,8 +177,11 @@ public class Notice extends AmmoType  {
 		case SENT:
 			atSend = item;
 			break;
-		case DISPATCHED:
-			atDispatch = item;
+		case GATE_IN:
+			atGateIn = item;
+			break;
+		case GATE_OUT:
+			atGateOut = item;
 			break;
 		case DELIVERED:
 			atDelivery = item;
@@ -291,7 +301,8 @@ public class Notice extends AmmoType  {
 	public Notice() {
 		this.items = new ArrayList<Item>();
 		this.setItem(Threshold.SENT, Via.NONE);
-	 	this.setItem(Threshold.DISPATCHED, Via.NONE);
+	 	this.setItem(Threshold.GATE_IN, Via.NONE);
+	 	this.setItem(Threshold.GATE_OUT, Via.NONE);
 	 	this.setItem(Threshold.DELIVERED, Via.NONE);
 	 	this.setItem(Threshold.RECEIVED, Via.NONE);
 	}
