@@ -265,31 +265,20 @@ public class AmmoContacts {
 	ContentResolver cr = mResolver;
 
 	// First find existing record so we can modify it
-	Uri uriToModify = findExistingContact(lw);
+	Contact r = getContactByUserId(lw.getTigrUid());
 	
 	// If the contact isn't found, add it ("upsert" functionality)
-	if (uriToModify == null) {
+	if (r == null) {
 	    Log.d(TAG, "       failed to find existing user, inserting new contact ");
 	    return insertContactEntry(lw);
 	} else { 
 	    if (Log.isLoggable(TAG, Log.VERBOSE)) {
-		Log.d(TAG, "       found existing user URI: " + uriToModify.toString());
+		Log.d(TAG, "       found existing user : " + lw.getTigrUid());
 	    }
 	}
 
-	// Parse the contact id out of the URI (we know it's the 
-	// last segment of the URI just returned)
-	List<String> ps = uriToModify.getPathSegments();
 	int contactId = -1;
-	try {
-	    contactId = Integer.parseInt(ps.get(ps.size() -1));
-	} catch(NumberFormatException nfe) {
-	    Log.e(TAG, "Could not parse " + nfe);
-	    return null;
-	} 
-	if (Log.isLoggable(TAG, Log.VERBOSE)) {
-	    Log.d(TAG, "    contact id = " + String.valueOf(contactId));
-	}
+	contactId = r.getRawContactId();
 	if (!(contactId > 0)) return null;
 
 	// Then make a ContentProviderOperation to update this contact
@@ -432,6 +421,7 @@ public class AmmoContacts {
             }
 
 	// Apply the content provider operations
+	Uri uriToModify = null;
 	try {
             ContentProviderResult[] cpres = cr.applyBatch(ContactsContract.AUTHORITY, ops);
 	    uriToModify = cpres[0].uri;
@@ -1121,7 +1111,6 @@ public class AmmoContacts {
     //========================================================
     public Contact getContactByUserId(String userId) {
 	Log.d(TAG,"getContactByUserId() ");
-	Uri rval = null;
 
 	Uri f = Uri.parse("content://" + ContactsContract.AUTHORITY 
 			  + "/data/userid/" + userId);
@@ -1154,6 +1143,7 @@ public class AmmoContacts {
 
 	    AmmoContacts.Contact lw = new AmmoContacts.Contact();
 	    lw.setUserIdNumber(cursor.getString(1) );
+	    lw.setRawContactId(Integer.parseInt(contactIdStr));
 
 	    // Get other data for this contact
 	    String[] dataProjection = {"mimetype","data1","data2","data3","data4"};
