@@ -258,7 +258,6 @@ public class AmmoContacts {
     // contacts storage provider.
     //========================================================
     public Uri updateContactEntry(Contact lw) {
-        Log.d(TAG,"updateContactEntry() ");
         Log.d(TAG, "Updating person: " + lw.getName() + " " 
 	      + lw.getLastName() + " ... " + lw.getTigrUid() );
 	
@@ -269,7 +268,7 @@ public class AmmoContacts {
 	
 	// If the contact isn't found, add it ("upsert" functionality)
 	if (r == null) {
-	    Log.d(TAG, "       failed to find existing user, inserting new contact ");
+	    Log.d(TAG, "       no such existing user, inserting new contact ");
 	    return insertContactEntry(lw);
 	} else { 
 	    if (Log.isLoggable(TAG, Log.VERBOSE)) {
@@ -441,8 +440,6 @@ public class AmmoContacts {
     // 
     //========================================================
     public Uri insertContactEntry(Contact lw) {
-
-        Log.d(TAG,"insertContactEntry() ");
         Log.d(TAG, "Adding person: " + lw.getName() + " " + lw.getLastName() + " ... " + lw.getTigrUid() );
 
         ContentResolver cr = mResolver;
@@ -652,11 +649,14 @@ public class AmmoContacts {
 	if (Log.isLoggable(TAG, Log.VERBOSE)) {
 	    Log.d(TAG, "    deleteContactEntry");
 	}
+	Log.d(TAG, "Removing contact: " + lw.getName() + " " 
+	      + lw.getLastName() + " ... " + lw.getTigrUid() );
 	
 	ContentResolver cr = mResolver;
 
 	// First find existing record so we can delete it
 	Uri uriToDelete = findExistingContact(lw);
+
 	if (uriToDelete == null) {
 	    return null;
 	}
@@ -867,29 +867,35 @@ public class AmmoContacts {
 	}
 	*/
 	
-	if (projection != null) {
+	if (projection == null) {
+	    return null;
+	}
+
+	try { 
 	    ArrayList<HashMap<String, String>> rows = new ArrayList<HashMap<String, String>>();
-	    try {
-		int count = c.getCount();
-		for (int i = 0; i < count; i++) {
-		    c.moveToNext();		    
-		    HashMap<String, String> queryData = new HashMap<String,String>();
-		    for (String proj : projection) {
-			int idx = c.getColumnIndexOrThrow(proj);
-			//Log.d(TAG, "     storing " + proj + "     idx=" + String.valueOf(idx));
-			queryData.put(proj, c.getString(idx));
-		    }
-		    rows.add(queryData);
+	    int count = c.getCount();
+	    for (int i = 0; i < count; i++) {
+		c.moveToNext();		    
+		HashMap<String, String> queryData = new HashMap<String,String>();
+		for (String proj : projection) {
+		    int idx = c.getColumnIndexOrThrow(proj);
+		    //Log.d(TAG, "     storing " + proj + "     idx=" + String.valueOf(idx));
+		    queryData.put(proj, c.getString(idx));
 		}
-	    } catch (IllegalArgumentException e) { 
+		rows.add(queryData);
+	    }
+	    return rows;
+	} catch (IllegalArgumentException e) { 
 		Log.e(TAG, "IllegalArgumentException: " + e.getMessage());
 		e.printStackTrace();
 		return null;
-	    }
-	    return rows;
-	} else {
+	} catch (Throwable e) {
+	    Log.e(TAG, "Exception: " + e.getMessage());
+	    e.printStackTrace();
 	    return null;
-	}
+	} finally {
+	    c.close();
+        }
     }
 
     //========================================================
