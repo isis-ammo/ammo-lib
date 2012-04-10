@@ -646,36 +646,46 @@ public class AmmoContacts {
     // Delete an existing contact in the local contacts storage.
     //========================================================
     public Uri deleteContactEntry(Contact lw) {
-	if (Log.isLoggable(TAG, Log.VERBOSE)) {
-	    Log.d(TAG, "    deleteContactEntry");
-	}
 	Log.d(TAG, "Removing contact: " + lw.getName() + " " 
 	      + lw.getLastName() + " ... " + lw.getTigrUid() );
 	
 	ContentResolver cr = mResolver;
 
 	// First find existing record so we can delete it
-	Uri uriToDelete = findExistingContact(lw);
+	Contact r = getContactByUserId(lw.getTigrUid());
 
-	if (uriToDelete == null) {
+	if (r == null) {
+	    Log.d(TAG, "       no such user to delete, no further action taken");
 	    return null;
+	} else {
+	    Log.d(TAG, "       found existing user " + lw.getTigrUid() + ", will be deleted");
 	}
-	if (Log.isLoggable(TAG, Log.VERBOSE)) {
-	    Log.d(TAG, "      got back: " + uriToDelete.toString());
-	}
+	
+	int contactId = -1;
+	contactId = r.getRawContactId();
+	if (!(contactId > 0)) return null;
+
+	Uri uriToDelete = Uri.parse("content://com.android.contacts/raw_contacts/" + String.valueOf(contactId));
+	// that is: ContactsContract.RawContacts.CONTENT_URI + "/" + contactId
 
 	// Then make a ContentProviderOperation to delete this contact
 	ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-	ops.add(ContentProviderOperation.newDelete(uriToDelete).build());
 
-	// TODO: withValue() bits to delete all of contact's data
-	// (...)
+	// Entries in data table
+	ops.add(ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+		.withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=?",
+			       new String[] { String.valueOf(contactId) } )
+		.build());
+
+	// Entries in contacts / raw_contacts tables
+	ops.add(ContentProviderOperation.newDelete(uriToDelete).build());
 	
 	try {
             ContentProviderResult[] cpres = cr.applyBatch(ContactsContract.AUTHORITY, ops);
 	    uriToDelete = cpres[0].uri;
         } catch (Exception ex) {
-            Log.e(TAG, "Exception encoutered while deleting contact: " + ex.toString());
+            Log.e(TAG, "Exception encoutered while deleting contact: " + ex.toString() + " : " + ex.getMessage());
+	    ex.printStackTrace();
 	    return null;
         }
 
