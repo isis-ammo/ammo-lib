@@ -11,11 +11,9 @@ purpose whatsoever, and to have or authorize others to do so.
 package edu.vu.isis.ammo.api;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.lang.ArrayIndexOutOfBoundsException;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
@@ -1132,6 +1130,7 @@ public class AmmoContacts {
 			  + "/data/userid/" + userId);
 	Log.d(TAG, "  searching for uri = " + f.toString());
 
+	@SuppressWarnings("unused")
 	int contactId = -1;
 	Cursor cursor = null;
 	try {
@@ -1193,7 +1192,8 @@ public class AmmoContacts {
     // Internal utility function to get the URI for an existing 
     // contact in the database.
     //========================================================
-    private Uri findExistingContact(Contact lw) {
+    @SuppressWarnings("unused")
+	private Uri findExistingContact(Contact lw) {
 	Uri rval = null;
 	Log.d(TAG, "findExistingContact");
 	
