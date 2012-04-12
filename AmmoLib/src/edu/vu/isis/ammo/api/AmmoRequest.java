@@ -215,7 +215,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		try {
 			version = in.readByte();
 			if (version < VERSION) {
-				plogger.warn("AMMO REQUEST VERSION MISMATCH, received {}, expected {}",
+				plogger.info("AMMO REQUEST VERSION MISMATCH, received {}, expected {}",
 						version, VERSION);
 			} else if (version > VERSION ){
 				plogger.warn("AMMO REQUEST VERSION MISMATCH, received {}, expected {}",
