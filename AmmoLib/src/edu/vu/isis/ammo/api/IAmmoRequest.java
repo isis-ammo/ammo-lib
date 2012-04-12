@@ -132,9 +132,20 @@ public interface IAmmoRequest {
         public Builder select(Query val);
         public Builder select(Form val); 
    }
+   /**
+    * deprecated:
+    * DIRECTED_POSTAL, DIRECTED_SUBSCRIBE, PUBLISH
+    * 
+    * @author phreed
+    *
+    */
    public enum Action {
-     POSTAL, RETRIEVAL, INTEREST;
+     POSTAL(1), DIRECTED_POSTAL(2), PUBLISH(3), RETRIEVAL(4), INTEREST(5), DIRECTED_SUBSCRIBE(6);
 
+     private Action(int ordinal) {
+    	 
+     }
+     
      @Override
      public String toString() {
          switch (this) {
@@ -149,8 +160,15 @@ public interface IAmmoRequest {
      static public void writeToParcel(Parcel dest, Action action) {
         dest.writeInt(action.ordinal());
      }
-     static public Action getInstance(Parcel in) { 
-        return Action.values()[in.readInt()];
+     
+     static public Action getInstance(Parcel in) throws IncompleteRequest { 
+    	 final int ordinal = in.readInt();
+    	 try {
+        return Action.values()[ordinal];
+    	 } catch (Exception ex) {
+    		 IncompleteRequest.logger.error("bad action index {}", ordinal);
+    		 throw new IncompleteRequest(ex);
+    	 }
      }
    };
 

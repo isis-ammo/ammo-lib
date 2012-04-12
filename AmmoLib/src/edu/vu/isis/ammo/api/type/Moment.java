@@ -20,9 +20,9 @@ import android.os.Parcelable;
 public class Moment extends AmmoType {
 
     public enum Type {
-    	LAZY(1, "Wait until the last moment"),
-    	EAGER(2, "Serialize as soon as possible"),
-    	APRIORI(3, "Pre serialized");
+    	LAZY(1, "the last moment"),
+    	EAGER(2, "as soon as possible"),
+    	APRIORI(3, "pre-serialized");
 
     	private final int o;
     	private final String d;

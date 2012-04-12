@@ -10,8 +10,8 @@ purpose whatsoever, and to have or authorize others to do so.
 */
 package edu.vu.isis.ammo.api.type;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -59,7 +59,7 @@ public class Notice extends AmmoType  {
       
 	public class Item {	   
 		public final Threshold threshold;
-		public final Via via;
+		public Via via;
 		
 		private Item(Threshold threshold, Via via) {
 			this.threshold = threshold;
@@ -69,14 +69,20 @@ public class Notice extends AmmoType  {
 		@Override
 		public String toString() {
 		return new StringBuilder()
-			.append("threshold [").append(this.threshold).append("], ")
-			.append("via [").append(this.via).append("]")
+			.append("@[").append(this.threshold).append("]->")
+			.append("").append(this.via)
 			.toString();
 		}
 		
 		public boolean isActive() {
 			return ! this.via.equals(Via.NONE);
 		}
+
+		public void writeParcel(Parcel dest, int flags) {
+			dest.writeInt(this.threshold.ordinal());
+			dest.writeInt(this.via.ordinal());
+		}
+
 	}
 	
 	public static Notice newInstance() {
@@ -156,43 +162,21 @@ public class Notice extends AmmoType  {
 		return 0;
 	}
     
-    
-    final private List<Item> items;
- 	private Item atSend; 
- 	private Item atGateIn;
- 	private Item atGateOut;
- 	private Item atDelivery; 
- 	private Item atReceipt;
+ 	final public Item atSend; 
+ 	final public Item atGateIn;
+ 	final public Item atGateOut;
+ 	final public Item atDelivery; 
+ 	final public Item atReceipt;
  	
- 	public Item whenSent() { return atSend; }
- 	public Item whenGateIn() { return atGateIn; }
- 	public Item whenGateOut() { return atGateOut; }
- 	public Item whenDelivered() { return atDelivery; }
- 	public Item whenReceived() { return atReceipt; }
-	
-	public Item setItem(Threshold threshold, Via via) {
-		final Item item = new Item(threshold, via);
-		//this.items.add(item);
-		switch (threshold) {
-		case SENT:
-			atSend = item;
-			break;
-		case GATE_IN:
-			atGateIn = item;
-			break;
-		case GATE_OUT:
-			atGateOut = item;
-			break;
-		case DELIVERED:
-			atDelivery = item;
-			break;
-		case RECEIVED:
-			atReceipt = item;
-		    break;
-		}
-		return item;
-	}
-	
+ 	public void setItem(Threshold threshold, Via via) {
+ 		switch(threshold) {
+ 		case SENT: atSend.via = via; return;
+ 		case GATE_IN: atGateIn.via = via; return;
+ 		case GATE_OUT: atGateOut.via = via; return;
+ 		case DELIVERED: atDelivery.via = via; return;
+ 		case RECEIVED: atReceipt.via = via; return;
+ 		}
+ 	}
     /**
      * 
      * As acknowledgments of the message are generated they
@@ -260,22 +244,32 @@ public class Notice extends AmmoType  {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("marshall notice {}", this);
-		dest.writeInt(this.items.size());
+		dest.writeInt(5); // the number of items
 		
-		for (Item item : this.items ) {
-			dest.writeInt(item.threshold.ordinal());
-			dest.writeInt(item.via.ordinal());
-		}
+		this.atSend.writeParcel(dest, flags);
+		this.atGateIn.writeParcel(dest, flags);
+		this.atGateOut.writeParcel(dest, flags);
+		this.atDelivery.writeParcel(dest, flags);
+		this.atReceipt.writeParcel(dest, flags);
 	}
 
 	private Notice(Parcel in) {
 		final int count = in.readInt();
-		this.items = new ArrayList<Item>(count);
+		
+		final Map<Threshold, Item> items = new HashMap<Threshold,Item>(count);
+		
 		for (int ix = 0; ix < count; ++ix) {
 			final Threshold threshold = Threshold.values()[in.readInt()];
 			final Via via = Via.values()[in.readInt()];
-			this.items.add(this.setItem(threshold, via));
+			
+			items.put(threshold, new Item(threshold, via));
 		}
+		this.atSend = items.get(Threshold.SENT);
+		this.atGateIn = items.get(Threshold.GATE_IN);
+		this.atGateOut = items.get(Threshold.GATE_OUT);
+		this.atDelivery = items.get(Threshold.DELIVERED);
+		this.atReceipt = items.get(Threshold.RECEIVED);
+		
 		plogger.trace("unmarshall notice {}", this);
 	}
 
@@ -284,14 +278,13 @@ public class Notice extends AmmoType  {
 	// *********************************
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder();
-	        sb.append("notice :");
-		for (Item item : this.items){ 
-		    sb.append('\n')
-		      .append("@ [").append(item.threshold).append("]")
-			  .append("->[").append(item.via).append("]");
-		}
-		return sb.toString();
+		return new StringBuilder()
+            .append(this.atSend.toString()).append(' ')
+            .append(this.atGateIn.toString()).append(' ')
+            .append(this.atGateOut.toString()).append(' ')
+            .append(this.atDelivery.toString()).append(' ')
+            .append(this.atReceipt.toString()).append(' ')
+            .toString();
 	}
 
 	// *********************************
@@ -299,12 +292,11 @@ public class Notice extends AmmoType  {
 	// *********************************
 
 	public Notice() {
-		this.items = new ArrayList<Item>();
-		this.setItem(Threshold.SENT, Via.NONE);
-	 	this.setItem(Threshold.GATE_IN, Via.NONE);
-	 	this.setItem(Threshold.GATE_OUT, Via.NONE);
-	 	this.setItem(Threshold.DELIVERED, Via.NONE);
-	 	this.setItem(Threshold.RECEIVED, Via.NONE);
+		this.atSend = new Item(Threshold.SENT, Via.NONE);
+		this.atGateIn = new Item(Threshold.GATE_IN, Via.NONE);
+		this.atGateOut = new Item(Threshold.GATE_OUT, Via.NONE);	
+		this.atDelivery = new Item(Threshold.DELIVERED, Via.NONE);	
+		this.atReceipt = new Item(Threshold.RECEIVED, Via.NONE);
 	}
 
 }
