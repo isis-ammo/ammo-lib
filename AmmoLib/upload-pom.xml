@@ -7,7 +7,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.vu.isis</groupId>
   <artifactId>ammolib</artifactId>
-  <version>1.4.4</version>
+  <version>1.4.6</version>
   <description>POM is about the minimum</description>
 </project>
 
