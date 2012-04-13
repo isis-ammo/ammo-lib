@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TempFileInputStream extends FileInputStream {
 
-	private static final Logger logger = LoggerFactory.getLogger("class.TempFileInputStream");
+	private static final Logger logger = LoggerFactory.getLogger("ammo.class.TempFileInputStream");
 
 	/**
 	 * Underlying file object
