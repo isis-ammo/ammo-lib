@@ -15,6 +15,7 @@ import edu.vu.isis.ammo.api.type.Oid;
 import edu.vu.isis.ammo.api.type.Order;
 import edu.vu.isis.ammo.api.type.Moment;
 import edu.vu.isis.ammo.api.type.Notice;
+import edu.vu.isis.ammo.api.type.Payload;
 import edu.vu.isis.ammo.api.type.Quantifier;
 import edu.vu.isis.ammo.api.type.TimeInterval;
 import edu.vu.isis.ammo.api.type.TimeStamp;
@@ -27,16 +28,16 @@ public interface IAmmoRequest {
    public TimeStamp lastMessage();
    public void resetMetrics(Integer val);
    public static final Uri PROVIDER_DEFAULT = null;
-   public static final String PAYLOAD_DEFAULT = "";
+   public static final String PAYLOAD_DEFAULT = Payload.DEFAULT;
    public static final Moment MOMENT_APRIORI = Moment.APRIORI;
    public static final Moment MOMENT_EAGER = Moment.EAGER;
    public static final Moment MOMENT_LAZY = Moment.LAZY;
 
-   public static final Moment MOMENT_DEFAULT = MOMENT_LAZY ;
+   public static final Moment MOMENT_DEFAULT = Moment.DEFAULT;
 
    public static final String TOPIC_DEFAULT = "";
    public static final String SUBTOPIC_DEFAULT = "";
-   public static final Quantifier.Type QUANTIFIER_DEFAULT = Quantifier.Type.BULLETIN;
+   public static final Quantifier.Type QUANTIFIER_DEFAULT = Quantifier.DEFAULT;
 
    public static final TimeInterval EXPIRE_UNLIMITED = 
          new TimeInterval(TimeInterval.UNLIMITED);

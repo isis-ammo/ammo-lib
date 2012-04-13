@@ -22,11 +22,17 @@ import android.os.Parcelable;
 public class Quantifier extends AmmoType { 
 
 	public enum Type { 
-		SINGLE,   // only one recipient/subscriber is expected
-		ROOM,     // only multiple subscribers restricted on the sub-topic
-		ALL,      // expected to go to pretty much everybody, subtopic irrelevant
-		BULLETIN, // expected to be retrieved so distribution is not knowable
-		; }
+		SINGLE(0x01),   // only one recipient/subscriber is expected
+		ROOM(0x02),     // only multiple subscribers restricted on the sub-topic
+		ALL(0x03),      // expected to go to pretty much everybody, subtopic irrelevant
+		BULLETIN(0x04); // expected to be retrieved so distribution is not knowable
+		
+		final public int o;
+		
+		private Type(int o) {
+			this.o = o;
+		}
+	}
 
 	final private Type type;
 
@@ -47,6 +53,8 @@ public class Quantifier extends AmmoType {
 			return new Quantifier[size];
 		}
 	};
+
+	public static final Type DEFAULT = Type.BULLETIN;
 	
 	public static Quantifier readFromParcel(Parcel source) {
 		if (AmmoType.isNull(source)) return null;
@@ -56,14 +64,26 @@ public class Quantifier extends AmmoType {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("marshall topic {}", this);
-		dest.writeInt(this.type.ordinal());
+		dest.writeInt(this.type.o);
 
 		
 	}
 
 	public Quantifier(Parcel in) {
-		this.type = Type.values()[ in.readInt() ];
-		
+		final int ordinal = in.readInt();
+		if (ordinal == Type.SINGLE.o) {
+			this.type = Type.SINGLE; 
+		} else if (ordinal == Type.BULLETIN.o) {
+			this.type = Type.BULLETIN;
+		} else if (ordinal == Type.ROOM.o) {
+			this.type = Type.ROOM; 
+		} else if (ordinal == Type.ALL.o) {
+			this.type = Type.ALL; 
+		} else {
+			this.type = DEFAULT; 
+			plogger.trace("unknown qualifier {} using {}", 
+					ordinal, this.type.name());
+		}
 		plogger.trace("unmarshall topic {}", this);
 	}
 	// *********************************
@@ -94,7 +114,9 @@ public class Quantifier extends AmmoType {
 		if (val.equalsIgnoreCase(Type.ALL.name())) {
 			this.type = Type.ALL;
 		} else {
-			this.type = Type.ALL;
+			this.type = DEFAULT; 
+			plogger.trace("unknown qualifier {} using {}", 
+					val, this.type.name());
 		}
 	}
 	

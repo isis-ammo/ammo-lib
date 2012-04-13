@@ -842,7 +842,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		@Override
 		public Builder quantifier(Quantifier.Type type) {
-			this.quantifier(type);
+			this.quantifier = new Quantifier(type);
 			return this;
 		}
 

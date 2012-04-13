@@ -100,6 +100,8 @@ public class Moment extends AmmoType {
     final public static Moment APRIORI = new Moment(Type.APRIORI);
     final public static Moment EAGER = new Moment(Type.EAGER);
     final public static Moment LAZY = new Moment(Type.LAZY);
+
+	public static final Moment DEFAULT = LAZY;
     
     @Override
     public String toString() {

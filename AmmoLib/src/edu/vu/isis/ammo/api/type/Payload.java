@@ -41,6 +41,9 @@ public class Payload extends AmmoType {
 			return new Payload[size];
 		}
 	};
+	
+	public static final String DEFAULT = "";
+	
 	public static Payload readFromParcel(Parcel source) {
 		if (AmmoType.isNull(source)) return null;
 		return new Payload(source);
