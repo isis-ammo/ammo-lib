@@ -92,7 +92,7 @@ public interface IAmmoRequest {
       public IAmmoRequest retrieve() throws RemoteException;
       public IAmmoRequest getInstance(String uuid) throws RemoteException;
       public void releaseInstance();
-      public Builder notice(Notice.Threshold threshold, Via via);
+      public Builder notice(Notice.Threshold threshold, Via.Type type);
       public Builder notice(Notice val);
         public Builder provider(Uri val);
         public Builder payload(String val);

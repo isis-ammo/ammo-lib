@@ -987,9 +987,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		/**
 		 *  To clear the notices use notice(null).
 		 */
-		public Builder notice(Notice.Threshold threshold, Via via) {
+		public Builder notice(Notice.Threshold threshold, Via.Type type) {
 			if (this.notice == null) this.notice = Notice.newInstance();
-			this.notice.setItem(threshold, via);
+			this.notice.setItem(threshold, type);
 			return this;
 		}
 
