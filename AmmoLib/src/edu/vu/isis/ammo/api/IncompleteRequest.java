@@ -14,4 +14,8 @@ public class IncompleteRequest extends Exception {
 		super(ex);
 	}
 
+	public IncompleteRequest(String msg) {
+		super(msg);
+	}
+
 }

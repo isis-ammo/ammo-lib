@@ -139,7 +139,7 @@ public interface IAmmoRequest {
     * 
     */
    public enum Action {
-     NONE(0), 
+	 NONE(0),
      POSTAL(1), DIRECTED_POSTAL(2), 
      PUBLISH(3), 
      RETRIEVAL(4), 
@@ -163,13 +163,19 @@ public interface IAmmoRequest {
      }
 
      static public void writeToParcel(Parcel dest, Action action) {
-        dest.writeInt(action.ordinal());
+        dest.writeInt(action.o);
      }
      
      static public Action getInstance(Parcel in) throws IncompleteRequest { 
     	 final int ordinal = in.readInt();
     	 try {
-        return Action.values()[ordinal];
+    		 if (ordinal == NONE.o) return NONE;
+    		 if (ordinal == POSTAL.o) return POSTAL;
+    		 if (ordinal == RETRIEVAL.o) return RETRIEVAL;
+    		 if (ordinal == INTEREST.o) return INTEREST;
+    		 IncompleteRequest.logger.error("bad action index {}", ordinal);
+    		 throw new IncompleteRequest("bad action");
+    		 
     	 } catch (Exception ex) {
     		 IncompleteRequest.logger.error("bad action index {}", ordinal);
     		 throw new IncompleteRequest(ex);

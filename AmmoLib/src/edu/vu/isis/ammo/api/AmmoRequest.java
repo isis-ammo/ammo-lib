@@ -584,13 +584,13 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			case BIND:
 			case PEEK:
 				final String ident = this.distributor.get().makeRequest(request);
-				logger.info("request {} {}", request, ident);
+				logger.info("service bind : {} {}", request, ident);
 				break;
 			case COMMAND:
 			default:
 				final Intent parcelIntent = MAKE_DISTRIBUTOR_REQUEST.cloneFilter();
 				parcelIntent.putExtra("request", request);
-				ComponentName componentName = this.context.startService(parcelIntent);
+				final ComponentName componentName = this.context.startService(parcelIntent);
 				if (componentName != null) {
 					logger.debug("service command : {}", componentName.getClassName());
 				} else {

@@ -281,6 +281,29 @@ public class Notice extends AmmoType  {
 		public static Via newInstance() {
 			return new Via();
 		}
+		
+		@Override
+		public String toString() {
+			if (this.v == Type.NONE.v) return "NONE"; 
+			
+			final StringBuilder sb = new StringBuilder().append(':');
+			if (0< (this.v & Type.ACTIVITY.v)) {
+				sb.append("activity").append(':');
+			}
+			if (0< (this.v & Type.SERVICE.v)) {
+				sb.append("service").append(':');
+			}
+			if (0< (this.v & Type.BROADCAST.v)) {
+				sb.append("broadcast").append(':');
+			}
+			if (0< (this.v & Type.STICKY_BROADCAST.v)) {
+				sb.append("sticky").append(':');
+			}
+			if (0< (this.v & Type.HEARTBEAT.v)) {
+				sb.append("heartbeat").append(':');
+			}
+			return sb.toString();
+		}
 
 	}
 
