@@ -86,6 +86,7 @@ public interface IAmmoRequest {
    public interface Builder {
       public IAmmoRequest duplicate() throws RemoteException;
       public Builder reset();
+      public IAmmoRequest base();
       public IAmmoRequest post() throws RemoteException;
       public IAmmoRequest interest() throws RemoteException;
       public IAmmoRequest subscribe() throws RemoteException;
@@ -136,14 +137,18 @@ public interface IAmmoRequest {
     * deprecated:
     * DIRECTED_POSTAL, DIRECTED_SUBSCRIBE, PUBLISH
     * 
-    * @author phreed
-    *
     */
    public enum Action {
-     POSTAL(1), DIRECTED_POSTAL(2), PUBLISH(3), RETRIEVAL(4), INTEREST(5), DIRECTED_SUBSCRIBE(6);
+     NONE(0), 
+     POSTAL(1), DIRECTED_POSTAL(2), 
+     PUBLISH(3), 
+     RETRIEVAL(4), 
+     INTEREST(5), DIRECTED_INTEREST(6);
 
+     public int o;
+     
      private Action(int ordinal) {
-    	 
+    	 this.o = ordinal;
      }
      
      @Override

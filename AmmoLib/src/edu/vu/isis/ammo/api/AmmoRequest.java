@@ -602,6 +602,11 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		@Override
+		public IAmmoRequest base() {
+			return new AmmoRequest(IAmmoRequest.Action.NONE, this);
+		}
+		
+		@Override
 		public IAmmoRequest post() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.POSTAL, this));
 		}
