@@ -12,7 +12,6 @@ package edu.vu.isis.ammo.api.type;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import edu.vu.isis.ammo.api.IAmmoRequest;
 
 public class Selection extends AmmoType {
 
@@ -21,8 +20,8 @@ public class Selection extends AmmoType {
 	final private Type type;
 
 	final public String string;
-	final public IAmmoRequest.Query query;
-	final public IAmmoRequest.Form form;
+	final public Query query;
+	final public Form form;
 
 	// *********************************
 	// Parcelable Support
@@ -132,13 +131,13 @@ public class Selection extends AmmoType {
 		this.form = null;
 	}
 
-	public Selection(IAmmoRequest.Query val) {
+	public Selection(Query val) {
 		this.type = Type.QUERY;
 		this.string = null;
 		this.query = val;
 		this.form = null;
 	}
-	public Selection(IAmmoRequest.Form val) {
+	public Selection(Form val) {
 		this.type = Type.FORM;
 		this.string = null;
 		this.query = null;

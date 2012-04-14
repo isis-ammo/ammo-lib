@@ -1,26 +1,25 @@
 // IAmmoRequest.java
 // See docs/java/ammo-api.nw for documentation
 package edu.vu.isis.ammo.api;
-import java.util.Map;
-
 import android.content.ContentValues;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.os.Parcel;
-
 import edu.vu.isis.ammo.api.type.DeliveryScope;
+import edu.vu.isis.ammo.api.type.Form;
 import edu.vu.isis.ammo.api.type.Limit;
+import edu.vu.isis.ammo.api.type.Moment;
+import edu.vu.isis.ammo.api.type.Notice;
 import edu.vu.isis.ammo.api.type.Notice.Via;
 import edu.vu.isis.ammo.api.type.Oid;
 import edu.vu.isis.ammo.api.type.Order;
-import edu.vu.isis.ammo.api.type.Moment;
-import edu.vu.isis.ammo.api.type.Notice;
 import edu.vu.isis.ammo.api.type.Payload;
 import edu.vu.isis.ammo.api.type.Quantifier;
+import edu.vu.isis.ammo.api.type.Query;
 import edu.vu.isis.ammo.api.type.TimeInterval;
 import edu.vu.isis.ammo.api.type.TimeStamp;
 
 public interface IAmmoRequest {
+
    public IAmmoRequest replace(IAmmoRequest req) throws RemoteException;
    public IAmmoRequest replace(String uuid) throws RemoteException;
    public void cancel(); 
@@ -134,62 +133,5 @@ public interface IAmmoRequest {
         public Builder select(Query val);
         public Builder select(Form val); 
    }
-   /**
-    * deprecated:
-    * DIRECTED_POSTAL, DIRECTED_SUBSCRIBE, PUBLISH
-    * 
-    */
-   public enum Action {
-	 NONE(0),
-     POSTAL(1), DIRECTED_POSTAL(2), 
-     PUBLISH(3), 
-     RETRIEVAL(4), 
-     INTEREST(5), DIRECTED_INTEREST(6);
-
-     public int o;
-     
-     private Action(int ordinal) {
-    	 this.o = ordinal;
-     }
-     
-     @Override
-     public String toString() {
-         switch (this) {
-         case POSTAL: return "POSTAL";
-         case RETRIEVAL: return "RETRIEVAL";
-         case INTEREST: return "INTEREST";
-         default: 
-             return null;
-         }
-     }
-
-     static public void writeToParcel(Parcel dest, Action action) {
-        dest.writeInt(action.o);
-     }
-     
-     static public Action getInstance(Parcel in) throws IncompleteRequest { 
-    	 final int ordinal = in.readInt();
-    	 try {
-    		 if (ordinal == NONE.o) return NONE;
-    		 if (ordinal == POSTAL.o) return POSTAL;
-    		 if (ordinal == RETRIEVAL.o) return RETRIEVAL;
-    		 if (ordinal == INTEREST.o) return INTEREST;
-    		 IncompleteRequest.logger.error("bad action index {}", ordinal);
-    		 throw new IncompleteRequest("bad action");
-    		 
-    	 } catch (Exception ex) {
-    		 IncompleteRequest.logger.error("bad action index {}", ordinal);
-    		 throw new IncompleteRequest(ex);
-    	 }
-     }
-   };
-
-   public interface Query {
-      public String select();
-      public String[] args();
-
-      public Query args(String[] val);
-   }
-   public interface Form extends Map<String, String> {}
-
+  
 }

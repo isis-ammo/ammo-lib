@@ -29,7 +29,9 @@ import android.os.Parcel;
 import android.os.ParcelFormatException;
 import android.os.Parcelable;
 import android.os.RemoteException;
+import edu.vu.isis.ammo.api.type.Action;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
+import edu.vu.isis.ammo.api.type.Form;
 import edu.vu.isis.ammo.api.type.Limit;
 import edu.vu.isis.ammo.api.type.Moment;
 import edu.vu.isis.ammo.api.type.Notice;
@@ -39,6 +41,7 @@ import edu.vu.isis.ammo.api.type.Order;
 import edu.vu.isis.ammo.api.type.Payload;
 import edu.vu.isis.ammo.api.type.Provider;
 import edu.vu.isis.ammo.api.type.Quantifier;
+import edu.vu.isis.ammo.api.type.Query;
 import edu.vu.isis.ammo.api.type.Selection;
 import edu.vu.isis.ammo.api.type.TimeInterval;
 import edu.vu.isis.ammo.api.type.TimeStamp;
@@ -61,7 +64,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	// **********************
 	// PUBLIC PROPERTIES
 	// **********************
-	final public IAmmoRequest.Action action;
+	final public Action action;
 	final public String uuid; // the request globally unique identifier
 	final public String uid;  // the application object unique identifier
 
@@ -154,54 +157,56 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		plogger.trace("marshall ammo request {} {}", this.uuid, this.action);
+		plogger.trace("version: {}", VERSION);
 		dest.writeByte(VERSION);
-
+		
+		plogger.trace("request: [{}:{}]", this.uuid, this.uid);
 		dest.writeValue(this.uuid);
 		dest.writeValue(this.uid);
+		plogger.trace("action: {}", this.action);
 		Action.writeToParcel(dest, this.action);
 
-		plogger.trace("provider {}", this.provider);
+		plogger.trace("provider: {}", this.provider);
 		Provider.writeToParcel(this.provider, dest, flags);
-		plogger.debug("payload {}", this.payload);
+		plogger.debug("payload: {}", this.payload);
 		Payload.writeToParcel(this.payload, dest, flags);
-		plogger.trace("moment {}", this.moment);
+		plogger.trace("moment: {}", this.moment);
 		Moment.writeToParcel(this.moment, dest, flags);
-		plogger.trace("topic {} = {}", this.topic, this.subtopic);
+		plogger.trace("topic: [{}]+[{}]", this.topic, this.subtopic);
 		Topic.writeToParcel(this.topic, dest, flags);
 		Topic.writeToParcel(this.subtopic, dest, flags);
-		plogger.trace("quantifier {}", this.quantifier);
+		plogger.trace("quantifier: {}", this.quantifier);
 		Notice.writeToParcel(this.quantifier, dest, flags);
 
-		plogger.debug("downsample {}", this.downsample);
+		plogger.debug("downsample: {}", this.downsample);
 		dest.writeValue(this.downsample);
-		plogger.debug("durabliity {}", this.durability);
+		plogger.debug("durabliity: {}", this.durability);
 		dest.writeValue(this.durability);
 
-		plogger.debug("priority {}", this.priority);
+		plogger.debug("priority: {}", this.priority);
 		dest.writeValue(this.priority);
-		plogger.debug("order {}", this.order);
+		plogger.debug("order: {}", this.order);
 		Order.writeToParcel(this.order, dest, flags);
 
-		plogger.debug("start {}", this.start);
+		plogger.debug("start: {}", this.start);
 		TimeTrigger.writeToParcel(this.start, dest, flags);
-		plogger.debug("expire {}", this.expire);
+		plogger.debug("expire: {}", this.expire);
 		TimeTrigger.writeToParcel(this.expire, dest, flags);
-		plogger.debug("limit {}", this.limit);
+		plogger.debug("limit: {}", this.limit);
 		Limit.writeToParcel(this.limit, dest, flags);
 
-		plogger.debug("scope {}", this.scope);
+		plogger.debug("scope: {}", this.scope);
 		DeliveryScope.writeToParcel(this.scope, dest, flags);
-		plogger.debug("throttle {}", this.throttle);
+		plogger.debug("throttle: {}", this.throttle);
 		dest.writeValue(this.throttle);
-		plogger.debug("worth {}", this.worth);
+		plogger.debug("worth: {}", this.worth);
 		dest.writeValue(this.worth);
-		plogger.trace("notice {}", this.notice);
+		plogger.trace("notice: {}", this.notice);
 		Notice.writeToParcel(this.notice, dest, flags);
 
-		plogger.trace("selection {}", this.select);
+		plogger.trace("selection: {}", this.select);
 		Selection.writeToParcel(this.select, dest, flags);
-		plogger.debug("projection {}", this.project);
+		plogger.debug("projection: {}", this.project);
 		dest.writeStringArray(this.project);
 	}
 
@@ -231,9 +236,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		try {
 			this.uuid = (String) in.readValue(String.class.getClassLoader());
 			this.uid  = (version < (byte)3) ? this.uuid : (String) in.readValue(String.class.getClassLoader());
-			plogger.trace("unmarshall ammo request: [{}]:[{}]", this.uuid, this.uid);
+			plogger.trace("uuid: [{}:{}]", this.uuid, this.uid);
 		} catch (Exception ex) {
-			plogger.error("unmarshall on uid {}", ex);
+			plogger.error("decoding uid: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		
@@ -241,64 +246,70 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.action = Action.getInstance(in);
 			plogger.trace("action: {}", this.action);
 		} catch (Exception ex) {
-			plogger.error("unmarshall on action {}", ex);
+			plogger.error("decoding action: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
 			this.provider = Provider.readFromParcel(in);
 			plogger.trace("provider: {}", this.provider);
 		} catch (Exception ex) {
-			plogger.error("unmarshall provider {}", ex);
+			plogger.error("decoding provider: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
 			this.payload = Payload.readFromParcel(in);
 			plogger.trace("payload: {}", this.payload);	
 		} catch (Exception ex) {
-			plogger.error("unmarshall on payload {}", ex);
+			plogger.error("decoding payload: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
 			this.moment = (version < (byte) 4) ? Moment.LAZY : Moment.readFromParcel(in);
 			plogger.trace("moment: {}", this.moment);
 		} catch (Exception ex) {
-			plogger.error("unmarshall on moment {}", ex);
+			plogger.error("decoding moment: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
 			this.topic = Topic.readFromParcel(in);
 			plogger.trace("topic: {}", this.topic);
 		} catch (Exception ex) {
-			plogger.error("unmarshall topic {}", ex);
+			plogger.error("decoding topic: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
-		try {
-			if (version < (byte) 3) {
-				// unused read slack bytes
-				this.subtopic = new Topic("");
-				this.quantifier = new Quantifier(Quantifier.Type.BULLETIN);
-			} else {
+
+		if (version < (byte) 3) {
+			// unused read slack bytes
+			this.subtopic = new Topic("");
+			this.quantifier = new Quantifier(Quantifier.Type.BULLETIN);
+		} else {
+			try {
 				this.subtopic = Topic.readFromParcel(in);
 				plogger.trace("subtopic: {}", this.subtopic);
+			} catch (Exception ex) {
+				plogger.error("decoding subtopic: {}", ex);
+				throw new IncompleteRequest(ex);
+			}
+			try {
 				this.quantifier = Quantifier.readFromParcel(in);
 				plogger.trace("quantifier: {}", this.quantifier);
+			} catch (Exception ex) {
+				plogger.error("decoding quantifier: {}", ex);
+				throw new IncompleteRequest(ex);
 			}
-		} catch (Exception ex) {
-			plogger.error("unmarshall subtopic {}", ex);
-			throw new IncompleteRequest(ex);
-		}
+		} 
 		try {
 			this.downsample = (Integer) in.readValue(Integer.class.getClassLoader());
 			plogger.trace("downsample: {}", this.downsample);
 		} catch (Exception ex) {
-			plogger.error("unmarshall downsample {}", ex);
+			plogger.error("decoding downsample: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
 			this.durability = (Integer) in.readValue(Integer.class.getClassLoader());
 			plogger.trace("durability: {}", this.durability);
 		} catch (Exception ex) {
-			plogger.error("unmarshall durability {}", ex);
+			plogger.error("decoding durability: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
@@ -306,14 +317,14 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.priority = (Integer) in.readValue(Integer.class.getClassLoader());
 			plogger.trace("priority: {}", this.priority);
 		} catch (Exception ex) {
-			plogger.error("unmarshall priority {}", ex);
+			plogger.error("decoding priority: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
 			this.order = Order.readFromParcel(in);
 			plogger.trace("order: {}", this.order);
 		} catch (Exception ex) {
-			plogger.error("unmarshall order {}", ex);
+			plogger.error("decoding order: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
@@ -327,21 +338,21 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.expire = TimeTrigger.readFromParcel(in);
 			plogger.trace("expire: {}", this.expire);
 		} catch (Exception ex) {
-			plogger.error("unmarshall expire {}", ex);
+			plogger.error("decoding expire: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
 			this.limit = (version < (byte)2) ? new Limit(100) : Limit.readFromParcel(in);
 			plogger.trace("limit: {}", this.limit);
 		} catch (Exception ex) {
-			plogger.error("unmarshall limit  {}", ex);
+			plogger.error("decoding limit: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
 			this.scope = DeliveryScope.readFromParcel(in);
 			plogger.trace("scope: {}", this.scope);
 		} catch (Exception ex) {
-			plogger.error("unmarshall scope {}", ex);
+			plogger.error("decoding scope: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
@@ -355,28 +366,28 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.worth = (Integer) in.readValue(Integer.class.getClassLoader());
 			plogger.trace("worth: {}", this.worth);
 		} catch (Exception ex) {
-			plogger.error("unmarshall worth {}", ex);
+			plogger.error("decoding worth: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
 			this.notice = (version < 4) ? new Notice() : Notice.readFromParcel(in);
 			plogger.trace("notice: {}", this.notice);
 		} catch (Exception ex) {
-			plogger.error("unmarshall notice {}", ex);
+			plogger.error("decoding notice: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
 			this.select = Selection.readFromParcel(in);
 			plogger.trace("select: {}", this.select);
 		} catch (Exception ex) {
-			plogger.error("unmarshall select {}", ex);
+			plogger.error("decoding select: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
 			this.project = in.createStringArray();
 			plogger.trace("projection: {}", this.project);
 		} catch (Exception ex) {
-			plogger.error("unmarshall proejction {}", ex);
+			plogger.error("decoding projection: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
 
@@ -391,7 +402,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	// IAmmoReques Support
 	// *********************************
 
-	private AmmoRequest(IAmmoRequest.Action action, Builder builder) {
+	private AmmoRequest(Action action, Builder builder) {
 		this.action = action;
 		this.uid = builder.uid;
 
@@ -603,18 +614,18 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		@Override
 		public IAmmoRequest base() {
-			return new AmmoRequest(IAmmoRequest.Action.NONE, this);
+			return new AmmoRequest(Action.NONE, this);
 		}
 		
 		@Override
 		public IAmmoRequest post() throws RemoteException {
-			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.POSTAL, this));
+			return this.makeRequest(new AmmoRequest(Action.POSTAL, this));
 		}
 
 
 		@Override
 		public IAmmoRequest retrieve() throws RemoteException {
-			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.RETRIEVAL, this));
+			return this.makeRequest(new AmmoRequest(Action.RETRIEVAL, this));
 		}
 
 		@Override
@@ -624,7 +635,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		@Override
 		public IAmmoRequest interest() throws RemoteException {
-			return this.makeRequest(new AmmoRequest(IAmmoRequest.Action.INTEREST, this));
+			return this.makeRequest(new AmmoRequest(Action.INTEREST, this));
 		}
 
 		@Override
