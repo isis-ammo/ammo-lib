@@ -758,8 +758,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		@Override
 		public Builder moment(String val) {
-			if (val == null)
-				return this;
+			if (val == null) {
+				return this.moment(SerialMoment.DEFAULT);
+			}
 			return this.moment(new SerialMoment(val));
 		}
 
@@ -783,21 +784,22 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		public Builder provider(String val) {
-			if (val == null)
-				return this;
+			if (val == null) {
+				return this.provider(Provider.DEFAULT);
+			}
 			return this.provider(Uri.parse(val));
 		}
 
 		@Override
 		public Builder provider(Uri val) {
 			this.provider = new Provider(val);
-			this.moment = SerialMoment.APRIORI;
 			return this;
 		}
 
 		public Builder scope(String val) {
-			if (val == null)
-				return this;
+			if (val == null) {
+				return this.scope(DeliveryScope.DEFAULT);
+			}
 			return this.scope(new DeliveryScope(val));
 		}
 

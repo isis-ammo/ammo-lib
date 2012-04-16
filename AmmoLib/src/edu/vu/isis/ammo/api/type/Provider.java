@@ -104,6 +104,8 @@ public class Provider extends AmmoType {
 	// IAmmoRequest Support
 	// *********************************
 
+	public final static Uri DEFAULT = Uri.parse("");
+	
 	public byte[] asBytes() {
 		switch (this.type){
 		case URI: return this.uri.toString().getBytes();

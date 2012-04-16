@@ -21,7 +21,7 @@ public class DeliveryScope extends AmmoType {
     public enum Type {
         GLOBAL, LOCAL;
     }
-  
+    
     final private Type type;
     
     // *********************************
@@ -75,6 +75,8 @@ public class DeliveryScope extends AmmoType {
     
     final public static DeliveryScope GLOBAL = new DeliveryScope(Type.GLOBAL);
     final public static DeliveryScope LOCAL = new DeliveryScope(Type.LOCAL);
+    public final static DeliveryScope DEFAULT = GLOBAL;
+    
     
     @Override
     public String toString() {
