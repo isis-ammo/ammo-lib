@@ -264,7 +264,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			throw new IncompleteRequest(ex);
 		}
 		try {
-			this.moment = (version < (byte) 4) ? Moment.LAZY : Moment.readFromParcel(in);
+			this.moment = (version < (byte) 4) ? Moment.DEFAULT : Moment.readFromParcel(in);
 			plogger.trace("moment: {}", this.moment);
 		} catch (Exception ex) {
 			plogger.error("decoding moment: {}", ex);

@@ -7,7 +7,7 @@ The US government has the right to use, modify, reproduce, release,
 perform, display, or disclose computer software or computer software 
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
-*/
+ */
 package edu.vu.isis.ammo.api.type;
 
 
@@ -19,94 +19,98 @@ import android.os.Parcelable;
  */
 public class Moment extends AmmoType {
 
-    public enum Type {
-    	LAZY(1, "the last moment"),
-    	EAGER(2, "as soon as possible"),
-    	APRIORI(3, "pre-serialized");
+	public enum Type {
+		LAZY(1, "the last moment"),
+		EAGER(2, "as soon as possible"),
+		APRIORI(3, "pre-serialized");
 
-    	private final int o;
-    	private final String d;
-    	
-    	private Type(int ordinal, String description) {
-    		this.o = ordinal;
-    		this.d = description;
-    	}
-    }
-    
+		private final int o;
+		private final String d;
 
-    final private Type type;
-    
-    // *********************************
-    // Parcelable Support
-    // *********************************
+		private Type(int ordinal, String description) {
+			this.o = ordinal;
+			this.d = description;
+		}
+	}
 
-    public static final Parcelable.Creator<Moment> CREATOR = 
-        new Parcelable.Creator<Moment>() {
 
-        @Override
-        public Moment createFromParcel(Parcel source) {
-            return new Moment(source);
-        }
-
-        @Override
-        public Moment[] newArray(int size) {
-            return new Moment[size];
-        }
-    };
-    public static Moment readFromParcel(Parcel source) {
-    	if (AmmoType.isNull(source)) return null;
-        return new Moment(source);
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-    	plogger.trace("marshall Moment {}", this);
-        dest.writeInt(this.type.ordinal());
-    }
-
-    private Moment(Parcel in) {
-        this.type = Type.values()[in.readInt()];
-    	plogger.trace("unmarshall Moment []", this);
-    }
+	final private Type type;
 
 	// *********************************
-    // IAmmoRequest Support
-    // *********************************
-	
-    public Moment(String val) {
-        if (val.startsWith("A")) { this.type = Type.APRIORI; return; }
-        if (val.startsWith("E")) { this.type = Type.EAGER; return; }
-        if (val.startsWith("L")) { this.type = Type.LAZY; return; }
-        this.type = Type.LAZY;
-    }
-    
+	// Parcelable Support
+	// *********************************
+
+	public static final Parcelable.Creator<Moment> CREATOR = 
+			new Parcelable.Creator<Moment>() {
+
+		@Override
+		public Moment createFromParcel(Parcel source) {
+			return new Moment(source);
+		}
+
+		@Override
+		public Moment[] newArray(int size) {
+			return new Moment[size];
+		}
+	};
+	public static Moment readFromParcel(Parcel source) {
+		if (AmmoType.isNull(source)) return null;
+		return new Moment(source);
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		plogger.trace("marshall Moment {}", this);
+		dest.writeInt(this.type.o);
+	}
+
+	private Moment(Parcel in) {
+		final int ordinal = in.readInt();
+		this.type = getInstance(ordinal).type;
+	}
+
+	// *********************************
+	// IAmmoRequest Support
+	// *********************************
+
+	public Moment(String val) {
+		if (val.startsWith("A")) { this.type = Type.APRIORI; return; }
+		if (val.startsWith("E")) { this.type = Type.EAGER; return; }
+		if (val.startsWith("L")) { this.type = Type.LAZY; return; }
+		this.type = Type.LAZY;
+	}
+
 	public int cv() {
 		return this.type.o;
 	}
-  
-    public Moment(int cv) {
-    	if (cv == Type.APRIORI.o) { this.type = Type.APRIORI; return; }
-    	if (cv == Type.EAGER.o) { this.type = Type.EAGER; return; }
-    	if (cv == Type.LAZY.o) { this.type = Type.LAZY; return; }
-        this.type = Type.LAZY;
-    }
-    
-    public Moment(Type val) {
-        this.type = val;
-    }
-    
-    public Type type() { return this.type; }
-    
-    final public static Moment APRIORI = new Moment(Type.APRIORI);
-    final public static Moment EAGER = new Moment(Type.EAGER);
-    final public static Moment LAZY = new Moment(Type.LAZY);
+
+	public Moment(int cv) {
+		this.type = getInstance(cv).type;
+	}
+	
+	private Moment getInstance(int cv) {
+		if (cv == Type.APRIORI.o) { return APRIORI; }
+		if (cv == Type.EAGER.o) { return EAGER;}
+		if (cv == Type.LAZY.o) { return LAZY; }
+		return DEFAULT;
+	}
+
+	public Moment(Type val) {
+		this.type = val;
+	}
+
+	public Type type() { return this.type; }
+
+	final public static Moment APRIORI = new Moment(Type.APRIORI);
+	final public static Moment EAGER = new Moment(Type.EAGER);
+	final public static Moment LAZY = new Moment(Type.LAZY);
 
 	public static final Moment DEFAULT = LAZY;
-    
-    @Override
-    public String toString() {
-    	return new StringBuilder().append(this.type.d).toString();
-    }
-    
+
+	@Override
+	public String toString() {
+		return new StringBuilder().append(this.type.d).toString();
+	}
+
 }
 
