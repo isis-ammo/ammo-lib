@@ -669,7 +669,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.durability(DURABILITY_DEFAULT);
 			this.order(ORDER_DEFAULT);
 			this.payload(PAYLOAD_DEFAULT);
-			this.moment(MOMENT_DEFAULT);
+			this.moment(Moment.DEFAULT);
 			this.priority(PRIORITY_DEFAULT);
 			this.provider(PROVIDER_DEFAULT);
 			this.scope(SCOPE_DEFAULT);

@@ -28,11 +28,6 @@ public interface IAmmoRequest {
    public void resetMetrics(Integer val);
    public static final Uri PROVIDER_DEFAULT = null;
    public static final String PAYLOAD_DEFAULT = Payload.DEFAULT;
-   public static final Moment MOMENT_APRIORI = Moment.APRIORI;
-   public static final Moment MOMENT_EAGER = Moment.EAGER;
-   public static final Moment MOMENT_LAZY = Moment.LAZY;
-
-   public static final Moment MOMENT_DEFAULT = Moment.DEFAULT;
 
    public static final String TOPIC_DEFAULT = "";
    public static final String SUBTOPIC_DEFAULT = "";

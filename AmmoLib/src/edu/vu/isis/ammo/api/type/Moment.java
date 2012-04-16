@@ -88,10 +88,10 @@ public class Moment extends AmmoType {
 		this.type = getInstance(cv).type;
 	}
 	
-	private Moment getInstance(int cv) {
-		if (cv == Type.APRIORI.o) { return APRIORI; }
-		if (cv == Type.EAGER.o) { return EAGER;}
-		if (cv == Type.LAZY.o) { return LAZY; }
+	private Moment getInstance(int ordinal) {
+		if (ordinal == Type.APRIORI.o) { return APRIORI; }
+		if (ordinal == Type.EAGER.o) { return EAGER;}
+		if (ordinal == Type.LAZY.o) { return LAZY; }
 		return DEFAULT;
 	}
 
@@ -109,7 +109,11 @@ public class Moment extends AmmoType {
 
 	@Override
 	public String toString() {
-		return new StringBuilder().append(this.type.d).toString();
+		return new StringBuilder()
+		.append(this.type.name())
+		.append(" : ")
+		.append(this.type.d)
+		.toString();
 	}
 
 }
