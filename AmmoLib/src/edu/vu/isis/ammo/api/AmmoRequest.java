@@ -33,7 +33,7 @@ import edu.vu.isis.ammo.api.type.Action;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Form;
 import edu.vu.isis.ammo.api.type.Limit;
-import edu.vu.isis.ammo.api.type.Moment;
+import edu.vu.isis.ammo.api.type.SerialMoment;
 import edu.vu.isis.ammo.api.type.Notice;
 import edu.vu.isis.ammo.api.type.Notice.Via;
 import edu.vu.isis.ammo.api.type.Oid;
@@ -70,7 +70,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 	final public Provider provider;
 	final public Payload payload;
-	final public Moment moment;
+	final public SerialMoment moment;
 	final public Topic topic;
 	final public Topic subtopic;
 	final public Quantifier quantifier;
@@ -171,7 +171,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		plogger.debug("payload: {}", this.payload);
 		Payload.writeToParcel(this.payload, dest, flags);
 		plogger.trace("moment: {}", this.moment);
-		Moment.writeToParcel(this.moment, dest, flags);
+		SerialMoment.writeToParcel(this.moment, dest, flags);
 		plogger.trace("topic: [{}]+[{}]", this.topic, this.subtopic);
 		Topic.writeToParcel(this.topic, dest, flags);
 		Topic.writeToParcel(this.subtopic, dest, flags);
@@ -264,7 +264,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			throw new IncompleteRequest(ex);
 		}
 		try {
-			this.moment = (version < (byte) 4) ? Moment.DEFAULT : Moment.readFromParcel(in);
+			this.moment = (version < (byte) 4) ? SerialMoment.DEFAULT : SerialMoment.readFromParcel(in);
 			plogger.trace("moment: {}", this.moment);
 		} catch (Exception ex) {
 			plogger.error("decoding moment: {}", ex);
@@ -551,7 +551,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		private Provider provider;
 		private Payload payload;
-		private Moment moment;
+		private SerialMoment moment;
 		private Topic topic;
 		private Topic subtopic;
 		private Quantifier quantifier;
@@ -669,7 +669,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.durability(DURABILITY_DEFAULT);
 			this.order(ORDER_DEFAULT);
 			this.payload(PAYLOAD_DEFAULT);
-			this.moment(Moment.DEFAULT);
+			this.moment(SerialMoment.DEFAULT);
 			this.priority(PRIORITY_DEFAULT);
 			this.provider(PROVIDER_DEFAULT);
 			this.scope(SCOPE_DEFAULT);
@@ -760,11 +760,11 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		public Builder moment(String val) {
 			if (val == null)
 				return this;
-			return this.moment(new Moment(val));
+			return this.moment(new SerialMoment(val));
 		}
 
 		@Override
-		public Builder moment(Moment val) {
+		public Builder moment(SerialMoment val) {
 			this.moment = val;
 			return this;
 		}
@@ -791,7 +791,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		@Override
 		public Builder provider(Uri val) {
 			this.provider = new Provider(val);
-			this.moment = Moment.APRIORI;
+			this.moment = SerialMoment.APRIORI;
 			return this;
 		}
 

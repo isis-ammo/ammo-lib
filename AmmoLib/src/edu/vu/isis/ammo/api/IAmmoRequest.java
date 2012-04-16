@@ -7,7 +7,7 @@ import android.os.RemoteException;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Form;
 import edu.vu.isis.ammo.api.type.Limit;
-import edu.vu.isis.ammo.api.type.Moment;
+import edu.vu.isis.ammo.api.type.SerialMoment;
 import edu.vu.isis.ammo.api.type.Notice;
 import edu.vu.isis.ammo.api.type.Notice.Via;
 import edu.vu.isis.ammo.api.type.Oid;
@@ -114,7 +114,7 @@ public interface IAmmoRequest {
         public Builder limit(Limit val);
         public Builder durability(Integer val);
         public Builder moment(String val);
-        public Builder moment(Moment val);
+        public Builder moment(SerialMoment val);
         public Builder priority(Integer val);
         public Builder order(Order val);
         public Builder worth(Integer val);
