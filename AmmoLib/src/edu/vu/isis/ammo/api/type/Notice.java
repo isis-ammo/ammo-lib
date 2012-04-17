@@ -69,8 +69,8 @@ public class Notice extends AmmoType  {
 		@Override
 		public String toString() {
 			return new StringBuilder()
-			.append("@[").append(this.threshold).append("]->")
-			.append("").append(this.via)
+			.append("@").append(this.threshold).append("->")
+			.append("[").append(this.via).append(']')
 			.toString();
 		}
 
@@ -367,13 +367,32 @@ public class Notice extends AmmoType  {
 	// *********************************
 	@Override
 	public String toString() {
-		return new StringBuilder()
-		.append(this.atSend.toString()).append(' ')
-		.append(this.atGateIn.toString()).append(' ')
-		.append(this.atGateOut.toString()).append(' ')
-		.append(this.atDelivery.toString()).append(' ')
-		.append(this.atReceipt.toString()).append(' ')
-		.toString();
+		final StringBuilder sb = new StringBuilder();
+		boolean existsAnActive = false;
+		if (this.atSend.via.isActive()) {
+			sb.append(this.atSend.toString()).append(' ');
+			existsAnActive = true;
+		} 
+		if (this.atGateIn.via.isActive()) {
+			sb.append(this.atGateIn.toString()).append(' ');
+			existsAnActive = true;
+		} 
+		if (this.atGateOut.via.isActive()) {
+			sb.append(this.atGateOut.toString()).append(' ');
+			existsAnActive = true;
+		}
+		if (this.atDelivery.via.isActive()) {
+			sb.append(this.atDelivery.toString()).append(' ');
+			existsAnActive = true;
+		}
+		if (this.atSend.via.isActive()) {
+			sb.append(this.atReceipt.toString()).append(' ');
+			existsAnActive = true;
+		} 
+		if (! existsAnActive) {
+			return "none requested";
+		}
+		return sb.toString();
 	}
 
 	// *********************************
