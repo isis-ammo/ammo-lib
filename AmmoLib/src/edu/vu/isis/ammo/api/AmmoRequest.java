@@ -47,8 +47,8 @@ import edu.vu.isis.ammo.api.type.Topic;
  * see docs/dev-guide/developer-guide.pdf
  */
 public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcelable {
-	private static final Logger logger = LoggerFactory.getLogger("ammo.class.AmmoRequest.Request");
-	private static final Logger plogger = LoggerFactory.getLogger("ammo.class.AmmoRequest.Parcel");
+	private static final Logger logger = LoggerFactory.getLogger("api.request");
+	private static final Logger plogger = LoggerFactory.getLogger("api.parcel");
 
 	// **********************
 	// PUBLIC PROPERTIES
