@@ -20,6 +20,8 @@ import android.os.Parcelable;
  *
  */
 public class Quantifier extends AmmoType { 
+	
+	static final public Quantifier RESET = null;
 
 	public enum Type { 
 		SINGLE(0x01),   // only one recipient/subscriber is expected

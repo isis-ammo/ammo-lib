@@ -18,6 +18,8 @@ import android.os.Parcelable;
  */
 public class Limit extends AmmoType {
 
+	static final public Limit RESET = null;
+	
 	public int count;
 	
     public enum Type {

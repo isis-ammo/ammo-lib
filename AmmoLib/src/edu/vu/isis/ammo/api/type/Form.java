@@ -23,6 +23,8 @@ import android.os.Parcelable;
  */
 
 public class Form extends AmmoType implements Map<String, String> {
+	
+	static final public Form RESET = null;
 	    
     private final Map<String,String> backing;
     

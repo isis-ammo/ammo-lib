@@ -18,6 +18,8 @@ import android.os.Parcelable;
  */
 public class DeliveryScope extends AmmoType {
 
+	static final public DeliveryScope RESET = null;
+	
     public enum Type {
         GLOBAL, LOCAL;
     }

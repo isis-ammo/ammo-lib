@@ -16,6 +16,8 @@ import android.os.Parcelable;
 
 
 public class Provider extends AmmoType {
+	
+	static final public Provider RESET = null;
 
 	public enum Type { URI; }
 

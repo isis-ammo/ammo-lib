@@ -18,6 +18,8 @@ import android.os.Parcelable;
  */
 
 public class Query extends AmmoType {
+	
+	static final public Query RESET = null;
 
 	final private String select;
 	final private String[] args;

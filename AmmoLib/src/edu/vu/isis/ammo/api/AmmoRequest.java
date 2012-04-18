@@ -1003,7 +1003,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		}
 
 		/**
-		 *  To clear the notices use notice(null).
+		 *  To clear the notices use notice(Notice.RESET).
 		 */
 		public Builder notice(Notice.Threshold threshold, Via.Type type) {
 			if (this.notice == null) this.notice = Notice.newInstance();
@@ -1014,7 +1014,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		/**
 		 *  It replaces the current notice object with the argument.
 		 *  The notice set can be cleared by using this method
-		 *  with a null object.
+		 *  with the Notice.RESET object.
 		 */
 		@Override
 		public Builder notice(Notice val) {

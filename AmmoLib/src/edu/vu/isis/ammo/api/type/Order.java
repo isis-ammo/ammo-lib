@@ -17,6 +17,8 @@ import android.os.Parcelable;
  * Specifies the order in which queued items are to be processed.
  */
 public class Order extends AmmoType {
+	
+	static final public Order RESET = null;
 
     public enum Type {
     	OLDEST_FIRST(1, "Oldest First"),

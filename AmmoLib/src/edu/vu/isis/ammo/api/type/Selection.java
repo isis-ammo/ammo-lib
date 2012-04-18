@@ -14,6 +14,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Selection extends AmmoType {
+	
+	static final public Selection RESET = null;
 
 	public enum Type { STRING, QUERY, FORM; }
 

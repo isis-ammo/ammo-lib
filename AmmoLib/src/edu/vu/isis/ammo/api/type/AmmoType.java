@@ -62,6 +62,11 @@ public abstract class AmmoType implements Parcelable {
 	*	if (AmmoType.isNull(source)) return null;
 	*	return new T(source);
 	* }
+	* 
+	* Every child should have a RESET constant.
+	* This constant is used with the AmmoRequest.Builder to 
+	* reset the field to its default state.
+	* The reset should typically be typed and set to null.
 	*/
 	static public void writeToParcel(AmmoType that, Parcel dest, int flags) {
 		if (that == null) {

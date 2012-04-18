@@ -14,6 +14,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class TimeTrigger extends AmmoType {
+	
+	static final public TimeTrigger RESET = null;
 
 	public enum Type { ABS, REL; }
 

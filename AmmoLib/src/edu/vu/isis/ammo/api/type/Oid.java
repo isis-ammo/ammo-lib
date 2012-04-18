@@ -21,6 +21,8 @@ import android.os.Parcelable;
 
 public class Oid extends AmmoType implements List<Integer> {
 
+	static final public Oid RESET = null;
+	
 	private final List<Integer> backing;
 	
     // *********************************

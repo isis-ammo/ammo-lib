@@ -16,6 +16,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class TimeStamp extends AmmoType {
+	
+	static final public TimeStamp RESET = null;
 
 	final private long millis;
 	final private TimeInterval interval;

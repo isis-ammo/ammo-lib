@@ -15,6 +15,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Topic extends AmmoType { 
+	
+	static final public Topic RESET = null;
 
 	public enum Type { OID, STR; }
 

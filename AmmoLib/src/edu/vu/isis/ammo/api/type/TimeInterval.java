@@ -18,6 +18,8 @@ import android.os.Parcelable;
  */
 public class TimeInterval extends AmmoType {
 	
+	static final public TimeInterval RESET = null;
+	
     public enum Unit {
         MILLISEC, SECOND, MINUTE, HOUR, DAY, YEAR
     };

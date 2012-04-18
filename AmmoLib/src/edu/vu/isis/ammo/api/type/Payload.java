@@ -16,6 +16,8 @@ import android.os.Parcelable;
 
 
 public class Payload extends AmmoType { 
+	
+	static final public Payload RESET = null;
 
 	public enum Type { NONE, STR, BYTE, CV; }
 

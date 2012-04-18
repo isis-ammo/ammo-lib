@@ -17,6 +17,8 @@ import android.os.Parcelable;
  * Specifies the Moment in which queued items are to be processed.
  */
 public class SerialMoment extends AmmoType {
+	
+	static final public SerialMoment RESET = null;
 
 	public static final int APRIORI_ID = 1;
 	public static final int EAGER_ID = 2;

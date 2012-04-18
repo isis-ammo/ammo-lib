@@ -56,6 +56,8 @@ import android.os.Parcelable;
  */
 
 public class Notice extends AmmoType  {
+	
+	static final public Notice RESET = null;
 
 	public class Item {	   
 		public final Threshold threshold;
