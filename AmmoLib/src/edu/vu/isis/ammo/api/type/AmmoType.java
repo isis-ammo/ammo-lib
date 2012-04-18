@@ -46,7 +46,7 @@ import android.os.Parcelable;
  *
  */
 public abstract class AmmoType implements Parcelable {
-	protected static final Logger plogger = LoggerFactory.getLogger( "ammo.class.AmmoType" );
+	protected static final Logger plogger = LoggerFactory.getLogger( "api.type" );
 
 	// *********************************
 	// Parcelable Support
