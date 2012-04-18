@@ -18,6 +18,8 @@ public class Topic extends AmmoType {
 	
 	static final public Topic RESET = null;
 
+	public static final String DEFAULT = "";
+
 	public enum Type { OID, STR; }
 
 	final private Type type;

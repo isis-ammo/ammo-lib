@@ -29,8 +29,6 @@ public interface IAmmoRequest {
    public static final Uri PROVIDER_DEFAULT = null;
    public static final String PAYLOAD_DEFAULT = Payload.DEFAULT;
 
-   public static final String TOPIC_DEFAULT = "";
-   public static final String SUBTOPIC_DEFAULT = "";
    public static final Quantifier.Type QUANTIFIER_DEFAULT = Quantifier.DEFAULT;
 
    public static final TimeInterval EXPIRE_UNLIMITED = 

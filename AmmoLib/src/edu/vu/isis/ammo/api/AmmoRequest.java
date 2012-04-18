@@ -675,8 +675,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.scope(SCOPE_DEFAULT);
 			this.start(START_DEFAULT);
 			this.throttle(THROTTLE_DEFAULT);
-			this.topic(TOPIC_DEFAULT);
-			this.subtopic(SUBTOPIC_DEFAULT);
+			this.topic(Topic.DEFAULT);
+			this.subtopic(Topic.DEFAULT);
 			this.quantifier(QUANTIFIER_DEFAULT);
 			this.uid(UID_DEFAULT);
 			this.expire(EXPIRE_DEFAULT);
