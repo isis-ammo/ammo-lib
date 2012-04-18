@@ -20,8 +20,34 @@ public class TimeInterval extends AmmoType {
 	
 	static final public TimeInterval RESET = null;
 	
+	static final private int MILLISEC_ID = 0;
+	static final private int SECOND_ID = 1;
+	static final private int MINUTE_ID = 2;
+	static final private int HOUR_ID = 3;
+	static final private int DAY_ID = 4;
+	static final private int MONTH_ID = 5;
+	static final private int YEAR_ID = 6;
+	
     public enum Unit {
-        MILLISEC, SECOND, MINUTE, HOUR, DAY, YEAR
+        MILLISEC(MILLISEC_ID), SECOND(SECOND_ID), 
+        MINUTE(MINUTE_ID), HOUR(HOUR_ID), 
+        DAY(DAY_ID), MONTH(MONTH_ID), YEAR(YEAR_ID);
+        
+        final public int id;
+        private Unit(int id) { this.id = id; }
+        
+    static public Unit getInstance(int id) {
+    	switch(id) {
+    	case MILLISEC_ID: return Unit.MILLISEC;
+    	case SECOND_ID: return Unit.SECOND;
+    	case MINUTE_ID: return Unit.MINUTE;
+    	case HOUR_ID: return Unit.HOUR;
+    	case DAY_ID: return Unit.DAY;
+    	case MONTH_ID: return Unit.MONTH;
+    	case YEAR_ID: return Unit.YEAR;
+    	}
+    	return null;
+    }
     };
     static public final int UNLIMITED = Integer.MAX_VALUE;
 
@@ -54,12 +80,12 @@ public class TimeInterval extends AmmoType {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("marshall time interval {}", this);
-		dest.writeInt(this.units.ordinal());
+		dest.writeInt(this.units.id);
 		dest.writeLong(this.quantity);
 	}
 
     private TimeInterval(Parcel in) {
-        this.units = Unit.values()[in.readInt()];
+        this.units = Unit.getInstance(in.readInt());
         this.quantity = in.readLong();
     	plogger.trace("unmarshall time interval {}", this);
     }

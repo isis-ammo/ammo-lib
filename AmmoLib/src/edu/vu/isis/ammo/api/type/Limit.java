@@ -22,16 +22,27 @@ public class Limit extends AmmoType {
 	
 	public int count;
 	
+	static final private int OLDEST_ID = 0;
+	static final private int NEWEST_ID = 1;
+	
     public enum Type {
-    	OLDEST(1, "Oldest"),
-    	NEWEST(2, "Newest");
+    	OLDEST(OLDEST_ID, "oldest"),
+    	NEWEST(NEWEST_ID, "newest");
 
-    	public final int o;
+    	public final int id;
     	public final String d;
     	
-    	private Type(int ordinal, String description) {
-    		this.o = ordinal;
+    	private Type(int id, String description) {
+    		this.id = id;
     		this.d = description;
+    	}
+    	
+    	static public Type getInstance(final int id) {
+    		switch (id) {
+    		case OLDEST_ID: return OLDEST;
+    		case NEWEST_ID: return NEWEST;
+    		}
+    		return null;
     	}
     }
     
@@ -66,12 +77,12 @@ public class Limit extends AmmoType {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
     	plogger.trace("marshall order {}", this);
-        dest.writeInt(this.type.ordinal());
+        dest.writeInt(this.type.id);
         dest.writeInt(this.count);
     }
 
     private Limit(Parcel in) {
-        this.type = Type.values()[in.readInt()];
+        this.type = Type.getInstance(in.readInt());
         this.count = in.readInt();
     	plogger.trace("unmarshall limit []", this);
     }

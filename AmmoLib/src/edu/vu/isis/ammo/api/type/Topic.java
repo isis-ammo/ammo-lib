@@ -15,12 +15,27 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Topic extends AmmoType { 
-	
+
 	static final public Topic RESET = null;
 
 	public static final String DEFAULT = "";
 
-	public enum Type { OID, STR; }
+	static final private int OID_ID = 0;
+	static final private int STR_ID = 1;
+
+	public enum Type { 
+		OID(OID_ID), STR(STR_ID);
+
+		final public int id;
+		private Type(final int id) { this.id = id; }
+		static public Type getInstance(final int id) {
+			switch (id) {
+			case OID_ID: return OID;
+			case STR_ID: return STR;
+			}
+			return null;
+		}
+	};
 
 	final private Type type;
 	final private String str;
@@ -60,8 +75,8 @@ public class Topic extends AmmoType {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {		
 		plogger.trace("marshall topic {}", this);
-		dest.writeInt(this.type.ordinal());
-		
+		dest.writeInt(this.type.id);
+
 		switch (this.type) {
 		case OID:
 			this.oid.writeToParcel(dest, flags);
@@ -77,7 +92,7 @@ public class Topic extends AmmoType {
 		try {
 			ordinal = in.readInt();
 
-			this.type = Type.values()[ ordinal ];
+			this.type = Type.getInstance(ordinal);
 			if (this.type == null) {
 				this.str = null;
 				this.oid = null;

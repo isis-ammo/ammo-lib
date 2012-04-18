@@ -58,6 +58,7 @@ import android.os.Parcelable;
 public class Notice extends AmmoType  {
 	
 	static final public Notice RESET = null;
+	
 
 	public class Item {	   
 		public final Threshold threshold;
@@ -77,7 +78,7 @@ public class Notice extends AmmoType  {
 		}
 
 		public void writeParcel(Parcel dest, int flags) {
-			dest.writeInt(this.threshold.ordinal());
+			dest.writeInt(this.threshold.id);
 			dest.writeInt(this.via.v);
 		}
 
@@ -138,19 +139,36 @@ public class Notice extends AmmoType  {
 	 *        
 	 */
 
+	static private final int SENT_ID = 0x01;
+	static private final int GATE_IN_ID = 0x02;
+	static private final int GATE_OUT_ID = 0x04;
+	static private final int DELIVERED_ID = 0x08;
+	static private final int RECEIVED_ID = 0x10;
+	
 	public enum Threshold {
-		SENT(0x01, "sent"),                   // the message has left the hand held
-		GATE_IN(0x02, "gateway in-bound"),    // hand held dispatches request to android plugin
-		GATE_OUT(0x04, "gateway out-bound"),  // arrived at an outgoing gateway plugin
-		DELIVERED(0x08, "delivered"),         // delivered to a hand held
-		RECEIVED(0x10, "received");           // processed by a dispatcher on a handheld
+		SENT(SENT_ID, "sent"),                       // the message has left the hand held
+		GATE_IN(GATE_IN_ID, "gateway in-bound"),     // hand held dispatches request to android plugin
+		GATE_OUT(GATE_OUT_ID, "gateway out-bound"),  // arrived at an outgoing gateway plugin
+		DELIVERED(DELIVERED_ID, "delivered"),        // delivered to a hand held
+		RECEIVED(RECEIVED_ID, "received");           // processed by a dispatcher on a handheld
 
-		public final int p;
-		public final String d;
+		public final int id;
+		public final String t;
 
-		private Threshold(int bitpos, String description) {
-			this.p = bitpos;
-			this.d = description;
+		private Threshold(int id, String title) {
+			this.id = id;
+			this.t = title;
+		}
+
+		public static Threshold getInstance(int id) {
+			switch (id) {
+			case SENT_ID: return Threshold.SENT;
+			case GATE_IN_ID: return Threshold.GATE_IN;
+			case GATE_OUT_ID: return Threshold.GATE_OUT;
+			case DELIVERED_ID: return Threshold.DELIVERED;
+			case RECEIVED_ID: return Threshold.RECEIVED;
+			}
+			return null;
 		}
 	}
 
@@ -227,6 +245,7 @@ public class Notice extends AmmoType  {
 	 */
 
 	static public class Via { 
+	
 		public enum Type {
 			NONE(0x00), 
 			ACTIVITY(0x01), 
@@ -266,7 +285,7 @@ public class Notice extends AmmoType  {
 			return ! (this.v == Type.NONE.v);
 		}
 		
-		public boolean isHeartbeat() {
+		public boolean hasHeartbeat() {
 			return (0 < (this.v | Type.HEARTBEAT.v));
 		}
 
@@ -334,7 +353,8 @@ public class Notice extends AmmoType  {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		plogger.trace("marshall notice {}", this);
+		plogger.error("origin notice: {}", this);
+		
 		dest.writeInt(5); // the number of items
 
 		this.atSend.writeParcel(dest, flags);
@@ -346,11 +366,11 @@ public class Notice extends AmmoType  {
 
 	private Notice(Parcel in) {
 		final int count = in.readInt();
-
+        
 		final Map<Threshold, Item> items = new HashMap<Threshold,Item>(count);
 
 		for (int ix = 0; ix < count; ++ix) {
-			final Threshold threshold = Threshold.values()[in.readInt()];
+			final Threshold threshold = Threshold.getInstance(in.readInt());
 			final Via via = Via.newInstance(in.readInt());
 
 			items.put(threshold, new Item(threshold, via));
@@ -361,9 +381,9 @@ public class Notice extends AmmoType  {
 		this.atDelivery = items.get(Threshold.DELIVERED);
 		this.atReceipt = items.get(Threshold.RECEIVED);
 
-		plogger.trace("unmarshall notice {}", this);
+		plogger.trace("decoded notice: {}", this);
 	}
-
+	
 	// *********************************
 	// Standard Methods
 	// *********************************

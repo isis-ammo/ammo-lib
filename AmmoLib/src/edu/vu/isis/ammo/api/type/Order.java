@@ -20,17 +20,30 @@ public class Order extends AmmoType {
 	
 	static final public Order RESET = null;
 
+	static final private int OLDEST_FIRST_ID = 1;
+	static final private int NEWEST_ONLY_ID = 2;
+	static final private int NEWEST_FIRST_ID = 3;
+	
     public enum Type {
-    	OLDEST_FIRST(1, "Oldest First"),
-    	NEWEST_ONLY(2, "Newest Only"),
-    	NEWEST_FIRST(3, "Newest First");
+    	OLDEST_FIRST(OLDEST_FIRST_ID, "Oldest First"),
+    	NEWEST_ONLY(NEWEST_ONLY_ID, "Newest Only"),
+    	NEWEST_FIRST(NEWEST_FIRST_ID, "Newest First");
 
-    	private final int o;
+    	private final int id;
     	private final String d;
     	
-    	private Type(int ordinal, String description) {
-    		this.o = ordinal;
+    	private Type(int id, String description) {
+    		this.id = id;
     		this.d = description;
+    	}
+    	
+    	static public Type getInstance(int id) {
+    		switch (id) {
+    		case OLDEST_FIRST_ID: return OLDEST_FIRST;
+    		case NEWEST_ONLY_ID: return NEWEST_ONLY;
+    		case NEWEST_FIRST_ID: return NEWEST_FIRST;
+    		}
+    		return null;
     	}
     }
     
@@ -38,7 +51,7 @@ public class Order extends AmmoType {
     final private Type type;
     
    	public int cv() {
-		return this.type.o;
+		return this.type.id;
 	}
   
     // *********************************
@@ -66,11 +79,11 @@ public class Order extends AmmoType {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
     	plogger.trace("marshall order {}", this);
-        dest.writeInt(this.type.ordinal());
+        dest.writeInt(this.type.id);
     }
 
     private Order(Parcel in) {
-        this.type = Type.values()[in.readInt()];
+        this.type = Type.getInstance(in.readInt());
     	plogger.trace("unmarshall order []", this);
     }
 

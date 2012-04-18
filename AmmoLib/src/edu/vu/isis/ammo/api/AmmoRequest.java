@@ -1018,9 +1018,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		 */
 		@Override
 		public Builder notice(Notice val) {
-			if (val == null) {
-
-			}
 			this.notice = val;
 			return this;
 		}

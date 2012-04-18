@@ -17,7 +17,24 @@ public class Selection extends AmmoType {
 	
 	static final public Selection RESET = null;
 
-	public enum Type { STRING, QUERY, FORM; }
+
+	static final private int STRING_ID = 0;
+	static final private int QUERY_ID = 1;
+	static final private int FORM_ID = 2;
+	
+	public enum Type { 
+		STRING(STRING_ID), QUERY(QUERY_ID), FORM(FORM_ID); 
+		final public int id;
+		private Type(final int id) { this.id = id; }
+		static public Type getInstance(final int id) {
+			switch (id) {
+			case STRING_ID: return STRING;
+			case QUERY_ID: return QUERY;
+			case FORM_ID: return FORM;
+			}
+			return null;
+		}
+	};
 
 	final private Type type;
 
@@ -52,7 +69,7 @@ public class Selection extends AmmoType {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("marshall select {}", this);
-		dest.writeInt(this.type.ordinal());
+		dest.writeInt(this.type.id);
 
 		switch (this.type) {
 		case STRING:
@@ -68,7 +85,7 @@ public class Selection extends AmmoType {
 	}
 
 	public Selection(Parcel in) {
-		this.type = Type.values()[ in.readInt() ];
+		this.type = Type.getInstance(in.readInt());
 		if (this.type == null) {
 			this.string = null;
 			this.query = null;

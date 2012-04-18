@@ -19,7 +19,25 @@ public class Payload extends AmmoType {
 	
 	static final public Payload RESET = null;
 
-	public enum Type { NONE, STR, BYTE, CV; }
+	static final private int NONE_ID = 0;
+	static final private int STR_ID = 1;
+	static final private int BYTE_ID = 2;
+	static final private int CV_ID = 3;
+	
+	public enum Type { 
+		NONE(NONE_ID), STR(STR_ID), BYTE(BYTE_ID), CV(CV_ID); 
+		final public int id;
+		private Type(final int id) { this.id = id; }
+		static public Type getInstance(final int id) {
+			switch (id) {
+			case NONE_ID: return NONE;
+			case STR_ID: return STR;
+			case BYTE_ID: return BYTE;
+			case CV_ID: return CV;
+			}
+			return null;
+		}
+	};
 
 	final private Type type;
 	final private String str;
@@ -54,7 +72,7 @@ public class Payload extends AmmoType {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("marshall payload {}", this);
-		dest.writeInt(this.type.ordinal());
+		dest.writeInt(this.type.id);
 
 		switch (this.type) {
 		case CV:
@@ -70,7 +88,7 @@ public class Payload extends AmmoType {
 	}
 
 	public Payload(Parcel in) {
-		this.type = Type.values()[ in.readInt() ];
+		this.type = Type.getInstance(in.readInt());
 		if (this.type == null) {
 			this.str = null;
 			this.bytes = null;

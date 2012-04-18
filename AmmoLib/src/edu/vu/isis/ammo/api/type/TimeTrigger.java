@@ -7,17 +7,34 @@ The US government has the right to use, modify, reproduce, release,
 perform, display, or disclose computer software or computer software 
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
-*/
+ */
 package edu.vu.isis.ammo.api.type;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class TimeTrigger extends AmmoType {
-	
+
 	static final public TimeTrigger RESET = null;
 
-	public enum Type { ABS, REL; }
+	static final private int ABS_ID = 0;
+	static final private int REL_ID = 1;
+
+	public enum Type { 
+		ABS(ABS_ID), 
+		REL(REL_ID); 
+
+		final public int id;
+		private Type(int id) { this.id = id; }
+
+		static public Type getInstance(int id) {
+			switch (id) {
+			case ABS_ID: return ABS;
+			case REL_ID: return REL;
+			}
+			return null;
+		}
+	}
 
 	private Type type;
 	public Type type() { return type; }
@@ -42,7 +59,7 @@ public class TimeTrigger extends AmmoType {
 			return new TimeTrigger[size];
 		}
 	};
-	
+
 	public static TimeTrigger readFromParcel(Parcel source) {
 		if (AmmoType.isNull(source)) return null;
 		return new TimeTrigger(source);
@@ -51,7 +68,7 @@ public class TimeTrigger extends AmmoType {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("marshall time trigger {}", this);
-		dest.writeInt(this.type.ordinal());
+		dest.writeInt(this.type.id);
 		switch (this.type) {
 		case ABS:
 			TimeStamp.writeToParcel(this.abs, dest, flags);
@@ -63,7 +80,7 @@ public class TimeTrigger extends AmmoType {
 	}
 
 	private TimeTrigger(Parcel in) {
-		this.type = Type.values()[ in.readInt() ];
+		this.type = Type.getInstance(in.readInt());
 		if (this.type == null) {
 			this.abs = null;
 			this.rel = null;
@@ -83,7 +100,7 @@ public class TimeTrigger extends AmmoType {
 			}
 		plogger.trace("unmarshall time trigger {}", this);
 	}
-	
+
 
 	// *********************************
 	// Standard Methods
@@ -121,17 +138,17 @@ public class TimeTrigger extends AmmoType {
 		this.abs = null;
 		this.rel = val;
 	}
-	
+
 	/**
 	 * Methods for serializing for the database.
 	 * @param cv
 	 */
 	public TimeTrigger(long cv) {
-	    this.type = Type.ABS;
-	    this.abs = new TimeStamp(cv);
-	    this.rel = null;
+		this.type = Type.ABS;
+		this.abs = new TimeStamp(cv);
+		this.rel = null;
 	}
-	
+
 	public long cv() {
 		if (this.type == null) {
 			return System.currentTimeMillis();

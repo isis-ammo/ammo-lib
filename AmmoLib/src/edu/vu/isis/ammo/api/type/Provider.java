@@ -19,7 +19,21 @@ public class Provider extends AmmoType {
 	
 	static final public Provider RESET = null;
 
-	public enum Type { URI; }
+	static final private int URI_ID = 0;
+	
+	public enum Type { 
+		URI(URI_ID); 
+		final public int id;
+		private Type(int id) {
+			this.id = id;
+		}
+		static public Type getInstance(int id) {
+			switch(id) {
+			case URI_ID: return URI;
+			}
+			return null;
+		}
+	}
 
 	final private Type type;
 	final private Uri uri;
@@ -57,7 +71,7 @@ public class Provider extends AmmoType {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("marshall provider {}", this);
-		dest.writeInt(this.type.ordinal());
+		dest.writeInt(this.type.id);
 
 		switch (this.type) {
 		case URI:
@@ -67,7 +81,7 @@ public class Provider extends AmmoType {
 	}
 
 	public Provider(Parcel in) {
-		this.type = Type.values()[ in.readInt() ];
+		this.type = Type.getInstance(in.readInt());
 		if (this.type == null) {
 			this.uri = null;
 		} else
