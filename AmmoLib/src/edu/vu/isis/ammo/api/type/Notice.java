@@ -278,6 +278,10 @@ public class Notice extends AmmoType  {
 		};
 		
 		public int v;
+		
+		public String asBits() {
+			return Integer.toBinaryString(this.v);
+		}
 
 		/**
 		 * multi-value flag, NONE resets it.
@@ -422,7 +426,7 @@ public class Notice extends AmmoType  {
 			sb.append(this.atDelivery.toString()).append(' ');
 			existsAnActive = true;
 		}
-		if (this.atSend.via.isActive()) {
+		if (this.atReceipt.via.isActive()) {
 			sb.append(this.atReceipt.toString()).append(' ');
 			existsAnActive = true;
 		} 
