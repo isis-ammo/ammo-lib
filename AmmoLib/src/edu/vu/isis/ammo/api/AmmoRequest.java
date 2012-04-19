@@ -157,25 +157,25 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		plogger.trace("version: {}", VERSION);
+		plogger.debug("version: {}", VERSION);
 		dest.writeByte(VERSION);
 		
-		plogger.trace("request: [{}:{}]", this.uuid, this.uid);
+		plogger.debug("request: [{}:{}]", this.uuid, this.uid);
 		dest.writeValue(this.uuid);
 		dest.writeValue(this.uid);
-		plogger.trace("action: {}", this.action);
+		plogger.debug("action: {}", this.action);
 		Action.writeToParcel(dest, this.action);
 
-		plogger.trace("provider: {}", this.provider);
+		plogger.debug("provider: {}", this.provider);
 		Provider.writeToParcel(this.provider, dest, flags);
 		plogger.debug("payload: {}", this.payload);
 		Payload.writeToParcel(this.payload, dest, flags);
-		plogger.trace("moment: {}", this.moment);
+		plogger.debug("moment: {}", this.moment);
 		SerialMoment.writeToParcel(this.moment, dest, flags);
-		plogger.trace("topic: [{}]+[{}]", this.topic, this.subtopic);
+		plogger.debug("topic: [{}]+[{}]", this.topic, this.subtopic);
 		Topic.writeToParcel(this.topic, dest, flags);
 		Topic.writeToParcel(this.subtopic, dest, flags);
-		plogger.trace("quantifier: {}", this.quantifier);
+		plogger.debug("quantifier: {}", this.quantifier);
 		Notice.writeToParcel(this.quantifier, dest, flags);
 
 		plogger.debug("downsample: {}", this.downsample);
@@ -201,10 +201,10 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		dest.writeValue(this.throttle);
 		plogger.debug("worth: {}", this.worth);
 		dest.writeValue(this.worth);
-		plogger.trace("notice: {}", this.notice);
+		plogger.debug("notice: {}", this.notice);
 		Notice.writeToParcel(this.notice, dest, flags);
 
-		plogger.trace("selection: {}", this.select);
+		plogger.debug("selection: {}", this.select);
 		Selection.writeToParcel(this.select, dest, flags);
 		plogger.debug("projection: {}", this.project);
 		dest.writeStringArray(this.project);
@@ -1008,6 +1008,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		public Builder notice(Notice.Threshold threshold, Via.Type type) {
 			if (this.notice == null) this.notice = Notice.newInstance();
 			this.notice.setItem(threshold, type);
+			plogger.trace("notice=[{}]", this.notice);
 			return this;
 		}
 

@@ -184,7 +184,15 @@ public class Notice extends AmmoType  {
 	final public Item atDelivery; 
 	final public Item atReceipt;
 
+	/**
+	 * Used by the request builder
+	 * 
+	 * @param threshold
+	 * @param type
+	 */
 	public void setItem(Threshold threshold, Via.Type type) {
+		plogger.debug("set notice item: @{}->[{}]",
+				threshold, type);
 		switch(threshold) {
 		case SENT: atSend.via.set(type); return;
 		case GATE_IN: atGateIn.via.set(type); return;
@@ -194,6 +202,13 @@ public class Notice extends AmmoType  {
 		}
 	}
 	
+	/**
+	 * Used by the data store
+	 * Note this takes an aggregate type.
+	 * 
+	 * @param threshold
+	 * @param aggregate
+	 */
 	public void setItem(Threshold threshold, int aggregate) {
 		switch(threshold) {
 		case SENT: atSend.via.set(aggregate); return;
@@ -274,7 +289,7 @@ public class Notice extends AmmoType  {
 				this.v = Type.NONE.v; 
 				return;
 			}
-			this.v &= type.v; 
+			this.v |= type.v; 
 		}
 		
 		public void set(int aggregate) {
@@ -286,7 +301,7 @@ public class Notice extends AmmoType  {
 		}
 		
 		public boolean hasHeartbeat() {
-			return (0 < (this.v | Type.HEARTBEAT.v));
+			return (0 < (this.v & Type.HEARTBEAT.v));
 		}
 
 		private Via(int val) {
@@ -353,7 +368,7 @@ public class Notice extends AmmoType  {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		plogger.error("origin notice: {}", this);
+		plogger.trace("origin notice: {}", this);
 		
 		dest.writeInt(5); // the number of items
 
@@ -412,7 +427,7 @@ public class Notice extends AmmoType  {
 			existsAnActive = true;
 		} 
 		if (! existsAnActive) {
-			return "none requested";
+			return "<none requested>";
 		}
 		return sb.toString();
 	}
