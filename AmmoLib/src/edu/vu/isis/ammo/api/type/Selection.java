@@ -149,6 +149,13 @@ public class Selection extends AmmoType {
 		this.query = null;
 		this.form = null;
 	}
+	
+	public String cv() {
+		switch (this.type){
+		case STRING: return this.string;
+		}
+		return "";
+	}
 
 	public Selection(Query val) {
 		this.type = Type.QUERY;
