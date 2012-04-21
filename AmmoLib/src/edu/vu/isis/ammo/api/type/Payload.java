@@ -210,13 +210,29 @@ public class Payload extends AmmoType {
 		return null;
 	}
 
-	public boolean hasContent() {
+	/**
+	 * What type of content if any is present.
+	 * Just because the type is specified it may not be valid.
+	 * This method can be used to determine if the 
+	 * payload has content.
+	 * 
+	 * @return
+	 */
+	public Type whatContent() {
 		switch (this.type){
-		case STR: return (this.str != null && this.str.length() > 0);
-		case BYTE: return (this.bytes != null);
-		case CV: return (!this.cv.valueSet().isEmpty());
+		case STR: 
+			if (this.str == null) return Type.NONE;
+			if (this.str.length() < 1) return Type.NONE;
+			return Type.STR;
+		case BYTE: 
+			if (this.bytes == null) return Type.NONE;
+			return Type.BYTE;
+		case CV: 
+			if (this.cv == null) return Type.NONE;
+			if (this.cv.valueSet().isEmpty()) return Type.NONE;
+			return Type.CV;
 		}
-		return false;
+		return Type.NONE;
 	}
 	
 	public ContentValues getCV () {
