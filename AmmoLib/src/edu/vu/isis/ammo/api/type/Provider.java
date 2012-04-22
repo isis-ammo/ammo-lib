@@ -7,7 +7,7 @@ The US government has the right to use, modify, reproduce, release,
 perform, display, or disclose computer software or computer software 
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
-*/
+ */
 package edu.vu.isis.ammo.api.type;
 
 import android.net.Uri;
@@ -16,13 +16,14 @@ import android.os.Parcelable;
 
 
 public class Provider extends AmmoType {
-	
+
 	static final public Provider RESET = null;
 
 	static final private int URI_ID = 0;
-	
+
 	public enum Type { 
 		URI(URI_ID); 
+
 		final public int id;
 		private Type(int id) {
 			this.id = id;
@@ -42,9 +43,20 @@ public class Provider extends AmmoType {
 		this.type = Type.URI;
 		this.uri = val;
 	}
-	
+
 	public String cv() {
-		return this.uri.toString();
+		if (this.type == null) {
+			return null;
+		}
+			
+		switch(this.type) {
+		case URI:
+			if (this.uri == null) {
+				return null;
+			}
+			return this.uri.toString();
+		}
+		return null;
 	}
 
 	// *********************************
@@ -67,7 +79,7 @@ public class Provider extends AmmoType {
 		if (AmmoType.isNull(source)) return null;
 		return new Provider(source);
 	}
-	
+
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("marshall provider {}", this);
@@ -97,12 +109,12 @@ public class Provider extends AmmoType {
 	// *********************************
 	// Standard Methods
 	// *********************************
-	
+
 	public Provider(String val) {
 		this.type = Type.URI;
 		this.uri = Uri.parse(val);
 	}
-	
+
 	@Override
 	public String toString() {
 		if (this.type == null) {
@@ -121,7 +133,7 @@ public class Provider extends AmmoType {
 	// *********************************
 
 	public final static Uri DEFAULT = Uri.parse("");
-	
+
 	public byte[] asBytes() {
 		switch (this.type){
 		case URI: return this.uri.toString().getBytes();
