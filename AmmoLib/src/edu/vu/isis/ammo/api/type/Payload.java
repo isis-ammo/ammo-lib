@@ -10,6 +10,13 @@ purpose whatsoever, and to have or authorize others to do so.
 */
 package edu.vu.isis.ammo.api.type;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -139,11 +146,37 @@ public class Payload extends AmmoType {
 	}
 
 	public byte[] asBytes() {
+	    
 		switch (this.type){
 		case BYTE: return this.bytes;
 		case STR: return this.str.getBytes();
+		case CV: return this.encodeJson();
 		}
 		return null;
+	}
+	
+	private byte[] encodeJson () {
+	    // encoding in json for now ...
+	    Set<java.util.Map.Entry<String, Object>> data = this.cv.valueSet();
+	    Iterator<java.util.Map.Entry<String, Object>> iter = data.iterator();	    
+	    final JSONObject json = new JSONObject();
+
+	    while (iter.hasNext())
+	    {
+	        Map.Entry<String, Object> entry = 
+	                (Map.Entry<String, Object>)iter.next();	        
+	        try {
+	            if (entry.getValue() instanceof String)
+	                json.put(entry.getKey(), cv.getAsString(entry.getKey()));
+	            else if (entry.getValue() instanceof Integer)
+	                json.put(entry.getKey(), cv.getAsInteger(entry.getKey()));
+	        } catch (JSONException e) {
+	            // TODO Auto-generated catch block
+	            e.printStackTrace();
+	        }
+	    }
+
+	    return json.toString().getBytes();
 	}
 
 	public String asString() {
@@ -158,7 +191,12 @@ public class Payload extends AmmoType {
 		switch (this.type){
 		case STR: return (this.str != null && this.str.length() > 0);
 		case BYTE: return (this.bytes != null);
+		case CV: return (!this.cv.valueSet().isEmpty());
 		}
 		return false;
+	}
+	
+	public ContentValues getCV () {
+	    return cv;
 	}
 }
