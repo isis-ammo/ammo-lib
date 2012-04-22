@@ -435,11 +435,32 @@ public class Notice extends AmmoType  {
 		}
 		return sb.toString();
 	}
+	/**
+	 * This indicates whether there exists an 
+	 * active remote threshold to be noticed.
+	 * (The sent threshold is local not remote)
+	 * @return
+	 */
+	public boolean isRemoteActive() {
+		if (this.atGateIn.via.isActive()) {
+			return true;
+		} 
+		if (this.atGateOut.via.isActive()) {
+			return true;
+		}
+		if (this.atDelivery.via.isActive()) {
+			return true;
+		}
+		if (this.atReceipt.via.isActive()) {
+			return true;
+		} 
+		return false;
+	}
 
-	// *********************************
-	// IAmmoRequest Support
-	// *********************************
-
+	/**
+	 * The default constructor 
+	 * Sets all the thresholds.
+	 */
 	public Notice() {
 		this.atSend = new Item(Threshold.SENT, Via.newInstance());
 		this.atGateIn = new Item(Threshold.GATE_IN, Via.newInstance());
