@@ -134,10 +134,13 @@ public class Payload extends AmmoType {
 		}
 		switch (this.type) {
 		case CV:
+			if (this.cv == null) return "";
 			return this.cv.toString();
 		case BYTE: 
+			if (this.bytes == null) return "";
 			return this.bytes.toString();
 		case STR:
+			if (this.str == null) return "";
 			return this.str.toString();
 
 		default:
