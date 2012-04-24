@@ -500,7 +500,7 @@ public class Notice extends AmmoType  {
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("origin notice: {}", this);
 
-		dest.writeInt(5); // the number of items
+		dest.writeInt(4); // the number of items
 
 		this.atSend.writeParcel(dest, flags);
 		this.atGatewayDelivered.writeParcel(dest, flags);
@@ -514,9 +514,12 @@ public class Notice extends AmmoType  {
 		final Map<Threshold, Item> items = new HashMap<Threshold,Item>(count);
 
 		for (int ix = 0; ix < count; ++ix) {
-			final Threshold threshold = Threshold.getInstance(in.readInt());
-			final Via via = Via.newInstance(in.readInt());
-
+			final int rawThreshold = in.readInt();
+			final Threshold threshold = Threshold.getInstance(rawThreshold);
+			final int rawVia = in.readInt();
+			final Via via = Via.newInstance(rawVia);
+            plogger.trace("raw notice threshold=[{}] via=[{}]", 
+            		rawThreshold, rawVia);
 			items.put(threshold, new Item(threshold, via));
 		}
 		this.atSend = items.get(Threshold.SENT);
