@@ -13,6 +13,9 @@ package edu.vu.isis.ammo.api.type;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -49,17 +52,146 @@ import android.os.Parcelable;
  *        .putExtra(EXTRA_CHANNEL, ack.channel.toString());
  *        
  *  For more examples for each of the intents generated see Threshold.
- *        
- *  and depending on the Via the intent will be sent (see Via).
- *  
+ *  Depending on the Via the intent will be sent (see Via).
  *  
  */
 
 public class Notice extends AmmoType  {
-	
-	static final public Notice RESET = null;
-	
 
+	static final public Notice RESET = null;
+
+	/**
+	 * The following constants are used to produce intents.
+	 */
+	public static final String ACTION_MSG_SENT = "edu.vu.isis.ammo.ACTION_MESSAGE_SENT";
+	public static final String ACTION_GW_DELIVERED = "edu.vu.isis.ammo.ACTION_MESSAGE_GATEWAY_DELIVERED";
+	public static final String ACTION_HH_DELIVERED = "edu.vu.isis.ammo.ACTION_MESSAGE_DEVICE_DELIVERED";
+	public static final String ACTION_PLUGIN_DELIVERED = "edu.vu.isis.ammo.ACTION_MESSAGE_PLUGIN_DELIVERED";
+
+	public static final String EXTRA_TOPIC = "topic";
+	public static final String EXTRA_SUBTOPIC = "subtopic";
+	public static final String EXTRA_UID = "uid";
+	public static final String EXTRA_CHANNEL = "channel";
+	public static final String EXTRA_STATUS = "status";
+	public static final String EXTRA_DEVICE = "device";
+	public static final String EXTRA_OPERATOR = "operator";
+
+	/**
+	 * A class to build those intents which may be generated in
+	 * response to the message crossing a noted threshold.
+	 * 
+	 */
+	public static IntentBuilder getIntentBuilder(final Notice notice) {
+		return new IntentBuilder(notice);
+	}
+	static public class IntentBuilder {
+
+		@SuppressWarnings("unused")
+		private final Notice notice;
+		private String topic = null;
+		private String subtopic = null;
+		private String auid = null;
+		private String channel = null;
+		private String status = null;
+		private String device = null;
+		private String operator = null;
+
+		private IntentBuilder(final Notice notice) {
+			this.notice = notice;
+		}
+
+		public IntentBuilder topic(final Topic topic) {
+			this.topic = topic.toString();
+			return this;
+		}
+		public IntentBuilder topic(final String topic) {
+			this.topic = topic;
+			return this;
+		}
+		public IntentBuilder subtopic(final Topic subtopic) {
+			this.subtopic = subtopic.toString();
+			return this;
+		}
+		public IntentBuilder subtopic(final String subtopic) {
+			this.subtopic = subtopic;
+			return this;
+		}
+		public IntentBuilder auid(final String auid) {
+			this.auid = auid;
+			return this;
+		}
+		public IntentBuilder channel(final String channel) {
+			this.channel = channel;
+			return this;
+		}
+		public IntentBuilder status(final String status) {
+			this.status = status;
+			return this;
+		}
+		public IntentBuilder device(final String device) {
+			this.device = device;
+			return this;
+		}
+		public IntentBuilder operator(final String operator) {
+			this.operator = operator;
+			return this;
+		}
+
+		public Intent buildSent(final Context context) {
+			return this.build(context, ACTION_MSG_SENT);
+		}
+		public Intent buildDeviceDelivered(final Context context) {
+			return this.build(context, ACTION_HH_DELIVERED);
+		}
+		public Intent buildGatewayDelivered(final Context context) {
+			return this.build(context, ACTION_GW_DELIVERED);
+		}
+		public Intent buildPluginDelivered(final Context context) {
+			return this.build(context, ACTION_PLUGIN_DELIVERED);
+		}
+
+		private Intent build(final Context context, final String action) {
+			final Uri.Builder uriBuilder = new Uri.Builder()
+			.scheme("ammo")
+			.authority(this.topic);
+
+			if (this.subtopic != null) 
+				uriBuilder.path(this.subtopic);
+
+			final Intent noticed = new Intent()
+			.setAction(action)
+			.setData(uriBuilder.build())
+			.putExtra(EXTRA_TOPIC, this.topic);
+
+			if (this.subtopic != null)
+				noticed.putExtra(EXTRA_SUBTOPIC, this.subtopic);
+
+			if (this.auid != null)
+				noticed.putExtra(EXTRA_UID, this.auid);
+
+			if (this.channel != null)
+				noticed.putExtra(EXTRA_CHANNEL, this.channel);
+
+			if (this.status != null)
+				noticed.putExtra(EXTRA_STATUS, this.status);
+			
+			if (this.device != null)
+				noticed.putExtra(EXTRA_DEVICE, this.status);
+			
+			if (this.operator != null)
+				noticed.putExtra(EXTRA_OPERATOR, this.operator);
+
+			return noticed;
+		}
+	}
+
+
+	/**
+	 * Class for adding items to the notice.
+	 * An item consists of a threshold which may be crossed 
+	 * and the aggregate of those intents to be generated when that happens.
+	 *
+	 */
 	public class Item {	   
 		public final Threshold threshold;
 		public Via via;
@@ -140,17 +272,15 @@ public class Notice extends AmmoType  {
 	 */
 
 	static private final int SENT_ID = 0x01;
-	static private final int GATE_IN_ID = 0x02;
-	static private final int GATE_OUT_ID = 0x04;
-	static private final int DELIVERED_ID = 0x08;
-	static private final int RECEIVED_ID = 0x10;
-	
+	static private final int GATEWAY_ID = 0x02;
+	static private final int PLUGIN_ID = 0x04;
+	static private final int DEVICE_ID = 0x08;
+
 	public enum Threshold {
-		SENT(SENT_ID, "sent"),                       // the message has left the hand held
-		GATE_IN(GATE_IN_ID, "gateway in-bound"),     // hand held dispatches request to android plugin
-		GATE_OUT(GATE_OUT_ID, "gateway out-bound"),  // arrived at an outgoing gateway plugin
-		DELIVERED(DELIVERED_ID, "delivered"),        // delivered to a hand held
-		RECEIVED(RECEIVED_ID, "received");           // processed by a dispatcher on a handheld
+		SENT(SENT_ID, "sent"),                                // the message has left the hand held
+		GATE_DELIVERY(GATEWAY_ID, "gateway in-bound"),        // hand held dispatches request to android plugin
+		PLUGIN_DELIVERY(PLUGIN_ID, "gateway to plugin"),    // arrived at an outgoing gateway plugin
+		DEVICE_DELIVERY(DEVICE_ID, "handheld delivered");  // delivered to a hand held
 
 		public final int id;
 		public final String t;
@@ -163,10 +293,9 @@ public class Notice extends AmmoType  {
 		public static Threshold getInstance(int id) {
 			switch (id) {
 			case SENT_ID: return Threshold.SENT;
-			case GATE_IN_ID: return Threshold.GATE_IN;
-			case GATE_OUT_ID: return Threshold.GATE_OUT;
-			case DELIVERED_ID: return Threshold.DELIVERED;
-			case RECEIVED_ID: return Threshold.RECEIVED;
+			case GATEWAY_ID: return Threshold.GATE_DELIVERY;
+			case PLUGIN_ID: return Threshold.PLUGIN_DELIVERY;
+			case DEVICE_ID: return Threshold.DEVICE_DELIVERY;
 			}
 			return null;
 		}
@@ -179,10 +308,9 @@ public class Notice extends AmmoType  {
 	}
 
 	final public Item atSend; 
-	final public Item atGateIn;
-	final public Item atGateOut;
-	final public Item atDelivery; 
-	final public Item atReceipt;
+	final public Item atGatewayDelivered;
+	final public Item atPluginDelivered;
+	final public Item atDeviceDelivered; 
 
 	/**
 	 * Used by the request builder
@@ -195,13 +323,12 @@ public class Notice extends AmmoType  {
 				threshold, type);
 		switch(threshold) {
 		case SENT: atSend.via.set(type); return;
-		case GATE_IN: atGateIn.via.set(type); return;
-		case GATE_OUT: atGateOut.via.set(type); return;
-		case DELIVERED: atDelivery.via.set(type); return;
-		case RECEIVED: atReceipt.via.set(type); return;
+		case GATE_DELIVERY: atGatewayDelivered.via.set(type); return;
+		case PLUGIN_DELIVERY: atPluginDelivered.via.set(type); return;
+		case DEVICE_DELIVERY: atDeviceDelivered.via.set(type); return;
 		}
 	}
-	
+
 	/**
 	 * Used by the data store
 	 * Note this takes an aggregate type.
@@ -212,13 +339,12 @@ public class Notice extends AmmoType  {
 	public void setItem(Threshold threshold, int aggregate) {
 		switch(threshold) {
 		case SENT: atSend.via.set(aggregate); return;
-		case GATE_IN: atGateIn.via.set(aggregate); return;
-		case GATE_OUT: atGateOut.via.set(aggregate); return;
-		case DELIVERED: atDelivery.via.set(aggregate); return;
-		case RECEIVED: atReceipt.via.set(aggregate); return;
+		case GATE_DELIVERY: atGatewayDelivered.via.set(aggregate); return;
+		case PLUGIN_DELIVERY: atPluginDelivered.via.set(aggregate); return;
+		case DEVICE_DELIVERY: atDeviceDelivered.via.set(aggregate); return;
 		}
 	}
-	
+
 	/**
 	 * 
 	 * As acknowledgments of the message are generated they
@@ -260,7 +386,7 @@ public class Notice extends AmmoType  {
 	 */
 
 	static public class Via { 
-	
+
 		public enum Type {
 			NONE(0x00), 
 			ACTIVITY(0x01), 
@@ -276,9 +402,9 @@ public class Notice extends AmmoType  {
 				this.v = v;
 			}
 		};
-		
+
 		public int v;
-		
+
 		public String asBits() {
 			return Integer.toBinaryString(this.v);
 		}
@@ -295,7 +421,7 @@ public class Notice extends AmmoType  {
 			}
 			this.v |= type.v; 
 		}
-		
+
 		public void set(int aggregate) {
 			this.v = aggregate;
 		}
@@ -303,7 +429,7 @@ public class Notice extends AmmoType  {
 		public boolean isActive() {
 			return ! (this.v == Type.NONE.v);
 		}
-		
+
 		public boolean hasHeartbeat() {
 			return (0 < (this.v & Type.HEARTBEAT.v));
 		}
@@ -321,11 +447,11 @@ public class Notice extends AmmoType  {
 		public static Via newInstance() {
 			return new Via();
 		}
-		
+
 		@Override
 		public String toString() {
 			if (this.v == Type.NONE.v) return "NONE"; 
-			
+
 			final StringBuilder sb = new StringBuilder().append(':');
 			if (0< (this.v & Type.ACTIVITY.v)) {
 				sb.append("activity").append(':');
@@ -373,19 +499,18 @@ public class Notice extends AmmoType  {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("origin notice: {}", this);
-		
+
 		dest.writeInt(5); // the number of items
 
 		this.atSend.writeParcel(dest, flags);
-		this.atGateIn.writeParcel(dest, flags);
-		this.atGateOut.writeParcel(dest, flags);
-		this.atDelivery.writeParcel(dest, flags);
-		this.atReceipt.writeParcel(dest, flags);
+		this.atGatewayDelivered.writeParcel(dest, flags);
+		this.atPluginDelivered.writeParcel(dest, flags);
+		this.atDeviceDelivered.writeParcel(dest, flags);
 	}
 
 	private Notice(Parcel in) {
 		final int count = in.readInt();
-        
+
 		final Map<Threshold, Item> items = new HashMap<Threshold,Item>(count);
 
 		for (int ix = 0; ix < count; ++ix) {
@@ -395,14 +520,13 @@ public class Notice extends AmmoType  {
 			items.put(threshold, new Item(threshold, via));
 		}
 		this.atSend = items.get(Threshold.SENT);
-		this.atGateIn = items.get(Threshold.GATE_IN);
-		this.atGateOut = items.get(Threshold.GATE_OUT);
-		this.atDelivery = items.get(Threshold.DELIVERED);
-		this.atReceipt = items.get(Threshold.RECEIVED);
+		this.atGatewayDelivered = items.get(Threshold.GATE_DELIVERY);
+		this.atPluginDelivered = items.get(Threshold.PLUGIN_DELIVERY);
+		this.atDeviceDelivered = items.get(Threshold.DEVICE_DELIVERY);
 
 		plogger.trace("decoded notice: {}", this);
 	}
-	
+
 	// *********************************
 	// Standard Methods
 	// *********************************
@@ -414,22 +538,18 @@ public class Notice extends AmmoType  {
 			sb.append(this.atSend.toString()).append(' ');
 			existsAnActive = true;
 		} 
-		if (this.atGateIn.via.isActive()) {
-			sb.append(this.atGateIn.toString()).append(' ');
+		if (this.atGatewayDelivered.via.isActive()) {
+			sb.append(this.atGatewayDelivered.toString()).append(' ');
 			existsAnActive = true;
 		} 
-		if (this.atGateOut.via.isActive()) {
-			sb.append(this.atGateOut.toString()).append(' ');
+		if (this.atPluginDelivered.via.isActive()) {
+			sb.append(this.atPluginDelivered.toString()).append(' ');
 			existsAnActive = true;
 		}
-		if (this.atDelivery.via.isActive()) {
-			sb.append(this.atDelivery.toString()).append(' ');
+		if (this.atDeviceDelivered.via.isActive()) {
+			sb.append(this.atDeviceDelivered.toString()).append(' ');
 			existsAnActive = true;
 		}
-		if (this.atReceipt.via.isActive()) {
-			sb.append(this.atReceipt.toString()).append(' ');
-			existsAnActive = true;
-		} 
 		if (! existsAnActive) {
 			return "<none requested>";
 		}
@@ -442,18 +562,15 @@ public class Notice extends AmmoType  {
 	 * @return
 	 */
 	public boolean isRemoteActive() {
-		if (this.atGateIn.via.isActive()) {
+		if (this.atGatewayDelivered.via.isActive()) {
 			return true;
 		} 
-		if (this.atGateOut.via.isActive()) {
+		if (this.atPluginDelivered.via.isActive()) {
 			return true;
 		}
-		if (this.atDelivery.via.isActive()) {
+		if (this.atDeviceDelivered.via.isActive()) {
 			return true;
 		}
-		if (this.atReceipt.via.isActive()) {
-			return true;
-		} 
 		return false;
 	}
 
@@ -463,10 +580,9 @@ public class Notice extends AmmoType  {
 	 */
 	public Notice() {
 		this.atSend = new Item(Threshold.SENT, Via.newInstance());
-		this.atGateIn = new Item(Threshold.GATE_IN, Via.newInstance());
-		this.atGateOut = new Item(Threshold.GATE_OUT, Via.newInstance());	
-		this.atDelivery = new Item(Threshold.DELIVERED, Via.newInstance());	
-		this.atReceipt = new Item(Threshold.RECEIVED, Via.newInstance());
+		this.atGatewayDelivered = new Item(Threshold.GATE_DELIVERY, Via.newInstance());
+		this.atPluginDelivered = new Item(Threshold.PLUGIN_DELIVERY, Via.newInstance());	
+		this.atDeviceDelivered = new Item(Threshold.DEVICE_DELIVERY, Via.newInstance());	
 	}
 
 }
