@@ -133,9 +133,10 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 				
 			} catch (Throwable ex) {
 				final int capacity = source.dataCapacity();
-				final int size = (capacity < 50) ? capacity : 50;
-				final byte[] data = new byte[size];
-				source.unmarshall(data, 0, size);
+				//final int size = (capacity < 50) ? capacity : 50;
+				//final byte[] data = new byte[size];
+				//source.unmarshall(data, 0, size);
+				final byte[] data = source.marshall();
 				plogger.error("PARCEL UNMARSHALLING PROBLEM: size {} data {}", 
 						new Object[] { capacity, data }, ex ); 
 				return null;
@@ -176,11 +177,11 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		Topic.writeToParcel(this.topic, dest, flags);
 		Topic.writeToParcel(this.subtopic, dest, flags);
 		plogger.debug("quantifier: {}", this.quantifier);
-		Notice.writeToParcel(this.quantifier, dest, flags);
+		Quantifier.writeToParcel(this.quantifier, dest, flags);
 
 		plogger.debug("downsample: {}", this.downsample);
 		dest.writeValue(this.downsample);
-		plogger.debug("durabliity: {}", this.durability);
+		plogger.debug("durability: {}", this.durability);
 		dest.writeValue(this.durability);
 
 		plogger.debug("priority: {}", this.priority);

@@ -492,7 +492,9 @@ public class Notice extends AmmoType  {
 	};
 
 	public static Notice readFromParcel(Parcel source) {
-		if (AmmoType.isNull(source)) return null;
+		if (AmmoType.isNull(source)) {
+			return new Notice();
+		}
 		return new Notice(source);
 	}
 
