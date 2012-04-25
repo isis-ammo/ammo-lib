@@ -133,9 +133,10 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 				
 			} catch (Throwable ex) {
 				final int capacity = source.dataCapacity();
-				final int size = (capacity < 50) ? capacity : 50;
-				final byte[] data = new byte[size];
-				source.unmarshall(data, 0, size);
+				//final int size = (capacity < 50) ? capacity : 50;
+				//final byte[] data = new byte[size];
+				//source.unmarshall(data, 0, size);
+				final byte[] data = source.marshall();
 				plogger.error("PARCEL UNMARSHALLING PROBLEM: size {} data {}", 
 						new Object[] { capacity, data }, ex ); 
 				return null;
