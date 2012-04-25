@@ -174,10 +174,10 @@ public class Notice extends AmmoType  {
 
 			if (this.status != null)
 				noticed.putExtra(EXTRA_STATUS, this.status);
-			
+
 			if (this.device != null)
 				noticed.putExtra(EXTRA_DEVICE, this.status);
-			
+
 			if (this.operator != null)
 				noticed.putExtra(EXTRA_OPERATOR, this.operator);
 
@@ -509,15 +509,26 @@ public class Notice extends AmmoType  {
 	}
 
 	private Notice(Parcel in) {
-		final int count = in.readInt();
+		final Map<Threshold, Item> items;
+		try {
+			final int count = in.readInt();
 
-		final Map<Threshold, Item> items = new HashMap<Threshold,Item>(count);
+			items = new HashMap<Threshold,Item>(count);
 
-		for (int ix = 0; ix < count; ++ix) {
-			final Threshold threshold = Threshold.getInstance(in.readInt());
-			final Via via = Via.newInstance(in.readInt());
+			for (int ix = 0; ix < count; ++ix) {
+				final Threshold threshold = Threshold.getInstance(in.readInt());
+				final Via via = Via.newInstance(in.readInt());
 
-			items.put(threshold, new Item(threshold, via));
+				items.put(threshold, new Item(threshold, via));
+			}
+		} catch (Exception ex) {
+			// most likely exception is IllegalArgumentException
+			plogger.error("uninitialized parcel ex=[{}]", ex);
+			this.atSend = new Item(Threshold.SENT, Via.newInstance());
+			this.atGatewayDelivered = new Item(Threshold.GATE_DELIVERY, Via.newInstance());
+			this.atPluginDelivered = new Item(Threshold.PLUGIN_DELIVERY, Via.newInstance());	
+			this.atDeviceDelivered = new Item(Threshold.DEVICE_DELIVERY, Via.newInstance());	
+			return;
 		}
 		this.atSend = items.get(Threshold.SENT);
 		this.atGatewayDelivered = items.get(Threshold.GATE_DELIVERY);
