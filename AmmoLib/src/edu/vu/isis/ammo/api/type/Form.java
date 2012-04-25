@@ -17,13 +17,14 @@ import java.util.Set;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import edu.vu.isis.ammo.api.IAmmoRequest;
 
 /**
  * The form is used to convey some selection of objects.
  */
 
-public class Form extends AmmoType implements Map<String, String>, IAmmoRequest.Form {
+public class Form extends AmmoType implements Map<String, String> {
+	
+	static final public Form RESET = null;
 	    
     private final Map<String,String> backing;
     

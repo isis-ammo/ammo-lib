@@ -18,10 +18,24 @@ import android.os.Parcelable;
  */
 public class DeliveryScope extends AmmoType {
 
+	static final public DeliveryScope RESET = null;
+	
+	static final private int GLOBAL_ID = 0;
+	static final private int LOCAL_ID = 1;
+	
     public enum Type {
-        GLOBAL, LOCAL;
+        GLOBAL(GLOBAL_ID), LOCAL(LOCAL_ID);
+        final public int id;
+        private Type(final int id) { this.id = id; }
+        static public Type getInstance(final int id) {
+        	switch(id) {
+        	case GLOBAL_ID: return GLOBAL;
+        	case LOCAL_ID: return LOCAL;
+        	}
+        	return null;
+        }
     }
-  
+    
     final private Type type;
     
     // *********************************
@@ -49,11 +63,11 @@ public class DeliveryScope extends AmmoType {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
     	plogger.trace("marshall dscope {}", this);
-        dest.writeInt(this.type.ordinal());
+        dest.writeInt(this.type.id);
     }
 
     private DeliveryScope(Parcel in) {
-        this.type = Type.values()[in.readInt()];
+        this.type = Type.getInstance(in.readInt());
     	plogger.trace("unmarshall dscope []", this);
     }
 
@@ -75,6 +89,8 @@ public class DeliveryScope extends AmmoType {
     
     final public static DeliveryScope GLOBAL = new DeliveryScope(Type.GLOBAL);
     final public static DeliveryScope LOCAL = new DeliveryScope(Type.LOCAL);
+    public final static DeliveryScope DEFAULT = GLOBAL;
+    
     
     @Override
     public String toString() {
