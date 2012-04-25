@@ -7,15 +7,35 @@ The US government has the right to use, modify, reproduce, release,
 perform, display, or disclose computer software or computer software 
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
-*/
+ */
 package edu.vu.isis.ammo.api.type;
 
+import edu.vu.isis.ammo.api.IncompleteRequest;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Topic extends AmmoType { 
 
-	public enum Type { OID, STR; }
+	static final public Topic RESET = null;
+
+	public static final String DEFAULT = "";
+
+	static final private int OID_ID = 0;
+	static final private int STR_ID = 1;
+
+	public enum Type { 
+		OID(OID_ID), STR(STR_ID);
+
+		final public int id;
+		private Type(final int id) { this.id = id; }
+		static public Type getInstance(final int id) {
+			switch (id) {
+			case OID_ID: return OID;
+			case STR_ID: return STR;
+			}
+			return null;
+		}
+	};
 
 	final private Type type;
 	final private String str;
@@ -30,7 +50,11 @@ public class Topic extends AmmoType {
 
 		@Override
 		public Topic createFromParcel(Parcel source) {
-			return new Topic(source);
+			try {
+				return new Topic(source);
+			} catch (IncompleteRequest ex) {
+				return null;
+			}
 		}
 
 		@Override
@@ -38,16 +62,20 @@ public class Topic extends AmmoType {
 			return new Topic[size];
 		}
 	};
-	
+
 	public static Topic readFromParcel(Parcel source) {
 		if (AmmoType.isNull(source)) return null;
-		return new Topic(source);
+		try {
+			return new Topic(source);
+		} catch (IncompleteRequest ex) {
+			return null;
+		}
 	}
 
 	@Override
-	public void writeToParcel(Parcel dest, int flags) {
+	public void writeToParcel(Parcel dest, int flags) {		
 		plogger.trace("marshall topic {}", this);
-		dest.writeInt(this.type.ordinal());
+		dest.writeInt(this.type.id);
 
 		switch (this.type) {
 		case OID:
@@ -59,25 +87,34 @@ public class Topic extends AmmoType {
 		}
 	}
 
-	public Topic(Parcel in) {
-		this.type = Type.values()[ in.readInt() ];
-		if (this.type == null) {
-			this.str = null;
-			this.oid = null;
-		} else
-			switch (this.type) {
-			case OID:
-				this.str = null;
-				this.oid = Oid.CREATOR.createFromParcel(in);
-				break;
-			case STR:
-				this.str = in.readString();
-				this.oid = null;
-				break;
-			default:
+	public Topic(Parcel in) throws IncompleteRequest {
+		int ordinal = -1;
+		try {
+			ordinal = in.readInt();
+
+			this.type = Type.getInstance(ordinal);
+			if (this.type == null) {
 				this.str = null;
 				this.oid = null;
-			}
+			} else
+				switch (this.type) {
+				case OID:
+					this.str = null;
+					this.oid = Oid.CREATOR.createFromParcel(in);
+					break;
+				case STR:
+					this.str = in.readString();
+					this.oid = null;
+					break;
+				default:
+					this.str = null;
+					this.oid = null;
+				}
+
+		} catch (ArrayIndexOutOfBoundsException ex) {
+			plogger.error("bad topic {} {}", ordinal, ex);
+			throw new IncompleteRequest(ex);
+		}
 		plogger.trace("unmarshall topic {}", this);
 	}
 	// *********************************

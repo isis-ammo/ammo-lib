@@ -12,13 +12,14 @@ package edu.vu.isis.ammo.api.type;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import edu.vu.isis.ammo.api.IAmmoRequest;
 
 /**
  * The query is used to convey some selection of objects.
  */
 
-public class Query extends AmmoType implements IAmmoRequest.Query {
+public class Query extends AmmoType {
+	
+	static final public Query RESET = null;
 
 	final private String select;
 	final private String[] args;

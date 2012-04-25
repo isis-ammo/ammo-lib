@@ -23,8 +23,28 @@ import android.os.Parcelable;
 
 
 public class Payload extends AmmoType { 
+	
+	static final public Payload RESET = null;
 
-	public enum Type { NONE, STR, BYTE, CV; }
+	static final private int NONE_ID = 0;
+	static final private int STR_ID = 1;
+	static final private int BYTE_ID = 2;
+	static final private int CV_ID = 3;
+	
+	public enum Type { 
+		NONE(NONE_ID), STR(STR_ID), BYTE(BYTE_ID), CV(CV_ID); 
+		final public int id;
+		private Type(final int id) { this.id = id; }
+		static public Type getInstance(final int id) {
+			switch (id) {
+			case NONE_ID: return NONE;
+			case STR_ID: return STR;
+			case BYTE_ID: return BYTE;
+			case CV_ID: return CV;
+			}
+			return null;
+		}
+	};
 
 	final private Type type;
 	final private String str;
@@ -48,6 +68,9 @@ public class Payload extends AmmoType {
 			return new Payload[size];
 		}
 	};
+	
+	public static final String DEFAULT = "";
+	
 	public static Payload readFromParcel(Parcel source) {
 		if (AmmoType.isNull(source)) return null;
 		return new Payload(source);
@@ -56,7 +79,7 @@ public class Payload extends AmmoType {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("marshall payload {}", this);
-		dest.writeInt(this.type.ordinal());
+		dest.writeInt(this.type.id);
 
 		switch (this.type) {
 		case CV:
@@ -72,7 +95,7 @@ public class Payload extends AmmoType {
 	}
 
 	public Payload(Parcel in) {
-		this.type = Type.values()[ in.readInt() ];
+		this.type = Type.getInstance(in.readInt());
 		if (this.type == null) {
 			this.str = null;
 			this.bytes = null;
@@ -111,10 +134,13 @@ public class Payload extends AmmoType {
 		}
 		switch (this.type) {
 		case CV:
+			if (this.cv == null) return "";
 			return this.cv.toString();
 		case BYTE: 
+			if (this.bytes == null) return "";
 			return this.bytes.toString();
 		case STR:
+			if (this.str == null) return "";
 			return this.str.toString();
 
 		default:
@@ -187,13 +213,29 @@ public class Payload extends AmmoType {
 		return null;
 	}
 
-	public boolean hasContent() {
+	/**
+	 * What type of content if any is present.
+	 * Just because the type is specified it may not be valid.
+	 * This method can be used to determine if the 
+	 * payload has content.
+	 * 
+	 * @return
+	 */
+	public Type whatContent() {
 		switch (this.type){
-		case STR: return (this.str != null && this.str.length() > 0);
-		case BYTE: return (this.bytes != null);
-		case CV: return (!this.cv.valueSet().isEmpty());
+		case STR: 
+			if (this.str == null) return Type.NONE;
+			if (this.str.length() < 1) return Type.NONE;
+			return Type.STR;
+		case BYTE: 
+			if (this.bytes == null) return Type.NONE;
+			return Type.BYTE;
+		case CV: 
+			if (this.cv == null) return Type.NONE;
+			if (this.cv.valueSet().isEmpty()) return Type.NONE;
+			return Type.CV;
 		}
-		return false;
+		return Type.NONE;
 	}
 	
 	public ContentValues getCV () {

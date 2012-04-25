@@ -12,17 +12,35 @@ package edu.vu.isis.ammo.api.type;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import edu.vu.isis.ammo.api.IAmmoRequest;
 
 public class Selection extends AmmoType {
+	
+	static final public Selection RESET = null;
 
-	public enum Type { STRING, QUERY, FORM; }
+
+	static final private int STRING_ID = 0;
+	static final private int QUERY_ID = 1;
+	static final private int FORM_ID = 2;
+	
+	public enum Type { 
+		STRING(STRING_ID), QUERY(QUERY_ID), FORM(FORM_ID); 
+		final public int id;
+		private Type(final int id) { this.id = id; }
+		static public Type getInstance(final int id) {
+			switch (id) {
+			case STRING_ID: return STRING;
+			case QUERY_ID: return QUERY;
+			case FORM_ID: return FORM;
+			}
+			return null;
+		}
+	};
 
 	final private Type type;
 
 	final public String string;
-	final public IAmmoRequest.Query query;
-	final public IAmmoRequest.Form form;
+	final public Query query;
+	final public Form form;
 
 	// *********************************
 	// Parcelable Support
@@ -51,7 +69,7 @@ public class Selection extends AmmoType {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("marshall select {}", this);
-		dest.writeInt(this.type.ordinal());
+		dest.writeInt(this.type.id);
 
 		switch (this.type) {
 		case STRING:
@@ -67,7 +85,7 @@ public class Selection extends AmmoType {
 	}
 
 	public Selection(Parcel in) {
-		this.type = Type.values()[ in.readInt() ];
+		this.type = Type.getInstance(in.readInt());
 		if (this.type == null) {
 			this.string = null;
 			this.query = null;
@@ -131,14 +149,21 @@ public class Selection extends AmmoType {
 		this.query = null;
 		this.form = null;
 	}
+	
+	public String cv() {
+		switch (this.type){
+		case STRING: return this.string;
+		}
+		return "";
+	}
 
-	public Selection(IAmmoRequest.Query val) {
+	public Selection(Query val) {
 		this.type = Type.QUERY;
 		this.string = null;
 		this.query = val;
 		this.form = null;
 	}
-	public Selection(IAmmoRequest.Form val) {
+	public Selection(Form val) {
 		this.type = Type.FORM;
 		this.string = null;
 		this.query = null;
