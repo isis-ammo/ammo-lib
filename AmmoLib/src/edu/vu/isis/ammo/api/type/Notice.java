@@ -492,14 +492,15 @@ public class Notice extends AmmoType  {
 	};
 
 	public static Notice readFromParcel(Parcel source) {
-		if (AmmoType.isNull(source)) return null;
+		if (AmmoType.isNull(source)) {
+			return new Notice();
+		}
 		return new Notice(source);
 	}
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.trace("origin notice: {}", this);
-
 		dest.writeInt(4); // the number of items
 
 		this.atSend.writeParcel(dest, flags);
@@ -509,18 +510,25 @@ public class Notice extends AmmoType  {
 	}
 
 	private Notice(Parcel in) {
+		final Map<Threshold, Item> items;
+		try {
 		final int count = in.readInt();
 
-		final Map<Threshold, Item> items = new HashMap<Threshold,Item>(count);
+			items = new HashMap<Threshold,Item>(count);
 
 		for (int ix = 0; ix < count; ++ix) {
-			final int rawThreshold = in.readInt();
-			final Threshold threshold = Threshold.getInstance(rawThreshold);
-			final int rawVia = in.readInt();
-			final Via via = Via.newInstance(rawVia);
-            plogger.trace("raw notice threshold=[{}] via=[{}]", 
-            		rawThreshold, rawVia);
+				final Threshold threshold = Threshold.getInstance(in.readInt());
+				final Via via = Via.newInstance(in.readInt());
 			items.put(threshold, new Item(threshold, via));
+			}
+		} catch (Exception ex) {
+			// most likely exception is IllegalArgumentException
+			plogger.error("uninitialized parcel ex=[{}]", ex);
+			this.atSend = new Item(Threshold.SENT, Via.newInstance());
+			this.atGatewayDelivered = new Item(Threshold.GATE_DELIVERY, Via.newInstance());
+			this.atPluginDelivered = new Item(Threshold.PLUGIN_DELIVERY, Via.newInstance());	
+			this.atDeviceDelivered = new Item(Threshold.DEVICE_DELIVERY, Via.newInstance());	
+			return;
 		}
 		this.atSend = items.get(Threshold.SENT);
 		this.atGatewayDelivered = items.get(Threshold.GATE_DELIVERY);
@@ -576,7 +584,6 @@ public class Notice extends AmmoType  {
 		}
 		return false;
 	}
-
 	/**
 	 * The default constructor 
 	 * Sets all the thresholds.

@@ -177,11 +177,11 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		Topic.writeToParcel(this.topic, dest, flags);
 		Topic.writeToParcel(this.subtopic, dest, flags);
 		plogger.debug("quantifier: {}", this.quantifier);
-		Notice.writeToParcel(this.quantifier, dest, flags);
+		Quantifier.writeToParcel(this.quantifier, dest, flags);
 
 		plogger.debug("downsample: {}", this.downsample);
 		dest.writeValue(this.downsample);
-		plogger.debug("durabliity: {}", this.durability);
+		plogger.debug("durability: {}", this.durability);
 		dest.writeValue(this.durability);
 
 		plogger.debug("priority: {}", this.priority);
