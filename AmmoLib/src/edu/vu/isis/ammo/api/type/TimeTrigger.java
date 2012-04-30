@@ -82,6 +82,13 @@ public class TimeTrigger extends AmmoType {
 		plogger.trace("unmarshall time trigger {}", this);
 	}
 	
+	/**
+	 * The cv returns an absolute time value in milliseconds.
+	 * This time is only a recommendation it may be that
+	 * the distribution policy has set a maximum.
+	 * 
+	 * @return the absolute expiration time in milliseconds.
+	 */
 	public long cv() {
 		if (this.type == null) {
 			return System.currentTimeMillis();
