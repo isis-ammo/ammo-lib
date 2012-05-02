@@ -636,7 +636,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		@Override
 		public IAmmoRequest interest() throws RemoteException {
-			return this.makeRequest(new AmmoRequest(Action.INTEREST, this));
+			return this.makeRequest(new AmmoRequest(Action.SUBSCRIBE, this));
 		}
 
 		@Override

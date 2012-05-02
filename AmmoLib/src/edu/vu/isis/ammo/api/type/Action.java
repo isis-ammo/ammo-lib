@@ -16,7 +16,7 @@ public enum Action {
 	POSTAL(0), DIRECTED_POSTAL(1), 
 	PUBLISH(2), 
 	RETRIEVAL(3), 
-	INTEREST(4), DIRECTED_INTEREST(5);
+	SUBSCRIBE(4), DIRECTED_SUBSCRIBE(5);
 
 	public static final Logger logger = LoggerFactory.getLogger("class.Action");
 	public static final Logger IPC_REQ_IN = LoggerFactory.getLogger( "ipc.request.inbound" );
@@ -33,7 +33,7 @@ public enum Action {
 		case NONE: return "NONE";
 		case POSTAL: return "POSTAL";
 		case RETRIEVAL: return "RETRIEVAL";
-		case INTEREST: return "INTEREST";
+		case SUBSCRIBE: return "SUBSCRIBE";
 		default: 
 			return null;
 		}
@@ -50,7 +50,7 @@ public enum Action {
 			if (ordinal == NONE.o) return NONE;
 			if (ordinal == POSTAL.o) return POSTAL;
 			if (ordinal == RETRIEVAL.o) return RETRIEVAL;
-			if (ordinal == INTEREST.o) return INTEREST;
+			if (ordinal == SUBSCRIBE.o) return SUBSCRIBE;
 			IncompleteRequest.logger.error("bad action index {}", ordinal);
 			throw new IncompleteRequest("bad action");
 
