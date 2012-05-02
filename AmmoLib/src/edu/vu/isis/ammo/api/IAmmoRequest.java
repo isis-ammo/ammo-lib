@@ -34,7 +34,7 @@ public interface IAmmoRequest {
    public static final TimeInterval EXPIRE_UNLIMITED = 
          new TimeInterval(TimeInterval.UNLIMITED);
    public static final TimeInterval EXPIRE_DEFAULT = 
-         new TimeInterval(TimeInterval.Unit.HOUR);
+         new TimeInterval(TimeInterval.Unit.DAY);
    public static final Integer DURABILITY_VOLATILE = 1;
    public static final Integer DURABILITY_PERSISTENT = 2;
 
