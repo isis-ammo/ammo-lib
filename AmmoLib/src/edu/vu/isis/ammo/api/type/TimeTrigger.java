@@ -7,7 +7,7 @@ The US government has the right to use, modify, reproduce, release,
 perform, display, or disclose computer software or computer software 
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
- */
+*/
 package edu.vu.isis.ammo.api.type;
 
 import android.os.Parcel;
@@ -59,7 +59,7 @@ public class TimeTrigger extends AmmoType {
 			return new TimeTrigger[size];
 		}
 	};
-
+	
 	public static TimeTrigger readFromParcel(Parcel source) {
 		if (AmmoType.isNull(source)) return null;
 		return new TimeTrigger(source);
@@ -100,8 +100,20 @@ public class TimeTrigger extends AmmoType {
 			}
 		plogger.trace("unmarshall time trigger {}", this);
 	}
-
-
+	
+	public long cv() {
+		if (this.type == null) {
+			return System.currentTimeMillis();
+		} else
+			switch (this.type) {
+			case ABS:
+				return this.abs.cv();
+			case REL:
+				return System.currentTimeMillis() + this.rel.cv();
+			default:
+				return System.currentTimeMillis();
+			}
+	}
 	// *********************************
 	// Standard Methods
 	// *********************************
