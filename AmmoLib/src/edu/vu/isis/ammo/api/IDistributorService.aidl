@@ -9,7 +9,7 @@ interface IDistributorService
     recoverRequest to get the request back
     */
    String makeRequest(in AmmoRequest request); 
-   AmmoRequest recoverRequest(in String uuid);
+   AmmoRequest recoverRequest(in String uuid, in int version);
    
    
 }   
