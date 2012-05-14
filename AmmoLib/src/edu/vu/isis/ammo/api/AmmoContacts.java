@@ -605,8 +605,14 @@ public class AmmoContacts {
         // (In future we should prob. change this to include rank, role, etc.)
         String displayName = "";
         if (displayName.length() < 1) {
-            if (callsign != null && callsign.length() > 0) {
-                displayName = callsign;
+            // if (callsign != null && callsign.length() > 0) {
+            //     displayName = callsign;
+            // }
+	    // TBD SKN: Android Contacts requires displayNames to be unique, per new requirement callsigns are not unique
+	    //          map userid to display name
+	    //          tigrUserId MUST BE UNIQUE!!!!!!
+            if (userId != null && userId.length() > 0) {
+                 displayName = userId;
             }
         }
         if (displayName.length() < 1) {
