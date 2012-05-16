@@ -9,7 +9,7 @@ interface IDistributorAdaptor
     /**
     Request that a payload be deserialized into a tuple from a content provider.
     */
-   void deserialize(in String encoding, in String relationName, in byte[] payload);
+   String deserialize(in String encoding, in String relationName, in byte[] payload);
    
    
 }   
