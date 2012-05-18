@@ -24,6 +24,7 @@
 </parent-->
 
   <artifactId>ammolib</artifactId>
+  <packaging>apk</packaging>
   <name>Ammo Android Library</name>
 
   <distributionManagement>
@@ -117,12 +118,13 @@
 	       <plugin>
                     <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                     <artifactId>android-maven-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.2.0</version>
+
                     <extensions>true</extensions>
                     <configuration>
-                        <!--<sdk>
-                            <platform>10</platform>
-                        </sdk>-->
+                        <sdk>
+                            <platform>8</platform>
+                        </sdk>
                         <undeployBeforeDeploy>true</undeployBeforeDeploy>
                     </configuration>
                 </plugin>
@@ -180,13 +182,13 @@
             <dependency>
                 <groupId>com.google.android</groupId>
                 <artifactId>android</artifactId>
-                <version>2.3.3</version>
+                <version>2.2.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.android</groupId>
                 <artifactId>android-test</artifactId>
-                <version>2.3.3</version>
+                <version>2.2.1</version>
             </dependency>
             <dependency>
                 <groupId>transapps</groupId>

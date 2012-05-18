@@ -50,6 +50,9 @@
     <target name="realclean" depends="clean">
         <echo>Removing gen and libs dirs..</echo>
         <delete dir="gen"/>
+        <delete dir="javadoc"/>
+        <delete file="ammolib.jar"/>
+        <delete file="ammolib-javadoc.jar"/>
     </target>
 
     <target name="javadoc"
