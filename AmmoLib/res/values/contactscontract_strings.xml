@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="description_star">favorite</string>
+    <string name="low_memory">Phone storage is full! Delete some files to free space.</string>    
+
+    <string name="postalTypeCustom">Custom</string>
+    <string name="postalTypeHome">Home</string>
+    <string name="postalTypeWork">Work</string>
+    <string name="postalTypeOther">Other</string>
+
+    <string name="phoneTypeCustom">Custom</string>
+    <string name="phoneTypeHome">Home</string>
+    <string name="phoneTypeMobile">Mobile</string>
+    <string name="phoneTypeWork">Work</string>
+    <string name="phoneTypeFaxWork">Work Fax</string>
+    <string name="phoneTypeFaxHome">Home Fax</string>
+    <string name="phoneTypePager">Pager</string>
+    <string name="phoneTypeOther">Other</string>
+    <string name="phoneTypeCallback">Callback</string>
+    <string name="phoneTypeCar">Car</string>
+    <string name="phoneTypeCompanyMain">Company Main</string>
+    <string name="phoneTypeIsdn">ISDN</string>
+    <string name="phoneTypeMain">Main</string>
+    <string name="phoneTypeOtherFax">Other Fax</string>
+    <string name="phoneTypeRadio">Radio</string>
+    <string name="phoneTypeTelex">Telex</string>
+    <string name="phoneTypeTtyTdd">TTY TDD</string>
+    <string name="phoneTypeWorkMobile">Work Mobile</string>
+    <string name="phoneTypeWorkPager">Work Pager</string>
+    <string name="phoneTypeAssistant">Assistant</string>
+    <string name="phoneTypeMms">MMS</string>
+
+    <string name="emailTypeCustom">Custom</string>
+    <string name="emailTypeHome">Home</string>
+    <string name="emailTypeWork">Work</string>
+    <string name="emailTypeOther">Other</string>
+    <string name="emailTypeMobile">Mobile</string>
+
+    <string name="imProtocolCustom">Custom</string>
+    <string name="imProtocolAim">AIM</string>
+    <string name="imProtocolMsn">Windows Live</string>
+    <string name="imProtocolYahoo">Yahoo</string>
+    <string name="imProtocolSkype">Skype</string>
+    <string name="imProtocolQq">QQ</string>
+    <string name="imProtocolGoogleTalk">Google Talk</string>
+    <string name="imProtocolIcq">ICQ</string>
+    <string name="imProtocolJabber">Jabber</string>
+    <string name="imProtocolNetMeeting">NetMeeting</string>
+
+    <string name="orgTypeWork">Work</string>
+    <string name="orgTypeOther">Other</string>
+    <string name="orgTypeCustom">Custom</string>
+
+    <string name="eventTypeBirthday">Birthday</string>
+    <string name="eventTypeAnniversary">Anniversary</string>
+    <string name="eventTypeOther">Event</string>
+
+    <string name="imTypeCustom">Custom</string>
+    <string name="imTypeHome">Home</string>
+    <string name="imTypeWork">Work</string>
+    <string name="imTypeOther">Other</string>
+
+    <string name="emergency_call_dialog_number_for_display">Emergency number</string>
+
+</resources>
