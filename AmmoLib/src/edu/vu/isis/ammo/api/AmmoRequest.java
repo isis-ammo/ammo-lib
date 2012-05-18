@@ -10,13 +10,13 @@ purpose whatsoever, and to have or authorize others to do so.
  */
 package edu.vu.isis.ammo.api;
 
+import java.util.PriorityQueue;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
@@ -33,7 +33,6 @@ import edu.vu.isis.ammo.api.type.Action;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Form;
 import edu.vu.isis.ammo.api.type.Limit;
-import edu.vu.isis.ammo.api.type.SerialMoment;
 import edu.vu.isis.ammo.api.type.Notice;
 import edu.vu.isis.ammo.api.type.Notice.Via;
 import edu.vu.isis.ammo.api.type.Oid;
@@ -43,6 +42,7 @@ import edu.vu.isis.ammo.api.type.Provider;
 import edu.vu.isis.ammo.api.type.Quantifier;
 import edu.vu.isis.ammo.api.type.Query;
 import edu.vu.isis.ammo.api.type.Selection;
+import edu.vu.isis.ammo.api.type.SerialMoment;
 import edu.vu.isis.ammo.api.type.TimeInterval;
 import edu.vu.isis.ammo.api.type.TimeStamp;
 import edu.vu.isis.ammo.api.type.TimeTrigger;
@@ -103,7 +103,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		if (this.topic != null) sb.append(this.topic).append(' ');
 		return sb.toString();
 	}
-	
+
 	public String toShow() {
 		StringBuilder sb = new StringBuilder();
 		if (this.action != null) sb.append(this.action.toString()).append(" Request ");
@@ -113,7 +113,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		if (this.subtopic != null) sb.append('&').append(this.subtopic);
 		if (this.quantifier != null) sb.append('&').append(this.quantifier);
 		sb.append(' ');
-		
+
 		return sb.toString();
 	}
 
@@ -127,10 +127,10 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		public AmmoRequest createFromParcel(Parcel source) {
 			try {
 				return new AmmoRequest(source);
-				
+
 			} catch (IncompleteRequest ex) {
 				return null;
-				
+
 			} catch (Throwable ex) {
 				final int capacity = source.dataCapacity();
 				//final int size = (capacity < 50) ? capacity : 50;
@@ -160,7 +160,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.debug("version: {}", VERSION);
 		dest.writeByte(VERSION);
-		
+
 		plogger.debug("request: [{}:{}]", this.uuid, this.uid);
 		dest.writeValue(this.uuid);
 		dest.writeValue(this.uid);
@@ -242,7 +242,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			plogger.error("decoding uid: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
-		
+
 		try {
 			this.action = Action.getInstance(in);
 			plogger.trace("action: {}", this.action);
@@ -453,10 +453,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		return new AmmoRequest.Builder(context).reset();
 	}
 
-	public static Builder newBuilder(Context context, BroadcastReceiver receiver) {
-		return new AmmoRequest.Builder(context, receiver).reset();
-	}
-
 	// public static Builder newBuilder(IBinder service) {
 	// return new AmmoRequest.Builder(service).reset();
 	// }
@@ -491,54 +487,116 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * 
 	 */
 	private static final Intent DISTRIBUTOR_SERVICE = new Intent(IDistributorService.class.getCanonicalName());
-	private static final Intent MAKE_DISTRIBUTOR_REQUEST = new Intent("edu.vu.isis.ammo.api.MAKE_REQUEST");
 
 	public static class Builder implements IAmmoRequest.Builder {
 
-		private enum ConnectionMode {
-			BIND, PEEK, COMMAND, NONE;
-		}
-
-		private final AtomicReference<ConnectionMode> mode;
+		private final PriorityQueue<AmmoRequest> requestQueue;
+		private final PriorityQueue<String> retrievalQueue;
 		private final AtomicReference<IDistributorService> distributor;
 		private final Context context;
 
-		private Builder(Context context, BroadcastReceiver receiver) {
-
-			this.mode = new AtomicReference<ConnectionMode>(ConnectionMode.COMMAND);
-			this.distributor = new AtomicReference<IDistributorService>(null);
-			this.context = context;
-
-			final IBinder service = receiver.peekService(context, DISTRIBUTOR_SERVICE);
-			if (service == null) {
-				logger.warn("ammo not peekable");
-				return;
-			}
-			logger.warn("ammo available");
-			this.distributor.set(IDistributorService.Stub.asInterface(service));
-			this.mode.set(ConnectionMode.PEEK);
-		}
-
 		final private ServiceConnection conn = new ServiceConnection() {
+			private final Builder parent = Builder.this;
+
 			@Override
 			public void onServiceConnected(ComponentName name, IBinder service) {
 				logger.trace("service connected");
 				Builder.this.distributor.set(IDistributorService.Stub.asInterface(service));
-				Builder.this.mode.set(ConnectionMode.BIND);
+
+				synchronized(parent.requestQueue) {
+					while(true) {
+						final AmmoRequest request = parent.requestQueue.poll();
+						if (request == null) break;
+						final String ident;
+						try {
+							ident = parent.distributor.get().makeRequest(request);
+						} catch (RemoteException ex) {
+							AmmoRequest.logger.error("service cannot fulfill make request {}",
+									ex.getStackTrace());
+							break;
+						}
+						AmmoRequest.logger.info("service bind : {} {}", request, ident);
+					}
+				}
+				
+				synchronized(parent.retrievalQueue) {
+					while(true) {
+						final String uuid = parent.retrievalQueue.poll();
+						if (uuid == null) break;
+						final AmmoRequest request;
+						try {
+							request = parent.distributor.get().recoverRequest(uuid, 4);
+						} catch (RemoteException ex) {
+							AmmoRequest.logger.error("service cannot fulfill make request {}",
+									ex.getStackTrace());
+							break;
+						}
+						AmmoRequest.logger.info("service bind : {} {}", request, uuid);
+					}
+				}
 			}
 
 			@Override
 			public void onServiceDisconnected(ComponentName name) {
 				logger.trace("service {} disconnected", name.flattenToShortString());
-				Builder.this.mode.set(ConnectionMode.COMMAND);
 				Builder.this.distributor.set(null);
 			}
 		};
+		
+		/**
+		 * The request is sent over an AIDL connection.
+		 * To do so requires a binder which may not be ready.
+		 * In the case where the binder is not ready the request 
+		 * is placed into a queue.
+		 */
+		private IAmmoRequest makeRequest(final AmmoRequest request) {
+			synchronized(this.requestQueue) {
+				final IDistributorService distributor = this.distributor.get();
+				if (distributor != null) {
+					try {
+						final String ident = distributor.makeRequest(request);
+						AmmoRequest.logger.info("request=[{}] [{}]", ident, request);
+						return request;
+					} catch (RemoteException ex) {
+						AmmoRequest.logger.info("service cannot fulfill make request immediately {}", request);
+					}
+				} else {
+					final boolean isBound = this.context.bindService(DISTRIBUTOR_SERVICE, this.conn, Context.BIND_AUTO_CREATE);
+					if (! isBound) {
+						AmmoRequest.logger.error("Ammo does not appear to be available");
+					}
+				}
+				this.requestQueue.offer(request);
+			}
+			return request;
+		}
+		
+		private IAmmoRequest recoverRequest(final String uuid, final int version) {
+			synchronized(this.requestQueue) {
+				final IDistributorService distributor = this.distributor.get();
+				if (distributor != null) {
+					try {
+						return distributor.recoverRequest(uuid, version);
+					} catch (RemoteException ex) {
+						AmmoRequest.logger.info("service cannot fulfill request retrieval immediately {}", uuid);
+					}
+				} else {
+					final boolean isBound = this.context.bindService(DISTRIBUTOR_SERVICE, this.conn, Context.BIND_AUTO_CREATE);
+					if (! isBound) {
+						AmmoRequest.logger.error("Ammo does not appear to be available");
+					}
+				}
+				this.retrievalQueue.offer(uuid);
+			}
+			return null;
+		}
+
 
 		private Builder(Context context) {
-			this.mode = new AtomicReference<ConnectionMode>(ConnectionMode.COMMAND);
 			this.distributor = new AtomicReference<IDistributorService>(null);
 			this.context = context;
+			this.requestQueue = new PriorityQueue<AmmoRequest>();
+			this.retrievalQueue = new PriorityQueue<String>();
 			try {
 				final boolean isBound = this.context.bindService(DISTRIBUTOR_SERVICE, this.conn, Context.BIND_AUTO_CREATE);
 				logger.trace("is the service bound? {}", isBound);
@@ -580,44 +638,11 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		// ACTIONS
 		// ***************
 
-		/**
-		 * Generally the BIND approach should be used as it has the best
-		 * performance. Sometimes this is not possible and the
-		 * getService()/COMMAND method must be used (in the case of
-		 * BroadcastReceiver). There are cases where the PEEK method may be used
-		 * (BroadcastReceiver) but it is not particularly reliable so the
-		 * fall-back to COMMAND is necessary. It may also be the case that the
-		 * service has not yet started and the binder has not yet been obtained.
-		 * In that interim case the COMMAND mode should be used.
-		 * 
-		 */
-		private IAmmoRequest makeRequest(final AmmoRequest request) throws RemoteException {
-			switch (this.mode.get()) {
-			case BIND:
-			case PEEK:
-				final String ident = this.distributor.get().makeRequest(request);
-				logger.info("service bind : {} {}", request, ident);
-				break;
-			case COMMAND:
-			default:
-				final Intent parcelIntent = MAKE_DISTRIBUTOR_REQUEST.cloneFilter();
-				parcelIntent.putExtra("request", request);
-				final ComponentName componentName = this.context.startService(parcelIntent);
-				if (componentName != null) {
-					logger.debug("service command : {}", componentName.getClassName());
-				} else {
-					logger.error("service command : {}", parcelIntent);
-				}
-				break;
-			}
-			return request;
-		}
-
 		@Override
 		public IAmmoRequest base() {
 			return new AmmoRequest(Action.NONE, this);
 		}
-		
+
 		@Override
 		public IAmmoRequest post() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(Action.POSTAL, this));
@@ -647,8 +672,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 		@Override
 		public IAmmoRequest getInstance(String uuid) throws RemoteException {
-			// TODO Auto-generated method stub
-			return null;
+			return this.recoverRequest(uuid, 4);
 		}
 
 		@Override
