@@ -671,8 +671,8 @@ public class AmmoContacts {
 	contactId = r.getRawContactId();
 	if (!(contactId > 0)) return null;
 
-	Uri uriToDelete = Uri.parse("content://com.android.contacts/raw_contacts/" + String.valueOf(contactId));
-	// that is: ContactsContract.RawContacts.CONTENT_URI + "/" + contactId
+	Uri uriToDelete = Uri.withAppendedPath(ContactsContract.RawContacts.CONTENT_URI, 
+					       String.valueOf(contactId));
 
 	// Then make a ContentProviderOperation to delete this contact
 	ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
