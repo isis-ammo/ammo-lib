@@ -24,10 +24,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.net.Uri;
-import android.provider.ContactsContract;
-import android.provider.ContactsContract.CommonDataKinds.StructuredName;
-import android.provider.ContactsContract.Contacts;
-import android.provider.ContactsContract.Data;
+
+//import android.provider.ContactsContract;
+//import android.provider.ContactsContract.CommonDataKinds.StructuredName;
+//import android.provider.ContactsContract.Contacts;
+//import android.provider.ContactsContract.Data;
+
+import edu.vu.isis.ammo.contacts.provider.ContactsContract;
+import edu.vu.isis.ammo.contacts.provider.ContactsContract.CommonDataKinds.StructuredName;
+import edu.vu.isis.ammo.contacts.provider.ContactsContract.Contacts;
+import edu.vu.isis.ammo.contacts.provider.ContactsContract.Data;
+
 import android.util.Log;
 import edu.vu.isis.ammo.launch.constants.Constants;
 

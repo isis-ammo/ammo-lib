@@ -7,7 +7,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
-     <ammolib.version>1.5.9-SNAPSHOT</ammolib.version> <!-- where can I pull this version number from? -->
+     <ammolib.version>1.5.5-SNAPSHOT</ammolib.version> <!-- where can I pull this version number from? -->
      <vandylib.repo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.repo.url>
      <vandylib.snapshot.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/vanderbilt-snapshot/</vandylib.snapshot.url>
      <vandylib.eucleo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/eucleo/</vandylib.eucleo.url>
@@ -20,7 +20,7 @@
 <!--parent>
   <groupId>edu.vu.isis</groupId>
   <artifactId>ammo-parent</artifactId>
-  <version>1.5.8-SNAPSHOT</version>
+  <version>1.5.5-SNAPSHOT</version>
 </parent-->
 
   <artifactId>ammolib</artifactId>
@@ -63,7 +63,7 @@
 
 
        
-       <plugin>
+       <!--plugin>
          <groupId>org.codehaus.mojo</groupId>
          <artifactId>build-helper-maven-plugin</artifactId>
           <executions>
@@ -80,12 +80,26 @@
                   </configuration>
              </execution>
           </executions>
-       </plugin>
+       </plugin-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>1.6</version>
 				<executions>
+                    <execution>
+                        <id>version_gen</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <target>
+                                <ant antfile="maven-version-generator.xml"  inheritAll="true" inheritRefs="true">
+                                    <target name="update-version"/>
+                                </ant>
+                            </target>
+                        </configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+                    </execution>
 					<execution>
 						<phase>deploy</phase> <!--should only build javadoc when you need to deploy-->
 						<configuration>
