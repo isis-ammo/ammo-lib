@@ -30,6 +30,7 @@ import android.os.ParcelFormatException;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import edu.vu.isis.ammo.api.type.Action;
+import edu.vu.isis.ammo.api.type.ChannelFilter;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Form;
 import edu.vu.isis.ammo.api.type.Limit;
@@ -93,6 +94,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 	final public Integer worth;
 	final public Notice notice;
+	
+	final public ChannelFilter channelFilter;
 
 	@Override
 	public String toString() {
@@ -154,7 +157,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	 * Class.writeToParcel(this.provider, dest, flags) so that when the null
 	 * will will be handled correctly.
 	 */
-	private final byte VERSION = (byte) 0x04;
+	private final byte VERSION = (byte) 0x05;
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
@@ -209,6 +212,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		Selection.writeToParcel(this.select, dest, flags);
 		plogger.debug("projection: {}", this.project);
 		dest.writeStringArray(this.project);
+		
+		plogger.debug("channelFilter: [{}]", this.channelFilter);
+		dest.writeValue(this.channelFilter);
 	}
 
 	/**
@@ -391,7 +397,13 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			plogger.error("decoding projection: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
-
+		try {
+			this.channelFilter = (version < (byte)5) ? null : ChannelFilter.readFromParcel(in);
+			plogger.trace("channelFilter: {}", this.channelFilter);
+		} catch (Exception ex) {
+			plogger.error("decoding channelFilter: {}", ex);
+			throw new IncompleteRequest(ex);
+		}
 	}
 
 	@Override
@@ -414,6 +426,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		this.topic = builder.topic;
 		this.subtopic = builder.subtopic;
 		this.quantifier = builder.quantifier;
+		this.channelFilter = builder.channelFilter;
 
 		this.downsample = builder.downsample;
 		this.durability = builder.durability;
@@ -556,6 +569,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		private Topic topic;
 		private Topic subtopic;
 		private Quantifier quantifier;
+		private ChannelFilter channelFilter;
 
 		private Integer downsample;
 		private Integer durability;
@@ -882,6 +896,19 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 					.getContentResolver()
 					.getType(this.provider.asUri());
 			this.topic(topic);
+			return this;
+		}
+		
+		/**
+		 *  
+		 */
+		@Override
+		public Builder channelFilter(String val) {
+			if (val == null) {
+				this.channelFilter = null;
+				return this;
+			}
+			this.channelFilter = new ChannelFilter(val);
 			return this;
 		}
 
