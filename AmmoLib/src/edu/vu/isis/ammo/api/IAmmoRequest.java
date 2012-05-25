@@ -102,7 +102,7 @@ public interface IAmmoRequest {
         public Builder quantifier(Quantifier.Type quantifier);
         public Builder topic(Oid major, Oid minor, Quantifier.Type quantifier); 
 
-		public Builder channelFilter(String val); 
+		public Builder useChannel(String val); 
 
         // \availability{2.0}
         public Builder uid(String val);

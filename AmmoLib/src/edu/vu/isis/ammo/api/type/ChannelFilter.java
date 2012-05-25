@@ -82,6 +82,10 @@ public class ChannelFilter extends AmmoType {
 	// IAmmoRequest Support
 	// *********************************
 
+    /** 
+    * TBD SKN 
+    * should check that the val is valid
+    */
 	public ChannelFilter(String val) {
 		this.name = val;
 	}

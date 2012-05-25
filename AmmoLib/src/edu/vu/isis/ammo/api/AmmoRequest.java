@@ -214,7 +214,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		dest.writeStringArray(this.project);
 		
 		plogger.debug("channelFilter: [{}]", this.channelFilter);
-		dest.writeValue(this.channelFilter);
+		ChannelFilter.writeToParcel(this.channelFilter, dest, flags);
 	}
 
 	/**
@@ -903,7 +903,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		 *  
 		 */
 		@Override
-		public Builder channelFilter(String val) {
+	    public Builder useChannel(String val) {
 			if (val == null) {
 				this.channelFilter = null;
 				return this;
@@ -911,7 +911,6 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.channelFilter = new ChannelFilter(val);
 			return this;
 		}
-
 
 		@Override
 		public Builder uid(String val) {
