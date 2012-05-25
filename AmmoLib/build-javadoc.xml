@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="AmmoLib" default="javadoc">
+
+    <!-- The local.properties file is created and updated by the 'android' tool.
+         It contains the path to the SDK. It should *NOT* be checked into
+         Version Control Systems. -->
+    <loadproperties srcFile="local.properties" />
+
+    <property environment="env"/>
+
+    <target name="realclean">
+        <echo>Removing gen and libs dirs..</echo>
+        <delete dir="gen"/>
+        <delete dir="javadoc"/>
+        <delete file="ammolib.jar"/>
+        <delete file="ammolib-javadoc.jar"/>
+    </target>
+
+    <target name="javadoc"
+        description="making java documentation for ammo lib">
+        <javadoc 
+           destdir="javadoc"
+           author="true" version="true" verbose="false" use="true"
+           windowtitle="Documentation for the AMMO APKs"
+           classpathref="android.antlibs" >
+
+           <fileset dir="src" defaultexcludes="yes">
+             <include name="**/*.java"/>
+             <exclude name="**/IDistributorService.java"/>
+           </fileset>
+
+        </javadoc>
+
+        <jar jarfile="${basedir}/ammolib-javadoc.jar" basedir="javadoc"/>
+    </target>
+    <import file="${sdk.dir}/tools/ant/build.xml" />
+</project>
