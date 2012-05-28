@@ -7,9 +7,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
+<!-- TEMPLATE2:BEGIN
+-->
      <repo.addr>vanderbilt-snapshot/</repo.addr> <!-- This field should read "Vanderbilt/" for releases --> 
-                                        <!-- else it should read "vanderbilt-snapshot/" for snapshots-->
-     <ammolib.version>1.5.5-SNAPSHOT</ammolib.version>
+                                                 <!-- else it should read "vanderbilt-snapshot/" for snapshots-->
+<!-- TEMPLATE2:END -->
      <vandylib.release.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.release.url>
      <vandylib.snapshot.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/vanderbilt-snapshot/</vandylib.snapshot.url>
      <vandylib.eucleo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/eucleo/</vandylib.eucleo.url>
@@ -17,8 +19,11 @@
   </properties>
 
   <groupId>edu.vu.isis</groupId>
+<!-- TEMPLATE:BEGIN
+-->
+  <version>1.5.5-SNAPSHOT</version> 
+<!-- TEMPLATE:END -->
 
-  <version>${ammolib.version}</version>
 <!--parent>
   <groupId>edu.vu.isis</groupId>
   <artifactId>ammo-parent</artifactId>
@@ -167,13 +172,13 @@
                   </goals>
                   <configuration>       <!--maven doesn't make sense-->
                       <javadoc>ammolib-javadoc.jar</javadoc>
-                      <file>target/ammolib-${ammolib.version}.jar</file>
+                      <file>target/ammolib-${project.version}.jar</file>
                       <repositoryId>nexus-vanderbilt</repositoryId>
                       <url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/${repo.addr}</url>
                       <generatePom>false</generatePom>
                       <groupId>edu.vu.isis</groupId>
                       <artifactId>ammolib</artifactId>
-                      <version>${ammolib.version}</version>
+                      <version>${project.version}</version>
                       <packaging>jar</packaging>
                   </configuration>
                </execution>
