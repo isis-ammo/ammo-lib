@@ -7,8 +7,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
-     <ammolib.version>1.5.5-SNAPSHOT</ammolib.version> <!-- where can I pull this version number from? -->
-     <vandylib.repo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.repo.url>
+     <repo.addr>vanderbilt-snapshot/</repo.addr> <!-- This field should read "Vanderbilt/" for releases --> 
+                                        <!-- else it should read "vanderbilt-snapshot/" for snapshots-->
+     <ammolib.version>1.5.5-SNAPSHOT</ammolib.version>
+     <vandylib.release.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.release.url>
      <vandylib.snapshot.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/vanderbilt-snapshot/</vandylib.snapshot.url>
      <vandylib.eucleo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/eucleo/</vandylib.eucleo.url>
      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,18 +26,18 @@
 </parent-->
 
   <artifactId>ammolib</artifactId>
-  <packaging>apk</packaging>
+  <packaging>apklib</packaging>
   <name>Ammo Android Library</name>
 
   <distributionManagement>
      <repository>
         <id>nexus-vanderbilt</id>
-        <url>${vandylib.snapshot.url}</url>
+        <url>${vandylib.release.url}</url>
      </repository>
-     <!--<snapshotRepository>
+     <snapshotRepository>
          <id>nexus-snapshot</id>
          <url>${vandylib.snapshot.url}</url>
-     </snapshotRepository>-->
+     </snapshotRepository>
   </distributionManagement>
 
 	<repositories>
@@ -104,7 +106,7 @@
 						<phase>deploy</phase> <!--should only build javadoc when you need to deploy-->
 						<configuration>
 							<target>
-								<ant antfile="build.xml" inheritAll="true" inheritRefs="true">
+								<ant antfile="build-javadoc.xml" inheritAll="true" inheritRefs="true">
 									<target name="javadoc"/>
 								</ant>
 							</target>
@@ -163,16 +165,16 @@
                   <goals>
                       <goal>deploy-file</goal>
                   </goals>
-                  <configuration>
-                      <file>ammolib-javadoc.jar</file>
-                      <repositoryId>nexus-snapshot</repositoryId>
-                      <url>${vandylib.snapshot.url}</url>
+                  <configuration>       <!--maven doesn't make sense-->
+                      <javadoc>ammolib-javadoc.jar</javadoc>
+                      <file>target/ammolib-${ammolib.version}.jar</file>
+                      <repositoryId>nexus-vanderbilt</repositoryId>
+                      <url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/${repo.addr}</url>
                       <generatePom>false</generatePom>
                       <groupId>edu.vu.isis</groupId>
                       <artifactId>ammolib</artifactId>
                       <version>${ammolib.version}</version>
                       <packaging>jar</packaging>
-                      <classifier>javadoc</classifier>
                   </configuration>
                </execution>
             </executions>
