@@ -7,7 +7,6 @@ import android.os.RemoteException;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
 import edu.vu.isis.ammo.api.type.Form;
 import edu.vu.isis.ammo.api.type.Limit;
-import edu.vu.isis.ammo.api.type.SerialMoment;
 import edu.vu.isis.ammo.api.type.Notice;
 import edu.vu.isis.ammo.api.type.Notice.Via;
 import edu.vu.isis.ammo.api.type.Oid;
@@ -15,6 +14,7 @@ import edu.vu.isis.ammo.api.type.Order;
 import edu.vu.isis.ammo.api.type.Payload;
 import edu.vu.isis.ammo.api.type.Quantifier;
 import edu.vu.isis.ammo.api.type.Query;
+import edu.vu.isis.ammo.api.type.SerialMoment;
 import edu.vu.isis.ammo.api.type.TimeInterval;
 import edu.vu.isis.ammo.api.type.TimeStamp;
 
@@ -102,6 +102,7 @@ public interface IAmmoRequest {
         public Builder quantifier(Quantifier.Type quantifier);
         public Builder topic(Oid major, Oid minor, Quantifier.Type quantifier); 
 
+		public Builder useChannel(String val); 
 
         // \availability{2.0}
         public Builder uid(String val);
@@ -123,7 +124,7 @@ public interface IAmmoRequest {
         public Builder downsample(Integer maxSize); 
         public Builder project(String[] val);
         public Builder select(Query val);
-        public Builder select(Form val); 
+        public Builder select(Form val);
    }
   
 }
