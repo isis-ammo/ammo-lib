@@ -64,6 +64,13 @@
         <echo message="version.name1 = ${version.name}"/>
         <echo message="~~~~~~~~~~ Done checking property file1 ~~~~~~~~~~"/>
 
+        <echo message="configure AmmoLib..."/>
+        <exec executable="android" dir="${android.dir}/AmmoLib" searchpath="true">
+           <arg line="update"/> <arg line="lib-project"/>
+           <arg line="--path"/> <arg line="."/>
+           <arg line="--target"/> <arg line="${android.target}"/>
+        </exec>
+        <echo message="android.library=true" file="${android.dir}/AmmoLib/project.properties" append="true"/>
 
     </target>
 

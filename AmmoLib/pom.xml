@@ -7,16 +7,28 @@
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
+<<<<<<< HEAD
      <ammolib.version>1.5.7</ammolib.version> <!-- where can I pull this version number from? -->
      <vandylib.repo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.repo.url>
+=======
+<!-- TEMPLATE2:BEGIN
+-->
+     <repo.addr>vanderbilt-snapshot/</repo.addr> <!-- This field should read "Vanderbilt/" for releases --> 
+                                                 <!-- else it should read "vanderbilt-snapshot/" for snapshots-->
+<!-- TEMPLATE2:END -->
+     <vandylib.release.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.release.url>
+>>>>>>> master
      <vandylib.snapshot.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/vanderbilt-snapshot/</vandylib.snapshot.url>
      <vandylib.eucleo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/eucleo/</vandylib.eucleo.url>
      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <groupId>edu.vu.isis</groupId>
+<!-- TEMPLATE:BEGIN
+-->
+  <version>1.5.8-SNAPSHOT</version> 
+<!-- TEMPLATE:END -->
 
-  <version>${ammolib.version}</version>
 <!--parent>
   <groupId>edu.vu.isis</groupId>
   <artifactId>ammo-parent</artifactId>
@@ -24,18 +36,22 @@
 </parent-->
 
   <artifactId>ammolib</artifactId>
-  <packaging>apk</packaging>
+  <packaging>apklib</packaging>
   <name>Ammo Android Library</name>
 
   <distributionManagement>
      <repository>
         <id>nexus-vanderbilt</id>
+<<<<<<< HEAD
         <url>${vandylib.repo.url}</url>
+=======
+        <url>${vandylib.release.url}</url>
+>>>>>>> master
      </repository>
-     <!--<snapshotRepository>
+     <snapshotRepository>
          <id>nexus-snapshot</id>
          <url>${vandylib.snapshot.url}</url>
-     </snapshotRepository>-->
+     </snapshotRepository>
   </distributionManagement>
 
 	<repositories>
@@ -104,7 +120,7 @@
 						<phase>deploy</phase> <!--should only build javadoc when you need to deploy-->
 						<configuration>
 							<target>
-								<ant antfile="build.xml" inheritAll="true" inheritRefs="true">
+								<ant antfile="build-javadoc.xml" inheritAll="true" inheritRefs="true">
 									<target name="javadoc"/>
 								</ant>
 							</target>
@@ -163,16 +179,23 @@
                   <goals>
                       <goal>deploy-file</goal>
                   </goals>
+<<<<<<< HEAD
                   <configuration>
                       <file>ammolib-javadoc.jar</file>
                       <repositoryId>nexus-vanderbilt</repositoryId>
                       <url>${vandylib.repo.url}</url>
+=======
+                  <configuration>       <!--maven doesn't make sense-->
+                      <javadoc>ammolib-javadoc.jar</javadoc>
+                      <file>target/ammolib-${project.version}.jar</file>
+                      <repositoryId>nexus-vanderbilt</repositoryId>
+                      <url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/${repo.addr}</url>
+>>>>>>> master
                       <generatePom>false</generatePom>
                       <groupId>edu.vu.isis</groupId>
                       <artifactId>ammolib</artifactId>
-                      <version>${ammolib.version}</version>
+                      <version>${project.version}</version>
                       <packaging>jar</packaging>
-                      <classifier>javadoc</classifier>
                   </configuration>
                </execution>
             </executions>
