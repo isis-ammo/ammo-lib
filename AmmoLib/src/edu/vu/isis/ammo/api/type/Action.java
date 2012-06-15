@@ -14,9 +14,12 @@ import edu.vu.isis.ammo.api.IncompleteRequest;
 public enum Action {
 	NONE(-1),
 	POSTAL(0), DIRECTED_POSTAL(1), 
+	UNPOSTAL(6),
 	PUBLISH(2), 
 	RETRIEVAL(3), 
-	SUBSCRIBE(4), DIRECTED_SUBSCRIBE(5);
+	UNRETRIEVAL(7), 
+	SUBSCRIBE(4), DIRECTED_SUBSCRIBE(5),
+	UNSUBSCRIBE(8);
 
 	public static final Logger logger = LoggerFactory.getLogger("class.Action");
 	public static final Logger IPC_REQ_IN = LoggerFactory.getLogger( "ipc.request.inbound" );
@@ -32,8 +35,11 @@ public enum Action {
 		switch (this) {
 		case NONE: return "NONE";
 		case POSTAL: return "POSTAL";
+		case UNPOSTAL: return "UNPOSTAL";
 		case RETRIEVAL: return "RETRIEVAL";
+		case UNRETRIEVAL: return "CANCEL RETRIEVAL";
 		case SUBSCRIBE: return "SUBSCRIBE";
+		case UNSUBSCRIBE: return "UNSUBSCRIBE";
 		default: 
 			return null;
 		}
@@ -49,8 +55,14 @@ public enum Action {
 		try {
 			if (ordinal == NONE.o) return NONE;
 			if (ordinal == POSTAL.o) return POSTAL;
+			if (ordinal == UNPOSTAL.o) return UNPOSTAL;
+			
 			if (ordinal == RETRIEVAL.o) return RETRIEVAL;
+			if (ordinal == UNRETRIEVAL.o) return UNRETRIEVAL;
+			
 			if (ordinal == SUBSCRIBE.o) return SUBSCRIBE;
+			if (ordinal == UNSUBSCRIBE.o) return UNSUBSCRIBE;
+			
 			IncompleteRequest.logger.error("bad action index {}", ordinal);
 			throw new IncompleteRequest("bad action");
 
