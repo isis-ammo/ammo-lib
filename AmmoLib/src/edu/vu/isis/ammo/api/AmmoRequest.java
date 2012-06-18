@@ -636,16 +636,30 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		public IAmmoRequest post() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(Action.POSTAL, this));
 		}
-
+		
+		@Override
+		public IAmmoRequest unpost() throws RemoteException {
+			return this.makeRequest(new AmmoRequest(Action.UNPOSTAL, this));
+		}
 
 		@Override
 		public IAmmoRequest retrieve() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(Action.RETRIEVAL, this));
 		}
+		
+		@Override
+		public IAmmoRequest unretrieve() throws RemoteException {
+			return this.makeRequest(new AmmoRequest(Action.UNRETRIEVAL, this));
+		}
 
 		@Override
 		public IAmmoRequest subscribe() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(Action.SUBSCRIBE, this));
+		}
+		
+		@Override
+		public IAmmoRequest unsubscribe() throws RemoteException {
+			return this.makeRequest(new AmmoRequest(Action.UNSUBSCRIBE, this));
 		}
 
 		@Override

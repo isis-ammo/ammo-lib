@@ -81,8 +81,14 @@ public interface IAmmoRequest {
       public Builder reset();
       public IAmmoRequest base();
       public IAmmoRequest post() throws RemoteException;
+      public IAmmoRequest unpost() throws RemoteException;
+      
       public IAmmoRequest subscribe() throws RemoteException;
+      public IAmmoRequest unsubscribe() throws RemoteException;
+      
       public IAmmoRequest retrieve() throws RemoteException;
+      public IAmmoRequest unretrieve() throws RemoteException;
+      
       public IAmmoRequest getInstance(String uuid) throws RemoteException;
       public void releaseInstance();
       public Builder notice(Notice.Threshold threshold, Via.Type type);
