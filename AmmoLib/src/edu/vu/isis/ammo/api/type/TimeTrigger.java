@@ -7,7 +7,7 @@ The US government has the right to use, modify, reproduce, release,
 perform, display, or disclose computer software or computer software 
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
-*/
+ */
 package edu.vu.isis.ammo.api.type;
 
 import android.os.Parcel;
@@ -40,7 +40,7 @@ public class TimeTrigger extends AmmoType {
 			return new TimeTrigger[size];
 		}
 	};
-	
+
 	public static TimeTrigger readFromParcel(Parcel source) {
 		if (AmmoType.isNull(source)) return null;
 		return new TimeTrigger(source);
@@ -81,25 +81,29 @@ public class TimeTrigger extends AmmoType {
 			}
 		plogger.trace("unmarshall time trigger {}", this);
 	}
-	
+
 	/**
 	 * The cv returns an absolute time value in milliseconds.
-	 * This time is only a recommendation it may be that
+	 * This time is only a recommendation; it may be that
 	 * the distribution policy has set a maximum.
 	 * 
 	 * @return the absolute expiration time in milliseconds.
 	 */
 	public long cv() {
 		if (this.type == null) {
-			return System.currentTimeMillis();
+			return Long.MAX_VALUE;
 		} else
 			switch (this.type) {
 			case ABS:
 				return this.abs.cv();
 			case REL:
-				return System.currentTimeMillis() + this.rel.cv();
+				if (this.rel.cv() < Long.MAX_VALUE) {
+					return System.currentTimeMillis() + this.rel.cv();
+				} else {
+					return Long.MAX_VALUE;
+				}
 			default:
-				return System.currentTimeMillis();
+				return Long.MAX_VALUE;
 			}
 	}
 	// *********************************

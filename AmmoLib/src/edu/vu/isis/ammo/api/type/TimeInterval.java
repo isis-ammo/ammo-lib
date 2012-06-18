@@ -74,7 +74,7 @@ public class TimeInterval extends AmmoType {
     	case MILLISEC:
     		return millis;
     	default:
-    			return 0;
+    		return Long.MAX_VALUE;
     	}
     }
 	// *********************************
