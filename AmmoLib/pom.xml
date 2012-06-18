@@ -7,17 +7,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <properties>
-<<<<<<< HEAD
-     <ammolib.version>1.5.7</ammolib.version> <!-- where can I pull this version number from? -->
-     <vandylib.repo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.repo.url>
-=======
 <!-- TEMPLATE2:BEGIN
 -->
      <repo.addr>vanderbilt-snapshot/</repo.addr> <!-- This field should read "Vanderbilt/" for releases --> 
                                                  <!-- else it should read "vanderbilt-snapshot/" for snapshots-->
 <!-- TEMPLATE2:END -->
      <vandylib.release.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.release.url>
->>>>>>> master
      <vandylib.snapshot.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/vanderbilt-snapshot/</vandylib.snapshot.url>
      <vandylib.eucleo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/eucleo/</vandylib.eucleo.url>
      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,7 +27,7 @@
 <!--parent>
   <groupId>edu.vu.isis</groupId>
   <artifactId>ammo-parent</artifactId>
-  <version>1.5.7</version>
+  <version>1.5.5-SNAPSHOT</version>
 </parent-->
 
   <artifactId>ammolib</artifactId>
@@ -42,11 +37,7 @@
   <distributionManagement>
      <repository>
         <id>nexus-vanderbilt</id>
-<<<<<<< HEAD
-        <url>${vandylib.repo.url}</url>
-=======
         <url>${vandylib.release.url}</url>
->>>>>>> master
      </repository>
      <snapshotRepository>
          <id>nexus-snapshot</id>
@@ -179,18 +170,11 @@
                   <goals>
                       <goal>deploy-file</goal>
                   </goals>
-<<<<<<< HEAD
-                  <configuration>
-                      <file>ammolib-javadoc.jar</file>
-                      <repositoryId>nexus-vanderbilt</repositoryId>
-                      <url>${vandylib.repo.url}</url>
-=======
                   <configuration>       <!--maven doesn't make sense-->
                       <javadoc>ammolib-javadoc.jar</javadoc>
                       <file>target/ammolib-${project.version}.jar</file>
                       <repositoryId>nexus-vanderbilt</repositoryId>
                       <url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/${repo.addr}</url>
->>>>>>> master
                       <generatePom>false</generatePom>
                       <groupId>edu.vu.isis</groupId>
                       <artifactId>ammolib</artifactId>
