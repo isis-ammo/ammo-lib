@@ -18,6 +18,8 @@ public enum PresenceSchema {
 	/** Who last modified the request */
 	OPERATOR("TEXT"),
 
+	/** Presence state: 1=available, 2=not available, etc.*/
+	STATE("INTEGER"),
 
 	/** The time when first observed (millisec); indicates the first time the peer was observed.*/
 	FIRST("INTEGER"),
@@ -68,4 +70,8 @@ public enum PresenceSchema {
 		return EnumUtils.getFields(PresenceSchema.class, names);
 	}
 	
+	@Override
+	public String toString() {
+	    return this.field;
+	}
 }
