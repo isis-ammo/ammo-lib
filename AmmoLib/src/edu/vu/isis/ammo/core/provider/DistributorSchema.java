@@ -19,6 +19,26 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import edu.vu.isis.ammo.util.BaseDateColumns;
 
+/**
+@code{
+   // SAMPLE QUERY
+   Cursor presenceCursor = null;
+   try {
+      Uri presenceUri = DistributorSchema.CONTENT_URI.get(Relations.PRESENCE);
+      String selection = new StringBuilder().append(PresenceSchema.OPERATOR).append("=?").toString() ;
+      String[] selectionArgs = {cache.callsignBuffer.toString()};
+      presenceCursor = mContext.getContentResolver().query(presenceUri, null, 
+                             selection, selectionArgs, null);
+      presenceCursor.moveToFirst();
+      String originDevice = presenceCursor.getString(presenceCursor.getColumnIndex(PresenceSchema.ORIGIN.field));
+   } finally {
+      if (presenceCursor != null) {
+         presenceCursor.close();
+      }
+   }
+}
+ */
+
 public class DistributorSchema implements BaseColumns, BaseDateColumns {
 
 	public static final String AUTHORITY = "edu.vu.isis.ammo.core.provider.distributor";
