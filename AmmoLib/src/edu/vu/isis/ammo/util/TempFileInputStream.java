@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
  * A {@link FileInputStream} which (optionally) deletes the underlying file when
  * the stream is closed.
  * 
- * @author phreed
  */
 public class TempFileInputStream extends FileInputStream {
 
