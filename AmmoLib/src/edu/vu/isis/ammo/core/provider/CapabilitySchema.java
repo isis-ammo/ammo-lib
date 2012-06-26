@@ -46,16 +46,16 @@ public enum CapabilitySchema {
 	final public String field; 
 	
 	/** type */
-	final public String t; 
+	final public String type; 
 	
 	private CapabilitySchema( String type) {
 		this.field = this.name();
-		this.t = type;
+		this.type = type;
 	}
 	
 	private CapabilitySchema( String field, String type) {
 		this.field = field;
-		this.t = type;
+		this.type = type;
 	}
 	
 	/**
