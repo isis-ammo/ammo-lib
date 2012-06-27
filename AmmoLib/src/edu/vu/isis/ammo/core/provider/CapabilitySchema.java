@@ -24,7 +24,21 @@ public enum CapabilitySchema {
 	/** Qualifying parameters for the topic (optional : NULL) */
 	SUBTOPIC("TEXT"),
 
-
+	/** 
+	 * Use the PresenceState enum class to make these values useful.
+	 * e.g. 
+	 * @code{
+	 * final EnumSet<PresenceState> set = Presence.decode(cursor.getLong(cursor.getColumnIndex(ix)));
+	 * }
+	 * You can set the value in a similar fashion.
+	 * @code{
+	 * final long encodedValue = Presence.encode(EnumSet.of(PresenceState.RARE));
+	 * cv.put(CapablitySchema.STATE.field, encodedValue);
+	 * }
+	 * The encoded value is placed in the state field.
+	 */
+	STATE("INTEGER"),
+	
 	/** The time when first observed (millisec); indicates the first time the peer was observed.*/
 	FIRST("INTEGER"),
 
