@@ -42,7 +42,7 @@ public enum PresenceState {
 	 * @param stateSet
 	 * @return
 	 */
-	public long encodeState(Set<PresenceState> stateSet) {
+	public static long encodeState(Set<PresenceState> stateSet) {
 		long encodedState = 0;
 		for (final PresenceState state : stateSet) {
 			encodedState |= state.code;
@@ -55,7 +55,7 @@ public enum PresenceState {
 	 * @param stateSet an integer of states.
 	 * @return
 	 */
-	public Set<PresenceState> decodeStates(long encodedState) {
+	public static Set<PresenceState> decodeStates(long encodedState) {
 		long lowMask = Long.lowestOneBit(encodedState);
 		if (lowMask < 1) return null;
 		final EnumSet<PresenceState> decodedState = EnumSet.of(PresenceState.lookup(lowMask));
@@ -75,7 +75,7 @@ public enum PresenceState {
 	 * @param stateSet an integer of states.
 	 * @return
 	 */
-	public PresenceState decodeState( long encodedState) {
+	public static PresenceState decodeState( long encodedState) {
 		long lowMask = Long.lowestOneBit(encodedState);
 		if (lowMask < 1) return PresenceState.ABSENT;
 		return PresenceState.lookup(lowMask);
