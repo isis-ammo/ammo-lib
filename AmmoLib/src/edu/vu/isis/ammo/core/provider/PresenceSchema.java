@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import android.provider.BaseColumns;
 import edu.vu.isis.ammo.util.EnumUtils;
 
-public enum PresenceSchema {
+public enum PresenceSchema implements RelationSchema {
 	/** This is a locally unique identifier for the request */
 	ID(BaseColumns._ID,"TEXT"),
 	
@@ -86,5 +86,10 @@ public enum PresenceSchema {
 	@Override
 	public String toString() {
 	    return this.field;
+	}
+
+	@Override
+	public String getField() {
+		return this.field;
 	}
 }

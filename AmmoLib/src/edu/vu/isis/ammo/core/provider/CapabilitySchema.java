@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import android.provider.BaseColumns;
 import edu.vu.isis.ammo.util.EnumUtils;
 
-public enum CapabilitySchema {
+public enum CapabilitySchema implements RelationSchema {
 	/** This is a locally unique identifier for the request */
 	ID(BaseColumns._ID,"TEXT"),
 	
@@ -86,6 +86,11 @@ public enum CapabilitySchema {
 	 */
 	public static ArrayList<CapabilitySchema> mapFields(final String[] names) {
 		return EnumUtils.getFields(CapabilitySchema.class, names);
+	}
+
+	@Override
+	public String getField() {
+		return this.field;
 	}
 	
 }

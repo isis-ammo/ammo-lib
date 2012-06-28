@@ -1,6 +1,9 @@
 package edu.vu.isis.ammo.util;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
+
+import edu.vu.isis.ammo.core.provider.RelationSchema;
 
 
 public class EnumUtils {
@@ -9,12 +12,12 @@ public class EnumUtils {
 	 * 
 	 * @param clazz the enumeration for which the field names are extracted.
 	 */
-	public static <E extends Enum<E>> String[] buildFieldNames(Class<E> clazz) {
-		final E[] es = clazz.getEnumConstants();
-		final String[] result = new String[es.length];
+	 public static <E extends Enum<E> & RelationSchema> String[] buildFieldNames(Class<E> clazz) {
+		final EnumSet<E> set = EnumSet.allOf(clazz);
+		final String[] result = new String[set.size()];
 		int ix = 0;
-		for (final E cap : es) {
-			result[ix] = cap.name();
+		for (final E cap : set) {
+			result[ix] = cap.getField();
 			ix++;
 		}
 		return result;
@@ -28,6 +31,14 @@ public class EnumUtils {
 	 * @return an array of fields
 	 */
 	public static <E extends Enum<E>> ArrayList<E> getFields(Class<E> clazz, final String[] names) {
+		final ArrayList<E> fields = new ArrayList<E>(names.length);
+		for (final String name : names) {
+			fields.add(E.valueOf(clazz, name));
+		}
+		return fields;
+	}
+	
+	public static <E extends Enum<E>> ArrayList<E> getField(Class<E> clazz, final String[] names) {
 		final ArrayList<E> fields = new ArrayList<E>(names.length);
 		for (final String name : names) {
 			fields.add(E.valueOf(clazz, name));
