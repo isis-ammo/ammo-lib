@@ -10,7 +10,7 @@ import java.util.Set;
  * If that is the case they can be teased apart with the encode/decode methods.
  * 
  */
-public enum PresenceState {
+public enum TemporalState {
 
 	/** There is every reason to believe the device is present */
 	PRESENT(0x01), 
@@ -22,17 +22,17 @@ public enum PresenceState {
 	LOST(0x08),
 	/** There is no record for that device */
 	ABSENT(0x10);
-
+	
 	public final long code;
-	private PresenceState(int code) { this.code = code; }
-	static public PresenceState lookup(long lowMask) {
-		return PresenceState.lookupMap.get(lowMask);
+	private TemporalState(int code) { this.code = code; }
+	static public TemporalState lookup(long lowMask) {
+		return TemporalState.lookupMap.get(lowMask);
 	}
-	private static final HashMap<Long, PresenceState> lookupMap;
+	private static final HashMap<Long, TemporalState> lookupMap;
 	static {
-		final EnumSet<PresenceState> set = EnumSet.allOf(PresenceState.class);
-		lookupMap = new HashMap<Long, PresenceState>(set.size());
-		for (final PresenceState state : set) {
+		final EnumSet<TemporalState> set = EnumSet.allOf(TemporalState.class);
+		lookupMap = new HashMap<Long, TemporalState>(set.size());
+		for (final TemporalState state : set) {
 			lookupMap.put(Long.valueOf(state.code), state);
 		}
 	}
@@ -42,9 +42,9 @@ public enum PresenceState {
 	 * @param stateSet
 	 * @return
 	 */
-	public static long encodeState(Set<PresenceState> stateSet) {
+	public static long encodeState(Set<TemporalState> stateSet) {
 		long encodedState = 0;
-		for (final PresenceState state : stateSet) {
+		for (final TemporalState state : stateSet) {
 			encodedState |= state.code;
 		}
 		return encodedState;
@@ -55,18 +55,18 @@ public enum PresenceState {
 	 * @param stateSet an integer of states.
 	 * @return
 	 */
-	public static Set<PresenceState> decodeStates(long encodedState) {
+	public static Set<TemporalState> decodeStates(long encodedState) {
 		long lowMask = Long.lowestOneBit(encodedState);
 		if (lowMask < 1) return null;
-		final EnumSet<PresenceState> decodedState = EnumSet.of(PresenceState.lookup(lowMask));
+		final EnumSet<TemporalState> decodedState = EnumSet.of(TemporalState.lookup(lowMask));
 		long highMask = Long.highestOneBit(encodedState);
 		if (lowMask == highMask) return decodedState;
 		lowMask = lowMask << 1;
 		while (lowMask != highMask) {
-			decodedState.add(PresenceState.lookup(lowMask));
+			decodedState.add(TemporalState.lookup(lowMask));
 			lowMask = lowMask << 1;
 		}
-		decodedState.add(PresenceState.lookup(lowMask));
+		decodedState.add(TemporalState.lookup(lowMask));
 		return decodedState;
 	}
 	/**
@@ -75,9 +75,9 @@ public enum PresenceState {
 	 * @param stateSet an integer of states.
 	 * @return
 	 */
-	public static PresenceState decodeState( long encodedState) {
+	public static TemporalState decodeState( long encodedState) {
 		long lowMask = Long.lowestOneBit(encodedState);
-		if (lowMask < 1) return PresenceState.ABSENT;
-		return PresenceState.lookup(lowMask);
+		if (lowMask < 1) return TemporalState.ABSENT;
+		return TemporalState.lookup(lowMask);
 	}
 }
