@@ -237,7 +237,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 				plogger.trace("AMMO REQUEST VERSION MATCH: {}", version);
 			}
 		} catch (Exception ex) {
-			plogger.error("unmarshall on version {} {}", ex.getLocalizedMessage(), ex.getStackTrace());
+			plogger.error("unmarshall on version", ex);
 			throw new IncompleteRequest(ex);
 		}
 		try {
@@ -678,8 +678,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		public void releaseInstance() {
 			try {
 				this.context.unbindService(this.conn);	
-			} catch (IllegalArgumentException e) {
-				logger.warn("the service is not bound or registered {}", e.getLocalizedMessage());
+			} catch (IllegalArgumentException ex) {
+				logger.warn("the service is not bound or registered", ex);
 			}
 
 		}
