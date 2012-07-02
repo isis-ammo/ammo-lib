@@ -107,11 +107,11 @@ public class TempFileInputStream extends FileInputStream {
 	public void close() {
 
 		if (mIsClosed) {
-			logger.debug("already closed: " + this);
+			logger.debug("already closed: {}", this);
 			return;
 		}
 
-		logger.debug("closing: " + this);
+		logger.debug("closing {}", this);
 		mIsClosed = true;
 
 		try {
@@ -120,12 +120,12 @@ public class TempFileInputStream extends FileInputStream {
 				mIsDeleted = mFile.delete();
 			}
 		} catch (IOException ex) {
-			logger.warn("Failed to close() stream: " + this, ex);
+			logger.warn("Failed to close() stream: {}", this, ex);
 		} catch (RuntimeException ex) {
-			logger.warn("Failed to delete(): " + mFile, ex);
+			logger.warn("Failed to delete(): {}", mFile, ex);
 		}
 
-		logger.info(toString());
+		logger.info("close {}", this);
 		mFile = null;
 	}
 
