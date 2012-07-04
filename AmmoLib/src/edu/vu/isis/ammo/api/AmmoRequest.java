@@ -61,6 +61,10 @@ import edu.vu.isis.ammo.api.type.Topic;
 public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcelable {
 	private static final Logger logger = LoggerFactory.getLogger("api.request");
 	private static final Logger plogger = LoggerFactory.getLogger("api.parcel");
+	/**
+	 * Typically logging by clients is suppressed.
+	 */
+	private static final boolean CLIENT_LOGGING = false;
 
 	// **********************
 	// PUBLIC PROPERTIES
@@ -94,7 +98,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
 	final public Integer worth;
 	final public Notice notice;
-	
+
 	final public ChannelFilter channelFilter;
 
 	@Override
@@ -106,7 +110,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		if (this.topic != null) sb.append(this.topic).append(' ');
 		return sb.toString();
 	}
-	
+
 	public String toShow() {
 		StringBuilder sb = new StringBuilder();
 		if (this.action != null) sb.append(this.action.toString()).append(" Request ");
@@ -116,7 +120,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		if (this.subtopic != null) sb.append('&').append(this.subtopic);
 		if (this.quantifier != null) sb.append('&').append(this.quantifier);
 		sb.append(' ');
-		
+
 		return sb.toString();
 	}
 
@@ -130,10 +134,10 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		public AmmoRequest createFromParcel(Parcel source) {
 			try {
 				return new AmmoRequest(source);
-				
+
 			} catch (IncompleteRequest ex) {
 				return null;
-				
+
 			} catch (Throwable ex) {
 				final int capacity = source.dataCapacity();
 				//final int size = (capacity < 50) ? capacity : 50;
@@ -163,57 +167,57 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	public void writeToParcel(Parcel dest, int flags) {
 		plogger.debug("version: {}", VERSION);
 		dest.writeByte(VERSION);
-		
+
 		plogger.debug("request: [{}:{}]", this.uuid, this.uid);
 		dest.writeValue(this.uuid);
 		dest.writeValue(this.uid);
-		plogger.debug("action: {}", this.action);
+		if (CLIENT_LOGGING) plogger.debug("action: {}", this.action);
 		Action.writeToParcel(dest, this.action);
 
-		plogger.debug("provider: {}", this.provider);
+		if (CLIENT_LOGGING) plogger.debug("provider: {}", this.provider);
 		Provider.writeToParcel(this.provider, dest, flags);
-		plogger.debug("payload: {}", this.payload);
+		if (CLIENT_LOGGING) plogger.debug("payload: {}", this.payload);
 		Payload.writeToParcel(this.payload, dest, flags);
-		plogger.debug("moment: {}", this.moment);
+		if (CLIENT_LOGGING) plogger.debug("moment: {}", this.moment);
 		SerialMoment.writeToParcel(this.moment, dest, flags);
-		plogger.debug("topic: [{}]+[{}]", this.topic, this.subtopic);
+		if (CLIENT_LOGGING) plogger.debug("topic: [{}]+[{}]", this.topic, this.subtopic);
 		Topic.writeToParcel(this.topic, dest, flags);
 		Topic.writeToParcel(this.subtopic, dest, flags);
-		plogger.debug("quantifier: {}", this.quantifier);
+		if (CLIENT_LOGGING) plogger.debug("quantifier: {}", this.quantifier);
 		Quantifier.writeToParcel(this.quantifier, dest, flags);
 
-		plogger.debug("downsample: {}", this.downsample);
+		if (CLIENT_LOGGING) plogger.debug("downsample: {}", this.downsample);
 		dest.writeValue(this.downsample);
-		plogger.debug("durability: {}", this.durability);
+		if (CLIENT_LOGGING) plogger.debug("durability: {}", this.durability);
 		dest.writeValue(this.durability);
 
-		plogger.debug("priority: {}", this.priority);
+		if (CLIENT_LOGGING) plogger.debug("priority: {}", this.priority);
 		dest.writeValue(this.priority);
-		plogger.debug("order: {}", this.order);
+		if (CLIENT_LOGGING) plogger.debug("order: {}", this.order);
 		Order.writeToParcel(this.order, dest, flags);
 
-		plogger.debug("start: {}", this.start);
+		if (CLIENT_LOGGING) plogger.debug("start: {}", this.start);
 		TimeTrigger.writeToParcel(this.start, dest, flags);
-		plogger.debug("expire: {}", this.expire);
+		if (CLIENT_LOGGING) plogger.debug("expire: {}", this.expire);
 		TimeTrigger.writeToParcel(this.expire, dest, flags);
-		plogger.debug("limit: {}", this.limit);
+		if (CLIENT_LOGGING) plogger.debug("limit: {}", this.limit);
 		Limit.writeToParcel(this.limit, dest, flags);
 
-		plogger.debug("scope: {}", this.scope);
+		if (CLIENT_LOGGING) plogger.debug("scope: {}", this.scope);
 		DeliveryScope.writeToParcel(this.scope, dest, flags);
-		plogger.debug("throttle: {}", this.throttle);
+		if (CLIENT_LOGGING) plogger.debug("throttle: {}", this.throttle);
 		dest.writeValue(this.throttle);
-		plogger.debug("worth: {}", this.worth);
+		if (CLIENT_LOGGING) plogger.debug("worth: {}", this.worth);
 		dest.writeValue(this.worth);
-		plogger.debug("notice: {}", this.notice);
+		if (CLIENT_LOGGING) plogger.debug("notice: {}", this.notice);
 		Notice.writeToParcel(this.notice, dest, flags);
 
-		plogger.debug("selection: {}", this.select);
+		if (CLIENT_LOGGING) plogger.debug("selection: {}", this.select);
 		Selection.writeToParcel(this.select, dest, flags);
-		plogger.debug("projection: {}", this.project);
+		if (CLIENT_LOGGING) plogger.debug("projection: {}", this.project);
 		dest.writeStringArray(this.project);
-		
-		plogger.debug("channelFilter: [{}]", this.channelFilter);
+
+		if (CLIENT_LOGGING) plogger.debug("channelFilter: [{}]", this.channelFilter);
 		ChannelFilter.writeToParcel(this.channelFilter, dest, flags);
 	}
 
@@ -248,7 +252,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			plogger.error("decoding uid: {}", ex);
 			throw new IncompleteRequest(ex);
 		}
-		
+
 		try {
 			this.action = Action.getInstance(in);
 			plogger.trace("action: {}", this.action);
@@ -631,12 +635,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		public IAmmoRequest base() {
 			return new AmmoRequest(Action.NONE, this);
 		}
-		
+
 		@Override
 		public IAmmoRequest post() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(Action.POSTAL, this));
 		}
-		
+
 		@Override
 		public IAmmoRequest unpost() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(Action.UNPOSTAL, this));
@@ -646,7 +650,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		public IAmmoRequest retrieve() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(Action.RETRIEVAL, this));
 		}
-		
+
 		@Override
 		public IAmmoRequest unretrieve() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(Action.UNRETRIEVAL, this));
@@ -656,7 +660,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 		public IAmmoRequest subscribe() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(Action.SUBSCRIBE, this));
 		}
-		
+
 		@Override
 		public IAmmoRequest unsubscribe() throws RemoteException {
 			return this.makeRequest(new AmmoRequest(Action.UNSUBSCRIBE, this));
@@ -912,12 +916,12 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 			this.topic(topic);
 			return this;
 		}
-		
+
 		/**
 		 *  
 		 */
 		@Override
-	    public Builder useChannel(String val) {
+		public Builder useChannel(String val) {
 			if (val == null) {
 				this.channelFilter = null;
 				return this;
