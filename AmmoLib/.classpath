@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="lib" path="/Android-libs/java/logback-android.jar"/>
 	<classpathentry kind="lib" path="/Android-libs/java/slf4j-api.jar"/>
 	<classpathentry kind="lib" path="/Android-libs/java/tasettings-api-1.0.3.jar">
