@@ -16,7 +16,7 @@
      <vandylib.snapshot.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/vanderbilt-snapshot/</vandylib.snapshot.url>
      <vandylib.eucleo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/eucleo/</vandylib.eucleo.url>
      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-     <build>${basedir}/../../build</build>
+     <root.basedir>${basedir}/../..</root.basedir>
   </properties>
 
 <parent>
@@ -119,12 +119,12 @@
                         <phase>install</phase>
                         <configuration>
                             <tasks>
-                                <copy todir="${build}">
+                                <copy todir="${root.basedir}/build">
                                     <fileset dir="${basedir}/target">
                                         <include name="*-${project.version}.apklib"/>
                                     </fileset>
                                 </copy>
-                                <copy todir="${build}/../dist">
+                                <copy todir="${root.basedir}/dist">
                                     <fileset dir="${basedir}/target">
                                         <include name="*-${project.version}.jar"/>
                                     </fileset>
