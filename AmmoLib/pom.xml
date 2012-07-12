@@ -16,20 +16,14 @@
      <vandylib.snapshot.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/vanderbilt-snapshot/</vandylib.snapshot.url>
      <vandylib.eucleo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/eucleo/</vandylib.eucleo.url>
      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-     <build>${basedir}/../../build</build>
+     <root.basedir>${basedir}/../..</root.basedir>
   </properties>
 
-  <groupId>edu.vu.isis</groupId>
-<!-- TEMPLATE:BEGIN
--->
-  <version>1.5.15-SNAPSHOT</version> 
-<!-- TEMPLATE:END -->
-
-<!--parent>
+<parent>
   <groupId>edu.vu.isis</groupId>
   <artifactId>ammo-parent</artifactId>
-  <version>1.5.5-SNAPSHOT</version>
-</parent-->
+  <version>1.5.15-SNAPSHOT</version>
+</parent>
 
   <artifactId>ammolib</artifactId>
   <packaging>apklib</packaging>
@@ -92,7 +86,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.6</version>
 				<executions>
                     <execution>
                         <id>version_gen</id>
@@ -126,16 +119,16 @@
                         <phase>install</phase>
                         <configuration>
                             <tasks>
-                                <copy todir="${build}">
+                                <copy todir="${root.basedir}/build">
                                     <fileset dir="${basedir}/target">
                                         <include name="*-${project.version}.apklib"/>
                                     </fileset>
                                 </copy>
-                                <copy todir="${build}/../dist">
+                                <!--copy todir="${root.basedir}/dist">
                                     <fileset dir="${basedir}/target">
                                         <include name="*-${project.version}.jar"/>
                                     </fileset>
-                                </copy>
+                                </copy-->
                             </tasks>
                         </configuration>
                         <goals>
@@ -161,7 +154,6 @@
 	       <plugin>
                     <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                     <artifactId>android-maven-plugin</artifactId>
-                    <version>3.2.0</version>
 
                     <extensions>true</extensions>
                     <configuration>
@@ -175,11 +167,6 @@
        <plugin>
          <groupId>org.apache.maven.plugins</groupId>
          <artifactId>maven-compiler-plugin</artifactId>
-         <version>2.3.2</version>
-         <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-         </configuration>
        </plugin>
 
        <plugin>
@@ -214,29 +201,24 @@
     <dependency>
                <groupId>org.slf4j</groupId>
                <artifactId>slf4j-api</artifactId>
-               <version>1.6.4</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.8.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.android</groupId>
                 <artifactId>android</artifactId>
-                <version>2.2.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.google.android</groupId>
                 <artifactId>android-test</artifactId>
-                <version>2.2.1</version>
             </dependency>
             <dependency>
                 <groupId>transapps</groupId>
                 <artifactId>tasettings-api</artifactId>
-	        <version>1.0.9</version>
             </dependency>
   </dependencies>
 </project>
