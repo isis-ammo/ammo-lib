@@ -124,11 +124,11 @@
                                         <include name="*-${project.version}.apklib"/>
                                     </fileset>
                                 </copy>
-                                <copy todir="${root.basedir}/dist">
+                                <!--copy todir="${root.basedir}/dist">
                                     <fileset dir="${basedir}/target">
                                         <include name="*-${project.version}.jar"/>
                                     </fileset>
-                                </copy>
+                                </copy-->
                             </tasks>
                         </configuration>
                         <goals>
