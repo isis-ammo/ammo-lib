@@ -1,71 +1,56 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project 
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-                        http://maven.apache.org/xsd/maven-4.0.0.xsd" 
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="utf-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <properties>
-<!-- TEMPLATE2:BEGIN
+    <!-- TEMPLATE2:BEGIN
 -->
-     <repo.addr>vanderbilt-snapshot/</repo.addr> <!-- This field should read "Vanderbilt/" for releases --> 
-                                                 <!-- else it should read "vanderbilt-snapshot/" for snapshots-->
-<!-- TEMPLATE2:END -->
-     <vandylib.release.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.release.url>
-     <vandylib.snapshot.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/vanderbilt-snapshot/</vandylib.snapshot.url>
-     <vandylib.eucleo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/eucleo/</vandylib.eucleo.url>
-     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-     <root.basedir>${basedir}/../..</root.basedir>
+    <repo.addr>vanderbilt-snapshot/</repo.addr>
+    <!-- This field should read "Vanderbilt/" for releases -->
+    <!-- else it should read "vanderbilt-snapshot/" for snapshots-->
+    <!-- TEMPLATE2:END -->
+    <vandylib.release.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.release.url>
+    <vandylib.snapshot.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/vanderbilt-snapshot/</vandylib.snapshot.url>
+    <vandylib.eucleo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/eucleo/</vandylib.eucleo.url>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <root.basedir>${basedir}/../..</root.basedir>
   </properties>
-
-<parent>
-  <groupId>edu.vu.isis</groupId>
-  <artifactId>ammo-parent</artifactId>
-  <version>1.5.15-SNAPSHOT</version>
-</parent>
-
+  <parent>
+    <groupId>edu.vu.isis</groupId>
+    <artifactId>ammo-parent</artifactId>
+    <version>1.5.15-SNAPSHOT</version>
+  </parent>
   <artifactId>ammolib</artifactId>
   <packaging>apklib</packaging>
   <name>Ammo Android Library</name>
-
   <distributionManagement>
-     <repository>
-        <id>nexus-vanderbilt</id>
-        <url>${vandylib.release.url}</url>
-     </repository>
-     <snapshotRepository>
-         <id>nexus-snapshot</id>
-         <url>${vandylib.snapshot.url}</url>
-     </snapshotRepository>
+    <repository>
+      <id>nexus-vanderbilt</id>
+      <url>${vandylib.release.url}</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus-snapshot</id>
+      <url>${vandylib.snapshot.url}</url>
+    </snapshotRepository>
   </distributionManagement>
-
-	<repositories>
-            <repository>
-               <id>nexus-vanderbilt</id>
-               <url>${vandylib.repo.url}</url>
-            </repository>
-            <repository>
-                <id>nexus-eucleo</id>
-                <url>${vandylib.eucleo.url}</url>
-            </repository>
-            <repository>
-                <id>nexus-snapshot</id>
-                <url>${vandylib.snapshot.url}</url>
-            </repository>
-	</repositories>
-
-
+  <repositories>
+    <repository>
+      <id>nexus-vanderbilt</id>
+      <url>${vandylib.repo.url}</url>
+    </repository>
+    <repository>
+      <id>nexus-eucleo</id>
+      <url>${vandylib.eucleo.url}</url>
+    </repository>
+    <repository>
+      <id>nexus-snapshot</id>
+      <url>${vandylib.snapshot.url}</url>
+    </repository>
+  </repositories>
   <build>
     <directory>target</directory>
     <sourceDirectory>src</sourceDirectory>
-    
-
     <plugins>
-
-
-       
-       <!--plugin>
+      <!--plugin>
          <groupId>org.codehaus.mojo</groupId>
          <artifactId>build-helper-maven-plugin</artifactId>
           <executions>
@@ -83,143 +68,138 @@
              </execution>
           </executions>
        </plugin-->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-                    <execution>
-                        <id>version_gen</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <target>
-                                <ant antfile="maven-version-generator.xml"  inheritAll="true" inheritRefs="true">
-                                    <target name="update-version"/>
-                                </ant>
-                            </target>
-                        </configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-                    </execution>
-					<execution>
-						<phase>deploy</phase> <!--should only build javadoc when you need to deploy-->
-						<configuration>
-							<target>
-								<ant antfile="build-javadoc.xml" inheritAll="true" inheritRefs="true">
-									<target name="javadoc"/>
-								</ant>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-                    <execution>
-                        <id>make_tar</id>
-                        <phase>install</phase>
-                        <configuration>
-                            <tasks>
-                                <copy todir="${root.basedir}/build">
-                                    <fileset dir="${basedir}/target">
-                                        <include name="*-${project.version}.apklib"/>
-                                    </fileset>
-                                </copy>
-                                <!--copy todir="${root.basedir}/dist">
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>version_gen</id>
+            <phase>validate</phase>
+            <configuration>
+              <target>
+                <ant antfile="maven-version-generator.xml" inheritAll="true" inheritRefs="true">
+                  <target name="update-version" />
+                </ant>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <phase>deploy</phase>
+            <!--should only build javadoc when you need to deploy-->
+            <configuration>
+              <target>
+                <ant antfile="build-javadoc.xml" inheritAll="true" inheritRefs="true">
+                  <target name="javadoc" />
+                </ant>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>make_tar</id>
+            <phase>install</phase>
+            <configuration>
+              <tasks>
+                <copy todir="${root.basedir}/build">
+                  <fileset dir="${basedir}/target">
+                    <include name="*-${project.version}.apklib" />
+                  </fileset>
+                </copy>
+                <!--copy todir="${root.basedir}/dist">
                                     <fileset dir="${basedir}/target">
                                         <include name="*-${project.version}.jar"/>
                                     </fileset>
                                 </copy-->
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>ant-contrib</groupId>
-						<artifactId>ant-contrib</artifactId>
-						<version>1.0b3</version>
-						<exclusions>
-							<exclusion>
-								<groupId>ant</groupId>
-								<artifactId>ant</artifactId>
-							</exclusion>
-						</exclusions>
-					</dependency>
-				</dependencies>
-			</plugin>
-
-	       <plugin>
-                    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                    <artifactId>android-maven-plugin</artifactId>
-
-                    <extensions>true</extensions>
-                    <configuration>
-                        <sdk>
-                            <platform>8</platform>
-                        </sdk>
-                        <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                    </configuration>
-                </plugin>
-
-       <plugin>
-         <groupId>org.apache.maven.plugins</groupId>
-         <artifactId>maven-compiler-plugin</artifactId>
-       </plugin>
-
-       <plugin>
-         <groupId>org.apache.maven.plugins</groupId>
-         <artifactId>maven-deploy-plugin</artifactId>
-         <version>2.7</version>
-           <executions>
-              <execution>
-                  <phase>deploy</phase>
-                  <goals>
-                      <goal>deploy-file</goal>
-                  </goals>
-                  <configuration>       <!--maven doesn't make sense-->
-                      <javadoc>ammolib-javadoc.jar</javadoc>
-                      <file>target/ammolib-${project.version}.jar</file>
-                      <repositoryId>nexus-vanderbilt</repositoryId>
-                      <url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/${repo.addr}</url>
-                      <generatePom>false</generatePom>
-                      <groupId>edu.vu.isis</groupId>
-                      <artifactId>ammolib</artifactId>
-                      <version>${project.version}</version>
-                      <packaging>jar</packaging>
-                  </configuration>
-               </execution>
-            </executions>
-       </plugin>
-
-     </plugins>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>ant-contrib</groupId>
+            <artifactId>ant-contrib</artifactId>
+            <version>1.0b3</version>
+            <exclusions>
+              <exclusion>
+                <groupId>ant</groupId>
+                <artifactId>ant</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+        <artifactId>android-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <sdk>
+            <platform>8</platform>
+          </sdk>
+          <undeployBeforeDeploy>true</undeployBeforeDeploy>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.7</version>
+        <executions>
+          <execution>
+            <phase>deploy</phase>
+            <goals>
+              <goal>deploy-file</goal>
+            </goals>
+            <configuration>
+              <!--maven doesn't make sense-->
+              <javadoc>ammolib-javadoc.jar</javadoc>
+              <file>target/ammolib-${project.version}.jar</file>
+              <repositoryId>nexus-vanderbilt</repositoryId>
+              <url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/${repo.addr}</url>
+              <generatePom>false</generatePom>
+              <groupId>edu.vu.isis</groupId>
+              <artifactId>ammolib</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
-
   <dependencies>
     <dependency>
-               <groupId>org.slf4j</groupId>
-               <artifactId>slf4j-api</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.android</groupId>
-                <artifactId>android</artifactId>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.android</groupId>
-                <artifactId>android-test</artifactId>
-            </dependency>
-            <dependency>
-                <groupId>transapps</groupId>
-                <artifactId>tasettings-api</artifactId>
-            </dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.android</groupId>
+      <artifactId>android</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.android</groupId>
+      <artifactId>android-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>transapps</groupId>
+      <artifactId>tasettings-api</artifactId>
+    </dependency>
   </dependencies>
 </project>
-
