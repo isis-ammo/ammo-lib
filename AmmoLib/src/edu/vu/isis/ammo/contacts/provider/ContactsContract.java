@@ -46,6 +46,7 @@ import android.provider.BaseColumns;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import edu.vu.isis.ammo.R;
 
 /**
  * <p>
@@ -3692,27 +3693,27 @@ public final class ContactsContract {
              */
             public static final int getTypeLabelResource(int type) {
                 switch (type) {
-                    case TYPE_HOME: return edu.vu.isis.ammo.R.string.phoneTypeHome;
-                    case TYPE_MOBILE: return edu.vu.isis.ammo.R.string.phoneTypeMobile;
-                    case TYPE_WORK: return edu.vu.isis.ammo.R.string.phoneTypeWork;
-                    case TYPE_FAX_WORK: return edu.vu.isis.ammo.R.string.phoneTypeFaxWork;
-                    case TYPE_FAX_HOME: return edu.vu.isis.ammo.R.string.phoneTypeFaxHome;
-                    case TYPE_PAGER: return edu.vu.isis.ammo.R.string.phoneTypePager;
-                    case TYPE_OTHER: return edu.vu.isis.ammo.R.string.phoneTypeOther;
-                    case TYPE_CALLBACK: return edu.vu.isis.ammo.R.string.phoneTypeCallback;
-                    case TYPE_CAR: return edu.vu.isis.ammo.R.string.phoneTypeCar;
-                    case TYPE_COMPANY_MAIN: return edu.vu.isis.ammo.R.string.phoneTypeCompanyMain;
-                    case TYPE_ISDN: return edu.vu.isis.ammo.R.string.phoneTypeIsdn;
-                    case TYPE_MAIN: return edu.vu.isis.ammo.R.string.phoneTypeMain;
-                    case TYPE_OTHER_FAX: return edu.vu.isis.ammo.R.string.phoneTypeOtherFax;
-                    case TYPE_RADIO: return edu.vu.isis.ammo.R.string.phoneTypeRadio;
-                    case TYPE_TELEX: return edu.vu.isis.ammo.R.string.phoneTypeTelex;
-                    case TYPE_TTY_TDD: return edu.vu.isis.ammo.R.string.phoneTypeTtyTdd;
-                    case TYPE_WORK_MOBILE: return edu.vu.isis.ammo.R.string.phoneTypeWorkMobile;
-                    case TYPE_WORK_PAGER: return edu.vu.isis.ammo.R.string.phoneTypeWorkPager;
-                    case TYPE_ASSISTANT: return edu.vu.isis.ammo.R.string.phoneTypeAssistant;
-                    case TYPE_MMS: return edu.vu.isis.ammo.R.string.phoneTypeMms;
-                    default: return edu.vu.isis.ammo.R.string.phoneTypeCustom;
+                    case TYPE_HOME: return R.string.phoneTypeHome;
+                    case TYPE_MOBILE: return R.string.phoneTypeMobile;
+                    case TYPE_WORK: return R.string.phoneTypeWork;
+                    case TYPE_FAX_WORK: return R.string.phoneTypeFaxWork;
+                    case TYPE_FAX_HOME: return R.string.phoneTypeFaxHome;
+                    case TYPE_PAGER: return R.string.phoneTypePager;
+                    case TYPE_OTHER: return R.string.phoneTypeOther;
+                    case TYPE_CALLBACK: return R.string.phoneTypeCallback;
+                    case TYPE_CAR: return R.string.phoneTypeCar;
+                    case TYPE_COMPANY_MAIN: return R.string.phoneTypeCompanyMain;
+                    case TYPE_ISDN: return R.string.phoneTypeIsdn;
+                    case TYPE_MAIN: return R.string.phoneTypeMain;
+                    case TYPE_OTHER_FAX: return R.string.phoneTypeOtherFax;
+                    case TYPE_RADIO: return R.string.phoneTypeRadio;
+                    case TYPE_TELEX: return R.string.phoneTypeTelex;
+                    case TYPE_TTY_TDD: return R.string.phoneTypeTtyTdd;
+                    case TYPE_WORK_MOBILE: return R.string.phoneTypeWorkMobile;
+                    case TYPE_WORK_PAGER: return R.string.phoneTypeWorkPager;
+                    case TYPE_ASSISTANT: return R.string.phoneTypeAssistant;
+                    case TYPE_MMS: return R.string.phoneTypeMms;
+                    default: return R.string.phoneTypeCustom;
                 }
             }
 
@@ -3860,11 +3861,11 @@ public final class ContactsContract {
              */
             public static final int getTypeLabelResource(int type) {
                 switch (type) {
-                    case TYPE_HOME: return edu.vu.isis.ammo.R.string.emailTypeHome;
-                    case TYPE_WORK: return edu.vu.isis.ammo.R.string.emailTypeWork;
-                    case TYPE_OTHER: return edu.vu.isis.ammo.R.string.emailTypeOther;
-                    case TYPE_MOBILE: return edu.vu.isis.ammo.R.string.emailTypeMobile;
-                    default: return edu.vu.isis.ammo.R.string.emailTypeCustom;
+                    case TYPE_HOME: return R.string.emailTypeHome;
+                    case TYPE_WORK: return R.string.emailTypeWork;
+                    case TYPE_OTHER: return R.string.emailTypeOther;
+                    case TYPE_MOBILE: return R.string.emailTypeMobile;
+                    default: return R.string.emailTypeCustom;
                 }
             }
 
@@ -4068,10 +4069,10 @@ public final class ContactsContract {
              */
             public static final int getTypeLabelResource(int type) {
                 switch (type) {
-                    case TYPE_HOME: return edu.vu.isis.ammo.R.string.postalTypeHome;
-                    case TYPE_WORK: return edu.vu.isis.ammo.R.string.postalTypeWork;
-                    case TYPE_OTHER: return edu.vu.isis.ammo.R.string.postalTypeOther;
-                    default: return edu.vu.isis.ammo.R.string.postalTypeCustom;
+                    case TYPE_HOME: return R.string.postalTypeHome;
+                    case TYPE_WORK: return R.string.postalTypeWork;
+                    case TYPE_OTHER: return R.string.postalTypeOther;
+                    default: return R.string.postalTypeCustom;
                 }
             }
 
@@ -4206,10 +4207,10 @@ public final class ContactsContract {
              */
             public static final int getTypeLabelResource(int type) {
                 switch (type) {
-                    case TYPE_HOME: return edu.vu.isis.ammo.R.string.imTypeHome;
-                    case TYPE_WORK: return edu.vu.isis.ammo.R.string.imTypeWork;
-                    case TYPE_OTHER: return edu.vu.isis.ammo.R.string.imTypeOther;
-                    default: return edu.vu.isis.ammo.R.string.imTypeCustom;
+                    case TYPE_HOME: return R.string.imTypeHome;
+                    case TYPE_WORK: return R.string.imTypeWork;
+                    case TYPE_OTHER: return R.string.imTypeOther;
+                    default: return R.string.imTypeCustom;
                 }
             }
 
@@ -4234,16 +4235,16 @@ public final class ContactsContract {
              */
             public static final int getProtocolLabelResource(int type) {
                 switch (type) {
-                    case PROTOCOL_AIM: return edu.vu.isis.ammo.R.string.imProtocolAim;
-                    case PROTOCOL_MSN: return edu.vu.isis.ammo.R.string.imProtocolMsn;
-                    case PROTOCOL_YAHOO: return edu.vu.isis.ammo.R.string.imProtocolYahoo;
-                    case PROTOCOL_SKYPE: return edu.vu.isis.ammo.R.string.imProtocolSkype;
-                    case PROTOCOL_QQ: return edu.vu.isis.ammo.R.string.imProtocolQq;
-                    case PROTOCOL_GOOGLE_TALK: return edu.vu.isis.ammo.R.string.imProtocolGoogleTalk;
-                    case PROTOCOL_ICQ: return edu.vu.isis.ammo.R.string.imProtocolIcq;
-                    case PROTOCOL_JABBER: return edu.vu.isis.ammo.R.string.imProtocolJabber;
-                    case PROTOCOL_NETMEETING: return edu.vu.isis.ammo.R.string.imProtocolNetMeeting;
-                    default: return edu.vu.isis.ammo.R.string.imProtocolCustom;
+                    case PROTOCOL_AIM: return R.string.imProtocolAim;
+                    case PROTOCOL_MSN: return R.string.imProtocolMsn;
+                    case PROTOCOL_YAHOO: return R.string.imProtocolYahoo;
+                    case PROTOCOL_SKYPE: return R.string.imProtocolSkype;
+                    case PROTOCOL_QQ: return R.string.imProtocolQq;
+                    case PROTOCOL_GOOGLE_TALK: return R.string.imProtocolGoogleTalk;
+                    case PROTOCOL_ICQ: return R.string.imProtocolIcq;
+                    case PROTOCOL_JABBER: return R.string.imProtocolJabber;
+                    case PROTOCOL_NETMEETING: return R.string.imProtocolNetMeeting;
+                    default: return R.string.imProtocolCustom;
                 }
             }
 
@@ -4414,9 +4415,9 @@ public final class ContactsContract {
              */
             public static final int getTypeLabelResource(int type) {
                 switch (type) {
-                    case TYPE_WORK: return edu.vu.isis.ammo.R.string.orgTypeWork;
-                    case TYPE_OTHER: return edu.vu.isis.ammo.R.string.orgTypeOther;
-                    default: return edu.vu.isis.ammo.R.string.orgTypeCustom;
+                    case TYPE_WORK: return R.string.orgTypeWork;
+                    case TYPE_OTHER: return R.string.orgTypeOther;
+                    default: return R.string.orgTypeCustom;
                 }
             }
 
@@ -4589,14 +4590,14 @@ public final class ContactsContract {
              */
             public static int getTypeResource(Integer type) {
                 if (type == null) {
-                    return edu.vu.isis.ammo.R.string.eventTypeOther;
+                    return R.string.eventTypeOther;
                 }
                 switch (type) {
                     case TYPE_ANNIVERSARY:
-                        return edu.vu.isis.ammo.R.string.eventTypeAnniversary;
-                    case TYPE_BIRTHDAY: return edu.vu.isis.ammo.R.string.eventTypeBirthday;
-                    case TYPE_OTHER: return edu.vu.isis.ammo.R.string.eventTypeOther;
-                    default: return edu.vu.isis.ammo.R.string.eventTypeOther;
+                        return R.string.eventTypeAnniversary;
+                    case TYPE_BIRTHDAY: return R.string.eventTypeBirthday;
+                    case TYPE_OTHER: return R.string.eventTypeOther;
+                    default: return R.string.eventTypeOther;
                 }
             }
         }
