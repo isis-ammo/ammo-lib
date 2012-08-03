@@ -32,7 +32,23 @@ public class Payload extends AmmoType {
     static final private int CV_ID = 3;
 
     public enum Type { 
-        NONE(NONE_ID), STR(STR_ID), BYTE(BYTE_ID), CV(CV_ID); 
+        /**
+         * Essentially a null payload.
+         */
+        NONE(NONE_ID), 
+        /**
+         * A string.
+         */
+        STR(STR_ID),
+        /**
+         * A byte array
+         */
+        BYTE(BYTE_ID), 
+        /**
+         * A content provider style set of content values.
+         */
+        CV(CV_ID); 
+
         final public int id;
         private Type(final int id) { this.id = id; }
         static public Type getInstance(final int id) {
@@ -70,6 +86,8 @@ public class Payload extends AmmoType {
     };
 
     public static final String DEFAULT = "";
+
+    public static final Payload NONE = new Payload();
 
     public static Payload readFromParcel(Parcel source) {
         if (AmmoType.isNull(source)) return null;
@@ -121,6 +139,7 @@ public class Payload extends AmmoType {
                     this.bytes = null;
                     this.cv = null;
                     break;
+                case NONE:
                 default:
                     this.str = null;
                     this.bytes = null;
@@ -146,7 +165,7 @@ public class Payload extends AmmoType {
             case STR:
                 if (this.str == null) return "";
                 return this.str.toString();
-
+            case NONE:
             default:
                 return "<unknown type>"+ this.type;
         }
@@ -156,6 +175,13 @@ public class Payload extends AmmoType {
     // IAmmoRequest Support
     // *********************************
 
+    public Payload() {
+        this.type = Type.NONE;
+        this.str = null;
+        this.bytes = null;
+        this.cv = null;
+    }
+    
     public Payload(String val) {
         this.type = Type.STR;
         this.str = val;
@@ -253,5 +279,28 @@ public class Payload extends AmmoType {
 
     public ContentValues getCV () {
         return cv;
+    }
+
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj instanceof Payload) return true;
+        final Payload that = (Payload) obj;
+        if (this.type != that.type) return false; 
+        switch (this.type){
+            case STR: 
+                return (this.str.equals(that.str));
+            case BYTE: 
+                return (this.bytes.equals(that.str));
+            case CV: 
+                return (this.cv.equals(that.str));
+            case NONE:
+            default:
+                plogger.warn("invalid type {}", this.type);
+                return false;
+        }
     }
 }
