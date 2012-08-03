@@ -51,9 +51,9 @@ import edu.vu.isis.ammo.api.type.Topic;
 
 /**
  * see docs/dev-guide/developer-guide.pdf
- * 
+ *  
  * The request has many options.
- * 
+ *  
  * Option usage:
  *
  * 
@@ -73,30 +73,85 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	final public String uuid; // the request globally unique identifier
 	final public String uid;  // the application object unique identifier
 
+	/**
+	 *the data store which holds the object.
+	 */
 	final public Provider provider;
+	/**
+	 * the serialized content data.
+	 */
 	final public Payload payload;
 	final public SerialMoment moment;
+	/**
+	 * the general uid and data type. 
+     * This is a prefix match pattern.
+	 */
 	final public Topic topic;
 	final public Topic subtopic;
 	final public Quantifier quantifier;
 
 	final public Integer downsample;
+	/**
+	 * indicates the volatility of the value. 
+     * It amounts to deciding the allowed sources of the content. 
+     * It can be considered a measure of number of sources.
+	 */
 	final public Integer durability;
 
+	/**
+	 * the preferred delivery order for the content. 
+     * This is used to select between objects of differing types.
+	 */
 	final public Integer priority;
+	/**
+	 * the preferred delivery order for the content. 
+     * Unlike priority, this is used when there are multiple versions of the same item.
+	 */
 	final public Order order;
 
+	/**
+	 * states from which time 'missed' data should be retrieved. 
+     * This is typically used only on the retrieve or interest actions.
+	 */
 	final public TimeTrigger start;
+	/**
+	 * specifies the time until the subscription is dropped.
+	 */
 	final public TimeTrigger expire;
+	/**
+	 * obtain no more than the specified number of items.
+	 */
 	final public Limit limit;
 
+	/**
+	 * how far the request is allowed to travel. 
+     * It can be considered a measure of distance travelled.
+	 */
 	final public DeliveryScope scope;
+	/**
+	 * constrains the message rate to lower the load on the network. 
+     * The parameter is the maximum number of bits per second.
+	 */
 	final public Integer throttle;
 
+	/**
+	 * filter out (or in) the unnecessary fields.
+	 */
 	final public String[] project;
+	/**
+	 * reduce the quantity of items returned.
+	 */
 	final public Selection select;
 
+	/**
+	 * used as a check against priority. 
+     * This does not affect request delivery, but it will impact status.
+	 */
 	final public Integer worth;
+	/**
+	 * provides delivery notices concerning the progress of
+     * requests which meet the subscription type/uid.
+	 */
 	final public Notice notice;
 
 	final public ChannelFilter channelFilter;
@@ -416,7 +471,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 	}
 
 	// *********************************
-	// IAmmoReques Support
+	// IAmmoRequest Support
 	// *********************************
 
 	private AmmoRequest(Action action, Builder builder) {
