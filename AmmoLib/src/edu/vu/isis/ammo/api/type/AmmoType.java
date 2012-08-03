@@ -7,7 +7,7 @@ The US government has the right to use, modify, reproduce, release,
 perform, display, or disclose computer software or computer software 
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
-*/
+ */
 package edu.vu.isis.ammo.api.type;
 
 import org.slf4j.Logger;
@@ -46,35 +46,35 @@ import android.os.Parcelable;
  *
  */
 public abstract class AmmoType implements Parcelable {
-	protected static final Logger plogger = LoggerFactory.getLogger( "api.type" );
+    protected static final Logger plogger = LoggerFactory.getLogger( "api.type" );
 
-	// *********************************
-	// Parcelable Support
-	// *********************************
-	
+    // *********************************
+    // Parcelable Support
+    // *********************************
+
     /**
-	* Note the null check which matches up with the null check in 'createFromParcel' 
-    * mentioned above and implemented in each child class.
-    * There is an expectation that the implementation classes will
-    * have a method like...
-    * 
-    * public static T readFromParcel(Parcel source) {
-	*	if (AmmoType.isNull(source)) return null;
-	*	return new T(source);
-	* }
-	*/
-	static public void writeToParcel(AmmoType that, Parcel dest, int flags) {
-		if (that == null) {
-			dest.writeInt( 0 );
-			return;
-		}
-		dest.writeInt( 1 );
-		that.writeToParcel(dest, flags);
-	}
-	static public boolean isNull(Parcel source) {
-		return (source.readInt() == 0) ? true : false;
-	}
+     * Note the null check which matches up with the null check in 'createFromParcel' 
+     * mentioned above and implemented in each child class.
+     * There is an expectation that the implementation classes will
+     * have a method like...
+     * 
+     * public static T readFromParcel(Parcel source) {
+     *	if (AmmoType.isNull(source)) return null;
+     *	return new T(source);
+     * }
+     */
+    static public void writeToParcel(AmmoType that, Parcel dest, int flags) {
+        if (that == null) {
+            dest.writeInt( 0 );
+            return;
+        }
+        dest.writeInt( 1 );
+        that.writeToParcel(dest, flags);
+    }
+    static public boolean isNull(Parcel source) {
+        return (source.readInt() == 0) ? true : false;
+    }
 
-	@Override
-	public int describeContents() { return 0; }
+    @Override
+    public int describeContents() { return 0; }
 }
