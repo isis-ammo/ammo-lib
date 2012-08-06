@@ -287,17 +287,19 @@ public class Payload extends AmmoType {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj instanceof Payload) return true;
+        if (!(obj instanceof Payload)) return false;
         final Payload that = (Payload) obj;
-        if (this.type != that.type) return false; 
+        if (this.type != that.type) return false;
+        if (this.type == null) return true;
         switch (this.type){
             case STR: 
                 return (this.str.equals(that.str));
             case BYTE: 
-                return (this.bytes.equals(that.str));
+                return (this.bytes.equals(that.bytes));
             case CV: 
-                return (this.cv.equals(that.str));
+                return (this.cv.equals(that.cv));
             case NONE:
+                return true;
             default:
                 plogger.warn("invalid type {}", this.type);
                 return false;
