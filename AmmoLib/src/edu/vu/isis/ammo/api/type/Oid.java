@@ -7,7 +7,7 @@ The US government has the right to use, modify, reproduce, release,
 perform, display, or disclose computer software or computer software 
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
-*/
+ */
 package edu.vu.isis.ammo.api.type;
 
 import java.util.ArrayList;
@@ -21,14 +21,16 @@ import android.os.Parcelable;
 
 public class Oid extends AmmoType implements List<Integer> {
 
-	private final List<Integer> backing;
-	
+    private final List<Integer> backing;
+
+    public static final Oid EMPTY = new Oid();
+
     // *********************************
     // Parcelable Support
     // *********************************
 
     public static final Parcelable.Creator<Oid> CREATOR = 
-    	new Parcelable.Creator<Oid>() {
+            new Parcelable.Creator<Oid>() {
 
         @Override
         public Oid createFromParcel(Parcel source) {
@@ -41,40 +43,55 @@ public class Oid extends AmmoType implements List<Integer> {
         }
     };
     public Oid readFromParcel(Parcel source) {
-    	if (AmmoType.isNull(source)) return null;
+        if (AmmoType.isNull(source)) return null;
         return new Oid(source);
     }
-    
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		plogger.trace("marshall oid {}", this);
-		final int[] array = new int[this.backing.size()];
-		int ix=0;
-		for (Integer item : this.backing) array[ix++] = item.intValue();
-		dest.writeIntArray(array);
-	}
-	
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        plogger.trace("marshall oid {}", this);
+        final int[] array = new int[this.backing.size()];
+        int ix=0;
+        for (Integer item : this.backing) array[ix++] = item.intValue();
+        dest.writeIntArray(array);
+    }
+
     private Oid(Parcel in) {
-    	final int[] array = in.createIntArray();
-    	this.backing = new ArrayList<Integer>(array.length);
-    	for (int item : array) this.backing.add(item);
+        final int[] array = in.createIntArray();
+        this.backing = new ArrayList<Integer>(array.length);
+        for (int item : array) this.backing.add(item);
         plogger.trace("unmarshall oid {}", this);
     }
-	// *********************************
-	// Standard Methods
-	// *********************************
-	@Override
-	public String toString() {
-		return this.backing.toString();
-	}
+
+    // *********************************
+    // Standard Methods
+    // *********************************
+    @Override
+    public String toString() {
+        return this.backing.toString();
+    }
+    
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (this.backing == null) return false;
+        if (!(obj instanceof Oid)) return false;
+        final Oid that = (Oid) obj;
+        if (this.backing == that.backing) return true;
+        if (this.backing == null) return false;
+        return (this.backing.equals(that.backing));
+    }
 
     // *********************************
     // IAmmoRequest Support
     // *********************************
-	
-	private Oid() {
-		this.backing = new ArrayList<Integer>();
-	}
+
+    private Oid() {
+        this.backing = new ArrayList<Integer>();
+    }
 
     @Override
     public boolean add(Integer arg0) {
@@ -83,17 +100,17 @@ public class Oid extends AmmoType implements List<Integer> {
 
     @Override
     public void add(int location, Integer object) {
-    	this.backing.add(location, object);
+        this.backing.add(location, object);
     }
 
     @Override
     public boolean addAll(Collection<? extends Integer> arg0) {
-    	return this.backing.addAll(arg0);
+        return this.backing.addAll(arg0);
     }
 
     @Override
     public boolean addAll(int arg0, Collection<? extends Integer> arg1) {
-    	return this.backing.addAll(arg1);
+        return this.backing.addAll(arg1);
     }
 
     @Override
@@ -103,52 +120,52 @@ public class Oid extends AmmoType implements List<Integer> {
 
     @Override
     public boolean contains(Object object) {
-    	return this.backing.contains(object);
+        return this.backing.contains(object);
     }
 
     @Override
     public boolean containsAll(Collection<?> arg0) {
-    	return this.backing.containsAll(arg0);
+        return this.backing.containsAll(arg0);
     }
 
     @Override
     public Integer get(int location) {
-    	return this.backing.get(location);
+        return this.backing.get(location);
     }
 
     @Override
     public int indexOf(Object object) {
-    	return this.backing.indexOf(object);
+        return this.backing.indexOf(object);
     }
 
     @Override
     public boolean isEmpty() {
-    	return this.backing.isEmpty();
+        return this.backing.isEmpty();
     }
 
     @Override
     public Iterator<Integer> iterator() {
-    	return this.backing.iterator();
+        return this.backing.iterator();
     }
 
     @Override
     public int lastIndexOf(Object object) {
-    	return this.backing.lastIndexOf(object);
+        return this.backing.lastIndexOf(object);
     }
 
     @Override
     public ListIterator<Integer> listIterator() {
-    	return this.backing.listIterator();
+        return this.backing.listIterator();
     }
 
     @Override
     public ListIterator<Integer> listIterator(int location) {
-    	return this.backing.listIterator(location);
+        return this.backing.listIterator(location);
     }
 
     @Override
     public Integer remove(int location) {
-    	return this.backing.remove(location);
+        return this.backing.remove(location);
     }
 
     @Override
@@ -158,38 +175,38 @@ public class Oid extends AmmoType implements List<Integer> {
 
     @Override
     public boolean removeAll(Collection<?> arg0) {
-    	return this.backing.removeAll(arg0);
+        return this.backing.removeAll(arg0);
     }
 
     @Override
     public boolean retainAll(Collection<?> arg0) {
-    	return this.backing.retainAll(arg0);
+        return this.backing.retainAll(arg0);
     }
 
     @Override
     public Integer set(int location, Integer object) {
-    	return this.backing.set(location, object);
+        return this.backing.set(location, object);
     }
 
     @Override
     public int size() {
-    	return this.backing.size();
+        return this.backing.size();
     }
 
     @Override
     public List<Integer> subList(int start, int end) {
-    	return this.backing.subList(start, end);
+        return this.backing.subList(start, end);
     }
 
     @Override
     public Object[] toArray() {
-    	return this.backing.toArray();
+        return this.backing.toArray();
     }
 
     @Override
     public <T> T[] toArray(T[] array) {
-    	return this.backing.toArray(array);
+        return this.backing.toArray(array);
     }
-    
+
 
 }
