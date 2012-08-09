@@ -100,6 +100,34 @@ public class TimeStamp extends AmmoType {
         this.interval = new TimeInterval(interval);
     }
 
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof TimeStamp))
+            return false;
+        final TimeStamp that = (TimeStamp) obj;
+        if (this.millis != that.millis)
+            return false;
+        if (AmmoType.differ(this.interval, that.interval))
+            return false;
+        return true;
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (!this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.millis)
+                .increment(this.interval)
+                .hashCode();
+        return this.hashcode;
+    }
+
     @Override
     public String asString() {
         logger.error("asString() not implemented");

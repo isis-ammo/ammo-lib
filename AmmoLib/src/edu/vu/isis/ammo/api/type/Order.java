@@ -24,8 +24,17 @@ public class Order extends AmmoType {
     static final Logger logger = LoggerFactory.getLogger("type.order");
 
     public enum Type {
+        /**
+         * Present the oldest items from the set first
+         */
         OLDEST_FIRST(1, "Oldest First"),
+        /**
+         * 
+         */
         NEWEST_ONLY(2, "Newest Only"),
+        /**
+         * 
+         */
         NEWEST_FIRST(3, "Newest First");
 
         private final int o;
@@ -113,6 +122,31 @@ public class Order extends AmmoType {
     @Override
     public String toString() {
         return new StringBuilder().append(this.type.d).toString();
+    }
+
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Order))
+            return false;
+        final Order that = (Order) obj;
+        if (AmmoType.differ(this.type, that.type))
+            return false;
+        return true;
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (! this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.type)
+                .hashCode();
+        return this.hashcode;
     }
 
     @Override

@@ -8,6 +8,7 @@ perform, display, or disclose computer software or computer software
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
  */
+
 package edu.vu.isis.ammo.api.type;
 
 import java.util.Iterator;
@@ -21,8 +22,7 @@ import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-
-public class Template extends AmmoType { 
+public class Template extends AmmoType {
 
     static final public Template RESET = null;
 
@@ -31,11 +31,11 @@ public class Template extends AmmoType {
     static final private int BYTE_ID = 2;
     static final private int CV_ID = 3;
 
-    public enum Type { 
+    public enum Type {
         /**
          * Essentially a null payload.
          */
-        NONE(NONE_ID), 
+        NONE(NONE_ID),
         /**
          * A string.
          */
@@ -43,20 +43,28 @@ public class Template extends AmmoType {
         /**
          * A byte array
          */
-        BYTE(BYTE_ID), 
+        BYTE(BYTE_ID),
         /**
          * A content provider style set of content values.
          */
-        CV(CV_ID); 
+        CV(CV_ID);
 
         final public int id;
-        private Type(final int id) { this.id = id; }
+
+        private Type(final int id) {
+            this.id = id;
+        }
+
         static public Type getInstance(final int id) {
             switch (id) {
-                case NONE_ID: return NONE;
-                case STR_ID: return STR;
-                case BYTE_ID: return BYTE;
-                case CV_ID: return CV;
+                case NONE_ID:
+                    return NONE;
+                case STR_ID:
+                    return STR;
+                case BYTE_ID:
+                    return BYTE;
+                case CV_ID:
+                    return CV;
             }
             return null;
         }
@@ -71,26 +79,27 @@ public class Template extends AmmoType {
     // Parcelable Support
     // *********************************
 
-    public static final Parcelable.Creator<Template> CREATOR = 
+    public static final Parcelable.Creator<Template> CREATOR =
             new Parcelable.Creator<Template>() {
 
-        @Override
-        public Template createFromParcel(Parcel source) {
-            return new Template(source);
-        }
+                @Override
+                public Template createFromParcel(Parcel source) {
+                    return new Template(source);
+                }
 
-        @Override
-        public Template[] newArray(int size) {
-            return new Template[size];
-        }
-    };
+                @Override
+                public Template[] newArray(int size) {
+                    return new Template[size];
+                }
+            };
 
     public static final String DEFAULT = "";
 
     public static final Template NONE = new Template();
 
     public static Template readFromParcel(Parcel source) {
-        if (AmmoType.isNull(source)) return null;
+        if (AmmoType.isNull(source))
+            return null;
         return new Template(source);
     }
 
@@ -101,7 +110,7 @@ public class Template extends AmmoType {
 
         switch (this.type) {
             case CV:
-                this.cv.writeToParcel(dest, flags); 
+                this.cv.writeToParcel(dest, flags);
                 return;
             case BYTE:
                 dest.writeByteArray(this.bytes);
@@ -147,6 +156,7 @@ public class Template extends AmmoType {
             }
         plogger.trace("unmarshall payload");
     }
+
     // *********************************
     // Standard Methods
     // *********************************
@@ -157,17 +167,20 @@ public class Template extends AmmoType {
         }
         switch (this.type) {
             case CV:
-                if (this.cv == null) return "";
+                if (this.cv == null)
+                    return "";
                 return this.cv.toString();
-            case BYTE: 
-                if (this.bytes == null) return "";
+            case BYTE:
+                if (this.bytes == null)
+                    return "";
                 return this.bytes.toString();
             case STR:
-                if (this.str == null) return "";
+                if (this.str == null)
+                    return "";
                 return this.str.toString();
             case NONE:
             default:
-                return "<unknown type>"+ this.type;
+                return "<unknown type>" + this.type;
         }
     }
 
@@ -181,19 +194,21 @@ public class Template extends AmmoType {
         this.bytes = null;
         this.cv = null;
     }
-    
+
     public Template(String val) {
         this.type = Type.STR;
         this.str = val;
         this.bytes = null;
         this.cv = null;
     }
+
     public Template(byte[] val) {
         this.type = Type.BYTE;
         this.str = null;
         this.bytes = val;
         this.cv = null;
     }
+
     public Template(ContentValues val) {
         this.type = Type.CV;
         this.str = null;
@@ -203,10 +218,13 @@ public class Template extends AmmoType {
 
     public byte[] asBytes() {
 
-        switch (this.type){
-            case BYTE: return this.bytes;
-            case STR: return this.str.getBytes();
-            case CV: return this.encodeJson();
+        switch (this.type) {
+            case BYTE:
+                return this.bytes;
+            case STR:
+                return this.str.getBytes();
+            case CV:
+                return this.encodeJson();
             case NONE:
             default:
                 plogger.error("invalid type {}", this.type);
@@ -214,16 +232,16 @@ public class Template extends AmmoType {
         return null;
     }
 
-    private byte[] encodeJson () {
+    private byte[] encodeJson() {
         // encoding in json for now ...
         Set<java.util.Map.Entry<String, Object>> data = this.cv.valueSet();
-        Iterator<java.util.Map.Entry<String, Object>> iter = data.iterator();	    
+        Iterator<java.util.Map.Entry<String, Object>> iter = data.iterator();
         final JSONObject json = new JSONObject();
 
         while (iter.hasNext())
         {
-            Map.Entry<String, Object> entry = 
-                    (Map.Entry<String, Object>)iter.next();	        
+            Map.Entry<String, Object> entry =
+                    (Map.Entry<String, Object>) iter.next();
             try {
                 if (entry.getValue() instanceof String)
                     json.put(entry.getKey(), cv.getAsString(entry.getKey()));
@@ -238,37 +256,30 @@ public class Template extends AmmoType {
         return json.toString().getBytes();
     }
 
-    public String asString() {
-        switch (this.type){
-            case BYTE: return new String(this.bytes);
-            case STR: return this.str;
-            case NONE:
-            default:
-                plogger.error("invalid type {}", this.type);
-        }
-        return null;
-    }
-
     /**
-     * What type of content if any is present.
-     * Just because the type is specified it may not be valid.
-     * This method can be used to determine if the 
-     * payload has content.
+     * What type of content if any is present. Just because the type is
+     * specified it may not be valid. This method can be used to determine if
+     * the payload has content.
      * 
      * @return
      */
     public Type whatContent() {
-        switch (this.type){
-            case STR: 
-                if (this.str == null) return Type.NONE;
-                if (this.str.length() < 1) return Type.NONE;
+        switch (this.type) {
+            case STR:
+                if (this.str == null)
+                    return Type.NONE;
+                if (this.str.length() < 1)
+                    return Type.NONE;
                 return Type.STR;
-            case BYTE: 
-                if (this.bytes == null) return Type.NONE;
+            case BYTE:
+                if (this.bytes == null)
+                    return Type.NONE;
                 return Type.BYTE;
-            case CV: 
-                if (this.cv == null) return Type.NONE;
-                if (this.cv.valueSet().isEmpty()) return Type.NONE;
+            case CV:
+                if (this.cv == null)
+                    return Type.NONE;
+                if (this.cv.valueSet().isEmpty())
+                    return Type.NONE;
                 return Type.CV;
             case NONE:
             default:
@@ -277,7 +288,7 @@ public class Template extends AmmoType {
         return Type.NONE;
     }
 
-    public ContentValues getCV () {
+    public ContentValues getCV() {
         return cv;
     }
 
@@ -286,18 +297,26 @@ public class Template extends AmmoType {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Template)) return false;
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Template))
+            return false;
         final Template that = (Template) obj;
-        if (this.type != that.type) return false;
-        if (this.type == null) return true;
-        switch (this.type){
-            case STR: 
-                return (this.str.equals(that.str));
-            case BYTE: 
-                return (this.bytes.equals(that.bytes));
-            case CV: 
-                return (this.cv.equals(that.cv));
+        if (AmmoType.differ(this.type, that.type))
+            return false;
+        switch (this.type) {
+            case STR:
+                if (AmmoType.differ(this.str, that.str))
+                    return false;
+                return true;
+            case BYTE:
+                if (AmmoType.differ(this.bytes, that.bytes))
+                    return false;
+                return true;
+            case CV:
+                if (AmmoType.differ(this.cv, that.cv))
+                    return false;
+                return true;
             case NONE:
                 return true;
             default:
@@ -305,4 +324,31 @@ public class Template extends AmmoType {
                 return false;
         }
     }
+
+    @Override
+    public synchronized int hashCode() {
+        if (!this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.type)
+                .increment(this.str)
+                .increment(this.bytes)
+                .increment(this.cv)
+                .hashCode();
+        return this.hashcode;
+    }
+
+    public String asString() {
+        switch (this.type) {
+            case BYTE:
+                return new String(this.bytes);
+            case STR:
+                return this.str;
+            case NONE:
+            default:
+                plogger.error("invalid type {}", this.type);
+        }
+        return null;
+    }
+
 }

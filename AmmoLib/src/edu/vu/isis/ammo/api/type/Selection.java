@@ -92,7 +92,7 @@ public class Selection extends AmmoType {
                 Form.writeToParcel((Form) this.form, dest, flags);
                 return;
             case QUERY:
-                Query.writeToParcel((Query) this.query, dest, flags);
+                Selection.writeToParcel((Query) this.query, dest, flags);
                 return;
         }
     }
@@ -191,6 +191,51 @@ public class Selection extends AmmoType {
         this.string = null;
         this.query = null;
         this.form = val;
+    }
+
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Selection))
+            return false;
+        final Selection that = (Selection) obj;
+        if (AmmoType.differ(this.type, that.type))
+            return false;
+
+        switch (this.type) {
+            case STRING:
+                if (AmmoType.differ(this.string, that.string))
+                    return false;
+                return true;
+            case FORM:
+                if (AmmoType.differ(this.form, that.form))
+                    return false;
+                return true;
+            case QUERY:
+                if (AmmoType.differ(this.query, that.query))
+                    return false;
+                return true;
+            default:
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (!this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.type)
+                .increment(this.string)
+                .increment(this.form)
+                .increment(this.query)
+                .hashCode();
+        return this.hashcode;
     }
 
     @Override
