@@ -8,139 +8,162 @@ perform, display, or disclose computer software or computer software
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
  */
+
 package edu.vu.isis.ammo.api.type;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class TimeTrigger extends AmmoType {
+    static final Logger logger = LoggerFactory.getLogger("type.time.trigger");
 
-	public enum Type { ABS, REL; }
+    public enum Type {
+        ABS, REL;
+    }
 
-	private Type type;
-	public Type type() { return type; }
+    private Type type;
 
-	final public TimeStamp abs;
-	final public TimeInterval rel;
+    public Type type() {
+        return type;
+    }
 
-	// *********************************
-	// Parcelable Support
-	// *********************************
+    final public TimeStamp abs;
+    final public TimeInterval rel;
 
-	public static final Parcelable.Creator<TimeTrigger> CREATOR = 
-			new Parcelable.Creator<TimeTrigger>() {
+    // *********************************
+    // Parcelable Support
+    // *********************************
 
-		@Override
-		public TimeTrigger createFromParcel(Parcel source) {
-			return new TimeTrigger(source);
-		}
+    public static final Parcelable.Creator<TimeTrigger> CREATOR =
+            new Parcelable.Creator<TimeTrigger>() {
 
-		@Override
-		public TimeTrigger[] newArray(int size) {
-			return new TimeTrigger[size];
-		}
-	};
+                @Override
+                public TimeTrigger createFromParcel(Parcel source) {
+                    return new TimeTrigger(source);
+                }
 
-	public static TimeTrigger readFromParcel(Parcel source) {
-		if (AmmoType.isNull(source)) return null;
-		return new TimeTrigger(source);
-	}
+                @Override
+                public TimeTrigger[] newArray(int size) {
+                    return new TimeTrigger[size];
+                }
+            };
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		plogger.trace("marshall time trigger {}", this);
-		dest.writeInt(this.type.ordinal());
-		switch (this.type) {
-		case ABS:
-			TimeStamp.writeToParcel(this.abs, dest, flags);
-			return;
-		case REL:
-			TimeInterval.writeToParcel(this.rel, dest, flags);
-			return;
-		}
-	}
+    public static TimeTrigger readFromParcel(Parcel source) {
+        if (AmmoType.isNull(source))
+            return null;
+        return new TimeTrigger(source);
+    }
 
-	private TimeTrigger(Parcel in) {
-		this.type = Type.values()[ in.readInt() ];
-		if (this.type == null) {
-			this.abs = null;
-			this.rel = null;
-		} else
-			switch (this.type) {
-			case ABS:
-				this.abs = TimeStamp.readFromParcel(in);
-				this.rel = null;
-				break;
-			case REL:
-				this.abs = null;
-				this.rel = TimeInterval.readFromParcel(in);
-				break;
-			default:
-				this.abs = null;
-				this.rel = null;
-			}
-		plogger.trace("unmarshall time trigger {}", this);
-	}
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        plogger.trace("marshall time trigger {}", this);
+        dest.writeInt(this.type.ordinal());
+        switch (this.type) {
+            case ABS:
+                TimeStamp.writeToParcel(this.abs, dest, flags);
+                return;
+            case REL:
+                TimeInterval.writeToParcel(this.rel, dest, flags);
+                return;
+        }
+    }
 
-	/**
-	 * The cv returns an absolute time value in milliseconds.
-	 * This time is only a recommendation; it may be that
-	 * the distribution policy has set a maximum.
-	 * 
-	 * @return the absolute expiration time in milliseconds.
-	 */
-	public long cv() {
-		if (this.type == null) {
-			return Long.MAX_VALUE;
-		} else
-			switch (this.type) {
-			case ABS:
-				return this.abs.cv();
-			case REL:
-				if (this.rel.cv() < Long.MAX_VALUE) {
-					return System.currentTimeMillis() + this.rel.cv();
-				} else {
-					return Long.MAX_VALUE;
-				}
-			default:
-				return Long.MAX_VALUE;
-			}
-	}
-	// *********************************
-	// Standard Methods
-	// *********************************
-	@Override
-	public String toString() {
-		if (this.type == null) {
-			return "<no type>";
-		}
-		switch (this.type) {
-		case ABS:
-			return this.abs.toString();
-		case REL:
-			return this.rel.toString();
-		default:
-			return "<unknown type>"+ this.type;
-		}
-	}
+    private TimeTrigger(Parcel in) {
+        this.type = Type.values()[in.readInt()];
+        if (this.type == null) {
+            this.abs = null;
+            this.rel = null;
+        } else
+            switch (this.type) {
+                case ABS:
+                    this.abs = TimeStamp.readFromParcel(in);
+                    this.rel = null;
+                    break;
+                case REL:
+                    this.abs = null;
+                    this.rel = TimeInterval.readFromParcel(in);
+                    break;
+                default:
+                    this.abs = null;
+                    this.rel = null;
+            }
+        plogger.trace("unmarshall time trigger {}", this);
+    }
 
-	// *********************************
-	// IAmmoReques Support
-	// *********************************
+    /**
+     * The cv returns an absolute time value in milliseconds. This time is only
+     * a recommendation; it may be that the distribution policy has set a
+     * maximum.
+     * 
+     * @return the absolute expiration time in milliseconds.
+     */
+    public long cv() {
+        if (this.type == null) {
+            return Long.MAX_VALUE;
+        } else
+            switch (this.type) {
+                case ABS:
+                    return this.abs.cv();
+                case REL:
+                    if (this.rel.cv() < Long.MAX_VALUE) {
+                        return System.currentTimeMillis() + this.rel.cv();
+                    } else {
+                        return Long.MAX_VALUE;
+                    }
+                default:
+                    return Long.MAX_VALUE;
+            }
+    }
 
-	public TimeStamp abs() { return abs; }
-	public TimeInterval rel() { return rel; }
+    // *********************************
+    // Standard Methods
+    // *********************************
+    @Override
+    public String toString() {
+        if (this.type == null) {
+            return "<no type>";
+        }
+        switch (this.type) {
+            case ABS:
+                return this.abs.toString();
+            case REL:
+                return this.rel.toString();
+            default:
+                return "<unknown type>" + this.type;
+        }
+    }
 
-	public TimeTrigger(TimeStamp val) {
-		this.type = Type.ABS;
-		this.abs = val;
-		this.rel = null;
-	}
+    // *********************************
+    // IAmmoReques Support
+    // *********************************
 
-	public TimeTrigger(TimeInterval val) {
-		this.type = Type.REL;
-		this.abs = null;
-		this.rel = val;
-	}
+    public TimeStamp abs() {
+        return abs;
+    }
+
+    public TimeInterval rel() {
+        return rel;
+    }
+
+    public TimeTrigger(TimeStamp val) {
+        this.type = Type.ABS;
+        this.abs = val;
+        this.rel = null;
+    }
+
+    public TimeTrigger(TimeInterval val) {
+        this.type = Type.REL;
+        this.abs = null;
+        this.rel = val;
+    }
+
+    @Override
+    public String asString() {
+        logger.error("asString() not implemented");
+        return null;
+    }
 
 }
