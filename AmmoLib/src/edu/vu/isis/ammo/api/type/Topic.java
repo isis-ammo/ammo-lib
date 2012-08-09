@@ -10,12 +10,17 @@ purpose whatsoever, and to have or authorize others to do so.
  */
 package edu.vu.isis.ammo.api.type;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.vu.isis.ammo.api.IncompleteRequest;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Topic extends AmmoType { 
 
+    static final Logger logger = LoggerFactory.getLogger("type.topic");
+    
     static final public Topic RESET = null;
 
     public static final String DEFAULT = "";
@@ -129,6 +134,11 @@ public class Topic extends AmmoType {
     // *********************************
     // Standard Methods
     // *********************************
+    /**
+     * Do not used toString() for serializing the topic.
+     * Use asString() instead.
+     * toString() is intended for reading by humans.
+     */
     @Override
     public String toString() {
         if (this.type == null) {
@@ -148,6 +158,11 @@ public class Topic extends AmmoType {
     // IAmmoReques Support
     // *********************************
 
+    /**
+     * The constructor taking a string is symmetric with 
+     * the asString() method.
+     * @param val
+     */
     public Topic(String val) {
         this.type = Type.STR;
         this.str = val;
@@ -159,6 +174,13 @@ public class Topic extends AmmoType {
         this.oid = val;
     }
 
+    /**
+     * When the topic is to be transmitted as a string this 
+     * is the method which should be used <b>NOT</b> toString().
+     * 
+     * @return
+     */
+    @Override
     public String asString() { 
         return this.toString();
     }
@@ -182,6 +204,31 @@ public class Topic extends AmmoType {
                 plogger.warn("invalid type {}", this.type);
                 return false;
         }
+    }
+
+    private int hashcode;
+    private boolean dirtyHashcode;
+
+    @Override
+    public synchronized int hashCode() {
+        if (!this.dirtyHashcode)
+            return this.hashcode;
+        this.dirtyHashcode = false;
+        final HashBuilder hb =  AmmoType.HashBuilder.newBuilder()
+                .increment(this.type);
+        switch (this.type){
+            case STR: 
+                hb.increment(this.str);
+                break;
+            case OID: 
+                hb.increment(this.str);
+                break;
+            default:
+                hb.increment(this.str);
+                break;
+        }
+        this.hashcode = hb.toCode();
+        return this.hashcode;
     }
 
 }
