@@ -10,6 +10,9 @@ purpose whatsoever, and to have or authorize others to do so.
 */
 package edu.vu.isis.ammo.api.type;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,6 +20,7 @@ import android.os.Parcelable;
  * Specifies the order in which queued items are to be processed.
  */
 public class Limit extends AmmoType {
+    static final Logger logger = LoggerFactory.getLogger("type.limit");
 
 	public int count;
 	
@@ -116,5 +120,11 @@ public class Limit extends AmmoType {
 		default: return (this.count);
 		}
 	}
+	
+    @Override
+    public String asString() {
+        logger.error("asString() not implemented");
+        return null;
+    }
     
 }
