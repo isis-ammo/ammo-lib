@@ -81,4 +81,64 @@ public abstract class AmmoType implements Parcelable {
 
     @Override
     public int describeContents() { return 0; }
+    
+    /**
+     * force the individual types to implement this method.
+     */
+    /*
+    @Override
+    public abstract boolean equals(Object that);
+    */
+    /**
+     * force the individual types to implement this method.
+     */
+    /*
+    @Override
+    public abstract int hashCode();
+    */
+    /**
+     * 
+     * @return
+     */
+    public abstract String asString();
+    
+    /**
+     * This is a helper method for constructing hash codes.
+     * On its initial invocation the work should be set to 0.
+     * <p> For example
+     * <code>
+     *   work = incrementHash(0, part1.hashCode());
+     *   work = incrementHash(work, part2.hashCode();
+     *   work = incrementHash(work, part3.hashCode();
+     *   ...
+     *   work = incrementHash(work, part_N.hashCode();
+     * </code>
+     * @param work the hash code in progress.
+     * @param increment the hash code of the next element.
+     * @return the candidate hash code
+     */
+    protected static class HashBuilder {
+        private int hashcode;
+        private HashBuilder(int basecode) {
+            this.hashcode = basecode;
+        }
+        public static HashBuilder newBuilder() {
+            return new HashBuilder(17);
+        }
+        public HashBuilder increment(Object nextcode) {
+            this.hashcode *= 31;
+            if (nextcode != null) {
+                this.hashcode += nextcode.hashCode();
+            }
+            return this;
+        }
+        public HashBuilder increment(int nextcode) {
+            this.hashcode *= 31;
+            this.hashcode += nextcode;
+            return this;
+        }
+        public int toCode() {
+            return this.hashcode;
+        }
+    }
 }

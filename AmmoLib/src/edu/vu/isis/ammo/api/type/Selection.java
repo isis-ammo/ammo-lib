@@ -7,167 +7,196 @@ The US government has the right to use, modify, reproduce, release,
 perform, display, or disclose computer software or computer software 
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
-*/
+ */
+
 package edu.vu.isis.ammo.api.type;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Selection extends AmmoType {
-	
-	static final public Selection RESET = null;
+    static final Logger logger = LoggerFactory.getLogger("type.selection");
 
+    static final public Selection RESET = null;
 
-	static final private int STRING_ID = 0;
-	static final private int QUERY_ID = 1;
-	static final private int FORM_ID = 2;
-	
-	public enum Type { 
-		STRING(STRING_ID), QUERY(QUERY_ID), FORM(FORM_ID); 
-		final public int id;
-		private Type(final int id) { this.id = id; }
-		static public Type getInstance(final int id) {
-			switch (id) {
-			case STRING_ID: return STRING;
-			case QUERY_ID: return QUERY;
-			case FORM_ID: return FORM;
-			}
-			return null;
-		}
-	};
+    static final private int STRING_ID = 0;
+    static final private int QUERY_ID = 1;
+    static final private int FORM_ID = 2;
 
-	final private Type type;
+    public enum Type {
+        STRING(STRING_ID), QUERY(QUERY_ID), FORM(FORM_ID);
+        final public int id;
 
-	final public String string;
-	final public Query query;
-	final public Form form;
+        private Type(final int id) {
+            this.id = id;
+        }
 
-	// *********************************
-	// Parcelable Support
-	// *********************************
+        static public Type getInstance(final int id) {
+            switch (id) {
+                case STRING_ID:
+                    return STRING;
+                case QUERY_ID:
+                    return QUERY;
+                case FORM_ID:
+                    return FORM;
+            }
+            return null;
+        }
+    };
 
-	public static final Parcelable.Creator<Selection> CREATOR = 
-			new Parcelable.Creator<Selection>() {
+    final private Type type;
 
-		@Override
-		public Selection createFromParcel(Parcel source) {
-			if (AmmoType.isNull(source)) return null;
-			return new Selection(source);
-		}
+    final public String string;
+    final public Query query;
+    final public Form form;
 
-		@Override
-		public Selection[] newArray(int size) {
-			return new Selection[size];
-		}
-	};
-	
-	public static Selection readFromParcel(Parcel source) {
-		if (AmmoType.isNull(source)) return null;
-		return new Selection(source);
-	}
+    // *********************************
+    // Parcelable Support
+    // *********************************
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		plogger.trace("marshall select {}", this);
-		dest.writeInt(this.type.id);
+    public static final Parcelable.Creator<Selection> CREATOR =
+            new Parcelable.Creator<Selection>() {
 
-		switch (this.type) {
-		case STRING:
-			dest.writeValue(this.string);
-			return;
-		case FORM:
-			Form.writeToParcel((Form)this.form, dest, flags);
-			return;
-		case QUERY:
-			Query.writeToParcel((Query)this.query, dest, flags);
-			return;
-		}
-	}
+                @Override
+                public Selection createFromParcel(Parcel source) {
+                    if (AmmoType.isNull(source))
+                        return null;
+                    return new Selection(source);
+                }
 
-	public Selection(Parcel in) {
-		this.type = Type.getInstance(in.readInt());
-		if (this.type == null) {
-			this.string = null;
-			this.query = null;
-			this.form = null;
-		} else
-			switch (this.type) {
-			case STRING:
-				this.string = in.readString();
-				this.query = null;
-				this.form = null;
-				break;
-			case QUERY:
-				this.string = null;
-				this.query = Query.readFromParcel(in);
-				this.form = null;
-				break;
-			case FORM:
-				this.string = null;
-				this.query = null;
-				this.form = Form.readFromParcel(in);
-				break;
-			default:
-				this.string = null;
-				this.query = null;
-				this.form = null;
-			}
-		plogger.trace("unmarshall select {}", this);
-	}
-	// *********************************
-	// Standard Methods
-	// *********************************
-	@Override
-	public String toString() {
-		
-		if (this.type == null) {
-			return "<no type>";
-		} 
-		// final StringBuilder sb = new StringBuilder();
-		switch (this.type) {
-		case STRING:
-			if (this.string == null) return "<null string>";
-			return this.string;
-		case QUERY:
-			if (this.query == null) return "<null query>";
-			return this.query.toString();
-		case FORM:
-			if (this.form == null) return "<null form>";
-			return this.form.toString();
-		default:
-			return "<unknown type>"+ this.type;
-		}
-	}
+                @Override
+                public Selection[] newArray(int size) {
+                    return new Selection[size];
+                }
+            };
 
-	// *********************************
-	// IAmmoReques Support
-	// *********************************
+    public static Selection readFromParcel(Parcel source) {
+        if (AmmoType.isNull(source))
+            return null;
+        return new Selection(source);
+    }
 
-	public Selection(String val) {
-		this.type = Type.STRING;
-		this.string = val;
-		this.query = null;
-		this.form = null;
-	}
-	
-	public String cv() {
-		switch (this.type){
-		case STRING: return this.string;
-		}
-		return "";
-	}
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        plogger.trace("marshall select {}", this);
+        dest.writeInt(this.type.id);
 
-	public Selection(Query val) {
-		this.type = Type.QUERY;
-		this.string = null;
-		this.query = val;
-		this.form = null;
-	}
-	public Selection(Form val) {
-		this.type = Type.FORM;
-		this.string = null;
-		this.query = null;
-		this.form = val;
-	}
+        switch (this.type) {
+            case STRING:
+                dest.writeValue(this.string);
+                return;
+            case FORM:
+                Form.writeToParcel((Form) this.form, dest, flags);
+                return;
+            case QUERY:
+                Query.writeToParcel((Query) this.query, dest, flags);
+                return;
+        }
+    }
+
+    public Selection(Parcel in) {
+        this.type = Type.getInstance(in.readInt());
+        if (this.type == null) {
+            this.string = null;
+            this.query = null;
+            this.form = null;
+        } else
+            switch (this.type) {
+                case STRING:
+                    this.string = in.readString();
+                    this.query = null;
+                    this.form = null;
+                    break;
+                case QUERY:
+                    this.string = null;
+                    this.query = Query.readFromParcel(in);
+                    this.form = null;
+                    break;
+                case FORM:
+                    this.string = null;
+                    this.query = null;
+                    this.form = Form.readFromParcel(in);
+                    break;
+                default:
+                    this.string = null;
+                    this.query = null;
+                    this.form = null;
+            }
+        plogger.trace("unmarshall select {}", this);
+    }
+
+    // *********************************
+    // Standard Methods
+    // *********************************
+    @Override
+    public String toString() {
+
+        if (this.type == null) {
+            return "<no type>";
+        }
+        // final StringBuilder sb = new StringBuilder();
+        switch (this.type) {
+            case STRING:
+                if (this.string == null)
+                    return "<null string>";
+                return this.string;
+            case QUERY:
+                if (this.query == null)
+                    return "<null query>";
+                return this.query.toString();
+            case FORM:
+                if (this.form == null)
+                    return "<null form>";
+                return this.form.toString();
+            default:
+                return "<unknown type>" + this.type;
+        }
+    }
+
+    // *********************************
+    // IAmmoReques Support
+    // *********************************
+
+    public Selection(String val) {
+        this.type = Type.STRING;
+        this.string = val;
+        this.query = null;
+        this.form = null;
+    }
+
+    public String cv() {
+        switch (this.type) {
+            case STRING:
+                return this.string;
+            case FORM:
+            case QUERY:
+            default:
+                break;
+        }
+        return "";
+    }
+
+    public Selection(Query val) {
+        this.type = Type.QUERY;
+        this.string = null;
+        this.query = val;
+        this.form = null;
+    }
+
+    public Selection(Form val) {
+        this.type = Type.FORM;
+        this.string = null;
+        this.query = null;
+        this.form = val;
+    }
+
+    @Override
+    public String asString() {
+        logger.error("asString() not implemented");
+        return null;
+    }
 
 }
