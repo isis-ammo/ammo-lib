@@ -132,6 +132,34 @@ public class TimeInterval extends AmmoType {
         this.quantity = seconds;
     }
 
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof TimeInterval))
+            return false;
+        final TimeInterval that = (TimeInterval) obj;
+        if (AmmoType.differ(this.units, that.units))
+            return false;
+        if (this.quantity != that.quantity)
+            return false;
+        return true;
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (! this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.units)
+                .increment(this.quantity)
+                .hashCode();
+        return this.hashcode;
+    }
+
     @Override
     public String asString() {
         logger.error("asString() not implemented");

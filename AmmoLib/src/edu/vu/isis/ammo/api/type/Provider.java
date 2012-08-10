@@ -8,150 +8,193 @@ perform, display, or disclose computer software or computer software
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
  */
+
 package edu.vu.isis.ammo.api.type;
 
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-
 public class Provider extends AmmoType {
 
-	static final public Provider RESET = null;
+    static final public Provider RESET = null;
 
-	static final private int URI_ID = 0;
+    static final private int URI_ID = 0;
 
-	public enum Type { 
-		URI(URI_ID); 
+    public enum Type {
+        URI(URI_ID);
 
-		final public int id;
-		private Type(int id) {
-			this.id = id;
-		}
-		static public Type getInstance(int id) {
-			switch(id) {
-			case URI_ID: return URI;
-			}
-			return null;
-		}
-	}
+        final public int id;
 
-	final private Type type;
-	final private Uri uri;
+        private Type(int id) {
+            this.id = id;
+        }
 
-	public Provider(Uri val) {
-		this.type = Type.URI;
-		this.uri = val;
-	}
+        static public Type getInstance(int id) {
+            switch (id) {
+                case URI_ID:
+                    return URI;
+            }
+            return null;
+        }
+    }
 
-	public String cv() {
-		if (this.type == null) {
-			return null;
-		}
-			
-		switch(this.type) {
-		case URI:
-			if (this.uri == null) {
-				return null;
-			}
-			return this.uri.toString();
-		}
-		return null;
-	}
+    final private Type type;
+    final private Uri uri;
 
-	// *********************************
-	// Parcelable Support
-	// *********************************
+    public Provider(Uri val) {
+        this.type = Type.URI;
+        this.uri = val;
+    }
 
-	public static final Parcelable.Creator<Provider> CREATOR = 
-			new Parcelable.Creator<Provider>() {
+    public String cv() {
+        if (this.type == null) {
+            return null;
+        }
 
-		@Override
-		public Provider createFromParcel(Parcel source) {
-			return new Provider(source);
-		}
-		@Override
-		public Provider[] newArray(int size) {
-			return new Provider[size];
-		}
-	};
-	public static Provider readFromParcel(Parcel source) {
-		if (AmmoType.isNull(source)) return null;
-		return new Provider(source);
-	}
+        switch (this.type) {
+            case URI:
+                if (this.uri == null) {
+                    return null;
+                }
+                return this.uri.toString();
+        }
+        return null;
+    }
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		plogger.trace("marshall provider {}", this);
-		dest.writeInt(this.type.id);
+    // *********************************
+    // Parcelable Support
+    // *********************************
 
-		switch (this.type) {
-		case URI:
-			Uri.writeToParcel(dest, this.uri);
-			return;
-		}
-	}
+    public static final Parcelable.Creator<Provider> CREATOR =
+            new Parcelable.Creator<Provider>() {
 
-	public Provider(Parcel in) {
-		this.type = Type.getInstance(in.readInt());
-		if (this.type == null) {
-			this.uri = null;
-		} else
-			switch (this.type) {
-			case URI:
-				this.uri = Uri.CREATOR.createFromParcel(in);
-				break;
-			default:
-				this.uri = null;
-			}
-		plogger.trace("unmarshall provider {}", this);
-	}
-	// *********************************
-	// Standard Methods
-	// *********************************
+                @Override
+                public Provider createFromParcel(Parcel source) {
+                    return new Provider(source);
+                }
 
-	public Provider(String val) {
-		this.type = Type.URI;
-		this.uri = Uri.parse(val);
-	}
+                @Override
+                public Provider[] newArray(int size) {
+                    return new Provider[size];
+                }
+            };
 
-	@Override
-	public String toString() {
-		if (this.type == null) {
-			return "<no type>";
-		} 
-		switch (this.type) {
-		case URI:
-			return this.uri.toString();
-		default:
-			return "<unknown type>"+ this.type;
-		}
-	}
+    public static Provider readFromParcel(Parcel source) {
+        if (AmmoType.isNull(source))
+            return null;
+        return new Provider(source);
+    }
 
-	// *********************************
-	// IAmmoRequest Support
-	// *********************************
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        plogger.trace("marshall provider {}", this);
+        dest.writeInt(this.type.id);
 
-	public final static Uri DEFAULT = Uri.parse("");
+        switch (this.type) {
+            case URI:
+                Uri.writeToParcel(dest, this.uri);
+                return;
+        }
+    }
 
-	public byte[] asBytes() {
-		switch (this.type){
-		case URI: return this.uri.toString().getBytes();
-		}
-		return null;
-	}
+    public Provider(Parcel in) {
+        this.type = Type.getInstance(in.readInt());
+        if (this.type == null) {
+            this.uri = null;
+        } else
+            switch (this.type) {
+                case URI:
+                    this.uri = Uri.CREATOR.createFromParcel(in);
+                    break;
+                default:
+                    this.uri = null;
+            }
+        plogger.trace("unmarshall provider {}", this);
+    }
 
-	public String asString() {
-		switch (this.type){
-		case URI: return this.uri.toString();
-		}
-		return null;
-	}
+    // *********************************
+    // Standard Methods
+    // *********************************
 
-	public Uri asUri() {
-		switch (this.type){
-		case URI: return this.uri;
-		}
-		return null;
-	}
+    public Provider(String val) {
+        this.type = Type.URI;
+        this.uri = Uri.parse(val);
+    }
+
+    @Override
+    public String toString() {
+        if (this.type == null) {
+            return "<no type>";
+        }
+        switch (this.type) {
+            case URI:
+                return this.uri.toString();
+            default:
+                return "<unknown type>" + this.type;
+        }
+    }
+
+    // *********************************
+    // IAmmoRequest Support
+    // *********************************
+
+    public final static Uri DEFAULT = Uri.parse("");
+
+    public byte[] asBytes() {
+        switch (this.type) {
+            case URI:
+                return this.uri.toString().getBytes();
+        }
+        return null;
+    }
+
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Provider))
+            return false;
+        final Provider that = (Provider) obj;
+        if (AmmoType.differ(this.type, that.type))
+            return false;
+
+        switch (this.type) {
+            case URI:
+                if (AmmoType.differ(this.uri, that.uri))
+                    return false;
+                return true;
+        }
+        return true;
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (!this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.type)
+                .increment(this.uri)
+                .hashCode();
+        return this.hashcode;
+    }
+
+    public String asString() {
+        switch (this.type) {
+            case URI:
+                return this.uri.toString();
+        }
+        return null;
+    }
+
+    public Uri asUri() {
+        switch (this.type) {
+            case URI:
+                return this.uri;
+        }
+        return null;
+    }
 }

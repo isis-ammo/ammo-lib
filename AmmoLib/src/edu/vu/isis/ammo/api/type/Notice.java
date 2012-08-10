@@ -13,6 +13,7 @@ package edu.vu.isis.ammo.api.type;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -216,14 +217,14 @@ public class Notice extends AmmoType {
         }
 
         public void setVia(Via via) {
+            this.dirtyHashcode.set(true);
             this.via = via;
-            this.dirtyHashcode = true;
         }
 
         private Item(Threshold threshold, Via via) {
+            this.dirtyHashcode.set(true);
             this.threshold = threshold;
             this.via = via;
-            this.dirtyHashcode = true;
         }
 
         @Override
@@ -256,18 +257,17 @@ public class Notice extends AmmoType {
             return true;
         }
 
-        private int hashcode;
-        private boolean dirtyHashcode;
+        protected volatile int hashcode = 0;
+        protected AtomicBoolean dirtyHashcode = new AtomicBoolean(true);
 
         @Override
         public synchronized int hashCode() {
-            if (!this.dirtyHashcode)
+            if (!this.dirtyHashcode.getAndSet(false))
                 return this.hashcode;
-            this.dirtyHashcode = false;
             this.hashcode = AmmoType.HashBuilder.newBuilder()
                     .increment(this.threshold)
                     .increment(this.via)
-                    .toCode();
+                    .hashCode();
             return this.hashcode;
         }
     }
@@ -639,7 +639,6 @@ public class Notice extends AmmoType {
         this.atGatewayDelivered = new Item(Threshold.GATE_DELIVERY, Via.newInstance());
         this.atPluginDelivered = new Item(Threshold.PLUGIN_DELIVERY, Via.newInstance());
         this.atDeviceDelivered = new Item(Threshold.DEVICE_DELIVERY, Via.newInstance());
-        this.dirtyHashcode = true;
     }
 
     /**
@@ -652,31 +651,27 @@ public class Notice extends AmmoType {
         if (!(obj instanceof Notice))
             return false;
         final Notice that = (Notice) obj;
-        if (!this.atSend.equals(that.atSend))
+        if (AmmoType.differ(this.atSend, that.atSend))
             return false;
-        if (!this.atGatewayDelivered.equals(that.atGatewayDelivered))
+        if (AmmoType.differ(this.atGatewayDelivered, that.atGatewayDelivered))
             return false;
-        if (!this.atPluginDelivered.equals(that.atPluginDelivered))
+        if (AmmoType.differ(this.atPluginDelivered, that.atPluginDelivered))
             return false;
-        if (!this.atDeviceDelivered.equals(that.atDeviceDelivered))
+        if (AmmoType.differ(this.atDeviceDelivered, that.atDeviceDelivered))
             return false;
         return true;
     }
 
-    private int hashcode;
-    private boolean dirtyHashcode;
-
     @Override
     public synchronized int hashCode() {
-        if (!this.dirtyHashcode)
+        if (!this.dirtyHashcode.getAndSet(false))
             return this.hashcode;
-        this.dirtyHashcode = false;
         this.hashcode = AmmoType.HashBuilder.newBuilder()
                 .increment(this.atSend)
                 .increment(this.atGatewayDelivered)
                 .increment(this.atPluginDelivered)
                 .increment(this.atDeviceDelivered)
-                .toCode();
+                .hashCode();
         return this.hashcode;
     }
 

@@ -29,7 +29,16 @@ public class DeliveryScope extends AmmoType {
     static final private int LOCAL_ID = 1;
 
     public enum Type {
-        GLOBAL(GLOBAL_ID), LOCAL(LOCAL_ID);
+        /**
+         * Indicates that the last update originated outside of the current
+         * device/application scope.
+         */
+        GLOBAL(GLOBAL_ID),
+        /**
+         * Indicates that the last update originated in the current
+         * device/application scope.
+         */
+        LOCAL(LOCAL_ID);
         final public int id;
 
         private Type(final int id) {
@@ -120,6 +129,31 @@ public class DeliveryScope extends AmmoType {
                 sb.append("<unknown>");
         }
         return sb.toString();
+    }
+
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof DeliveryScope))
+            return false;
+        final DeliveryScope that = (DeliveryScope) obj;
+        if (AmmoType.differ(this.type, that.type))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        if (this.hashcode != 0)
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.type)
+                .hashCode();
+        return this.hashcode;
     }
 
     @Override

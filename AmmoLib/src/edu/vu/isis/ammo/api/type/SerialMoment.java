@@ -169,6 +169,31 @@ public class SerialMoment extends AmmoType {
         return this.type.o;
     }
 
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof SerialMoment))
+            return false;
+        final SerialMoment that = (SerialMoment) obj;
+        if (AmmoType.differ(this.type, that.type))
+            return false;
+        return true;
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (! this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.type)
+                .hashCode();
+        return this.hashcode;
+    }
+
     @Override
     public String asString() {
         logger.error("asString() not implemented");
