@@ -182,7 +182,17 @@ public class Topic extends AmmoType {
      */
     @Override
     public String asString() { 
-        return this.toString();
+        if (this.type == null) {
+            return "<no type>";
+        }
+        switch (this.type) {
+            case OID:
+                return this.oid.toString();
+            case STR:
+                return this.str;
+            default:
+                return "<unknown type>"+ this.type;
+        }
     }
     
     /**
