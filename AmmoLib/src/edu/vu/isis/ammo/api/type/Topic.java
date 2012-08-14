@@ -10,12 +10,17 @@ purpose whatsoever, and to have or authorize others to do so.
  */
 package edu.vu.isis.ammo.api.type;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.vu.isis.ammo.api.IncompleteRequest;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Topic extends AmmoType { 
 
+    static final Logger logger = LoggerFactory.getLogger("type.topic");
+    
     static final public Topic RESET = null;
 
     public static final String DEFAULT = "";
@@ -129,6 +134,11 @@ public class Topic extends AmmoType {
     // *********************************
     // Standard Methods
     // *********************************
+    /**
+     * Do not used toString() for serializing the topic.
+     * Use asString() instead.
+     * toString() is intended for reading by humans.
+     */
     @Override
     public String toString() {
         if (this.type == null) {
@@ -148,6 +158,11 @@ public class Topic extends AmmoType {
     // IAmmoReques Support
     // *********************************
 
+    /**
+     * The constructor taking a string is symmetric with 
+     * the asString() method.
+     * @param val
+     */
     public Topic(String val) {
         this.type = Type.STR;
         this.str = val;
@@ -159,8 +174,25 @@ public class Topic extends AmmoType {
         this.oid = val;
     }
 
+    /**
+     * When the topic is to be transmitted as a string this 
+     * is the method which should be used <b>NOT</b> toString().
+     * 
+     * @return
+     */
+    @Override
     public String asString() { 
-        return this.toString();
+        if (this.type == null) {
+            return "<no type>";
+        }
+        switch (this.type) {
+            case OID:
+                return this.oid.toString();
+            case STR:
+                return this.str;
+            default:
+                return "<unknown type>"+ this.type;
+        }
     }
     
     /**
@@ -171,17 +203,42 @@ public class Topic extends AmmoType {
         if (this == obj) return true;
         if (!(obj instanceof Topic)) return false;
         final Topic that = (Topic) obj;
-        if (this.type != that.type) return false;
-        if (this.type == null) return true;
+        if (AmmoType.differ(this.type, that.type))
+            return false;
         switch (this.type){
             case STR: 
-                return (this.str.equals(that.str));
+                if (AmmoType.differ(this.str, that.str))
+                    return false;
+                return true;
             case OID: 
-                return (this.oid.equals(that.oid));
+                if (AmmoType.differ(this.oid, that.oid))
+                    return false;
+                return true;
             default:
                 plogger.warn("invalid type {}", this.type);
                 return false;
         }
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (! this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        final HashBuilder hb =  AmmoType.HashBuilder.newBuilder()
+                .increment(this.type);
+        switch (this.type){
+            case STR: 
+                hb.increment(this.str);
+                break;
+            case OID: 
+                hb.increment(this.oid);
+                break;
+            default:
+                hb.increment(this.str);
+                break;
+        }
+        this.hashcode = hb.hashCode();
+        return this.hashcode;
     }
 
 }

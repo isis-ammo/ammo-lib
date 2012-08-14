@@ -22,9 +22,9 @@ import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Payload extends AmmoType {
+public class Template extends AmmoType {
 
-    static final public Payload RESET = null;
+    static final public Template RESET = null;
 
     static final private int NONE_ID = 0;
     static final private int STR_ID = 1;
@@ -74,62 +74,33 @@ public class Payload extends AmmoType {
     final private String str;
     final private byte[] bytes;
     final private ContentValues cv;
-    
-    public Type getType() {
-        return this.type;
-    }
-    public String getString() {
-        return this.str;
-    }
-    /**
-     * Includes a defensive copy.
-     * 
-     * @return
-     */
-    public byte[] getBytes() {
-        final byte[] src = this.bytes;
-        final byte[] dst = new byte[src.length];
-        System.arraycopy(src, 0, dst, 0, src.length);
-        return dst;
-    }
-    
-    /**
-     * This method exposes an internal object making
-     * 'this' object not safe.
-     * The problem could be corrected with a defensive copy
-     * but that introduces overhead.
-     * @return
-     */
-    public ContentValues getCV() {
-        return cv;
-    }
 
     // *********************************
     // Parcelable Support
     // *********************************
 
-    public static final Parcelable.Creator<Payload> CREATOR =
-            new Parcelable.Creator<Payload>() {
+    public static final Parcelable.Creator<Template> CREATOR =
+            new Parcelable.Creator<Template>() {
 
                 @Override
-                public Payload createFromParcel(Parcel source) {
-                    return new Payload(source);
+                public Template createFromParcel(Parcel source) {
+                    return new Template(source);
                 }
 
                 @Override
-                public Payload[] newArray(int size) {
-                    return new Payload[size];
+                public Template[] newArray(int size) {
+                    return new Template[size];
                 }
             };
 
     public static final String DEFAULT = "";
 
-    public static final Payload NONE = new Payload();
+    public static final Template NONE = new Template();
 
-    public static Payload readFromParcel(Parcel source) {
+    public static Template readFromParcel(Parcel source) {
         if (AmmoType.isNull(source))
             return null;
-        return new Payload(source);
+        return new Template(source);
     }
 
     @Override
@@ -154,7 +125,7 @@ public class Payload extends AmmoType {
         }
     }
 
-    public Payload(Parcel in) {
+    public Template(Parcel in) {
         this.type = Type.getInstance(in.readInt());
         if (this.type == null) {
             this.str = null;
@@ -217,28 +188,28 @@ public class Payload extends AmmoType {
     // IAmmoRequest Support
     // *********************************
 
-    public Payload() {
+    public Template() {
         this.type = Type.NONE;
         this.str = null;
         this.bytes = null;
         this.cv = null;
     }
 
-    public Payload(String val) {
+    public Template(String val) {
         this.type = Type.STR;
         this.str = val;
         this.bytes = null;
         this.cv = null;
     }
 
-    public Payload(byte[] val) {
+    public Template(byte[] val) {
         this.type = Type.BYTE;
         this.str = null;
         this.bytes = val;
         this.cv = null;
     }
 
-    public Payload(ContentValues val) {
+    public Template(ContentValues val) {
         this.type = Type.CV;
         this.str = null;
         this.bytes = null;
@@ -246,6 +217,7 @@ public class Payload extends AmmoType {
     }
 
     public byte[] asBytes() {
+
         switch (this.type) {
             case BYTE:
                 return this.bytes;
@@ -260,14 +232,14 @@ public class Payload extends AmmoType {
         return null;
     }
 
-
     private byte[] encodeJson() {
         // encoding in json for now ...
         Set<java.util.Map.Entry<String, Object>> data = this.cv.valueSet();
         Iterator<java.util.Map.Entry<String, Object>> iter = data.iterator();
         final JSONObject json = new JSONObject();
 
-        while (iter.hasNext()) {
+        while (iter.hasNext())
+        {
             Map.Entry<String, Object> entry =
                     (Map.Entry<String, Object>) iter.next();
             try {
@@ -282,19 +254,6 @@ public class Payload extends AmmoType {
         }
 
         return json.toString().getBytes();
-    }
-
-    public String asString() {
-        switch (this.type) {
-            case BYTE:
-                return new String(this.bytes);
-            case STR:
-                return this.str;
-            case NONE:
-            default:
-                plogger.error("invalid type {}", this.type);
-        }
-        return null;
     }
 
     /**
@@ -329,6 +288,10 @@ public class Payload extends AmmoType {
         return Type.NONE;
     }
 
+    public ContentValues getCV() {
+        return cv;
+    }
+
     /**
      * check that the two objects are logically equal.
      */
@@ -336,9 +299,9 @@ public class Payload extends AmmoType {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!(obj instanceof Payload))
+        if (!(obj instanceof Template))
             return false;
-        final Payload that = (Payload) obj;
+        final Template that = (Template) obj;
         if (AmmoType.differ(this.type, that.type))
             return false;
         switch (this.type) {
@@ -364,7 +327,7 @@ public class Payload extends AmmoType {
 
     @Override
     public synchronized int hashCode() {
-        if (! this.dirtyHashcode.getAndSet(false))
+        if (!this.dirtyHashcode.getAndSet(false))
             return this.hashcode;
         this.hashcode = AmmoType.HashBuilder.newBuilder()
                 .increment(this.type)
@@ -373,6 +336,19 @@ public class Payload extends AmmoType {
                 .increment(this.cv)
                 .hashCode();
         return this.hashcode;
+    }
+
+    public String asString() {
+        switch (this.type) {
+            case BYTE:
+                return new String(this.bytes);
+            case STR:
+                return this.str;
+            case NONE:
+            default:
+                plogger.error("invalid type {}", this.type);
+        }
+        return null;
     }
 
 }

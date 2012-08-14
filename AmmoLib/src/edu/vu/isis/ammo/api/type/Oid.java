@@ -8,6 +8,7 @@ perform, display, or disclose computer software or computer software
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
  */
+
 package edu.vu.isis.ammo.api.type;
 
 import java.util.ArrayList;
@@ -16,10 +17,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Oid extends AmmoType implements List<Integer> {
+    static final Logger logger = LoggerFactory.getLogger("type.oid");
 
     private final List<Integer> backing;
 
@@ -29,21 +34,23 @@ public class Oid extends AmmoType implements List<Integer> {
     // Parcelable Support
     // *********************************
 
-    public static final Parcelable.Creator<Oid> CREATOR = 
+    public static final Parcelable.Creator<Oid> CREATOR =
             new Parcelable.Creator<Oid>() {
 
-        @Override
-        public Oid createFromParcel(Parcel source) {
-            return new Oid(source);
-        }
+                @Override
+                public Oid createFromParcel(Parcel source) {
+                    return new Oid(source);
+                }
 
-        @Override
-        public Oid[] newArray(int size) {
-            return new Oid[size];
-        }
-    };
+                @Override
+                public Oid[] newArray(int size) {
+                    return new Oid[size];
+                }
+            };
+
     public Oid readFromParcel(Parcel source) {
-        if (AmmoType.isNull(source)) return null;
+        if (AmmoType.isNull(source))
+            return null;
         return new Oid(source);
     }
 
@@ -51,15 +58,17 @@ public class Oid extends AmmoType implements List<Integer> {
     public void writeToParcel(Parcel dest, int flags) {
         plogger.trace("marshall oid {}", this);
         final int[] array = new int[this.backing.size()];
-        int ix=0;
-        for (Integer item : this.backing) array[ix++] = item.intValue();
+        int ix = 0;
+        for (Integer item : this.backing)
+            array[ix++] = item.intValue();
         dest.writeIntArray(array);
     }
 
     private Oid(Parcel in) {
         final int[] array = in.createIntArray();
         this.backing = new ArrayList<Integer>(array.length);
-        for (int item : array) this.backing.add(item);
+        for (int item : array)
+            this.backing.add(item);
         plogger.trace("unmarshall oid {}", this);
     }
 
@@ -69,20 +78,6 @@ public class Oid extends AmmoType implements List<Integer> {
     @Override
     public String toString() {
         return this.backing.toString();
-    }
-    
-    /**
-     * check that the two objects are logically equal.
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (this.backing == null) return false;
-        if (!(obj instanceof Oid)) return false;
-        final Oid that = (Oid) obj;
-        if (this.backing == that.backing) return true;
-        if (this.backing == null) return false;
-        return (this.backing.equals(that.backing));
     }
 
     // *********************************
@@ -208,5 +203,35 @@ public class Oid extends AmmoType implements List<Integer> {
         return this.backing.toArray(array);
     }
 
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Oid))
+            return false;
+        final Oid that = (Oid) obj; 
+        if (AmmoType.differ(this.backing, that.backing))
+            return false;
+        return true;
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (! this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.backing)
+                .hashCode();
+        return this.hashcode;
+    }
+
+    @Override
+    public String asString() {
+        logger.error("asString() not implemented");
+        return null;
+    }
 
 }

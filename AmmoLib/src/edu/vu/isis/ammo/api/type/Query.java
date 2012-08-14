@@ -7,8 +7,12 @@ The US government has the right to use, modify, reproduce, release,
 perform, display, or disclose computer software or computer software 
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
-*/
+ */
+
 package edu.vu.isis.ammo.api.type;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -18,82 +22,119 @@ import android.os.Parcelable;
  */
 
 public class Query extends AmmoType {
-	
-	static final public Query RESET = null;
+    static final Logger logger = LoggerFactory.getLogger("type.query");
 
-	final private String select;
-	final private String[] args;
+    static final public Query RESET = null;
 
-	// *********************************
-	// Parcelable Support
-	// *********************************
+    final private String select;
+    final private String[] args;
 
-	public static final Parcelable.Creator<Query> CREATOR = 
-			new Parcelable.Creator<Query>() {
+    // *********************************
+    // Parcelable Support
+    // *********************************
 
-		@Override
-		public Query createFromParcel(Parcel source) {
-			return new Query(source);
-		}
+    public static final Parcelable.Creator<Query> CREATOR =
+            new Parcelable.Creator<Query>() {
 
-		@Override
-		public Query[] newArray(int size) {
-			return new Query[size];
-		}
-	};
-	public static Query readFromParcel(Parcel source) {
-		if (AmmoType.isNull(source)) return null;
-		return new Query(source);
-	}
+                @Override
+                public Query createFromParcel(Parcel source) {
+                    return new Query(source);
+                }
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		plogger.trace("marshall query {}", this);
-		dest.writeString(this.select);
-		dest.writeStringArray(this.args);
-	}
+                @Override
+                public Query[] newArray(int size) {
+                    return new Query[size];
+                }
+            };
 
-	private Query(Parcel in) {
-		this.select = in.readString();
-		this.args = in.createStringArray();
-		plogger.trace("unmarshall query {}", this);
-	}
-	// *********************************
-	// Standard Methods
-	// *********************************
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(this.select);
-		if (this.args != null) 
-			sb.append(" args ").append(this.args);
-		return sb.toString();
-	}
+    public static Query readFromParcel(Parcel source) {
+        if (AmmoType.isNull(source))
+            return null;
+        return new Query(source);
+    }
 
-	// *********************************
-	// IAmmoReques Support
-	// *********************************
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        plogger.trace("marshall query {}", this);
+        dest.writeString(this.select);
+        dest.writeStringArray(this.args);
+    }
 
-	public Query(String select, String[] args) {
-		this.select = select;
-		this.args = args;
-	}
+    private Query(Parcel in) {
+        this.select = in.readString();
+        this.args = in.createStringArray();
+        plogger.trace("unmarshall query {}", this);
+    }
 
-	public Query(String select) {
-		this.select = select;
-		this.args = null;
-	}
+    // *********************************
+    // Standard Methods
+    // *********************************
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.select);
+        if (this.args != null)
+            sb.append(" args ").append(this.args);
+        return sb.toString();
+    }
 
-	public String select() {
-		return this.select;
-	}
+    // *********************************
+    // IAmmoReques Support
+    // *********************************
 
-	public String[] args() {
-		return this.args();
-	}
+    public Query(String select, String[] args) {
+        this.select = select;
+        this.args = args;
+    }
 
-	public Query args(String[] args) {
-		return new Query(this.select, args);
-	}
+    public Query(String select) {
+        this.select = select;
+        this.args = null;
+    }
+
+    public String select() {
+        return this.select;
+    }
+
+    public String[] args() {
+        return this.args();
+    }
+
+    public Query args(String[] args) {
+        return new Query(this.select, args);
+    }
+
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Query))
+            return false;
+        final Query that = (Query) obj;
+        if (AmmoType.differ(this.select, that.select))
+            return false;
+        if (AmmoType.differ(this.args, that.args))
+            return false;
+        return true;
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (!this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.select)
+                .increment(this.args)
+                .hashCode();
+        return this.hashcode;
+    }
+
+    @Override
+    public String asString() {
+        logger.error("asString() not implemented");
+        return null;
+    }
 }
-

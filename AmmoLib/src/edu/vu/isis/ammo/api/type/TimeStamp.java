@@ -7,89 +7,131 @@ The US government has the right to use, modify, reproduce, release,
 perform, display, or disclose computer software or computer software 
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
-*/
+ */
+
 package edu.vu.isis.ammo.api.type;
 
 import java.util.Calendar;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class TimeStamp extends AmmoType {
+    static final Logger logger = LoggerFactory.getLogger("type.time.stamp");
 
-	final private long millis;
-	final private TimeInterval interval;
+    final private long millis;
+    final private TimeInterval interval;
 
-	// *********************************
-	// Parcelable Support
-	// *********************************
+    // *********************************
+    // Parcelable Support
+    // *********************************
 
-	public static final Parcelable.Creator<TimeStamp> CREATOR = 
-			new Parcelable.Creator<TimeStamp>() {
+    public static final Parcelable.Creator<TimeStamp> CREATOR =
+            new Parcelable.Creator<TimeStamp>() {
 
-		@Override
-		public TimeStamp createFromParcel(Parcel source) {
-			return new TimeStamp(source);
-		}
+                @Override
+                public TimeStamp createFromParcel(Parcel source) {
+                    return new TimeStamp(source);
+                }
 
-		@Override
-		public TimeStamp[] newArray(int size) {
-			return new TimeStamp[size];
-		}
-	};
-	
-	public static TimeStamp readFromParcel(Parcel source) {
-		if (AmmoType.isNull(source)) return null;
-		return new TimeStamp(source);
-	}
+                @Override
+                public TimeStamp[] newArray(int size) {
+                    return new TimeStamp[size];
+                }
+            };
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		plogger.trace("marshall time stamp {}", this);
-		dest.writeLong(this.millis);
-		TimeInterval.writeToParcel(this.interval, dest, flags);
-	}
+    public static TimeStamp readFromParcel(Parcel source) {
+        if (AmmoType.isNull(source))
+            return null;
+        return new TimeStamp(source);
+    }
 
-	private TimeStamp(Parcel in) {
-		this.millis = in.readLong();
-		this.interval = TimeInterval.readFromParcel(in);
-		plogger.trace("unmarshall time stamp {}", this);
-	}
-	
-	public long cv() {
-		return this.millis + this.interval.cv();
-	}
-	// *********************************
-	// Standard Methods
-	// *********************************
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(this.millis).append(" + ").append(this.interval);
-		return sb.toString();
-	}
-	// *********************************
-	// IAmmoReques Support
-	// *********************************
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        plogger.trace("marshall time stamp {}", this);
+        dest.writeLong(this.millis);
+        TimeInterval.writeToParcel(this.interval, dest, flags);
+    }
 
-	public TimeStamp() {
-		this.millis = System.currentTimeMillis();
-		this.interval = new TimeInterval(0);
-	}
+    private TimeStamp(Parcel in) {
+        this.millis = in.readLong();
+        this.interval = TimeInterval.readFromParcel(in);
+        plogger.trace("unmarshall time stamp {}", this);
+    }
 
-	public TimeStamp(String val) {
-		this.millis = System.currentTimeMillis();
-		this.interval = new TimeInterval(val);
-	}
+    public long cv() {
+        return this.millis + this.interval.cv();
+    }
 
-	public TimeStamp(Calendar cal) {
-		this.millis = (cal == null) ? System.currentTimeMillis() : cal.getTimeInMillis();
-		this.interval = new TimeInterval(0);
-	}
+    // *********************************
+    // Standard Methods
+    // *********************************
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(this.millis).append(" + ").append(this.interval);
+        return sb.toString();
+    }
 
-	public TimeStamp(Calendar cal, int interval) {
-		this.millis = (cal == null) ? System.currentTimeMillis() : cal.getTimeInMillis();
-		this.interval = new TimeInterval(interval);
-	}
+    // *********************************
+    // IAmmoReques Support
+    // *********************************
+
+    public TimeStamp() {
+        this.millis = System.currentTimeMillis();
+        this.interval = new TimeInterval(0);
+    }
+
+    public TimeStamp(String val) {
+        this.millis = System.currentTimeMillis();
+        this.interval = new TimeInterval(val);
+    }
+
+    public TimeStamp(Calendar cal) {
+        this.millis = (cal == null) ? System.currentTimeMillis() : cal.getTimeInMillis();
+        this.interval = new TimeInterval(0);
+    }
+
+    public TimeStamp(Calendar cal, int interval) {
+        this.millis = (cal == null) ? System.currentTimeMillis() : cal.getTimeInMillis();
+        this.interval = new TimeInterval(interval);
+    }
+
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof TimeStamp))
+            return false;
+        final TimeStamp that = (TimeStamp) obj;
+        if (this.millis != that.millis)
+            return false;
+        if (AmmoType.differ(this.interval, that.interval))
+            return false;
+        return true;
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (!this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.millis)
+                .increment(this.interval)
+                .hashCode();
+        return this.hashcode;
+    }
+
+    @Override
+    public String asString() {
+        logger.error("asString() not implemented");
+        return null;
+    }
 
 }
