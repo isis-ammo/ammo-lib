@@ -184,7 +184,6 @@ public class Payload extends AmmoType {
                     this.cv = null;
             }
         plogger.trace("unmarshall payload");
-        this.dirtyHashcode = true;
     }
 
     // *********************************
@@ -223,7 +222,6 @@ public class Payload extends AmmoType {
         this.str = null;
         this.bytes = null;
         this.cv = null;
-        this.dirtyHashcode = true;
     }
 
     public Payload(String val) {
@@ -231,7 +229,6 @@ public class Payload extends AmmoType {
         this.str = val;
         this.bytes = null;
         this.cv = null;
-        this.dirtyHashcode = true;
     }
 
     public Payload(byte[] val) {
@@ -239,7 +236,6 @@ public class Payload extends AmmoType {
         this.str = null;
         this.bytes = val;
         this.cv = null;
-        this.dirtyHashcode = true;
     }
 
     public Payload(ContentValues val) {
@@ -247,7 +243,6 @@ public class Payload extends AmmoType {
         this.str = null;
         this.bytes = null;
         this.cv = val;
-        this.dirtyHashcode = true;
     }
 
     public byte[] asBytes() {
@@ -344,17 +339,21 @@ public class Payload extends AmmoType {
         if (!(obj instanceof Payload))
             return false;
         final Payload that = (Payload) obj;
-        if (this.type != that.type)
+        if (AmmoType.differ(this.type, that.type))
             return false;
-        if (this.type == null)
-            return true;
         switch (this.type) {
             case STR:
-                return (this.str.equals(that.str));
+                if (AmmoType.differ(this.str, that.str))
+                    return false;
+                return true;
             case BYTE:
-                return (this.bytes.equals(that.bytes));
+                if (AmmoType.differ(this.bytes, that.bytes))
+                    return false;
+                return true;
             case CV:
-                return (this.cv.equals(that.cv));
+                if (AmmoType.differ(this.cv, that.cv))
+                    return false;
+                return true;
             case NONE:
                 return true;
             default:
@@ -363,20 +362,16 @@ public class Payload extends AmmoType {
         }
     }
 
-    private int hashcode;
-    private boolean dirtyHashcode;
-
     @Override
     public synchronized int hashCode() {
-        if (!this.dirtyHashcode)
+        if (! this.dirtyHashcode.getAndSet(false))
             return this.hashcode;
-        this.dirtyHashcode = false;
         this.hashcode = AmmoType.HashBuilder.newBuilder()
                 .increment(this.type)
                 .increment(this.str)
                 .increment(this.bytes)
                 .increment(this.cv)
-                .toCode();
+                .hashCode();
         return this.hashcode;
     }
 

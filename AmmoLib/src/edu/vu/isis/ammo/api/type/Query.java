@@ -104,6 +104,34 @@ public class Query extends AmmoType {
         return new Query(this.select, args);
     }
 
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Query))
+            return false;
+        final Query that = (Query) obj;
+        if (AmmoType.differ(this.select, that.select))
+            return false;
+        if (AmmoType.differ(this.args, that.args))
+            return false;
+        return true;
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (!this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.select)
+                .increment(this.args)
+                .hashCode();
+        return this.hashcode;
+    }
+
     @Override
     public String asString() {
         logger.error("asString() not implemented");

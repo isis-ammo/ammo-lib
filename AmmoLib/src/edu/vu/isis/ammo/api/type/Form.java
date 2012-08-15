@@ -136,6 +136,7 @@ public class Form extends AmmoType implements Map<String, String> {
 
     @Override
     public String remove(Object key) {
+        this.dirtyHashcode.set(true);
         return this.backing.remove(key);
     }
 
@@ -147,6 +148,31 @@ public class Form extends AmmoType implements Map<String, String> {
     @Override
     public Collection<String> values() {
         return this.backing.values();
+    }
+
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Form))
+            return false;
+        final Form that = (Form) obj;
+        if (AmmoType.differ(this.backing, that.backing))
+            return false;
+        return true;
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (!this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.backing)
+                .hashCode();
+        return this.hashcode;
     }
 
     @Override

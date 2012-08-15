@@ -106,10 +106,14 @@ public class ChannelFilter extends AmmoType {
 
     @Override
     public boolean equals(Object obj) {
-        if (this.name == null) {
-            return (obj == null) ? true : false;
-        }
-        return this.name.equals(obj);
+        if (this == obj)
+            return true;
+        if (!(obj instanceof ChannelFilter))
+            return false;
+        final ChannelFilter that = (ChannelFilter) obj;
+        if (AmmoType.differ(this.name, that.name))
+            return false;
+        return true;
     }
 
     @Override

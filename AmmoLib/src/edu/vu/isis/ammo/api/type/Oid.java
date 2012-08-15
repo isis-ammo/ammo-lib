@@ -80,25 +80,6 @@ public class Oid extends AmmoType implements List<Integer> {
         return this.backing.toString();
     }
 
-    /**
-     * check that the two objects are logically equal.
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (this.backing == null)
-            return false;
-        if (!(obj instanceof Oid))
-            return false;
-        final Oid that = (Oid) obj;
-        if (this.backing == that.backing)
-            return true;
-        if (this.backing == null)
-            return false;
-        return (this.backing.equals(that.backing));
-    }
-
     // *********************************
     // IAmmoRequest Support
     // *********************************
@@ -220,6 +201,31 @@ public class Oid extends AmmoType implements List<Integer> {
     @Override
     public <T> T[] toArray(T[] array) {
         return this.backing.toArray(array);
+    }
+
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Oid))
+            return false;
+        final Oid that = (Oid) obj; 
+        if (AmmoType.differ(this.backing, that.backing))
+            return false;
+        return true;
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (! this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        this.hashcode = AmmoType.HashBuilder.newBuilder()
+                .increment(this.backing)
+                .hashCode();
+        return this.hashcode;
     }
 
     @Override

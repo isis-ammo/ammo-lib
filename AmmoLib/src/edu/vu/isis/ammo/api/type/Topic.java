@@ -182,7 +182,17 @@ public class Topic extends AmmoType {
      */
     @Override
     public String asString() { 
-        return this.toString();
+        if (this.type == null) {
+            return "<no type>";
+        }
+        switch (this.type) {
+            case OID:
+                return this.oid.toString();
+            case STR:
+                return this.str;
+            default:
+                return "<unknown type>"+ this.type;
+        }
     }
     
     /**
@@ -193,27 +203,27 @@ public class Topic extends AmmoType {
         if (this == obj) return true;
         if (!(obj instanceof Topic)) return false;
         final Topic that = (Topic) obj;
-        if (this.type != that.type) return false;
-        if (this.type == null) return true;
+        if (AmmoType.differ(this.type, that.type))
+            return false;
         switch (this.type){
             case STR: 
-                return (this.str.equals(that.str));
+                if (AmmoType.differ(this.str, that.str))
+                    return false;
+                return true;
             case OID: 
-                return (this.oid.equals(that.oid));
+                if (AmmoType.differ(this.oid, that.oid))
+                    return false;
+                return true;
             default:
                 plogger.warn("invalid type {}", this.type);
                 return false;
         }
     }
 
-    private int hashcode;
-    private boolean dirtyHashcode;
-
     @Override
     public synchronized int hashCode() {
-        if (!this.dirtyHashcode)
+        if (! this.dirtyHashcode.getAndSet(false))
             return this.hashcode;
-        this.dirtyHashcode = false;
         final HashBuilder hb =  AmmoType.HashBuilder.newBuilder()
                 .increment(this.type);
         switch (this.type){
@@ -221,13 +231,13 @@ public class Topic extends AmmoType {
                 hb.increment(this.str);
                 break;
             case OID: 
-                hb.increment(this.str);
+                hb.increment(this.oid);
                 break;
             default:
                 hb.increment(this.str);
                 break;
         }
-        this.hashcode = hb.toCode();
+        this.hashcode = hb.hashCode();
         return this.hashcode;
     }
 

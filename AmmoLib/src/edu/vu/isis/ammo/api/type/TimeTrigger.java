@@ -63,7 +63,7 @@ public class TimeTrigger extends AmmoType {
         dest.writeInt(this.type.ordinal());
         switch (this.type) {
             case ABS:
-                TimeStamp.writeToParcel(this.abs, dest, flags);
+                TimeTrigger.writeToParcel(this.abs, dest, flags);
                 return;
             case REL:
                 TimeInterval.writeToParcel(this.rel, dest, flags);
@@ -158,6 +158,56 @@ public class TimeTrigger extends AmmoType {
         this.type = Type.REL;
         this.abs = null;
         this.rel = val;
+    }
+
+    /**
+     * check that the two objects are logically equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof TimeTrigger))
+            return false;
+        final TimeTrigger that = (TimeTrigger) obj;
+        if (AmmoType.differ(this.type, that.type))
+            return false;
+        switch (this.type) {
+            case ABS:
+                if (AmmoType.differ(this.abs, that.abs))
+                    return false;
+                return true;
+            case REL:
+                if (AmmoType.differ(this.rel, that.rel))
+                    return false;
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        if (! this.dirtyHashcode.getAndSet(false))
+            return this.hashcode;
+        final HashBuilder hb = AmmoType.HashBuilder.newBuilder()
+                .increment(this.type);
+
+        if (this.type == null) {
+            this.hashcode = hb.hashCode();
+        }
+        switch (this.type) {
+            case ABS:
+                 hb.increment(this.abs);
+                 break;
+            case REL:
+                hb.increment(this.rel);
+                break;
+            default:
+                break;
+        }
+        this.hashcode = hb.hashCode();
+        return this.hashcode;
     }
 
     @Override
