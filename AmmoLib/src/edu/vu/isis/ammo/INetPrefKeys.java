@@ -103,7 +103,7 @@ public interface INetPrefKeys {
     // VALUES
     public static final boolean DEFAULT_RELIABLE_MULTICAST_DISABLED = Keys.NetworkingKeys.DEFAULT_RELIABLE_MULTICAST_DISABLED;
     public static final String DEFAULT_RELIABLE_MULTICAST_HOST = "228.8.8.8";
-    public static final int DEFAULT_RELIABLE_MULTICAST_PORT = 45888;
+    public static final int DEFAULT_RELIABLE_MULTICAST_PORT = 45588;
     public static final int DEFAULT_RELIABLE_MULTICAST_NET_CONN = 20;
     public static final int DEFAULT_RELIABLE_MULTICAST_IDLE_TIME = 3;
     public static final int DEFAULT_RELIABLE_MULTICAST_TTL = 1;
