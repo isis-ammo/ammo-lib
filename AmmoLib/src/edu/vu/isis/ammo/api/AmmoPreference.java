@@ -83,6 +83,9 @@ public class AmmoPreference {
 
         final Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection,
                 selection, selectionArgs, sortOrder);
+        if(cur == null) {
+            return defaultValue;
+        }
         cur.moveToFirst();
         if (cur.getCount() < 1) {
             cur.close();
@@ -110,6 +113,9 @@ public class AmmoPreference {
         final String sortOrder = null;
         final Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection,
                 selection, selectionArgs, sortOrder);
+        if(cur == null) {
+            return defaultValue;
+        }
         cur.moveToFirst();
         if (cur.getCount() < 1) {
             cur.close();
@@ -134,6 +140,9 @@ public class AmmoPreference {
         };
         Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection,
                 selection, selectionArgs, null);
+        if(cur == null) {
+            return defaultValue;
+        }
         cur.moveToFirst();
         if (cur.getCount() < 1) {
             cur.close();
@@ -158,6 +167,9 @@ public class AmmoPreference {
         };
         Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection,
                 selection, selectionArgs, null);
+        if(cur == null) {
+            return defaultValue;
+        }
         cur.moveToFirst();
         if (cur.getCount() < 1) {
             cur.close();
@@ -182,6 +194,9 @@ public class AmmoPreference {
         };
         Cursor cur = mContentResolver.query(PreferenceSchema.CONTENT_URI, projection,
                 selection, selectionArgs, null);
+        if(cur == null) {
+            return defaultValue;
+        }
         cur.moveToFirst();
         if (cur.getCount() < 1) {
             cur.close();
