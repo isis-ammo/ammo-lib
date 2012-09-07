@@ -12,6 +12,8 @@ purpose whatsoever, and to have or authorize others to do so.
 package edu.vu.isis.ammo.api;
 
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
@@ -603,13 +605,13 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
     public static class Builder implements IAmmoRequest.Builder {
 
         private enum ConnectionMode {
-            /** Asynchronous request to obtain a connection over 
-             * which synchronous requests are made via the bind */
-            BIND, 
-            /** Connect via the peek, not so useful */
-            PEEK, 
+            /**
+             * Asynchronous request to obtain a connection over which
+             * synchronous requests are made.
+             */
+            BOUND,
             /** Asynchronous request without a response */
-            COMMAND, 
+            UNBOUND,
             /** No connection */
             NONE;
         }
@@ -617,27 +619,40 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         private final AtomicReference<ConnectionMode> mode;
         private final AtomicReference<IDistributorService> distributor;
         private final Context context;
+        private final BlockingQueue<AmmoRequest> pendingRequestQueue;
 
         final private ServiceConnection conn = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                logger.trace("service connected");
-                Builder.this.distributor.set(IDistributorService.Stub.asInterface(service));
-                Builder.this.mode.set(ConnectionMode.BIND);
+                logger.trace("service connected [{}] outstanding requests", Builder.this.pendingRequestQueue.size());
+                final IDistributorService distributor = IDistributorService.Stub.asInterface(service);
+               
+                try {
+                    for (final AmmoRequest request : Builder.this.pendingRequestQueue) {
+                        final String ident = distributor.makeRequest(request);
+                        logger.info("service bound : {} {}", request, ident);
+                    }
+                } catch (RemoteException ex) {
+                    logger.error("no connection on recently bound connection", ex);
+                    return;
+                }
+                Builder.this.distributor.set(distributor);
+                Builder.this.mode.set(ConnectionMode.BOUND);
             }
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
                 logger.trace("service {} disconnected", name.flattenToShortString());
-                Builder.this.mode.set(ConnectionMode.COMMAND);
+                Builder.this.mode.set(ConnectionMode.UNBOUND);
                 Builder.this.distributor.set(null);
             }
         };
 
         private Builder(Context context) {
-            this.mode = new AtomicReference<ConnectionMode>(ConnectionMode.COMMAND);
+            this.mode = new AtomicReference<ConnectionMode>(ConnectionMode.UNBOUND);
             this.distributor = new AtomicReference<IDistributorService>(null);
             this.context = context;
+            this.pendingRequestQueue = new LinkedBlockingQueue<AmmoRequest>();
             try {
                 final boolean isBound = this.context.bindService(DISTRIBUTOR_SERVICE, this.conn,
                         Context.BIND_AUTO_CREATE);
@@ -647,9 +662,17 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
             }
         }
 
+        /**
+         * This constructor is for direct connections to the service (not IPC).
+         * Primarily for testing.
+         * 
+         * @param context
+         * @param serviceBinder
+         */
         private Builder(Context context, IBinder serviceBinder) {
             this.context = context;
-            this.mode = new AtomicReference<ConnectionMode>(ConnectionMode.BIND);
+            this.pendingRequestQueue = null;
+            this.mode = new AtomicReference<ConnectionMode>(ConnectionMode.BOUND);
             this.distributor = new AtomicReference<IDistributorService>(
                     IDistributorService.Stub.asInterface(serviceBinder));
 
@@ -701,21 +724,25 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         private IAmmoRequest makeRequest(final AmmoRequest request) throws RemoteException {
             logger.info("make service request {} {}", this.mode, request);
             switch (this.mode.get()) {
-                case BIND:
-                case PEEK:
+                case BOUND:
                     final String ident = this.distributor.get().makeRequest(request);
-                    logger.info("service bind : {} {}", request, ident);
+                    logger.info("service bound : {} {}", request, ident);
                     break;
-                case COMMAND:
-                default:
+                case UNBOUND:
                     final Intent parcelIntent = MAKE_DISTRIBUTOR_REQUEST.cloneFilter();
-                    parcelIntent.putExtra("request", request);
+                    try {
+                        this.pendingRequestQueue.put(request);
+                    } catch (InterruptedException ex) {
+                        logger.debug("make request interrupted ", ex);
+                    }
                     final ComponentName componentName = this.context.startService(parcelIntent);
                     if (componentName != null) {
-                        logger.debug("service command : {}", componentName.getClassName());
+                        logger.debug("service binding : {}", componentName.getClassName());
                     } else {
-                        logger.error("service command : {}", parcelIntent);
+                        logger.error("service binding : {}", parcelIntent);
                     }
+                    break;
+                case NONE:
                     break;
             }
             return request;

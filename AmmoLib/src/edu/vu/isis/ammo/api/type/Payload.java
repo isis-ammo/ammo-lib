@@ -11,9 +11,7 @@ purpose whatsoever, and to have or authorize others to do so.
 
 package edu.vu.isis.ammo.api.type;
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -74,13 +72,15 @@ public class Payload extends AmmoType {
     final private String str;
     final private byte[] bytes;
     final private ContentValues cv;
-    
+
     public Type getType() {
         return this.type;
     }
+
     public String getString() {
         return this.str;
     }
+
     /**
      * Includes a defensive copy.
      * 
@@ -92,12 +92,12 @@ public class Payload extends AmmoType {
         System.arraycopy(src, 0, dst, 0, src.length);
         return dst;
     }
-    
+
     /**
-     * This method exposes an internal object making
-     * 'this' object not safe.
-     * The problem could be corrected with a defensive copy
-     * but that introduces overhead.
+     * This method exposes an internal object making 'this' object not safe. The
+     * problem could be corrected with a defensive copy but that introduces
+     * overhead.
+     * 
      * @return
      */
     public ContentValues getCV() {
@@ -149,7 +149,7 @@ public class Payload extends AmmoType {
                 return;
             case NONE:
             default:
-                plogger.error("invalid type {}", this.type);
+                plogger.error("invalid payload type {}", this.type);
                 break;
         }
     }
@@ -208,8 +208,9 @@ public class Payload extends AmmoType {
                     return "";
                 return this.str.toString();
             case NONE:
+                return "";
             default:
-                return "<unknown type>" + this.type;
+                return "<unknown payload type>" + this.type;
         }
     }
 
@@ -252,36 +253,36 @@ public class Payload extends AmmoType {
             case STR:
                 return this.str.getBytes();
             case CV:
-                return this.encodeJson();
+                return this.encodeContentValueAsBytes();
             case NONE:
             default:
-                plogger.error("invalid type {}", this.type);
+                plogger.error("invalid bytes payload type {}", this);
         }
         return null;
     }
 
-
-    private byte[] encodeJson() {
-        // encoding in json for now ...
-        Set<java.util.Map.Entry<String, Object>> data = this.cv.valueSet();
-        Iterator<java.util.Map.Entry<String, Object>> iter = data.iterator();
+    private String encodeContentValueAsJsonString() {
         final JSONObject json = new JSONObject();
 
-        while (iter.hasNext()) {
-            Map.Entry<String, Object> entry =
-                    (Map.Entry<String, Object>) iter.next();
+        for (Map.Entry<String, Object> entry : this.cv.valueSet()) {
             try {
-                if (entry.getValue() instanceof String)
-                    json.put(entry.getKey(), cv.getAsString(entry.getKey()));
-                else if (entry.getValue() instanceof Integer)
+                final Object value = entry.getValue();
+                if (value instanceof String) {
+                    json.put(entry.getKey(), (String) value);
+                } else if (value instanceof Integer) {
                     json.put(entry.getKey(), cv.getAsInteger(entry.getKey()));
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                } else {
+                    plogger.warn("unknown object type [{}]", value.getClass());
+                }
+            } catch (JSONException ex) {
+                plogger.warn("json problem", ex);
             }
         }
 
-        return json.toString().getBytes();
+        return json.toString();
+    }
+    private byte[] encodeContentValueAsBytes() {
+       return encodeContentValueAsJsonString().getBytes();
     }
 
     public String asString() {
@@ -290,11 +291,17 @@ public class Payload extends AmmoType {
                 return new String(this.bytes);
             case STR:
                 return this.str;
+            case CV:
+                return this.encodeContentValueAsJsonString();
             case NONE:
             default:
-                plogger.error("invalid type {}", this.type);
+                plogger.error("invalid string payload type {}", this);
         }
         return null;
+    }
+
+    public String cv() {
+        return this.asString();
     }
 
     /**
@@ -364,7 +371,7 @@ public class Payload extends AmmoType {
 
     @Override
     public synchronized int hashCode() {
-        if (! this.dirtyHashcode.getAndSet(false))
+        if (!this.dirtyHashcode.getAndSet(false))
             return this.hashcode;
         this.hashcode = AmmoType.HashBuilder.newBuilder()
                 .increment(this.type)
@@ -373,6 +380,28 @@ public class Payload extends AmmoType {
                 .increment(this.cv)
                 .hashCode();
         return this.hashcode;
+    }
+
+    public boolean isSet() {
+        switch (this.type) {
+            case STR:
+                if (this.str == null) return false;
+                if (this.str.length() < 1) return false;
+                return true;
+            case BYTE:
+                if (this.bytes == null) return false;
+                if (this.bytes.length < 1) return false;
+                return true;
+            case CV:
+                if (this.cv == null) return false;
+                if (this.cv.size() < 1) return false;
+                return true;
+            case NONE:
+                return false;
+            default:
+                plogger.warn("invalid type {}", this.type);
+                return false;
+        }
     }
 
 }
