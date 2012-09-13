@@ -55,7 +55,7 @@ import edu.vu.isis.ammo.api.type.Topic;
  * see docs/dev-guide/developer-guide.pdf The request has many options. Option
  * usage:
  */
-public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcelable {
+public class AmmoRequest implements IAmmoRequest, Parcelable {
     private static final Logger logger = LoggerFactory.getLogger("api.request");
     private static final Logger plogger = LoggerFactory.getLogger("api.parcel");
     /**
@@ -606,6 +606,14 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
 
         private enum ConnectionMode {
             /**
+             * For some reason the service is not running.
+             */
+            UNAVAILABLE,
+            /**
+             * A connection has been requested but not yet granted.
+             */
+            BINDING,
+            /**
              * Asynchronous request to obtain a connection over which
              * synchronous requests are made.
              */
@@ -624,9 +632,11 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         final private ServiceConnection conn = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                logger.trace("service connected [{}] outstanding requests", Builder.this.pendingRequestQueue.size());
-                final IDistributorService distributor = IDistributorService.Stub.asInterface(service);
-               
+                logger.trace("service connected [{}] outstanding requests",
+                        Builder.this.pendingRequestQueue.size());
+                final IDistributorService distributor = IDistributorService.Stub
+                        .asInterface(service);
+
                 try {
                     for (final AmmoRequest request : Builder.this.pendingRequestQueue) {
                         final String ident = distributor.makeRequest(request);
@@ -648,6 +658,16 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
             }
         };
 
+        /**
+         * The builder acquires a connection to the service. The status of the
+         * connection is managed. If the connection is not ready but there is a
+         * reasonable expectation that it will be made then requests are placed
+         * in a queue. The queue will be drained when the connection is
+         * established. This works with the makeRequest() and
+         * onServiceConnected() methods.
+         * 
+         * @param context
+         */
         private Builder(Context context) {
             this.mode = new AtomicReference<ConnectionMode>(ConnectionMode.UNBOUND);
             this.distributor = new AtomicReference<IDistributorService>(null);
@@ -657,6 +677,8 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
                 final boolean isBound = this.context.bindService(DISTRIBUTOR_SERVICE, this.conn,
                         Context.BIND_AUTO_CREATE);
                 logger.trace("is the service bound? {}", isBound);
+                this.mode.compareAndSet(ConnectionMode.UNBOUND,
+                        (isBound ? ConnectionMode.BINDING : ConnectionMode.UNAVAILABLE));
             } catch (ReceiverCallNotAllowedException ex) {
                 logger.error("the service cannot be bound");
             }
@@ -743,6 +765,9 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
                     }
                     break;
                 case NONE:
+                case BINDING:
+                case UNAVAILABLE:
+                default:
                     break;
             }
             return request;
@@ -798,6 +823,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         @Override
         public void releaseInstance() {
             try {
+                if (this.conn == null) return;
                 this.context.unbindService(this.conn);
             } catch (IllegalArgumentException ex) {
                 logger.warn("the service is not bound or registered", ex);

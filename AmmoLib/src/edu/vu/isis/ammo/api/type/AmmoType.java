@@ -101,10 +101,9 @@ public abstract class AmmoType implements Parcelable {
      *   ...
      *   work = incrementHash(work, part_N.hashCode();
      * </code>
-     * 
      * <p>
-     * This class is based on "Effective Java" Joshua Bloch 
-     * Item 9 : Always override hashcode when you override equals.
+     * This class is based on "Effective Java" Joshua Bloch Item 9 : Always
+     * override hashcode when you override equals.
      * 
      * @param work the hash code in progress.
      * @param increment the hash code of the next element.
@@ -134,7 +133,7 @@ public abstract class AmmoType implements Parcelable {
             }
             return this;
         }
-        
+
         public HashBuilder increment(Object[] array) {
             return this.increment(Arrays.hashCode(array));
         }
@@ -144,6 +143,7 @@ public abstract class AmmoType implements Parcelable {
             this.hashcode += nextcode;
             return this;
         }
+
         public HashBuilder increment(int[] array) {
             return this.increment(Arrays.hashCode(array));
         }
@@ -151,6 +151,7 @@ public abstract class AmmoType implements Parcelable {
         public HashBuilder increment(boolean nextcode) {
             return this.increment((int) (nextcode ? 1 : 0));
         }
+
         public HashBuilder increment(boolean[] array) {
             return this.increment(Arrays.hashCode(array));
         }
@@ -158,6 +159,7 @@ public abstract class AmmoType implements Parcelable {
         public HashBuilder increment(byte nextcode) {
             return this.increment((int) nextcode);
         }
+
         public HashBuilder increment(byte[] array) {
             return this.increment(Arrays.hashCode(array));
         }
@@ -165,6 +167,7 @@ public abstract class AmmoType implements Parcelable {
         public HashBuilder increment(char nextcode) {
             return this.increment((int) nextcode);
         }
+
         public HashBuilder increment(char[] array) {
             return this.increment(Arrays.hashCode(array));
         }
@@ -172,6 +175,7 @@ public abstract class AmmoType implements Parcelable {
         public HashBuilder increment(short nextcode) {
             return this.increment((int) nextcode);
         }
+
         public HashBuilder increment(short[] array) {
             return this.increment(Arrays.hashCode(array));
         }
@@ -179,6 +183,7 @@ public abstract class AmmoType implements Parcelable {
         public HashBuilder increment(long nextcode) {
             return this.increment((int) (nextcode ^ (nextcode >>> 32)));
         }
+
         public HashBuilder increment(long[] array) {
             return this.increment(Arrays.hashCode(array));
         }
@@ -186,6 +191,7 @@ public abstract class AmmoType implements Parcelable {
         public HashBuilder increment(float nextcode) {
             return this.increment((int) (Float.floatToIntBits(nextcode)));
         }
+
         public HashBuilder increment(float[] array) {
             return this.increment(Arrays.hashCode(array));
         }
@@ -193,6 +199,7 @@ public abstract class AmmoType implements Parcelable {
         public HashBuilder increment(double nextcode) {
             return this.increment((long) (Double.doubleToLongBits(nextcode)));
         }
+
         public HashBuilder increment(double[] array) {
             return this.increment(Arrays.hashCode(array));
         }
@@ -212,4 +219,21 @@ public abstract class AmmoType implements Parcelable {
         }
         return false;
     }
+
+    /**
+     * Write the object to a stream of bytes using the Parcel encoding.
+     * Make sure to write the not null indicator (a 1) before writing the parcel.
+     * @return
+     */
+    public byte[] pickle() {
+        final Parcel np = Parcel.obtain();
+        np.setDataPosition(0);
+        np.writeInt(1);
+        this.writeToParcel(np, Parcelable.CONTENTS_FILE_DESCRIPTOR);
+        np.setDataPosition(0);
+        final byte[] bytes = np.marshall();
+        plogger.info("pickle: [{}]", bytes);
+        return bytes;
+    }
+    
 }

@@ -540,6 +540,14 @@ public class Notice extends AmmoType {
                 }
             };
 
+    static public Notice fromParcelBytes(byte[] bytes) {
+        logger.trace("notice bytes=[{}]", bytes);
+        final Parcel np = Parcel.obtain();
+        np.unmarshall(bytes, 0, bytes.length);
+        np.setDataPosition(0);
+        return Notice.CREATOR.createFromParcel(np);
+    }
+
     public static Notice readFromParcel(Parcel source) {
         if (AmmoType.isNull(source)) {
             return new Notice();
@@ -572,7 +580,7 @@ public class Notice extends AmmoType {
 
                 items.put(threshold, new Item(threshold, via));
             }
-            
+
         } catch (Exception ex) {
             // most likely exception is IllegalArgumentException
             plogger.error("damaged/missing notice parcel", ex);

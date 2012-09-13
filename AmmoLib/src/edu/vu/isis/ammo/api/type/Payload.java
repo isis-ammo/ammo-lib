@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
+import android.os.BadParcelableException;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -122,6 +123,23 @@ public class Payload extends AmmoType {
                 }
             };
 
+    /**
+     * symmetric with AmmoType:asParcelBytes()
+     * 
+     * @param bytes
+     * @return
+     */
+    static public Payload unpickle(byte[] bytes) {
+        try {
+            final Parcel np = Parcel.obtain();
+            np.unmarshall(bytes, 0, bytes.length);
+            np.setDataPosition(0);
+            return Payload.readFromParcel(np);
+        } catch (BadParcelableException ex) {
+            return Payload.NONE;
+        }
+    }
+
     public static final String DEFAULT = "";
 
     public static final Payload NONE = new Payload();
@@ -155,7 +173,9 @@ public class Payload extends AmmoType {
     }
 
     public Payload(Parcel in) {
-        this.type = Type.getInstance(in.readInt());
+        final int rawType = in.readInt();
+        this.type = Type.getInstance(rawType);
+        plogger.debug("payload type raw=[{}] cooked=[{}]", this.type, rawType);
         if (this.type == null) {
             this.str = null;
             this.bytes = null;
@@ -183,7 +203,7 @@ public class Payload extends AmmoType {
                     this.bytes = null;
                     this.cv = null;
             }
-        plogger.trace("unmarshall payload");
+        plogger.trace("unmarshall payload [{}]", this);
     }
 
     // *********************************
@@ -197,18 +217,18 @@ public class Payload extends AmmoType {
         switch (this.type) {
             case CV:
                 if (this.cv == null)
-                    return "";
-                return this.cv.toString();
+                    return "cv: <null>";
+                return "cv: ["+ this.cv.toString()+"]";
             case BYTE:
                 if (this.bytes == null)
-                    return "";
-                return this.bytes.toString();
+                    return "byte: <null>";
+                return "byte: ["+this.bytes.toString()+"]";
             case STR:
                 if (this.str == null)
-                    return "";
-                return this.str.toString();
+                    return "str: <null>";
+                return "str: ["+this.str.toString()+"]";
             case NONE:
-                return "";
+                return "none";
             default:
                 return "<unknown payload type>" + this.type;
         }
@@ -281,8 +301,9 @@ public class Payload extends AmmoType {
 
         return json.toString();
     }
+
     private byte[] encodeContentValueAsBytes() {
-       return encodeContentValueAsJsonString().getBytes();
+        return encodeContentValueAsJsonString().getBytes();
     }
 
     public String asString() {
@@ -385,16 +406,22 @@ public class Payload extends AmmoType {
     public boolean isSet() {
         switch (this.type) {
             case STR:
-                if (this.str == null) return false;
-                if (this.str.length() < 1) return false;
+                if (this.str == null)
+                    return false;
+                if (this.str.length() < 1)
+                    return false;
                 return true;
             case BYTE:
-                if (this.bytes == null) return false;
-                if (this.bytes.length < 1) return false;
+                if (this.bytes == null)
+                    return false;
+                if (this.bytes.length < 1)
+                    return false;
                 return true;
             case CV:
-                if (this.cv == null) return false;
-                if (this.cv.size() < 1) return false;
+                if (this.cv == null)
+                    return false;
+                if (this.cv.size() < 1)
+                    return false;
                 return true;
             case NONE:
                 return false;
