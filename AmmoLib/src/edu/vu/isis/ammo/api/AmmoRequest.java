@@ -574,6 +574,16 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
         private final AtomicReference<ConnectionMode> mode;
         private final AtomicReference<IDistributorService> distributor;
         private final Context context;
+        
+        /**
+         * For internal use, when making AMMO requests inside AMMO core itself
+         */
+        protected Builder() {
+            mode = null;
+            distributor = null;
+            context = null;
+            
+        }
 
         private Builder(Context context, BroadcastReceiver receiver) {
 
@@ -664,7 +674,7 @@ public class AmmoRequest extends AmmoRequestBase implements IAmmoRequest, Parcel
          * In that interim case the COMMAND mode should be used.
          * 
          */
-        private IAmmoRequest makeRequest(final AmmoRequest request) throws RemoteException {
+        protected IAmmoRequest makeRequest(final AmmoRequest request) throws RemoteException {
             switch (this.mode.get()) {
                 case BIND:
                 case PEEK:
