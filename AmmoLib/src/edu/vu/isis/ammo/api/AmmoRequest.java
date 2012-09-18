@@ -994,6 +994,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
          * For internal use, when making AMMO requests inside AMMO core itself
          */
         protected Builder() {
+            pendingRequestQueue = null;
             mode = null;
             distributor = null;
             context = null;
