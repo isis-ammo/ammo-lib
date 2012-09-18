@@ -152,7 +152,12 @@ public class Order extends AmmoType {
     @Override
     public String asString() {
         logger.error("asString() not implemented");
-        return null;
+        switch(this.type) {
+            case NEWEST_FIRST: return "L";
+            case NEWEST_ONLY: return "1";
+            case OLDEST_FIRST:
+                default: return "F";
+        }
     }
 
 }

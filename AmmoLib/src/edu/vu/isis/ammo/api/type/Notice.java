@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.BadParcelableException;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -399,38 +400,44 @@ public class Notice extends AmmoType {
     }
 
     /**
+     * message acknowledgment states
+     * <p>
      * As acknowledgments of the message are generated they will contain the
-     * threshold status. \begin{table}[h] \center \begin{tabular}{rl} Name &
-     * Meaning \\ \hline SUCCESS & the place was reached without incident \\
-     * FAIL & the place was reached, but the request failed and will be canceled
-     * \\ UNKNOWN & the request is of an indeterminate disposition \\ REJECTED &
-     * the place rejected the request, another may yet accept it \\
-     * \end{tabular} \caption{message acknowledgment states} \end{table}
+     * threshold status.
      */
     public enum DeliveryState {
-        SUCCESS, FAIL, UNKNOWN, REJECTED
+        /** the place was reached without incident */
+        SUCCESS,
+        /** the place was reached, but the request failed and will be canceled */
+        FAIL,
+        /** the request is of an indeterminate disposition */
+        UNKNOWN,
+        /** the place rejected the request, another may yet accept it */
+        REJECTED
     };
 
     /**
      * As the request reaches the places mentioned, it will cause an intent to
-     * generated and sent via one of the following: \begin{description}
-     * \item[ACTIVITY] start an activity with the intent \item[BROADCAST]
-     * broadcast the intent \item[STICKY_BROADCAST] like broadcast but a
-     * register will pick up the last intent \item[SERVICE] start a service with
-     * the intent \item[SERVICE] start a service with the intent
-     * \end{description} The structure of the intent varies based on the
-     * NoticeThreshold type. One of the following delivery mechanism will be
-     * used. context.sendBroadcast(notice); context.sendStickyBroadcast(notice);
-     * context.startService(notice); context.startActivity(notice);
+     * generated and sent via one of prescribed Via.Type's. The structure of the
+     * intent varies based on the NoticeThreshold type. One of the following
+     * delivery mechanism will be used.
      */
 
     static public class Via {
 
         public enum Type {
+            /** Produce no action */
             NONE(0x00),
+            /** Send an intent to an Activity, context.startActivity(notice) */
             ACTIVITY(0x01),
+            /** Broadcast and intent, context.sendBroadcast(notice) */
             BROADCAST(0x02),
+            /**
+             * Broadcast an intent which persists ,
+             * context.sendStickyBroadcast(notice)
+             */
             STICKY_BROADCAST(0x04),
+            /** Start a service with the intent, context.startService(notice) */
             SERVICE(0x08),
             HEARTBEAT(0x10);
             // maybe RECORD indicating that the individual acknowledgments are
@@ -534,6 +541,27 @@ public class Notice extends AmmoType {
                 }
             };
 
+    /**
+     * symmetric with AmmoType:asParcelBytes()
+     * 
+     * @param bytes
+     * @return
+     */
+    static public Notice unpickle(byte[] bytes) {
+        Parcel np = null;
+        try {
+            np = Parcel.obtain();
+            np.unmarshall(bytes, 0, bytes.length);
+            np.setDataPosition(0);
+            return Notice.readFromParcel(np);
+        } catch (BadParcelableException ex) {
+            return Notice.RESET;
+        } finally {
+            if (np != null)
+                np.recycle();
+        }
+    }
+
     public static Notice readFromParcel(Parcel source) {
         if (AmmoType.isNull(source)) {
             return new Notice();
@@ -566,9 +594,10 @@ public class Notice extends AmmoType {
 
                 items.put(threshold, new Item(threshold, via));
             }
+
         } catch (Exception ex) {
             // most likely exception is IllegalArgumentException
-            plogger.error("uninitialized parcel ex=[{}]", ex);
+            plogger.error("damaged/missing notice parcel", ex);
             this.atSend = new Item(Threshold.SENT, Via.newInstance());
             this.atGatewayDelivered = new Item(Threshold.GATE_DELIVERY, Via.newInstance());
             this.atPluginDelivered = new Item(Threshold.PLUGIN_DELIVERY, Via.newInstance());
