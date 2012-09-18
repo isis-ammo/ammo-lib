@@ -221,19 +221,27 @@ public abstract class AmmoType implements Parcelable {
     }
 
     /**
-     * Write the object to a stream of bytes using the Parcel encoding.
-     * Make sure to write the not null indicator (a 1) before writing the parcel.
+     * Write the object to a stream of bytes using the Parcel encoding. Make
+     * sure to write the not null indicator (a 1) before writing the parcel.
+     * 
      * @return
      */
     public byte[] pickle() {
-        final Parcel np = Parcel.obtain();
-        np.setDataPosition(0);
-        np.writeInt(1);
-        this.writeToParcel(np, Parcelable.CONTENTS_FILE_DESCRIPTOR);
-        np.setDataPosition(0);
-        final byte[] bytes = np.marshall();
-        plogger.info("pickle: [{}]", bytes);
-        return bytes;
+        Parcel np = null;
+        try {
+            np = Parcel.obtain();
+
+            np.setDataPosition(0);
+            np.writeInt(1);
+            this.writeToParcel(np, Parcelable.CONTENTS_FILE_DESCRIPTOR);
+            np.setDataPosition(0);
+            final byte[] bytes = np.marshall();
+            plogger.info("pickle: [{}]", bytes);
+            return bytes;
+        } finally {
+            if (np != null)
+                np.recycle();
+        }
     }
-    
+
 }

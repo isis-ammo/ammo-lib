@@ -130,13 +130,16 @@ public class Payload extends AmmoType {
      * @return
      */
     static public Payload unpickle(byte[] bytes) {
+        Parcel np = null;
         try {
-            final Parcel np = Parcel.obtain();
+            np = Parcel.obtain();
             np.unmarshall(bytes, 0, bytes.length);
             np.setDataPosition(0);
             return Payload.readFromParcel(np);
         } catch (BadParcelableException ex) {
             return Payload.NONE;
+        } finally {
+            if (np != null) np.recycle();
         }
     }
 

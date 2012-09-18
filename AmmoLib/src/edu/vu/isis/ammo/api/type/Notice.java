@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.BadParcelableException;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -540,12 +541,25 @@ public class Notice extends AmmoType {
                 }
             };
 
-    static public Notice fromParcelBytes(byte[] bytes) {
-        logger.trace("notice bytes=[{}]", bytes);
-        final Parcel np = Parcel.obtain();
-        np.unmarshall(bytes, 0, bytes.length);
-        np.setDataPosition(0);
-        return Notice.CREATOR.createFromParcel(np);
+    /**
+     * symmetric with AmmoType:asParcelBytes()
+     * 
+     * @param bytes
+     * @return
+     */
+    static public Notice unpickle(byte[] bytes) {
+        Parcel np = null;
+        try {
+            np = Parcel.obtain();
+            np.unmarshall(bytes, 0, bytes.length);
+            np.setDataPosition(0);
+            return Notice.readFromParcel(np);
+        } catch (BadParcelableException ex) {
+            return Notice.RESET;
+        } finally {
+            if (np != null)
+                np.recycle();
+        }
     }
 
     public static Notice readFromParcel(Parcel source) {
