@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
@@ -917,7 +918,25 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
         return null;
     }
 
+    /**
+     * The principle factory method for obtaining a request builder.
+     * 
+     * @param context
+     * @return
+     */
     public static Builder newBuilder(Context context) {
+        return new AmmoRequest.Builder(context).reset();
+    }
+    
+    /**
+     * This method is deprecated.
+     * The resolver is no longer needed.
+     * 
+     * @param context
+     * @param resolver
+     * @return
+     */
+    public static Builder newBuilder(Context context, BroadcastReceiver resolver) {
         return new AmmoRequest.Builder(context).reset();
     }
 
