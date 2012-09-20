@@ -11,25 +11,16 @@ purpose whatsoever, and to have or authorize others to do so.
 package edu.vu.isis.ammo.api;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
-import java.lang.Long;
-
-import android.content.ContentProviderOperation;
-import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.net.Uri;
 import android.util.Log;
-
-import edu.vu.isis.ammo.contacts.provider.ContactsContract.StatusUpdates;
 import edu.vu.isis.ammo.core.provider.DistributorSchema;
-import edu.vu.isis.ammo.core.provider.Relations;
 import edu.vu.isis.ammo.core.provider.PresenceSchema;
+import edu.vu.isis.ammo.core.provider.Relations;
 import edu.vu.isis.ammo.core.provider.TemporalState;
 
 /**
@@ -43,12 +34,13 @@ public class AmmoPresence {
     /**
      * constants for presence state
      */
-    public static final int PRESENT = (int)TemporalState.PRESENT.code;
-    public static final int RARE = (int)TemporalState.RARE.code;
-    public static final int MISSED = (int)TemporalState.MISSED.code;
-    public static final int LOST = (int)TemporalState.LOST.code;
-    public static final int ABSENT = (int)TemporalState.ABSENT.code;
+    public static final int PRESENT = TemporalState.PRESENT.code;
+    public static final int RARE = TemporalState.RARE.code;
+    public static final int MISSED = TemporalState.MISSED.code;
+    public static final int LOST = TemporalState.LOST.code;
+    public static final int ABSENT = TemporalState.ABSENT.code;
 
+    @SuppressWarnings("unused")
     private ContentResolver mResolver;
     private Context mContext;
 
@@ -111,6 +103,25 @@ public class AmmoPresence {
     /**
      * Determine whether a given user is currently available on the 
      * network.
+     * 
+     * e.g.
+     * <code>
+        import edu.vu.isis.ammo.api.AmmoPresence;
+        import edu.vu.isis.ammo.api.AmmoPresence.UserStatus;
+        
+        AmmoPresence p = AmmoPresence.newInstance(mContext);
+        
+        // Status of single, named user
+        final int status = p.getUserPresenceStatus("bubba");
+        if (status == AmmoPresence.ABSENT) {
+            Log.d(TAG, "   --> user is absent");
+        }
+        
+        // List of all users whose status is known
+        ArrayList<UserStatus> userStatusList = p.getAllAvailableUsers();
+        for (UserStatus ustat : userStatusList) {
+            logger.info("user={} status={}", ustat.userId, ustat.status);
+        </code>
      * 
      * @param The userid (string), e.g. 'john.doe', to query for 
      *        availability. 
