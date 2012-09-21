@@ -12,13 +12,15 @@ purpose whatsoever, and to have or authorize others to do so.
 package edu.vu.isis.ammo.api;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import android.content.ContentResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.net.Uri;
-import android.util.Log;
 import edu.vu.isis.ammo.core.provider.DistributorSchema;
 import edu.vu.isis.ammo.core.provider.PresenceSchema;
 import edu.vu.isis.ammo.core.provider.Relations;
@@ -28,8 +30,7 @@ import edu.vu.isis.ammo.core.provider.TemporalState;
  * Class encapsulates user network presence information from Ammo
  */
 public class AmmoPresence {
-
-    private static final String TAG = "AmmoPresence";
+    private static final Logger logger = LoggerFactory.getLogger("api.ammo.presence");
 
     /**
      * constants for presence state
@@ -40,17 +41,13 @@ public class AmmoPresence {
     public static final int LOST = TemporalState.LOST.code;
     public static final int ABSENT = TemporalState.ABSENT.code;
 
-    @SuppressWarnings("unused")
-    private ContentResolver mResolver;
     private Context mContext;
 
     public AmmoPresence() {
-        mResolver = null;
         mContext = null;
     }
 
     private AmmoPresence(Context context) {
-        this.mResolver = context.getContentResolver();
         mContext = context;
     }
 
@@ -96,10 +93,10 @@ public class AmmoPresence {
      * @return arraylist of UserStatus objects, each containing the status of a
      *         user available on the network.
      */
-    public ArrayList<UserStatus> getAllAvailableUsers() {
-        ArrayList<UserStatus> userList = queryForAllUsers();
+    public List<UserStatus> getAllAvailableUsers() {
+        List<UserStatus> userList = queryForAllUsers();
         if (userList == null) {
-            Log.e(TAG, "null users list");
+            logger.error("null users list");
         }
         return userList;
     }
@@ -117,11 +114,6 @@ public class AmmoPresence {
         if (status == AmmoPresence.ABSENT) {
             Log.d(TAG, "   --> user is absent");
         }
-        
-        // List of all users whose status is known
-        ArrayList<UserStatus> userStatusList = p.getAllAvailableUsers();
-        for (UserStatus ustat : userStatusList) {
-            logger.info("user={} status={}", ustat.userId, ustat.status);
         </code>
      * 
      * @param The userid (string), e.g. 'john.doe', to query for availability.
@@ -132,7 +124,23 @@ public class AmmoPresence {
         return status;
     }
 
-    private ArrayList<UserStatus> queryForAllUsers() {
+    /**
+     * Report on all observed users available on the network.
+     * e.g. <code>
+        import edu.vu.isis.ammo.api.AmmoPresence;
+        import edu.vu.isis.ammo.api.AmmoPresence.UserStatus;
+        
+        AmmoPresence p = AmmoPresence.newInstance(mContext);
+        
+        // List of all users whose status is known
+        ArrayList<UserStatus> userStatusList = p.getAllAvailableUsers();
+        for (UserStatus ustat : userStatusList) {
+            logger.info("user={} status={}", ustat.userId, ustat.status);
+        </code>
+     * 
+     * @return Integer value corresponding to PRESENT, RARE, LOST, ABSENT
+     */
+    private List<UserStatus> queryForAllUsers() {
         Cursor presenceCursor = null;
         ArrayList<UserStatus> list = new ArrayList<UserStatus>();
         try {
@@ -146,13 +154,13 @@ public class AmmoPresence {
                     selection, selectionArgs, null);
 
             if (presenceCursor == null) {
-                Log.e(TAG, "queryForAllUsers: null cursor");
+                logger.error("queryForAllUsers: null cursor");
                 return null;
             }
 
             int count = presenceCursor.getCount();
             if (count <= 0) {
-                Log.e(TAG, "queryForAllUsers: no rows in cursor");
+                logger.error("queryForAllUsers: no rows in cursor");
                 return null;
             }
 
@@ -166,9 +174,8 @@ public class AmmoPresence {
 
                 int decodeStatus = TemporalState.decodeState(status).code;
 
-                // if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                Log.d(TAG, "queryForAllUsers: user=" + userId + "   status=" + decodeStatus);
-                // }
+                logger.debug("queryForAllUsers: user={} status={}",
+                        userId, decodeStatus);
 
                 UserStatus u = new UserStatus();
                 u.setUserId(userId);
@@ -178,16 +185,14 @@ public class AmmoPresence {
             }
             return list;
         } catch (IllegalArgumentException e) {
-            Log.e(TAG, "Error while querying for presence: " + e.toString());
-            e.printStackTrace();
+            logger.error("Error while querying for presence", e);
             return null;
         } catch (CursorIndexOutOfBoundsException e) {
-            Log.e(TAG, "Cursor out of bounds: " + e.getMessage());
+            logger.error("Cursor out of bounds", e);
             e.printStackTrace();
             return null;
         } catch (ArrayIndexOutOfBoundsException e) {
-            Log.e(TAG, "Array index out of bounds: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Array index out of bounds", e);
             return null;
         } finally {
             if (presenceCursor != null) {
@@ -200,42 +205,38 @@ public class AmmoPresence {
         final int FALLBACK_RETVAL = -1;
         Cursor presenceCursor = null;
         try {
-            // if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            Log.d(TAG, "queryUserPresence: " + userId);
-            // }
+            logger.debug("queryUserPresence: {}", userId);
             Uri presenceUri = DistributorSchema.CONTENT_URI.get(Relations.PRESENCE);
             String[] projection = {
-                PresenceSchema.STATE.field
+                    PresenceSchema.STATE.field
             };
-            String selection = new StringBuilder().append(PresenceSchema.OPERATOR).append("=?")
+            String selection = new StringBuilder()
+                    .append(PresenceSchema.OPERATOR).append("=?")
                     .toString();
             String[] selectionArgs = {
-                userId
+                    userId
             };
             presenceCursor = mContext.getContentResolver().query(presenceUri, projection,
                     selection, selectionArgs, null);
 
             if (presenceCursor == null) {
-                Log.e(TAG, "queryUserPresence: null cursor");
+                logger.error("queryUserPresence: null cursor");
                 return FALLBACK_RETVAL;
             }
             if (!presenceCursor.moveToFirst()) {
-                Log.e(TAG, "queryUserPresence: cursor error");
+                logger.error("queryUserPresence: cursor error");
                 return FALLBACK_RETVAL;
             }
 
             final int status = presenceCursor.getInt(presenceCursor
                     .getColumnIndex(PresenceSchema.STATE.field));
             int decodeStatus = TemporalState.decodeState(status).code;
-            // if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            Log.d(TAG, "queryUserPresence: status=" + Integer.toString(status));
-            Log.d(TAG, "queryUserPresence: (int)  status=" + decodeStatus);
-            // }
+
+            logger.debug("queryUserPresence: status={} coded={}", status, decodeStatus);
             return decodeStatus;
 
         } catch (IllegalArgumentException e) {
-            Log.e(TAG, "Error while querying for presence: " + e.toString());
-            e.printStackTrace();
+            logger.error("Error while querying for presence", e);
             return FALLBACK_RETVAL;
         } finally {
             if (presenceCursor != null) {
@@ -245,12 +246,22 @@ public class AmmoPresence {
         // Shouldn't make it to here
     }
 
-    public void setOnChangeCallback(String userId) {
+    /**
+     * This method has not yet been fully specified.
+     * The general intent is that each time the state of the user
+     * changes the runnable will be invoked.
+     * 
+     * @param userId
+     * @param runnable
+     */
+    /*
+    public void setOnChangeCallback(String userId, Runnable runnable) {
 
         if (userId == null) {
             // all users
         }
 
     }
+    */
 
 }
