@@ -38,12 +38,12 @@ public enum TemporalState {
         return TemporalState.lookupMap.get(lowMask);
     }
 
-    private static final HashMap<Long, TemporalState> lookupMap;
+    private static final HashMap<Integer, TemporalState> lookupMap;
     static {
         final EnumSet<TemporalState> set = EnumSet.allOf(TemporalState.class);
-        lookupMap = new HashMap<Long, TemporalState>(set.size());
+        lookupMap = new HashMap<Integer, TemporalState>(set.size());
         for (final TemporalState state : set) {
-            lookupMap.put(Long.valueOf(state.code), state);
+            lookupMap.put(Integer.valueOf(state.code), state);
         }
     }
 
