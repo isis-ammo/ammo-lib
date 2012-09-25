@@ -596,9 +596,10 @@ public class Notice extends AmmoType {
                 final Threshold threshold = Threshold.getInstance(in.readInt());
                 if (threshold == null) {
                     plogger.error("damaged notice parcel=[{}]", in.marshall());
-                    break;
+                    continue;
                 }
                 final Via via = Via.newInstance(in.readInt());
+                plogger.trace("notice threshold=[{}] via=[{}]", threshold, via);
                 items.put(threshold, new Item(threshold, via));
             }
         } catch (Exception ex) {
