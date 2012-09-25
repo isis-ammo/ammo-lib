@@ -276,30 +276,67 @@ public class Notice extends AmmoType {
     public static Notice newInstance() {
         return new Notice();
     }
+
     /**
      * The request progresses through the system. As it does, it crosses certain
-     * thresholds. These thresholds specify triggers where acknowledgements may
-     * be generated. 
+     * thresholds. These thresholds specify triggers where acknowledgments may
+     * be generated.
      * <p>
-     * \begin{table}[h] \center \begin{tabular}{rl} Name & Meaning
-     * \\ \hline NONE & placed under the control of the distributor \\ SENT &
-     * sent over a channel \\ DISPATCHED & placed under the control of an
-     * Android plugin \\ DELIVERED & a plugin acknowledges delivery of a message
-     * \\ RECEIVED & a target device acknowledges receipt of a message \\
-     * \end{tabular} \caption{message thresholds indicating progress}
-     * \end{table} NONE: no acknowledgment is generated and thus no intent is
-     * produced SENT: final Intent notice = new Intent()
-     * .setAction(ACTION_MSG_SENT) .setData(Uri.Builder() .scheme("ammo")
-     * .authority(ack.topic) .path(ack.subtopic) .build())
-     * .putExtra(EXTRA_STATUS, ack.status.toString()) .putExtra(EXTRA_TOPIC,
-     * ack.topic.toString()) .putExtra(EXTRA_UID, ack.auid.toString())
-     * .putExtra(EXTRA_CHANNEL, ack.channel.toString()); RECEIVED: final Intent
-     * notice = new Intent() .setAction(ACTION_MSG_RECEIVED)
-     * .setData(Uri.Builder() .scheme("ammo") .authority(ack.topic)
-     * .path(ack.subtopic) .build()) .putExtra(EXTRA_STATUS,
-     * ack.status.toString()) .putExtra(EXTRA_TOPIC, ack.topic.toString())
-     * .putExtra(EXTRA_UID, ack.auid.toString()) .putExtra(EXTRA_CHANNEL,
-     * ack.channel.toString()) .putExtra(EXTRA_DEVICE, ack.device.toString());
+     * message thresholds indicating progress
+     * <p>
+     * <dl>
+     * <dt>NONE</dt>
+     * <dd>no acknowledgment</dd>
+     * <dt>SENT</dt>
+     * <dd>once the message has been sent by a channel</dd>
+     * <dt>DISPATCHED</dt>
+     * <dd>placed under the control of an Android plugin</dd>
+     * <dt>DELIVERED</dt>
+     * <dd>a plugin acknowledges delivery of a message</dd>
+     * <dt>RECEIVED</dt>
+     * <dd>a target device acknowledges receipt of a message</dd>
+     * </dl>
+     * <p>
+     * Each of the events propagate the acknowledgment to the application in a
+     * number of different ways. Regardless of the mechanism the intent is
+     * formed in a consistent way for the particular type.
+     * <p>
+     * NONE: no acknowledgment is generated and thus no intent is produced
+     * <p>
+     * SENT:
+     * <p>
+     * <p>
+     * <code>
+     * final Intent notice = new Intent()
+     * .setAction(ACTION_MSG_SENT) 
+     * .setData(Uri.Builder() 
+     *    .scheme("ammo")
+     *    .authority(ack.topic) 
+     *    .path(ack.subtopic) 
+     *    .build())
+     * .putExtra(EXTRA_STATUS, ack.status.toString()) 
+     * .putExtra(EXTRA_TOPIC, ack.topic.toString()) 
+     * .putExtra(EXTRA_UID, ack.auid.toString())
+     * .putExtra(EXTRA_CHANNEL, ack.channel.toString()); 
+     * </code>
+     * <p>
+     * RECEIVED:
+     * <p>
+     * <code>
+     * final Intent
+     * notice = new Intent() 
+     * .setAction(ACTION_MSG_RECEIVED)
+     * .setData(Uri.Builder() 
+     *      .scheme("ammo") 
+     *      .authority(ack.topic)
+     *      .path(ack.subtopic) 
+     *      .build()) 
+     * .putExtra(EXTRA_STATUS, ack.status.toString()) 
+     * .putExtra(EXTRA_TOPIC, ack.topic.toString())
+     * .putExtra(EXTRA_UID, ack.auid.toString()) 
+     * .putExtra(EXTRA_CHANNEL, ack.channel.toString()) 
+     * .putExtra(EXTRA_DEVICE, ack.device.toString());
+     * </code>
      */
 
     static private final int SENT_ID = 0x01;
@@ -308,15 +345,14 @@ public class Notice extends AmmoType {
     static private final int DEVICE_ID = 0x08;
 
     public enum Threshold {
-        SENT(SENT_ID, "sent"), // the message has left the hand held
-        GATE_DELIVERY(GATEWAY_ID, "gateway in-bound"), // hand held dispatches
-                                                       // request to android
-                                                       // plugin
-        PLUGIN_DELIVERY(PLUGIN_ID, "gateway to plugin"), // arrived at an
-                                                         // outgoing gateway
-                                                         // plugin
-        DEVICE_DELIVERY(DEVICE_ID, "handheld delivered"); // delivered to a hand
-                                                          // held
+        /** the message has left the hand held */
+        SENT(SENT_ID, "sent"),
+        /** hand held dispatches request to android plugin */
+        GATE_DELIVERY(GATEWAY_ID, "gateway in-bound"),
+        /** arrived at an outgoing gateway plugin */
+        PLUGIN_DELIVERY(PLUGIN_ID, "gateway to plugin"),
+        /** delivered to a hand held */
+        DEVICE_DELIVERY(DEVICE_ID, "handheld delivered");
 
         public final int id;
         public final String t;
