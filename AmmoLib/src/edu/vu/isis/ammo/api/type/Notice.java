@@ -336,6 +336,7 @@ public class Notice extends AmmoType {
                 case DEVICE_ID:
                     return Threshold.DEVICE_DELIVERY;
             }
+            plogger.warn("no threshold of type=[{}]", id);
             return null;
         }
     }
@@ -581,33 +582,43 @@ public class Notice extends AmmoType {
         this.atDeviceDelivered.writeParcel(dest, flags);
     }
 
+    /**
+     * Receive a parcel and generate a Notice object from it.
+     * 
+     * @param in
+     */
     private Notice(Parcel in) {
-        final Map<Threshold, Item> items;
+        final Map<Threshold, Item> items = new HashMap<Threshold, Item>(4);
         try {
             final int count = in.readInt();
 
-            items = new HashMap<Threshold, Item>(count);
-
             for (int ix = 0; ix < count; ++ix) {
                 final Threshold threshold = Threshold.getInstance(in.readInt());
+                if (threshold == null) {
+                    plogger.error("damaged notice parcel=[{}]", in.marshall());
+                    break;
+                }
                 final Via via = Via.newInstance(in.readInt());
-
                 items.put(threshold, new Item(threshold, via));
             }
-
         } catch (Exception ex) {
             // most likely exception is IllegalArgumentException
             plogger.error("damaged/missing notice parcel", ex);
-            this.atSend = new Item(Threshold.SENT, Via.newInstance());
-            this.atGatewayDelivered = new Item(Threshold.GATE_DELIVERY, Via.newInstance());
-            this.atPluginDelivered = new Item(Threshold.PLUGIN_DELIVERY, Via.newInstance());
-            this.atDeviceDelivered = new Item(Threshold.DEVICE_DELIVERY, Via.newInstance());
-            return;
         }
-        this.atSend = items.get(Threshold.SENT);
-        this.atGatewayDelivered = items.get(Threshold.GATE_DELIVERY);
-        this.atPluginDelivered = items.get(Threshold.PLUGIN_DELIVERY);
-        this.atDeviceDelivered = items.get(Threshold.DEVICE_DELIVERY);
+        final Item sent = items.get(Threshold.SENT);
+        this.atSend = (sent != null) ? sent : new Item(Threshold.SENT, Via.newInstance());
+
+        final Item gwDelivery = items.get(Threshold.GATE_DELIVERY);
+        this.atGatewayDelivered = (gwDelivery != null) ? gwDelivery :
+                new Item(Threshold.GATE_DELIVERY, Via.newInstance());
+
+        final Item plugDelivery = items.get(Threshold.PLUGIN_DELIVERY);
+        this.atPluginDelivered = (plugDelivery != null) ? plugDelivery :
+                new Item(Threshold.PLUGIN_DELIVERY, Via.newInstance());
+
+        final Item devDelivery = items.get(Threshold.PLUGIN_DELIVERY);
+        this.atDeviceDelivered = (devDelivery != null) ? devDelivery :
+                new Item(Threshold.DEVICE_DELIVERY, Via.newInstance());
 
         plogger.trace("decoded notice: {}", this);
     }
