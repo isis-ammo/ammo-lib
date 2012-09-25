@@ -276,11 +276,12 @@ public class Notice extends AmmoType {
     public static Notice newInstance() {
         return new Notice();
     }
-
     /**
      * The request progresses through the system. As it does, it crosses certain
      * thresholds. These thresholds specify triggers where acknowledgements may
-     * be generated. \begin{table}[h] \center \begin{tabular}{rl} Name & Meaning
+     * be generated. 
+     * <p>
+     * \begin{table}[h] \center \begin{tabular}{rl} Name & Meaning
      * \\ \hline NONE & placed under the control of the distributor \\ SENT &
      * sent over a channel \\ DISPATCHED & placed under the control of an
      * Android plugin \\ DELIVERED & a plugin acknowledges delivery of a message
@@ -617,7 +618,7 @@ public class Notice extends AmmoType {
         this.atPluginDelivered = (plugDelivery != null) ? plugDelivery :
                 new Item(Threshold.PLUGIN_DELIVERY, Via.newInstance());
 
-        final Item devDelivery = items.get(Threshold.PLUGIN_DELIVERY);
+        final Item devDelivery = items.get(Threshold.DEVICE_DELIVERY);
         this.atDeviceDelivered = (devDelivery != null) ? devDelivery :
                 new Item(Threshold.DEVICE_DELIVERY, Via.newInstance());
 
