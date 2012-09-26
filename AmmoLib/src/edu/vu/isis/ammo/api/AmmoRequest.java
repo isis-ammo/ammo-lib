@@ -262,7 +262,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
             plogger.debug("payload: {}", this.payload);
         Nominal.PAYLOAD.writeToParcel(dest, flags);
         Payload.writeToParcel(this.payload, dest, flags);
-        
+
         // INTENT
         if (CLIENT_LOGGING)
             plogger.debug("intent: {}", this.intent);
@@ -274,13 +274,13 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
             plogger.debug("moment: {}", this.moment);
         Nominal.MOMENT.writeToParcel(dest, flags);
         SerialMoment.writeToParcel(this.moment, dest, flags);
-        
+
         // TOPIC
         if (CLIENT_LOGGING)
             plogger.debug("topic: [{}]+[{}]", this.topic, this.subtopic);
         Nominal.TOPIC.writeToParcel(dest, flags);
         Topic.writeToParcel(this.topic, dest, flags);
-        
+
         Nominal.SUBTOPIC.writeToParcel(dest, flags);
         Topic.writeToParcel(this.subtopic, dest, flags);
 
@@ -927,10 +927,9 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
     public static Builder newBuilder(Context context) {
         return new AmmoRequest.Builder(context).reset();
     }
-    
+
     /**
-     * This method is deprecated.
-     * The resolver is no longer needed.
+     * This method is deprecated. The resolver is no longer needed.
      * 
      * @param context
      * @param resolver
@@ -1210,9 +1209,8 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
                     return;
                 this.context.unbindService(this.conn);
             } catch (IllegalArgumentException ex) {
-                logger.warn("the service is not bound or registered", ex);
+                logger.warn("the service niether bound nor registered\n", ex);
             }
-
         }
 
         // **************
