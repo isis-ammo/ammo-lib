@@ -264,10 +264,11 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
         Payload.writeToParcel(this.payload, dest, flags);
 
         // INTENT
-        if (CLIENT_LOGGING)
-            plogger.debug("intent: {}", this.intent);
-        Nominal.INTENT.writeToParcel(dest, flags);
-        Payload.writeToParcel(this.intent, dest, flags);
+        
+        //if (CLIENT_LOGGING)
+        //    plogger.debug("intent: {}", this.intent);
+        //Nominal.INTENT.writeToParcel(dest, flags);
+        //Payload.writeToParcel(this.intent, dest, flags);
 
         // SERIAL MOMENT
         if (CLIENT_LOGGING)
@@ -929,7 +930,8 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
     }
 
     /**
-     * This method is deprecated. The resolver is no longer needed.
+     * This method is deprecated.
+     * The resolver is no longer needed.
      * 
      * @param context
      * @param resolver
@@ -977,8 +979,6 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
     /**
      * The builder makes requests to the Distributor via AIDL methods.
      */
-    private static final Intent DISTRIBUTOR_SERVICE = new Intent(
-            IDistributorService.class.getCanonicalName());
     private static final Intent MAKE_DISTRIBUTOR_REQUEST = new Intent(
             "edu.vu.isis.ammo.api.MAKE_REQUEST");
 
@@ -1012,7 +1012,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
         final private ServiceConnection conn = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                logger.trace("service connected [{}] outstanding requests",
+                logger.info("service connected [{}] outstanding requests",
                         Builder.this.pendingRequestQueue.size());
                 final IDistributorService distributor = IDistributorService.Stub
                         .asInterface(service);
@@ -1054,7 +1054,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
             this.context = context;
             this.pendingRequestQueue = new LinkedBlockingQueue<AmmoRequest>();
             try {
-                final boolean isBound = this.context.bindService(DISTRIBUTOR_SERVICE, this.conn,
+                final boolean isBound = this.context.bindService(MAKE_DISTRIBUTOR_REQUEST, this.conn,
                         Context.BIND_AUTO_CREATE);
                 logger.trace("is the service bound? {}", isBound);
                 this.mode.compareAndSet(ConnectionMode.UNBOUND,
@@ -1209,8 +1209,9 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
                     return;
                 this.context.unbindService(this.conn);
             } catch (IllegalArgumentException ex) {
-                logger.warn("the service niether bound nor registered\n", ex);
+                logger.warn("the service is not bound or registered", ex);
             }
+
         }
 
         // **************
