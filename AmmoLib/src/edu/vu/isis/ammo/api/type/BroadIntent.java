@@ -11,6 +11,7 @@ purpose whatsoever, and to have or authorize others to do so.
 
 package edu.vu.isis.ammo.api.type;
 
+import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 /**
@@ -20,14 +21,15 @@ import android.os.Parcelable;
  */
 public class BroadIntent extends AmmoType {
 
-    final private BroadIntent intent;
+    final private Intent intent;
 
-    public BroadIntent(BroadIntent val) {
+    public BroadIntent(Intent val) {
         this.intent = val;
     }
 
     public String cv() {
-        return intent.cv();
+        throw new UnsupportedOperationException();
+        // return ""; // intent.cv();
     }
 
     // *********************************
@@ -97,7 +99,7 @@ public class BroadIntent extends AmmoType {
     public synchronized int hashCode() {
         if (!this.dirtyHashcode.getAndSet(false))
             return this.hashcode;
-        this.hashcode = this.intent.hashcode;
+        this.hashcode = this.intent.hashCode();
         return this.hashcode;
     }
 

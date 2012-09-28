@@ -1083,7 +1083,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
         private String uid;
 
         private Provider provider;
-        public BroadIntent intent;
+        private BroadIntent intent;
         private Payload payload;
 
         private SerialMoment moment;
@@ -1582,6 +1582,12 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
         public Builder notice(Notice val) {
             this.notice = val;
             return this;
+        }
+
+        @Override
+        public Builder intent(Intent val) {
+            this.intent = new BroadIntent(val);
+            return null;
         }
     }
 
