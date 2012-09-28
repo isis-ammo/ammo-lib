@@ -1134,11 +1134,20 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
                     break;
                 case UNBOUND:
                     final Intent parcelIntent = MAKE_DISTRIBUTOR_REQUEST.cloneFilter();
+
+                    parcelIntent.putExtra("request", request);
+
+                    AmmoRequest req = parcelIntent.getParcelableExtra("request");
+
+                    logger.info("The parcelable request is {} ", req);
+
+                    /*
                     try {
                         this.pendingRequestQueue.put(request);
                     } catch (InterruptedException ex) {
                         logger.debug("make request interrupted ", ex);
                     }
+                    */
                     final ComponentName componentName = this.context.startService(parcelIntent);
                     if (componentName != null) {
                         logger.debug("service binding : {}", componentName.getClassName());
@@ -1146,8 +1155,14 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
                         logger.error("service binding : {}", parcelIntent);
                     }
                     break;
-                case NONE:
                 case BINDING:
+                    try {
+                        this.pendingRequestQueue.put(request);
+                    } catch (InterruptedException ex) {
+                        logger.debug("make request interrupted ", ex);
+                    }
+                    break;
+                case NONE:
                 case UNAVAILABLE:
                 default:
                     break;
