@@ -262,26 +262,26 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
             plogger.debug("payload: {}", this.payload);
         Nominal.PAYLOAD.writeToParcel(dest, flags);
         Payload.writeToParcel(this.payload, dest, flags);
-
+        
         // INTENT
-
-        // if (CLIENT_LOGGING)
-        // plogger.debug("intent: {}", this.intent);
-        // Nominal.INTENT.writeToParcel(dest, flags);
-        // Payload.writeToParcel(this.intent, dest, flags);
+        
+        //if (CLIENT_LOGGING)
+        //    plogger.debug("intent: {}", this.intent);
+        //Nominal.INTENT.writeToParcel(dest, flags);
+        //Payload.writeToParcel(this.intent, dest, flags);
 
         // SERIAL MOMENT
         if (CLIENT_LOGGING)
             plogger.debug("moment: {}", this.moment);
         Nominal.MOMENT.writeToParcel(dest, flags);
         SerialMoment.writeToParcel(this.moment, dest, flags);
-
+        
         // TOPIC
         if (CLIENT_LOGGING)
             plogger.debug("topic: [{}]+[{}]", this.topic, this.subtopic);
         Nominal.TOPIC.writeToParcel(dest, flags);
         Topic.writeToParcel(this.topic, dest, flags);
-
+        
         Nominal.SUBTOPIC.writeToParcel(dest, flags);
         Topic.writeToParcel(this.subtopic, dest, flags);
 
@@ -928,9 +928,10 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
     public static Builder newBuilder(Context context) {
         return new AmmoRequest.Builder(context).reset();
     }
-
+    
     /**
-     * This method is deprecated. The resolver is no longer needed.
+     * This method is deprecated.
+     * The resolver is no longer needed.
      * 
      * @param context
      * @param resolver
@@ -1053,8 +1054,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
             this.context = context;
             this.pendingRequestQueue = new LinkedBlockingQueue<AmmoRequest>();
             try {
-                final boolean isBound = this.context.bindService(MAKE_DISTRIBUTOR_REQUEST,
-                        this.conn,
+                final boolean isBound = this.context.bindService(MAKE_DISTRIBUTOR_REQUEST, this.conn,
                         Context.BIND_AUTO_CREATE);
                 logger.trace("is the service bound? {}", isBound);
                 this.mode.compareAndSet(ConnectionMode.UNBOUND,
@@ -1148,7 +1148,6 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
                     }
                     break;
                 case NONE:
-
                 case UNAVAILABLE:
                 default:
                     break;
