@@ -1116,14 +1116,12 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
         // ***************
 
         /**
-         * Generally the BIND approach should be used as it has the best
-         * performance. Sometimes this is not possible and the
-         * getService()/COMMAND method must be used (in the case of
-         * BroadcastReceiver). There are cases where the PEEK method may be used
-         * (BroadcastReceiver) but it is not particularly reliable so the
-         * fall-back to COMMAND is necessary. It may also be the case that the
-         * service has not yet started and the binder has not yet been obtained.
-         * In that interim case the COMMAND mode should be used.
+         * Generally the BOUND approach should be used as it has the best
+         * performance. Sometimes this is not possible and the startService()
+         * method must be used (in the case of BroadcastReceiver). It may also
+         * be the case that the service has not yet started and the binder has
+         * not yet been obtained. In that interim case the requests are put in a
+         * queue in anticipation of a connection mode should be used.
          */
         private IAmmoRequest makeRequest(final AmmoRequest request) throws RemoteException {
             logger.info("make service request {} {}", this.mode, request);
@@ -1134,11 +1132,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
                     break;
                 case UNBOUND:
                     final Intent parcelIntent = MAKE_DISTRIBUTOR_REQUEST.cloneFilter();
-                    try {
-                        this.pendingRequestQueue.put(request);
-                    } catch (InterruptedException ex) {
-                        logger.debug("make request interrupted ", ex);
-                    }
+                    parcelIntent.putExtra("request", request);
                     final ComponentName componentName = this.context.startService(parcelIntent);
                     if (componentName != null) {
                         logger.debug("service binding : {}", componentName.getClassName());
@@ -1146,8 +1140,14 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
                         logger.error("service binding : {}", parcelIntent);
                     }
                     break;
-                case NONE:
                 case BINDING:
+                    try {
+                        this.pendingRequestQueue.put(request);
+                    } catch (InterruptedException ex) {
+                        logger.debug("make request interrupted ", ex);
+                    }
+                    break;
+                case NONE:
                 case UNAVAILABLE:
                 default:
                     break;
