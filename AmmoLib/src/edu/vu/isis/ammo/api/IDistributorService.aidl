@@ -11,5 +11,4 @@ interface IDistributorService
    String makeRequest(in AmmoRequest request); 
    AmmoRequest recoverRequest(in String uuid);
    
-   
-}   
+}
