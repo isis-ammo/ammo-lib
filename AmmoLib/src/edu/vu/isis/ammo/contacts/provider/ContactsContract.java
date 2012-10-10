@@ -107,7 +107,6 @@ import edu.vu.isis.ammo.R;
  * {@link PhoneLookup}, which is used for quick caller-ID lookup</li>
  * </ul>
  */
-@SuppressWarnings("unused")
 public final class ContactsContract {
     /* The authority for the contacts provider */
     public static final String AUTHORITY = "edu.vu.isis.ammo.contacts";
