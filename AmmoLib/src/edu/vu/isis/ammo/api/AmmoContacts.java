@@ -1017,6 +1017,7 @@ public class AmmoContacts {
         Cursor c = cr.query(lookupUri, new String[]{Contacts.DISPLAY_NAME,Contacts._ID}, null,null,null);
 
 	AmmoContacts.Contact lw = new AmmoContacts.Contact();
+	lw.setLookup(lookupKey);
         try {
 	    Log.d(TAG, "   rows = " + String.valueOf(c.getCount()));
             c.moveToFirst();
@@ -1083,6 +1084,8 @@ public class AmmoContacts {
 	    return null;
 	}
 
+	
+
 	// Process the query's output
 	try {
 	    int count = c.getCount();	    
@@ -1104,6 +1107,10 @@ public class AmmoContacts {
 		populateContactData(otherData, lw);
 	    }
 
+	    // Retrieve lookup key
+	    String lookup = getLookupKeyForContact(contactId);
+	    lw.setLookup(lookup);
+	    
 	    return lw;
 	} catch (IllegalArgumentException e) { 
 	    Log.e(TAG, "IllegalArgumentException: " + e.getMessage());
@@ -1123,6 +1130,61 @@ public class AmmoContacts {
     }
 
     //========================================================
+    // Get the lookup hash key for a user, given the contact_id
+    // (i.e. contact_id as defined in provider's schema)
+    //========================================================
+    private String getLookupKeyForContact(String contactId) {
+	Log.d(TAG, "getLookupKeyForContact: id=" + contactId);
+	Cursor cLookup = null;
+	String[] projection = {"lookup"};
+	try {
+	    Uri lookupUri = Uri.parse("content://" + ContactsContract.AUTHORITY 
+				      + "/contacts/" + contactId + "/data");
+	    cLookup = mResolver.query(lookupUri, projection, null, null, null);
+	    if (cLookup == null) {
+		Log.e(TAG, "getLookupKeyForContact() -- cursor for lookup key is null");
+		return null;
+	    }
+	} catch (Throwable e) {
+	    Log.e(TAG, "Exception: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	}
+
+	try {
+	    String lookupKey = null;
+	    cLookup.moveToFirst();
+	    lookupKey = cLookup.getString(cLookup.getColumnIndex("lookup"));
+	    return lookupKey;
+	} catch (Throwable e) {
+	    return null;
+	} finally {
+	    cLookup.close();
+	}
+    }
+
+    //========================================================
+    // For debugging and testing purposes... Print some information about a cursor
+    // to the log.
+    //========================================================
+    private void examineCursor(Cursor cursor) {
+	if (cursor != null) {
+	    Log.d(TAG, " -- examine cursor -- ");
+	    for (String proj : cursor.getColumnNames() ) {
+		Log.d(TAG, "       has column = " + proj + " -- index = "
+		      + cursor.getColumnIndex(proj) );
+	    }
+	    int dc = cursor.getCount();
+	    Log.d(TAG, "       cursor rows: " + String.valueOf(dc));
+	    if (dc > 0) {
+		while (cursor.moveToNext() && (cursor.getPosition() < dc) ) {
+		    Log.d(TAG, "          row " + String.valueOf(cursor.getPosition()));
+		}
+	    }
+	}
+    }
+
+    //========================================================
     // 
     // getContactByUserId()
     // 
@@ -1139,7 +1201,7 @@ public class AmmoContacts {
 	int contactId = -1;
 	Cursor cursor = null;
 	try {
-	    String[] projection = {"contact_id", "lookup"};  // more...
+	    String[] projection = {"contact_id", "lookup"}; 
 	    cursor = mResolver.query(f, projection, null, null, null);
 	    if (cursor == null) {
 		Log.e(TAG, "getContactByUserId() -- cursor is null");
@@ -1159,11 +1221,11 @@ public class AmmoContacts {
 	    }
 
 	    cursor.moveToFirst();
-	    String contactIdStr = cursor.getString(0);
+	    String contactIdStr = cursor.getString(cursor.getColumnIndex("contact_id"));
 
 	    AmmoContacts.Contact lw = new AmmoContacts.Contact();
-	    lw.setUserIdNumber(cursor.getString(1) );
 	    lw.setRawContactId(Integer.parseInt(contactIdStr));
+	    lw.setLookup(cursor.getString(cursor.getColumnIndex("lookup")));
 
 	    // Get other data for this contact
 	    String[] dataProjection = {"mimetype","data1","data2","data3","data4"};

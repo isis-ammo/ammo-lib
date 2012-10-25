@@ -10,7 +10,7 @@
     <!-- TEMPLATE2:END -->
     <vandylib.release.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.release.url>
     <vandylib.snapshot.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/vanderbilt-snapshot/</vandylib.snapshot.url>
-    <vandylib.eucleo.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/eucleo/</vandylib.eucleo.url>
+    <transapps.public.url>http://devportal.researchinnovations.com:8081/nexus/content/groups/public/</transapps.public.url>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <root.basedir>${basedir}/../..</root.basedir>
     <android.target>android-8</android.target>
@@ -19,7 +19,7 @@
     <groupId>edu.vu.isis</groupId>
     <artifactId>ammo-parent</artifactId>
     <!-- TEMPLATE:BEGIN-->
-    <version>1.6.1-SNAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
     <!-- TEMPLATE:END -->
   </parent>
   <artifactId>ammolib</artifactId>
@@ -41,12 +41,12 @@
       <url>${vandylib.repo.url}</url>
     </repository>
     <repository>
-      <id>nexus-eucleo</id>
-      <url>${vandylib.eucleo.url}</url>
-    </repository>
-    <repository>
       <id>nexus-snapshot</id>
       <url>${vandylib.snapshot.url}</url>
+    </repository>
+    <repository>
+      <id>nexus-transapps</id>
+      <url>${transapps.public.url}</url>
     </repository>
   </repositories>
   <build>
@@ -170,6 +170,27 @@
               <file>target/ammolib-${project.version}.jar</file>
               <repositoryId>nexus-vanderbilt</repositoryId>
               <url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/${repo.addr}</url>
+              <generatePom>false</generatePom>
+              <groupId>edu.vu.isis</groupId>
+              <artifactId>ammolib</artifactId>
+              <version>${project.version}</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.4</version>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>target/ammolib-${project.version}.jar</file>
               <generatePom>false</generatePom>
               <groupId>edu.vu.isis</groupId>
               <artifactId>ammolib</artifactId>

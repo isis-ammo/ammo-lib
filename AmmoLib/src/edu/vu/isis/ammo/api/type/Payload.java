@@ -139,7 +139,8 @@ public class Payload extends AmmoType {
         } catch (BadParcelableException ex) {
             return Payload.NONE;
         } finally {
-            if (np != null) np.recycle();
+            if (np != null)
+                np.recycle();
         }
     }
 
@@ -221,15 +222,15 @@ public class Payload extends AmmoType {
             case CV:
                 if (this.cv == null)
                     return "cv: <null>";
-                return "cv: ["+ this.cv.toString()+"]";
+                return "cv: [" + this.cv.toString() + "]";
             case BYTE:
                 if (this.bytes == null)
                     return "byte: <null>";
-                return "byte: ["+this.bytes.toString()+"]";
+                return "byte: [" + this.bytes.toString() + "]";
             case STR:
                 if (this.str == null)
                     return "str: <null>";
-                return "str: ["+this.str.toString()+"]";
+                return "str: [" + this.str.toString() + "]";
             case NONE:
                 return "none";
             default:

@@ -2,6 +2,7 @@
 // See docs/java/ammo-api.nw for documentation
 package edu.vu.isis.ammo.api;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.RemoteException;
 import edu.vu.isis.ammo.api.type.DeliveryScope;
@@ -131,6 +132,7 @@ public interface IAmmoRequest {
         public Builder project(String[] val);
         public Builder select(Query val);
         public Builder select(Form val);
+        public Builder intent(Intent val);
    }
   
 }

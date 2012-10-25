@@ -41,10 +41,10 @@ public interface INetPrefKeys {
      * Journaling External Keys JOURNAL_DISABLED : Indicates that the user
      * wishes to make use if possible.
      */
-    public static final String JOURNAL_DISABLED = Keys.NetworkingKeys.JOURNAL_DISABLED;
-
+    public static final String JOURNAL_DISABLED = "transapps_settings_network_jounal_disabled";
+    
     // VALUES
-    public static final boolean DEFAULT_JOURNAL_DISABLED = Keys.NetworkingKeys.DEFAULT_JOURNAL_DISABLED;
+    public static final boolean DEFAULT_JOURNAL_ENABLED = Keys.NetworkingKeys.DEFAULT_JOURNAL_ENABLED;
 
     /**
      * Gateway Channel and TCP Link Settings External Keys GATEWAY_DISABLED :
@@ -58,7 +58,7 @@ public interface INetPrefKeys {
     public static final String GATEWAY_TIMEOUT = "CORE_SOCKET_TIMEOUT";
 
     // VALUES
-    public static final boolean DEFAULT_GATEWAY_DISABLED = Keys.NetworkingKeys.DEFAULT_GATEWAY_DISABLED;
+    public static final boolean DEFAULT_GATEWAY_ENABLED = Keys.NetworkingKeys.DEFAULT_GATEWAY_ENABLED;
     public static final String DEFAULT_GATEWAY_HOST = Keys.NetworkingKeys.DEFAULT_GATEWAY_HOST;
     public static final int DEFAULT_GATEWAY_PORT = 33289;
     public static final int DEFAULT_GW_FLAT_LINE_TIME = 20; // 20 minutes
@@ -78,7 +78,7 @@ public interface INetPrefKeys {
     public static final String MULTICAST_TTL = "MULTICAST_TTL";
 
     // VALUES
-    public static final boolean DEFAULT_MULTICAST_DISABLED = Keys.NetworkingKeys.DEFAULT_MULTICAST_DISABLED;
+    public static final boolean DEFAULT_MULTICAST_ENABLED = Keys.NetworkingKeys.DEFAULT_MULTICAST_ENABLED;
     public static final String DEFAULT_MULTICAST_HOST = "228.10.10.90";
     public static final int DEFAULT_MULTICAST_PORT = 9982;
     public static final int DEFAULT_MULTICAST_NET_CONN = 20;
@@ -101,9 +101,9 @@ public interface INetPrefKeys {
     public static final String RELIABLE_MULTICAST_TTL = "RELIABLE_MULTICAST_TTL";
 
     // VALUES
-    public static final boolean DEFAULT_RELIABLE_MULTICAST_DISABLED = Keys.NetworkingKeys.DEFAULT_RELIABLE_MULTICAST_DISABLED;
-    public static final String DEFAULT_RELIABLE_MULTICAST_HOST = "228.10.10.91";
-    public static final int DEFAULT_RELIABLE_MULTICAST_PORT = 9982;
+    public static final boolean DEFAULT_RELIABLE_MULTICAST_ENABLED = Keys.NetworkingKeys.DEFAULT_RELIABLE_MULTICAST_ENABLED;
+    public static final String DEFAULT_RELIABLE_MULTICAST_HOST = "228.8.8.8";
+    public static final int DEFAULT_RELIABLE_MULTICAST_PORT = 45588;
     public static final int DEFAULT_RELIABLE_MULTICAST_NET_CONN = 20;
     public static final int DEFAULT_RELIABLE_MULTICAST_IDLE_TIME = 3;
     public static final int DEFAULT_RELIABLE_MULTICAST_TTL = 1;
@@ -133,7 +133,7 @@ public interface INetPrefKeys {
     public static final String SERIAL_TRANSMIT_DURATION = "SERIAL_TRANSMIT_DURATION";
 
     // VALUES
-    public static final boolean DEFAULT_SERIAL_DISABLED = Keys.NetworkingKeys.DEFAULT_SERIAL_DISABLED;
+    public static final boolean DEFAULT_SERIAL_ENABLED = Keys.NetworkingKeys.DEFAULT_SERIAL_ENABLED;
     public static final String DEFAULT_SERIAL_DEVICE = "/dev/ttyUSB0";
     public static final int DEFAULT_SERIAL_BAUD_RATE = 9600;
     public static final int DEFAULT_SERIAL_SLOT_NUMBER = 1;
