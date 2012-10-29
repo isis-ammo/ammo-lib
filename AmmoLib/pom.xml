@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
   <properties>
-    <!-- TEMPLATE2:BEGIN
+<!--
+     These properties should be overridden by the default profile in ${HOME}/.m2/settings.xml 
 -->
     <repo.addr>vanderbilt-snapshot/</repo.addr>
-    <!-- This field should read "Vanderbilt/" for releases -->
-    <!-- else it should read "vanderbilt-snapshot/" for snapshots-->
-    <!-- TEMPLATE2:END -->
     <vandylib.release.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.release.url>
     <vandylib.snapshot.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/vanderbilt-snapshot/</vandylib.snapshot.url>
     <transapps.public.url>http://devportal.researchinnovations.com:8081/nexus/content/groups/public/</transapps.public.url>
+
+<!--
+     These properties should not be overridden.
+-->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <root.basedir>${basedir}/../..</root.basedir>
     <android.target>android-8</android.target>
   </properties>
-  <parent>
-    <groupId>edu.vu.isis</groupId>
-    <artifactId>ammo-parent</artifactId>
-    <!-- TEMPLATE:BEGIN-->
-    <version>1.7.0-SNAPSHOT</version>
-    <!-- TEMPLATE:END -->
-  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>edu.vu.isis</groupId>
   <artifactId>ammolib</artifactId>
+  <version>1.7.0-SNAPSHOT</version>
+
   <packaging>apklib</packaging>
   <name>Ammo Android Library</name>
+
   <distributionManagement>
     <repository>
       <id>nexus-vanderbilt</id>
@@ -53,42 +54,10 @@
     <directory>target</directory>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
-      <!--plugin>
-         <groupId>org.codehaus.mojo</groupId>
-         <artifactId>build-helper-maven-plugin</artifactId>
-          <executions>
-             <execution>
-                  <id>add-source</id>
-                  <phase>generate-sources</phase>
-                  <goals>
-                     <goal>add-source</goal>
-                         </goals>
-                  <configuration>
-                      <sources>
-                           <source>${basedir}/gen/edu/vu/isis/ammo/api</source>
-                      </sources>
-                  </configuration>
-             </execution>
-          </executions>
-       </plugin-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
-          <execution>
-            <id>version_gen</id>
-            <phase>validate</phase>
-            <configuration>
-              <target>
-                <ant antfile="maven-version-generator.xml" inheritAll="true" inheritRefs="true">
-                  <target name="update-version" />
-                </ant>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
           <execution>
             <phase>deploy</phase>
             <!--should only build javadoc when you need to deploy-->
@@ -103,6 +72,7 @@
               <goal>run</goal>
             </goals>
           </execution>
+
           <execution>
             <id>make_tar</id>
             <phase>install</phase>
@@ -113,17 +83,13 @@
                     <include name="*-${project.version}.apklib" />
                   </fileset>
                 </copy>
-                <!--copy todir="${root.basedir}/dist">
-                                    <fileset dir="${basedir}/target">
-                                        <include name="*-${project.version}.jar"/>
-                                    </fileset>
-                                </copy-->
               </tasks>
             </configuration>
             <goals>
               <goal>run</goal>
             </goals>
           </execution>
+
         </executions>
         <dependencies>
           <dependency>
@@ -142,17 +108,40 @@
       <plugin>
         <groupId>com.jayway.maven.plugins.android.generation2</groupId>
         <artifactId>android-maven-plugin</artifactId>
+        <version>3.4.0</version>
         <extensions>true</extensions>
-        <configuration>
-          <sdk>
-            <platform>8</platform>
-          </sdk>
-          <undeployBeforeDeploy>true</undeployBeforeDeploy>
-        </configuration>
+        <executions>
+          <execution>
+            <id>do-it</id>
+            <configuration>
+              <sdk>
+                <platform>8</platform>
+              </sdk>
+              <undeployBeforeDeploy>true</undeployBeforeDeploy>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>update-manifest</id>
+            <goals>
+              <goal>manifest-update</goal>
+            </goals>
+            <configuration>
+              <manifest>
+                <versionName></versionName>
+                <versionCodeUpdateFromVersion>true</versionCodeUpdateFromVersion>
+                <sharedUserId>anId</sharedUserId>
+                <debuggable>true</debuggable>
+              </manifest>
+            </configuration>
+          </execution>
+
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.5.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -206,24 +195,29 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
+<version>1.7.2</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+<version>4.11-beta-1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>android</artifactId>
+<version>4.1.1.4</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>android-test</artifactId>
+<version>4.1.1.4</version>
     </dependency>
     <dependency>
       <groupId>transapps</groupId>
       <artifactId>tasettings-api</artifactId>
+<version>1.0.18</version>
     </dependency>
   </dependencies>
   <profiles>
@@ -278,7 +272,7 @@
               <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.6.4</version>
+                <version>1.7.2</version>
               </dependency>
               <dependency>
                 <groupId>com.google.protobuf</groupId>
@@ -345,7 +339,7 @@
               <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.6.4</version>
+                <version>1.7.2</version>
               </dependency>
               <dependency>
                 <groupId>com.google.protobuf</groupId>
@@ -411,7 +405,7 @@
               <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.6.4</version>
+                <version>1.7.2</version>
               </dependency>
               <dependency>
                 <groupId>com.google.protobuf</groupId>
@@ -469,7 +463,7 @@
               <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.6.4</version>
+                <version>1.7.2</version>
               </dependency>
               <dependency>
                 <groupId>com.google.protobuf</groupId>
