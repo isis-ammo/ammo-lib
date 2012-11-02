@@ -1,48 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <parent>
+    <groupId>edu.vu.isis</groupId>
+    <artifactId>ammolib-parent</artifactId>
+    <version>1.7.0-SNAPSHOT</version>
+  </parent>
+
   <properties>
-<!--
-     These properties should be overridden by the default profile in ${HOME}/.m2/settings.xml 
--->
-    <repo.addr>vanderbilt-snapshot/</repo.addr>
     <vandylib.release.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.release.url>
-    <vandylib.snapshot.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/vanderbilt-snapshot/</vandylib.snapshot.url>
     <transapps.public.url>http://devportal.researchinnovations.com:8081/nexus/content/groups/public/</transapps.public.url>
 
-<!--
-     These properties should not be overridden.
--->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <root.basedir>${basedir}/../..</root.basedir>
     <android.target>android-8</android.target>
   </properties>
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>edu.vu.isis</groupId>
   <artifactId>ammolib</artifactId>
-  <version>1.7.0-SNAPSHOT</version>
-
   <packaging>apklib</packaging>
   <name>Ammo Android Library</name>
 
   <distributionManagement>
     <repository>
-      <id>nexus-vanderbilt</id>
+      <id>vanderbilt-release-repository</id>
       <url>${vandylib.release.url}</url>
     </repository>
     <snapshotRepository>
-      <id>nexus-snapshot</id>
+      <id>vanderbilt-snapshot-repository</id>
       <url>${vandylib.snapshot.url}</url>
     </snapshotRepository>
   </distributionManagement>
+
   <repositories>
     <repository>
-      <id>nexus-vanderbilt</id>
+      <id>vanderbilt-release-repository</id>
       <url>${vandylib.repo.url}</url>
     </repository>
     <repository>
-      <id>nexus-snapshot</id>
+      <id>vanderbilt-snapshot-repository</id>
       <url>${vandylib.snapshot.url}</url>
     </repository>
     <repository>
@@ -50,61 +45,10 @@
       <url>${transapps.public.url}</url>
     </repository>
   </repositories>
+
   <build>
-    <directory>target</directory>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>deploy</phase>
-            <!--should only build javadoc when you need to deploy-->
-            <configuration>
-              <target>
-                <ant antfile="build-javadoc.xml" inheritAll="true" inheritRefs="true">
-                  <target name="javadoc" />
-                </ant>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-
-          <execution>
-            <id>make_tar</id>
-            <phase>install</phase>
-            <configuration>
-              <tasks>
-                <copy todir="${root.basedir}/build">
-                  <fileset dir="${basedir}/target">
-                    <include name="*-${project.version}.apklib" />
-                  </fileset>
-                </copy>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-
-        </executions>
-        <dependencies>
-          <dependency>
-            <groupId>ant-contrib</groupId>
-            <artifactId>ant-contrib</artifactId>
-            <version>1.0b3</version>
-            <exclusions>
-              <exclusion>
-                <groupId>ant</groupId>
-                <artifactId>ant</artifactId>
-              </exclusion>
-            </exclusions>
-          </dependency>
-        </dependencies>
-      </plugin>
       <plugin>
         <groupId>com.jayway.maven.plugins.android.generation2</groupId>
         <artifactId>android-maven-plugin</artifactId>
@@ -128,9 +72,9 @@
             </goals>
             <configuration>
               <manifest>
-                <versionName></versionName>
+<!--
                 <versionCodeUpdateFromVersion>true</versionCodeUpdateFromVersion>
-                <sharedUserId>anId</sharedUserId>
+-->
                 <debuggable>true</debuggable>
               </manifest>
             </configuration>
@@ -143,81 +87,68 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.5.1</version>
       </plugin>
+
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.7</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.7</version>
         <executions>
           <execution>
-            <phase>deploy</phase>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
             <goals>
-              <goal>deploy-file</goal>
+              <goal>attach-artifact</goal>
             </goals>
             <configuration>
-              <!--maven doesn't make sense-->
-              <javadoc>ammolib-javadoc.jar</javadoc>
-              <file>target/ammolib-${project.version}.jar</file>
-              <repositoryId>nexus-vanderbilt</repositoryId>
-              <url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/${repo.addr}</url>
-              <generatePom>false</generatePom>
-              <groupId>edu.vu.isis</groupId>
-              <artifactId>ammolib</artifactId>
-              <version>${project.version}</version>
-              <packaging>jar</packaging>
+              <artifacts>
+                <artifact>
+                  <file>target/ammolib-${project.version}.jar</file>
+                </artifact>
+              </artifacts>
             </configuration>
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.4</version>
-        <executions>
-          <execution>
-            <phase>install</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-            <configuration>
-              <file>target/ammolib-${project.version}.jar</file>
-              <generatePom>false</generatePom>
-              <groupId>edu.vu.isis</groupId>
-              <artifactId>ammolib</artifactId>
-              <version>${project.version}</version>
-              <packaging>jar</packaging>
-            </configuration>
-          </execution>
-        </executions>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+          <show>private</show>
+          <nohelp>true</nohelp>
+        </configuration>
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-<version>1.7.2</version>
+      <version>1.7.2</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-<version>4.11-beta-1</version>
+      <version>4.11-beta-1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>android</artifactId>
-<version>4.1.1.4</version>
+      <version>4.1.1.4</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>android-test</artifactId>
-<version>4.1.1.4</version>
+      <version>4.1.1.4</version>
     </dependency>
     <dependency>
       <groupId>transapps</groupId>
       <artifactId>tasettings-api</artifactId>
-<version>1.0.18</version>
+      <version>1.0.18</version>
     </dependency>
   </dependencies>
   <profiles>
@@ -277,7 +208,7 @@
               <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
-                <version>2.3.0</version>
+                <version>2.4.1</version>
               </dependency>
               <dependency>
                 <groupId>org.json</groupId>
@@ -344,7 +275,7 @@
               <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
-                <version>2.3.0</version>
+                <version>2.4.1</version>
               </dependency>
               <dependency>
                 <groupId>org.json</groupId>
