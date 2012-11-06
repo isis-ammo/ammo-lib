@@ -167,14 +167,14 @@
                 <id>update_project</id>
                 <phase>validate</phase>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="configure Ammolib..."/>
                     <exec executable="android" dir="${basedir}" searchpath="true">
                       <arg line="update"/> <arg line="lib-project"/>
                       <arg line="--path"/> <arg line="."/>
                       <arg line="--target"/> <arg line="${android.target}"/>
                     </exec>
-                  </tasks>
+                  </target>
                 </configuration>
                 <goals>
                   <goal>run</goal>
@@ -234,14 +234,14 @@
                 <id>update_project</id>
                 <phase>validate</phase>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="configure Ammolib..."/>
                     <exec executable="android" dir="${basedir}" searchpath="true">
                       <arg line="update"/> <arg line="lib-project"/>
                       <arg line="--path"/> <arg line="."/>
                       <arg line="--target"/> <arg line="${android.target}"/>
                     </exec>
-                  </tasks>
+                  </target>
                 </configuration>
                 <goals>
                   <goal>run</goal>
@@ -300,14 +300,14 @@
                 <id>update_project</id>
                 <phase>validate</phase>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="configure Ammolib..."/>
                     <exec executable="android.bat" dir="${basedir}" searchpath="true">
                       <arg line="update"/> <arg line="lib-project"/>
                       <arg line="--path"/> <arg line="."/>
                       <arg line="--target"/> <arg line="${android.target}"/>
                     </exec>
-                  </tasks>
+                  </target>
                 </configuration>
                 <goals>
                   <goal>run</goal>
@@ -358,14 +358,14 @@
                 <id>update_project</id>
                 <phase>validate</phase>
                 <configuration>
-                  <tasks>
+                  <target>
                     <echo message="configure Ammolib..."/>
                     <exec executable="android" dir="${basedir}" searchpath="true">
                       <arg line="update"/> <arg line="lib-project"/>
                       <arg line="--path"/> <arg line="."/>
                       <arg line="--target"/> <arg line="${android.target}"/>
                     </exec>
-                  </tasks>
+                  </target>
                 </configuration>
                 <goals>
                   <goal>run</goal>
