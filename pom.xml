@@ -27,18 +27,33 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 
   <distributionManagement>
     <repository>
-      <id>vanderbilt-release-repository</id>
+      <id>vanderbilt-release</id>
       <url>${vandy.release.url}</url>
     </repository>
     <snapshotRepository>
-      <id>vanderbilt-snapshot-repository</id>
+      <id>vanderbilt-snapshot</id>
       <url>${vandy.snapshot.url}</url>
     </snapshotRepository>
   </distributionManagement>
 
+  <repositories>
+    <repository>
+      <id>vanderbilt-release-repository</id>
+      <url>${vandylib.repo.url}</url>
+    </repository>
+    <repository>
+      <id>vanderbilt-snapshot-repository</id>
+      <url>${vandylib.snapshot.url}</url>
+    </repository>
+    <repository>
+      <id>nexus-transapps</id>
+      <url>${transapps.public.url}</url>
+    </repository>
+  </repositories>
+
+
   <dependencyManagement>
     <dependencies>
-
 
       <dependency>
        <groupId>com.google.android</groupId>

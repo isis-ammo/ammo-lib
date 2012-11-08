@@ -20,32 +20,6 @@
   <packaging>apklib</packaging>
   <name>Ammo Android Library</name>
 
-  <distributionManagement>
-    <repository>
-      <id>vanderbilt-release-repository</id>
-      <url>${vandylib.release.url}</url>
-    </repository>
-    <snapshotRepository>
-      <id>vanderbilt-snapshot-repository</id>
-      <url>${vandylib.snapshot.url}</url>
-    </snapshotRepository>
-  </distributionManagement>
-
-  <repositories>
-    <repository>
-      <id>vanderbilt-release-repository</id>
-      <url>${vandylib.repo.url}</url>
-    </repository>
-    <repository>
-      <id>vanderbilt-snapshot-repository</id>
-      <url>${vandylib.snapshot.url}</url>
-    </repository>
-    <repository>
-      <id>nexus-transapps</id>
-      <url>${transapps.public.url}</url>
-    </repository>
-  </repositories>
-
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
