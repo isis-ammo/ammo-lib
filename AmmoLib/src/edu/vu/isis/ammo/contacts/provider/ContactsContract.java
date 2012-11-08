@@ -48,7 +48,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import edu.vu.isis.ammo.R;
 
-/**
+/*
  * <p>
  * The contract between the contacts provider and applications. Contains
  * definitions for the supported URIs and columns. These APIs supersede
@@ -107,14 +107,13 @@ import edu.vu.isis.ammo.R;
  * {@link PhoneLookup}, which is used for quick caller-ID lookup</li>
  * </ul>
  */
-@SuppressWarnings("unused")
 public final class ContactsContract {
-    /** The authority for the contacts provider */
+    /* The authority for the contacts provider */
     public static final String AUTHORITY = "edu.vu.isis.ammo.contacts";
-    /** A content:// style uri to the authority for the contacts provider */
+    /* A content:// style uri to the authority for the contacts provider */
     public static final Uri AUTHORITY_URI = Uri.parse("content://" + AUTHORITY);
 
-    /**
+    /*
      * An optional URI parameter for insert, update, or delete queries
      * that allows the caller
      * to specify that it is a sync adapter. The default value is false. If true
@@ -127,7 +126,7 @@ public final class ContactsContract {
      */
     public static final String CALLER_IS_SYNCADAPTER = "caller_is_syncadapter";
 
-    /**
+    /*
      * A query parameter key used to specify the package that is requesting a query.
      * This is used for restricting data based on package name.
      *
@@ -135,12 +134,12 @@ public final class ContactsContract {
      */
     public static final String REQUESTING_PACKAGE_PARAM_KEY = "requesting_package";
 
-    /**
+    /*
      * @hide
      */
     public static final class Preferences {
 
-        /**
+        /*
          * A key in the {@link android.provider.Settings android.provider.Settings} provider
          * that stores the preferred sorting order for contacts (by given name vs. by family name).
          *
@@ -148,21 +147,21 @@ public final class ContactsContract {
          */
         public static final String SORT_ORDER = "android.contacts.SORT_ORDER";
 
-        /**
+        /*
          * The value for the SORT_ORDER key corresponding to sorting by given name first.
          *
          * @hide
          */
         public static final int SORT_ORDER_PRIMARY = 1;
 
-        /**
+        /*
          * The value for the SORT_ORDER key corresponding to sorting by family name first.
          *
          * @hide
          */
         public static final int SORT_ORDER_ALTERNATIVE = 2;
 
-        /**
+        /*
          * A key in the {@link android.provider.Settings android.provider.Settings} provider
          * that stores the preferred display order for contacts (given name first vs. family
          * name first).
@@ -171,14 +170,14 @@ public final class ContactsContract {
          */
         public static final String DISPLAY_ORDER = "android.contacts.DISPLAY_ORDER";
 
-        /**
+        /*
          * The value for the DISPLAY_ORDER key corresponding to showing the given name first.
          *
          * @hide
          */
         public static final int DISPLAY_ORDER_PRIMARY = 1;
 
-        /**
+        /*
          * The value for the DISPLAY_ORDER key corresponding to showing the family name first.
          *
          * @hide
@@ -186,7 +185,7 @@ public final class ContactsContract {
         public static final int DISPLAY_ORDER_ALTERNATIVE = 2;
     }
 
-    /**
+    /*
      * @hide should be removed when users are updated to refer to SyncState
      * @deprecated use SyncState instead
      */
@@ -198,13 +197,13 @@ public final class ContactsContract {
     }
     */
 
-    /**
+    /*
      * A table provided for sync adapters to use for storing private sync state data.
      *
      * @see SyncStateContract
      */
     public static final class SyncState implements SyncStateContract.Columns {
-        /**
+        /*
          * This utility class cannot be instantiated
          */
         private SyncState() {}
@@ -212,13 +211,13 @@ public final class ContactsContract {
         public static final String CONTENT_DIRECTORY =
                 SyncStateContract.Constants.CONTENT_DIRECTORY;
 
-        /**
+        /*
          * The content:// style URI for this table
          */
         public static final Uri CONTENT_URI =
                 Uri.withAppendedPath(AUTHORITY_URI, CONTENT_DIRECTORY);
 
-        /**
+        /*
          * @see android.provider.SyncStateContract.Helpers#get
          */
         public static byte[] get(ContentProviderClient provider, Account account)
@@ -226,7 +225,7 @@ public final class ContactsContract {
             return SyncStateContract.Helpers.get(provider, CONTENT_URI, account);
         }
 
-        /**
+        /*
          * @see android.provider.SyncStateContract.Helpers#get
          */
         public static Pair<Uri, byte[]> getWithUri(ContentProviderClient provider, Account account)
@@ -234,7 +233,7 @@ public final class ContactsContract {
             return SyncStateContract.Helpers.getWithUri(provider, CONTENT_URI, account);
         }
 
-        /**
+        /*
          * @see android.provider.SyncStateContract.Helpers#set
          */
         public static void set(ContentProviderClient provider, Account account, byte[] data)
@@ -242,7 +241,7 @@ public final class ContactsContract {
             SyncStateContract.Helpers.set(provider, CONTENT_URI, account, data);
         }
 
-        /**
+        /*
          * @see android.provider.SyncStateContract.Helpers#newSetOperation
          */
         public static ContentProviderOperation newSetOperation(Account account, byte[] data) {
@@ -250,7 +249,7 @@ public final class ContactsContract {
         }
     }
 
-    /**
+    /*
      * Generic columns for use by sync adapters. The specific functions of
      * these columns are private to the sync adapter. Other clients of the API
      * should not attempt to either read or write this column.
@@ -260,17 +259,17 @@ public final class ContactsContract {
      */
     protected interface BaseSyncColumns {
 
-        /** Generic column for use by sync adapters. */
+        /* Generic column for use by sync adapters. */
         public static final String SYNC1 = "sync1";
-        /** Generic column for use by sync adapters. */
+        /* Generic column for use by sync adapters. */
         public static final String SYNC2 = "sync2";
-        /** Generic column for use by sync adapters. */
+        /* Generic column for use by sync adapters. */
         public static final String SYNC3 = "sync3";
-        /** Generic column for use by sync adapters. */
+        /* Generic column for use by sync adapters. */
         public static final String SYNC4 = "sync4";
     }
 
-    /**
+    /*
      * Columns that appear when each row of a table belongs to a specific
      * account, including sync information that an account may need.
      *
@@ -278,34 +277,34 @@ public final class ContactsContract {
      * @see Groups
      */
     protected interface SyncColumns extends BaseSyncColumns {
-        /**
+        /*
          * The name of the account instance to which this row belongs, which when paired with
          * {@link #ACCOUNT_TYPE} identifies a specific account.
          * <P>Type: TEXT</P>
          */
         public static final String ACCOUNT_NAME = "account_name";
 
-        /**
+        /*
          * The type of account to which this row belongs, which when paired with
          * {@link #ACCOUNT_NAME} identifies a specific account.
          * <P>Type: TEXT</P>
          */
         public static final String ACCOUNT_TYPE = "account_type";
 
-        /**
+        /*
          * String that uniquely identifies this row to its source account.
          * <P>Type: TEXT</P>
          */
         public static final String SOURCE_ID = "sourceid";
 
-        /**
+        /*
          * Version number that is updated whenever this row or its related data
          * changes.
          * <P>Type: INTEGER</P>
          */
         public static final String VERSION = "version";
 
-        /**
+        /*
          * Flag indicating that {@link #VERSION} has changed, and this row needs
          * to be synchronized by its owning account.
          * <P>Type: INTEGER (boolean)</P>
@@ -313,7 +312,7 @@ public final class ContactsContract {
         public static final String DIRTY = "dirty";
     }
 
-    /**
+    /*
      * Columns of {@link ContactsContract.Contacts} that track the user's
      * preferences for, or interactions with, the contact.
      *
@@ -324,32 +323,32 @@ public final class ContactsContract {
      * @see ContactsContract.Contacts.AggregationSuggestions
      */
     protected interface ContactOptionsColumns {
-        /**
+        /*
          * The number of times a contact has been contacted
          * <P>Type: INTEGER</P>
          */
         public static final String TIMES_CONTACTED = "times_contacted";
 
-        /**
+        /*
          * The last time a contact was contacted.
          * <P>Type: INTEGER</P>
          */
         public static final String LAST_TIME_CONTACTED = "last_time_contacted";
 
-        /**
+        /*
          * Is the contact starred?
          * <P>Type: INTEGER (boolean)</P>
          */
         public static final String STARRED = "starred";
 
-        /**
+        /*
          * URI for a custom ringtone associated with the contact. If null or missing,
          * the default ringtone is used.
          * <P>Type: TEXT (URI to the ringtone)</P>
          */
         public static final String CUSTOM_RINGTONE = "custom_ringtone";
 
-        /**
+        /*
          * Whether the contact should always be sent to voicemail. If missing,
          * defaults to false.
          * <P>Type: INTEGER (0 for false, 1 for true)</P>
@@ -357,7 +356,7 @@ public final class ContactsContract {
         public static final String SEND_TO_VOICEMAIL = "send_to_voicemail";
     }
 
-    /**
+    /*
      * Columns of {@link ContactsContract.Contacts} that refer to intrinsic
      * properties of the contact, as opposed to the user-specified options
      * found in {@link ContactOptionsColumns}.
@@ -368,76 +367,76 @@ public final class ContactsContract {
      * @see ContactsContract.Contacts.AggregationSuggestions
      */
     protected interface ContactsColumns {
-        /**
+        /*
          * The display name for the contact.
          * <P>Type: TEXT</P>
          */
         public static final String DISPLAY_NAME = ContactNameColumns.DISPLAY_NAME_PRIMARY;
 
-        /**
+        /*
          * Reference to the row in the RawContacts table holding the contact name.
          * <P>Type: INTEGER REFERENCES raw_contacts(_id)</P>
          * @hide
          */
         public static final String NAME_RAW_CONTACT_ID = "name_raw_contact_id";
 
-        /**
+        /*
          * Reference to the row in the data table holding the photo.
          * <P>Type: INTEGER REFERENCES data(_id)</P>
          */
         public static final String PHOTO_ID = "photo_id";
 
-        /**
+        /*
          * Lookup value that reflects the {@link Groups#GROUP_VISIBLE} state of
          * any {@link CommonDataKinds.GroupMembership} for this contact.
          */
         public static final String IN_VISIBLE_GROUP = "in_visible_group";
 
-        /**
+        /*
          * An indicator of whether this contact has at least one phone number. "1" if there is
          * at least one phone number, "0" otherwise.
          * <P>Type: INTEGER</P>
          */
         public static final String HAS_PHONE_NUMBER = "has_phone_number";
 
-        /**
+        /*
          * An opaque value that contains hints on how to find the contact if
          * its row id changed as a result of a sync or aggregation.
          */
         public static final String LOOKUP_KEY = "lookup";
     }
 
-    /**
+    /*
      * @see Contacts
      */
     protected interface ContactStatusColumns {
-        /**
+        /*
          * Contact presence status. See {@link StatusUpdates} for individual status
          * definitions.
          * <p>Type: NUMBER</p>
          */
         public static final String CONTACT_PRESENCE = "contact_presence";
 
-        /**
+        /*
          * Contact's latest status update.
          * <p>Type: TEXT</p>
          */
         public static final String CONTACT_STATUS = "contact_status";
 
-        /**
+        /*
          * The absolute time in milliseconds when the latest status was
          * inserted/updated.
          * <p>Type: NUMBER</p>
          */
         public static final String CONTACT_STATUS_TIMESTAMP = "contact_status_ts";
 
-        /**
+        /*
          * The package containing resources for this status: label and icon.
          * <p>Type: TEXT</p>
          */
         public static final String CONTACT_STATUS_RES_PACKAGE = "contact_status_res_package";
 
-        /**
+        /*
          * The resource ID of the label describing the source of contact
          * status, e.g. "Google Talk". This resource is scoped by the
          * {@link #CONTACT_STATUS_RES_PACKAGE}.
@@ -445,7 +444,7 @@ public final class ContactsContract {
          */
         public static final String CONTACT_STATUS_LABEL = "contact_status_label";
 
-        /**
+        /*
          * The resource ID of the icon for the source of contact status. This
          * resource is scoped by the {@link #CONTACT_STATUS_RES_PACKAGE}.
          * <p>Type: NUMBER</p>
@@ -453,7 +452,7 @@ public final class ContactsContract {
         public static final String CONTACT_STATUS_ICON = "contact_status_icon";
     }
 
-    /**
+    /*
      * Constants for various styles of combining given name, family name etc into
      * a full name.  For example, the western tradition follows the pattern
      * 'given name' 'middle name' 'family name' with the alternative pattern being
@@ -466,7 +465,7 @@ public final class ContactsContract {
         public static final int UNDEFINED = 0;
         public static final int WESTERN = 1;
 
-        /**
+        /*
          * Used if the name is written in Hanzi/Kanji/Hanja and we could not determine
          * which specific language it belongs to: Chinese, Japanese or Korean.
          */
@@ -477,32 +476,32 @@ public final class ContactsContract {
         public static final int KOREAN = 5;
     }
 
-    /**
+    /*
      * Constants for various styles of capturing the pronunciation of a person's name.
      * @hide
      */
     public interface PhoneticNameStyle {
         public static final int UNDEFINED = 0;
 
-        /**
+        /*
          * Pinyin is a phonetic method of entering Chinese characters. Typically not explicitly
          * shown in UIs, but used for searches and sorting.
          */
         public static final int PINYIN = 3;
 
-        /**
+        /*
          * Hiragana and Katakana are two common styles of writing out the pronunciation
          * of a Japanese names.
          */
         public static final int JAPANESE = 4;
 
-        /**
+        /*
          * Hangul is the Korean phonetic alphabet.
          */
         public static final int KOREAN = 5;
     }
 
-    /**
+    /*
      * Types of data used to produce the display name for a contact. Listed in the order
      * of increasing priority.
      *
@@ -517,7 +516,7 @@ public final class ContactsContract {
         public static final int STRUCTURED_NAME = 40;
     }
 
-    /**
+    /*
      * Contact name and contact name metadata columns in the RawContacts table.
      *
      * @see Contacts
@@ -526,7 +525,7 @@ public final class ContactsContract {
      */
     protected interface ContactNameColumns {
 
-        /**
+        /*
          * The kind of data that is used as the display name for the contact, such as
          * structured name or email address.  See DisplayNameSources.
          *
@@ -534,7 +533,7 @@ public final class ContactsContract {
          */
         public static final String DISPLAY_NAME_SOURCE = "display_name_source";
 
-        /**
+        /*
          * <p>
          * The standard text shown as the contact's display name, based on the best
          * available information for the contact (for example, it might be the email address
@@ -556,7 +555,7 @@ public final class ContactsContract {
          */
         public static final String DISPLAY_NAME_PRIMARY = "display_name";
 
-        /**
+        /*
          * <p>
          * An alternative representation of the display name, such as "family name first"
          * instead of "given name first" for Western names.  If an alternative is not
@@ -576,7 +575,7 @@ public final class ContactsContract {
          */
         public static final String DISPLAY_NAME_ALTERNATIVE = "display_name_alt";
 
-        /**
+        /*
          * The phonetic alphabet used to represent the {@link #PHONETIC_NAME}.  See
          * PhoneticNameStyle.
          *
@@ -584,7 +583,7 @@ public final class ContactsContract {
          */
         public static final String PHONETIC_NAME_STYLE = "phonetic_name_style";
 
-        /**
+        /*
          * <p>
          * Pronunciation of the full name in the phonetic alphabet specified by
          * {@link #PHONETIC_NAME_STYLE}.
@@ -600,7 +599,7 @@ public final class ContactsContract {
          */
         public static final String PHONETIC_NAME = "phonetic_name";
 
-        /**
+        /*
          * Sort key that takes into account locale-based traditions for sorting
          * names in address books.  The default
          * sort key is {@link #DISPLAY_NAME_PRIMARY}.  For Chinese names
@@ -609,7 +608,7 @@ public final class ContactsContract {
          */
         public static final String SORT_KEY_PRIMARY = "sort_key";
 
-        /**
+        /*
          * Sort key based on the alternative representation of the full name,
          * {@link #DISPLAY_NAME_ALTERNATIVE}.  Thus for Western names,
          * it is the one using the "family name first" format.
@@ -617,7 +616,7 @@ public final class ContactsContract {
         public static final String SORT_KEY_ALTERNATIVE = "sort_key_alt";
     }
 
-    /**
+    /*
      * URI parameter and cursor extras that return counts of rows grouped by the
      * address book index, which is usually the first letter of the sort key.
      * When this parameter is supplied, the row counts are returned in the
@@ -627,7 +626,7 @@ public final class ContactsContract {
      */
     public final static class ContactCounts {
 
-        /**
+        /*
          * Add this query parameter to a URI to get back row counts grouped by
          * the address book index as cursor extras. For most languages it is the
          * first letter of the sort key. This parameter does not affect the main
@@ -637,7 +636,7 @@ public final class ContactsContract {
          */
         public static final String ADDRESS_BOOK_INDEX_EXTRAS = "address_book_index_extras";
 
-        /**
+        /*
          * The array of address book index titles, which are returned in the
          * same order as the data in the cursor.
          * <p>TYPE: String[]</p>
@@ -646,7 +645,7 @@ public final class ContactsContract {
          */
         public static final String EXTRA_ADDRESS_BOOK_INDEX_TITLES = "address_book_index_titles";
 
-        /**
+        /*
          * The array of group counts for the corresponding group.  Contains the same number
          * of elements as the EXTRA_ADDRESS_BOOK_INDEX_TITLES array.
          * <p>TYPE: int[]</p>
@@ -656,7 +655,7 @@ public final class ContactsContract {
         public static final String EXTRA_ADDRESS_BOOK_INDEX_COUNTS = "address_book_index_counts";
     }
 
-    /**
+    /*
      * Constants for the contacts table, which contains a record per aggregate
      * of raw contacts representing the same person.
      * <h3>Operations</h3>
@@ -856,17 +855,17 @@ public final class ContactsContract {
      */
     public static class Contacts implements BaseColumns, ContactsColumns,
             ContactOptionsColumns, ContactNameColumns, ContactStatusColumns {
-        /**
+        /*
          * This utility class cannot be instantiated
          */
         private Contacts()  {}
 
-        /**
+        /*
          * The content:// style URI for this table
          */
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, "contacts");
 
-        /**
+        /*
          * A content:// style URI for this table that should be used to create
          * shortcuts or otherwise create long-term links to contacts. This URI
          * should always be followed by a "/" and the contact's {@link #LOOKUP_KEY}.
@@ -885,7 +884,7 @@ public final class ContactsContract {
         public static final Uri CONTENT_LOOKUP_URI = Uri.withAppendedPath(CONTENT_URI,
                 "lookup");
 
-        /**
+        /*
          * Base {@link Uri} for referencing a single {@link Contacts} entry,
          * created by appending {@link #LOOKUP_KEY} using
          * {@link Uri#withAppendedPath(Uri, String)}. Provides
@@ -896,7 +895,7 @@ public final class ContactsContract {
         public static final Uri CONTENT_VCARD_URI = Uri.withAppendedPath(CONTENT_URI,
                 "as_vcard");
 
-        /**
+        /*
          * Base {@link Uri} for referencing multiple {@link Contacts} entry,
          * created by appending {@link #LOOKUP_KEY} using
          * {@link Uri#withAppendedPath(Uri, String)}. The lookup keys have to be
@@ -915,7 +914,7 @@ public final class ContactsContract {
         public static final Uri CONTENT_MULTI_VCARD_URI = Uri.withAppendedPath(CONTENT_URI,
                 "as_multi_vcard");
 
-        /**
+        /*
          * Builds a {@link #CONTENT_LOOKUP_URI} style {@link Uri} describing the
          * requested {@link Contacts} entry.
          *
@@ -942,7 +941,7 @@ public final class ContactsContract {
             return null;
         }
 
-        /**
+        /*
          * Build a {@link #CONTENT_LOOKUP_URI} lookup {@link Uri} using the
          * given {@link ContactsContract.Contacts#_ID} and {@link #LOOKUP_KEY}.
          */
@@ -951,7 +950,7 @@ public final class ContactsContract {
                     lookupKey), contactId);
         }
 
-        /**
+        /*
          * Computes a content URI (see {@link #CONTENT_URI}) given a lookup URI.
          * <p>
          * Returns null if the contact cannot be found.
@@ -977,7 +976,7 @@ public final class ContactsContract {
             return null;
         }
 
-        /**
+        /*
          * Mark a contact as having been contacted.  This updates the
          * {@link #TIMES_CONTACTED} and {@link #LAST_TIME_CONTACTED} for the
          * contact, plus the corresponding values of any associated raw
@@ -994,7 +993,7 @@ public final class ContactsContract {
             resolver.update(uri, values, null, null);
         }
 
-        /**
+        /*
          * The content:// style URI used for "type-to-filter" functionality on the
          * {@link #CONTENT_URI} URI. The filter string will be used to match
          * various parts of the contact name. The filter argument should be passed
@@ -1003,7 +1002,7 @@ public final class ContactsContract {
         public static final Uri CONTENT_FILTER_URI = Uri.withAppendedPath(
                 CONTENT_URI, "filter");
 
-        /**
+        /*
          * The content:// style URI for this table joined with useful data from
          * {@link ContactsContract.Data}, filtered to include only starred contacts
          * and the most frequently contacted contacts.
@@ -1011,7 +1010,7 @@ public final class ContactsContract {
         public static final Uri CONTENT_STREQUENT_URI = Uri.withAppendedPath(
                 CONTENT_URI, "strequent");
 
-        /**
+        /*
          * The content:// style URI used for "type-to-filter" functionality on the
          * {@link #CONTENT_STREQUENT_URI} URI. The filter string will be used to match
          * various parts of the contact name. The filter argument should be passed
@@ -1023,41 +1022,41 @@ public final class ContactsContract {
         public static final Uri CONTENT_GROUP_URI = Uri.withAppendedPath(
                 CONTENT_URI, "group");
 
-        /**
+        /*
          * The MIME type of {@link #CONTENT_URI} providing a directory of
          * people.
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/contact";
 
-        /**
+        /*
          * The MIME type of a {@link #CONTENT_URI} subdirectory of a single
          * person.
          */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/contact";
 
-        /**
+        /*
          * The MIME type of a {@link #CONTENT_URI} subdirectory of a single
          * person.
          */
         public static final String CONTENT_VCARD_TYPE = "text/x-vcard";
 
-        /**
+        /*
          * A sub-directory of a single contact that contains all of the constituent raw contact
          * {@link ContactsContract.Data} rows.
          */
         public static final class Data implements BaseColumns, DataColumns {
-            /**
+            /*
              * no public constructor since this is a utility class
              */
             private Data() {}
 
-            /**
+            /*
              * The directory twig for this sub-table
              */
             public static final String CONTENT_DIRECTORY = "data";
         }
 
-        /**
+        /*
          * <p>
          * A <i>read-only</i> sub-directory of a single contact aggregate that
          * contains all aggregation suggestions (other contacts). The
@@ -1086,12 +1085,12 @@ public final class ContactsContract {
          */
         // TODO: add ContactOptionsColumns, ContactStatusColumns
         public static final class AggregationSuggestions implements BaseColumns, ContactsColumns {
-            /**
+            /*
              * No public constructor since this is a utility class
              */
             private AggregationSuggestions() {}
 
-            /**
+            /*
              * The directory twig for this sub-table. The URI can be followed by an optional
              * type-to-filter, similar to
              * {@link android.provider.ContactsContract.Contacts#CONTENT_FILTER_URI}.
@@ -1099,7 +1098,7 @@ public final class ContactsContract {
             public static final String CONTENT_DIRECTORY = "suggestions";
         }
 
-        /**
+        /*
          * A <i>read-only</i> sub-directory of a single contact that contains
          * the contact's primary photo.
          * <p>
@@ -1135,17 +1134,17 @@ public final class ContactsContract {
          */
         // TODO: change DataColumns to DataColumnsWithJoins
         public static final class Photo implements BaseColumns, DataColumns {
-            /**
+            /*
              * no public constructor since this is a utility class
              */
             private Photo() {}
 
-            /**
+            /*
              * The directory twig for this sub-table
              */
             public static final String CONTENT_DIRECTORY = "photo";
 
-            /**
+            /*
              * Thumbnail photo of the raw contact. This is the raw bytes of an image
              * that could be inflated using {@link android.graphics.BitmapFactory}.
              * <p>
@@ -1155,7 +1154,7 @@ public final class ContactsContract {
             public static final String PHOTO = DATA15;
         }
 
-        /**
+        /*
          * Opens an InputStream for the contacts's default photo and returns the
          * photo as a byte stream. If there is not photo null will be returned.
          *
@@ -1187,14 +1186,14 @@ public final class ContactsContract {
     }
 
     protected interface RawContactsColumns {
-        /**
+        /*
          * A reference to the {@link ContactsContract.Contacts#_ID} that this
          * data belongs to.
          * <P>Type: INTEGER</P>
          */
         public static final String CONTACT_ID = "contact_id";
 
-        /**
+        /*
          * Flag indicating that this {@link RawContacts} entry and its children have
          * been restricted to specific platform apps.
          * <P>Type: INTEGER (boolean)</P>
@@ -1203,13 +1202,13 @@ public final class ContactsContract {
          */
         public static final String IS_RESTRICTED = "is_restricted";
 
-        /**
+        /*
          * The aggregation mode for this contact.
          * <P>Type: INTEGER</P>
          */
         public static final String AGGREGATION_MODE = "aggregation_mode";
 
-        /**
+        /*
          * The "deleted" flag: "0" by default, "1" if the row has been marked
          * for deletion. When {@link android.content.ContentResolver#delete} is
          * called on a raw contact, it is marked for deletion and removed from its
@@ -1221,7 +1220,7 @@ public final class ContactsContract {
          */
         public static final String DELETED = "deleted";
 
-        /**
+        /*
          * The "name_verified" flag: "1" means that the name fields on this raw
          * contact can be trusted and therefore should be used for the entire
          * aggregated contact.
@@ -1249,7 +1248,7 @@ public final class ContactsContract {
         public static final String NAME_VERIFIED = "name_verified";
     }
 
-    /**
+    /*
      * Constants for the raw contacts table, which contains one row of contact
      * information for each person in each synced account. Sync adapters and
      * contact management apps
@@ -1602,43 +1601,43 @@ public final class ContactsContract {
      */
     public static final class RawContacts implements BaseColumns, RawContactsColumns,
             ContactOptionsColumns, ContactNameColumns, SyncColumns  {
-        /**
+        /*
          * This utility class cannot be instantiated
          */
         private RawContacts() {
         }
 
-        /**
+        /*
          * The content:// style URI for this table, which requests a directory of
          * raw contact rows matching the selection criteria.
          */
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, "raw_contacts");
 
-        /**
+        /*
          * The MIME type of the results from {@link #CONTENT_URI} when a specific
          * ID value is not provided, and multiple raw contacts may be returned.
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/raw_contact";
 
-        /**
+        /*
          * The MIME type of the results when a raw contact ID is appended to {@link #CONTENT_URI},
          * yielding a subdirectory of a single person.
          */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/raw_contact";
 
-        /**
+        /*
          * Aggregation mode: aggregate immediately after insert or update operation(s) are complete.
          */
         public static final int AGGREGATION_MODE_DEFAULT = 0;
 
-        /**
+        /*
          * Do not use.
          *
          * TODO: deprecate in favor of {@link #AGGREGATION_MODE_DEFAULT}
          */
         public static final int AGGREGATION_MODE_IMMEDIATE = 1;
 
-        /**
+        /*
          * <p>
          * Aggregation mode: aggregation suspended temporarily, and is likely to be resumed later.
          * Changes to the raw contact will update the associated aggregate contact but will not
@@ -1660,7 +1659,7 @@ public final class ContactsContract {
          */
         public static final int AGGREGATION_MODE_SUSPENDED = 2;
 
-        /**
+        /*
          * <p>
          * Aggregation mode: never aggregate this raw contact.  The raw contact will not
          * have a corresponding {@link Contacts} aggregate and therefore will not be included in
@@ -1675,7 +1674,7 @@ public final class ContactsContract {
          */
         public static final int AGGREGATION_MODE_DISABLED = 3;
 
-        /**
+        /*
          * Build a {@link android.provider.ContactsContract.Contacts#CONTENT_LOOKUP_URI}
          * style {@link Uri} for the parent {@link android.provider.ContactsContract.Contacts}
          * entry of the given {@link RawContacts} entry.
@@ -1700,7 +1699,7 @@ public final class ContactsContract {
             return lookupUri;
         }
 
-        /**
+        /*
          * A sub-directory of a single raw contact that contains all of its
          * {@link ContactsContract.Data} rows. To access this directory
          * append {@link Data#CONTENT_DIRECTORY} to the contact URI.
@@ -1708,19 +1707,19 @@ public final class ContactsContract {
          * TODO: deprecate in favor of {@link RawContacts.Entity}.
          */
         public static final class Data implements BaseColumns, DataColumns {
-            /**
+            /*
              * no public constructor since this is a utility class
              */
             private Data() {
             }
 
-            /**
+            /*
              * The directory twig for this sub-table
              */
             public static final String CONTENT_DIRECTORY = "data";
         }
 
-        /**
+        /*
          * <p>
          * A sub-directory of a single raw contact that contains all of its
          * {@link ContactsContract.Data} rows. To access this directory append
@@ -1742,18 +1741,18 @@ public final class ContactsContract {
          * </p>
          */
         public static final class Entity implements BaseColumns, DataColumns {
-            /**
+            /*
              * no public constructor since this is a utility class
              */
             private Entity() {
             }
 
-            /**
+            /*
              * The directory twig for this sub-table
              */
             public static final String CONTENT_DIRECTORY = "entity";
 
-            /**
+            /*
              * The ID of the data column. The value will be null if this raw contact has no
              * data rows.
              * <P>Type: INTEGER</P>
@@ -1761,7 +1760,7 @@ public final class ContactsContract {
             public static final String DATA_ID = "data_id";
         }
 
-        /**
+        /*
          * TODO: javadoc
          * @param cursor
          * @return
@@ -1874,87 +1873,87 @@ public final class ContactsContract {
         }
     }
 
-    /**
+    /*
      * Social status update columns.
      *
      * @see StatusUpdates
      * @see ContactsContract.Data
      */
     protected interface StatusColumns {
-        /**
+        /*
          * Contact's latest presence level.
          * <P>Type: INTEGER (one of the values below)</P>
          */
         public static final String PRESENCE = "mode";
 
-        /**
+        /*
          * @deprecated use {@link #PRESENCE}
          */
         @Deprecated
         public static final String PRESENCE_STATUS = PRESENCE;
 
-        /**
+        /*
          * An allowed value of {@link #PRESENCE}.
          */
         int OFFLINE = 0;
 
-        /**
+        /*
          * An allowed value of {@link #PRESENCE}.
          */
         int INVISIBLE = 1;
 
-        /**
+        /*
          * An allowed value of {@link #PRESENCE}.
          */
         int AWAY = 2;
 
-        /**
+        /*
          * An allowed value of {@link #PRESENCE}.
          */
         int IDLE = 3;
 
-        /**
+        /*
          * An allowed value of {@link #PRESENCE}.
          */
         int DO_NOT_DISTURB = 4;
 
-        /**
+        /*
          * An allowed value of {@link #PRESENCE}.
          */
         int AVAILABLE = 5;
 
-        /**
+        /*
          * Contact latest status update.
          * <p>Type: TEXT</p>
          */
         public static final String STATUS = "status";
 
-        /**
+        /*
          * @deprecated use {@link #STATUS}
          */
         @Deprecated
         public static final String PRESENCE_CUSTOM_STATUS = STATUS;
 
-        /**
+        /*
          * The absolute time in milliseconds when the latest status was inserted/updated.
          * <p>Type: NUMBER</p>
          */
         public static final String STATUS_TIMESTAMP = "status_ts";
 
-        /**
+        /*
          * The package containing resources for this status: label and icon.
          * <p>Type: NUMBER</p>
          */
         public static final String STATUS_RES_PACKAGE = "status_res_package";
 
-        /**
+        /*
          * The resource ID of the label describing the source of the status update, e.g. "Google
          * Talk".  This resource should be scoped by the {@link #STATUS_RES_PACKAGE}.
          * <p>Type: NUMBER</p>
          */
         public static final String STATUS_LABEL = "status_label";
 
-        /**
+        /*
          * The resource ID of the icon for the source of the status update.
          * This resource should be scoped by the {@link #STATUS_RES_PACKAGE}.
          * <p>Type: NUMBER</p>
@@ -1962,13 +1961,13 @@ public final class ContactsContract {
         public static final String STATUS_ICON = "status_icon";
     }
 
-    /**
+    /*
      * Columns in the Data table.
      *
      * @see ContactsContract.Data
      */
     protected interface DataColumns {
-        /**
+        /*
          * The package name to use when creating {@link Resources} objects for
          * this data row. This value is only designed for use when building user
          * interfaces, and should not be used to infer the owner.
@@ -1977,24 +1976,24 @@ public final class ContactsContract {
          */
         public static final String RES_PACKAGE = "res_package";
 
-        /**
+        /*
          * The MIME type of the item represented by this row.
          */
         public static final String MIMETYPE = "mimetype";
 
-        /**
+        /*
          * A reference to the {@link RawContacts#_ID}
          * that this data belongs to.
          */
         public static final String RAW_CONTACT_ID = "raw_contact_id";
 
-        /**
+        /*
          * Whether this is the primary entry of its kind for the raw contact it belongs to.
          * <P>Type: INTEGER (if set, non-0 means true)</P>
          */
         public static final String IS_PRIMARY = "is_primary";
 
-        /**
+        /*
          * Whether this is the primary entry of its kind for the aggregate
          * contact it belongs to. Any data record that is "super primary" must
          * also be "primary".
@@ -2002,7 +2001,7 @@ public final class ContactsContract {
          */
         public static final String IS_SUPER_PRIMARY = "is_super_primary";
 
-        /**
+        /*
          * The version of this data record. This is a read-only value. The data column is
          * guaranteed to not change without the version going up. This value is monotonically
          * increasing.
@@ -2010,51 +2009,51 @@ public final class ContactsContract {
          */
         public static final String DATA_VERSION = "data_version";
 
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA1 = "data1";
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA2 = "data2";
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA3 = "data3";
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA4 = "data4";
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA5 = "data5";
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA6 = "data6";
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA7 = "data7";
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA8 = "data8";
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA9 = "data9";
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA10 = "data10";
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA11 = "data11";
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA12 = "data12";
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA13 = "data13";
-        /** Generic data column, the meaning is {@link #MIMETYPE} specific */
+        /* Generic data column, the meaning is {@link #MIMETYPE} specific */
         public static final String DATA14 = "data14";
-        /**
+        /*
          * Generic data column, the meaning is {@link #MIMETYPE} specific. By convention,
          * this field is used to store BLOBs (binary data).
          */
         public static final String DATA15 = "data15";
 
-        /** Generic column for use by sync adapters. */
+        /* Generic column for use by sync adapters. */
         public static final String SYNC1 = "data_sync1";
-        /** Generic column for use by sync adapters. */
+        /* Generic column for use by sync adapters. */
         public static final String SYNC2 = "data_sync2";
-        /** Generic column for use by sync adapters. */
+        /* Generic column for use by sync adapters. */
         public static final String SYNC3 = "data_sync3";
-        /** Generic column for use by sync adapters. */
+        /* Generic column for use by sync adapters. */
         public static final String SYNC4 = "data_sync4";
     }
 
-    /**
+    /*
      * Combines all columns returned by {@link ContactsContract.Data} table queries.
      *
      * @see ContactsContract.Data
@@ -2064,7 +2063,7 @@ public final class ContactsContract {
             ContactStatusColumns {
     }
 
-    /**
+    /*
      * <p>
      * Constants for the data table, which contains data points tied to a raw
      * contact.  Each row of the data table is typically used to store a single
@@ -2568,23 +2567,23 @@ public final class ContactsContract {
      * </table>
      */
     public final static class Data implements DataColumnsWithJoins {
-        /**
+        /*
          * This utility class cannot be instantiated
          */
         private Data() {}
 
-        /**
+        /*
          * The content:// style URI for this table, which requests a directory
          * of data rows matching the selection criteria.
          */
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, "data");
 
-        /**
+        /*
          * The MIME type of the results from {@link #CONTENT_URI}.
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/data";
 
-        /**
+        /*
          * <p>
          * If {@link #FOR_EXPORT_ONLY} is explicitly set to "1", returned Cursor toward
          * Data.CONTENT_URI contains only exportable data.
@@ -2605,7 +2604,7 @@ public final class ContactsContract {
          */
         public static final String FOR_EXPORT_ONLY = "for_export_only";
 
-        /**
+        /*
          * <p>
          * Build a {@link android.provider.ContactsContract.Contacts#CONTENT_LOOKUP_URI}
          * style {@link Uri} for the parent {@link android.provider.ContactsContract.Contacts}
@@ -2637,7 +2636,7 @@ public final class ContactsContract {
         }
     }
 
-    /**
+    /*
      * <p>
      * Constants for the raw contacts entities table, which can be thought of as
      * an outer join of the raw_contacts table with the data table.  It is a strictly
@@ -2776,23 +2775,23 @@ public final class ContactsContract {
      */
     public final static class RawContactsEntity
             implements BaseColumns, DataColumns, RawContactsColumns {
-        /**
+        /*
          * This utility class cannot be instantiated
          */
         private RawContactsEntity() {}
 
-        /**
+        /*
          * The content:// style URI for this table
          */
         public static final Uri CONTENT_URI =
                 Uri.withAppendedPath(AUTHORITY_URI, "raw_contact_entities");
 
-        /**
+        /*
          * The MIME type of {@link #CONTENT_URI} providing a directory of raw contact entities.
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/raw_contact_entity";
 
-        /**
+        /*
          * If {@link #FOR_EXPORT_ONLY} is explicitly set to "1", returned Cursor toward
          * Data.CONTENT_URI contains only exportable data.
          *
@@ -2808,37 +2807,37 @@ public final class ContactsContract {
          */
         public static final String FOR_EXPORT_ONLY = "for_export_only";
 
-        /**
+        /*
          * The ID of the data column. The value will be null if this raw contact has no data rows.
          * <P>Type: INTEGER</P>
          */
         public static final String DATA_ID = "data_id";
     }
 
-    /**
+    /*
      * @see PhoneLookup
      */
     protected interface PhoneLookupColumns {
-        /**
+        /*
          * The phone number as the user entered it.
          * <P>Type: TEXT</P>
          */
         public static final String NUMBER = "number";
 
-        /**
+        /*
          * The type of phone number, for example Home or Work.
          * <P>Type: INTEGER</P>
          */
         public static final String TYPE = "type";
 
-        /**
+        /*
          * The user defined label for the phone number.
          * <P>Type: TEXT</P>
          */
         public static final String LABEL = "label";
     }
 
-    /**
+    /*
      * A table that represents the result of looking up a phone number, for
      * example for caller ID. To perform a lookup you must append the number you
      * want to find to {@link #CONTENT_FILTER_URI}.  This query is highly
@@ -2950,12 +2949,12 @@ public final class ContactsContract {
      */
     public static final class PhoneLookup implements BaseColumns, PhoneLookupColumns,
             ContactsColumns, ContactOptionsColumns {
-        /**
+        /*
          * This utility class cannot be instantiated
          */
         private PhoneLookup() {}
 
-        /**
+        /*
          * The content:// style URI for this table. Append the phone number you want to lookup
          * to this URI and query it to perform a lookup. For example:
          * <pre>
@@ -2965,7 +2964,7 @@ public final class ContactsContract {
         public static final Uri CONTENT_FILTER_URI = Uri.withAppendedPath(AUTHORITY_URI,
                 "phone_lookup");
 
-        /**
+        /*
          * The MIME type of {@link #CONTENT_FILTER_URI} providing a directory of phone lookup rows.
          *
          * @hide
@@ -2973,7 +2972,7 @@ public final class ContactsContract {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/phone_lookup";
     }
 
-    /**
+    /*
      * Additional data mixed in with {@link StatusColumns} to link
      * back to specific {@link ContactsContract.Data#_ID} entries.
      *
@@ -2981,19 +2980,19 @@ public final class ContactsContract {
      */
     protected interface PresenceColumns {
 
-        /**
+        /*
          * Reference to the {@link Data#_ID} entry that owns this presence.
          * <P>Type: INTEGER</P>
          */
         public static final String DATA_ID = "presence_data_id";
 
-        /**
+        /*
          * See {@link CommonDataKinds.Im} for a list of defined protocol constants.
          * <p>Type: NUMBER</p>
          */
         public static final String PROTOCOL = "protocol";
 
-        /**
+        /*
          * Name of the custom protocol.  Should be supplied along with the {@link #PROTOCOL} value
          * {@link ContactsContract.CommonDataKinds.Im#PROTOCOL_CUSTOM}.  Should be null or
          * omitted if {@link #PROTOCOL} value is not
@@ -3003,21 +3002,21 @@ public final class ContactsContract {
          */
         public static final String CUSTOM_PROTOCOL = "custom_protocol";
 
-        /**
+        /*
          * The IM handle the presence item is for. The handle is scoped to
          * {@link #PROTOCOL}.
          * <P>Type: TEXT</P>
          */
         public static final String IM_HANDLE = "im_handle";
 
-        /**
+        /*
          * The IM account for the local user that the presence data came from.
          * <P>Type: TEXT</P>
          */
         public static final String IM_ACCOUNT = "im_account";
     }
 
-    /**
+    /*
      * <p>
      * A status update is linked to a {@link ContactsContract.Data} row and captures
      * the user's latest status update via the corresponding source, e.g.
@@ -3145,17 +3144,17 @@ public final class ContactsContract {
      */
     public static class StatusUpdates implements StatusColumns, PresenceColumns {
 
-        /**
+        /*
          * This utility class cannot be instantiated
          */
         private StatusUpdates() {}
 
-        /**
+        /*
          * The content:// style URI for this table
          */
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, "status_updates");
 
-        /**
+        /*
          * Gets the resource ID for the proper presence icon.
          *
          * @param status the status to get the icon for
@@ -3178,7 +3177,7 @@ public final class ContactsContract {
             }
         }
 
-        /**
+        /*
          * Returns the precedence of the status code the higher number being the higher precedence.
          *
          * @param status The status code.
@@ -3190,20 +3189,20 @@ public final class ContactsContract {
             return status;
         }
 
-        /**
+        /*
          * The MIME type of {@link #CONTENT_URI} providing a directory of
          * status update details.
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/status-update";
 
-        /**
+        /*
          * The MIME type of a {@link #CONTENT_URI} subdirectory of a single
          * status update detail.
          */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/status-update";
     }
 
-    /**
+    /*
      * @deprecated This old name was never meant to be made public. Do not use.
      */
     @Deprecated
@@ -3211,7 +3210,7 @@ public final class ContactsContract {
 
     }
 
-    /**
+    /*
      * Additional columns returned by the {@link Contacts#CONTENT_FILTER_URI} providing the
      * explanation of why the filter matched the contact.  Specifically, they contain the
      * data type and element that was used for matching.
@@ -3222,42 +3221,42 @@ public final class ContactsContract {
      */
     public static class SearchSnippetColumns {
 
-        /**
+        /*
          * The ID of the data row that was matched by the filter.
          *
          * @hide
          */
         public static final String SNIPPET_DATA_ID = "snippet_data_id";
 
-        /**
+        /*
          * The type of data that was matched by the filter.
          *
          * @hide
          */
         public static final String SNIPPET_MIMETYPE = "snippet_mimetype";
 
-        /**
+        /*
          * The {@link Data#DATA1} field of the data row that was matched by the filter.
          *
          * @hide
          */
         public static final String SNIPPET_DATA1 = "snippet_data1";
 
-        /**
+        /*
          * The {@link Data#DATA2} field of the data row that was matched by the filter.
          *
          * @hide
          */
         public static final String SNIPPET_DATA2 = "snippet_data2";
 
-        /**
+        /*
          * The {@link Data#DATA3} field of the data row that was matched by the filter.
          *
          * @hide
          */
         public static final String SNIPPET_DATA3 = "snippet_data3";
 
-        /**
+        /*
          * The {@link Data#DATA4} field of the data row that was matched by the filter.
          *
          * @hide
@@ -3266,17 +3265,17 @@ public final class ContactsContract {
 
     }
 
-    /**
+    /*
      * Container for definitions of common data types stored in the {@link ContactsContract.Data}
      * table.
      */
     public static final class CommonDataKinds {
-        /**
+        /*
          * This utility class cannot be instantiated
          */
         private CommonDataKinds() {}
 
-        /**
+        /*
          * The {@link Data#RES_PACKAGE} value for common data that should be
          * shown using a default style.
          *
@@ -3284,40 +3283,40 @@ public final class ContactsContract {
          */
         public static final String PACKAGE_COMMON = "common";
 
-        /**
+        /*
          * The base types that all "Typed" data kinds support.
          */
         public interface BaseTypes {
-            /**
+            /*
              * A custom type. The custom label should be supplied by user.
              */
             public static int TYPE_CUSTOM = 0;
         }
 
-        /**
+        /*
          * Columns common across the specific types.
          */
         protected interface CommonColumns extends BaseTypes {
-            /**
+            /*
              * The data for the contact method.
              * <P>Type: TEXT</P>
              */
             public static final String DATA = DataColumns.DATA1;
 
-            /**
+            /*
              * The type of data, for example Home or Work.
              * <P>Type: INTEGER</P>
              */
             public static final String TYPE = DataColumns.DATA2;
 
-            /**
+            /*
              * The user defined label for the the contact method.
              * <P>Type: TEXT</P>
              */
             public static final String LABEL = DataColumns.DATA3;
         }
 
-        /**
+        /*
          * A data kind representing the contact's proper name. You can use all
          * columns defined for {@link ContactsContract.Data} as well as the following aliases.
          *
@@ -3383,15 +3382,15 @@ public final class ContactsContract {
          * </table>
          */
         public static final class StructuredName implements DataColumnsWithJoins {
-            /**
+            /*
              * This utility class cannot be instantiated
              */
             private StructuredName() {}
 
-            /** MIME type used when storing this in data table. */
+            /* MIME type used when storing this in data table. */
             public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/name";
 
-            /**
+            /*
              * The name that should be used to display the contact.
              * <i>Unstructured component of the name should be consistent with
              * its structured representation.</i>
@@ -3400,54 +3399,54 @@ public final class ContactsContract {
              */
             public static final String DISPLAY_NAME = DATA1;
 
-            /**
+            /*
              * The given name for the contact.
              * <P>Type: TEXT</P>
              */
             public static final String GIVEN_NAME = DATA2;
 
-            /**
+            /*
              * The family name for the contact.
              * <P>Type: TEXT</P>
              */
             public static final String FAMILY_NAME = DATA3;
 
-            /**
+            /*
              * The contact's honorific prefix, e.g. "Sir"
              * <P>Type: TEXT</P>
              */
             public static final String PREFIX = DATA4;
 
-            /**
+            /*
              * The contact's middle name
              * <P>Type: TEXT</P>
              */
             public static final String MIDDLE_NAME = DATA5;
 
-            /**
+            /*
              * The contact's honorific suffix, e.g. "Jr"
              */
             public static final String SUFFIX = DATA6;
 
-            /**
+            /*
              * The phonetic version of the given name for the contact.
              * <P>Type: TEXT</P>
              */
             public static final String PHONETIC_GIVEN_NAME = DATA7;
 
-            /**
+            /*
              * The phonetic version of the additional name for the contact.
              * <P>Type: TEXT</P>
              */
             public static final String PHONETIC_MIDDLE_NAME = DATA8;
 
-            /**
+            /*
              * The phonetic version of the family name for the contact.
              * <P>Type: TEXT</P>
              */
             public static final String PHONETIC_FAMILY_NAME = DATA9;
 
-            /**
+            /*
              * The style used for combining given/middle/family name into a full name.
              * See {@link ContactsContract.FullNameStyle}.
              *
@@ -3455,7 +3454,7 @@ public final class ContactsContract {
              */
             public static final String FULL_NAME_STYLE = DATA10;
 
-            /**
+            /*
              * The alphabet used for capturing the phonetic name.
              * See ContactsContract.PhoneticNameStyle.
              * @hide
@@ -3463,7 +3462,7 @@ public final class ContactsContract {
             public static final String PHONETIC_NAME_STYLE = DATA11;
         }
 
-        /**
+        /*
          * <p>A data kind representing the contact's nickname. For example, for
          * Bob Parr ("Mr. Incredible"):
          * <pre>
@@ -3528,12 +3527,12 @@ public final class ContactsContract {
          * </table>
          */
         public static final class Nickname implements DataColumnsWithJoins, CommonColumns {
-            /**
+            /*
              * This utility class cannot be instantiated
              */
             private Nickname() {}
 
-            /** MIME type used when storing this in data table. */
+            /* MIME type used when storing this in data table. */
             public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/nickname";
 
             public static final int TYPE_DEFAULT = 1;
@@ -3542,13 +3541,13 @@ public final class ContactsContract {
             public static final int TYPE_SHORT_NAME = 4;
             public static final int TYPE_INITIALS = 5;
 
-            /**
+            /*
              * The name itself
              */
             public static final String NAME = DATA;
         }
 
-        /**
+        /*
          * <p>
          * A data kind representing a telephone number.
          * </p>
@@ -3609,21 +3608,21 @@ public final class ContactsContract {
          * </table>
          */
         public static final class Phone implements DataColumnsWithJoins, CommonColumns {
-            /**
+            /*
              * This utility class cannot be instantiated
              */
             private Phone() {}
 
-            /** MIME type used when storing this in data table. */
+            /* MIME type used when storing this in data table. */
             public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/phone_v2";
 
-            /**
+            /*
              * The MIME type of {@link #CONTENT_URI} providing a directory of
              * phones.
              */
             public static final String CONTENT_TYPE = "vnd.android.cursor.dir/phone_v2";
 
-            /**
+            /*
              * The content:// style URI for all data records of the
              * {@link #CONTENT_ITEM_TYPE} MIME type, combined with the
              * associated raw contact and aggregate contact data.
@@ -3631,7 +3630,7 @@ public final class ContactsContract {
             public static final Uri CONTENT_URI = Uri.withAppendedPath(Data.CONTENT_URI,
                     "phones");
 
-            /**
+            /*
              * The content:// style URL for phone lookup using a filter. The filter returns
              * records of MIME type {@link #CONTENT_ITEM_TYPE}. The filter is applied
              * to display names as well as phone numbers. The filter argument should be passed
@@ -3661,13 +3660,13 @@ public final class ContactsContract {
             public static final int TYPE_ASSISTANT = 19;
             public static final int TYPE_MMS = 20;
 
-            /**
+            /*
              * The phone number as the user entered it.
              * <P>Type: TEXT</P>
              */
             public static final String NUMBER = DATA;
 
-            /**
+            /*
              * @deprecated use {@link #getTypeLabel(Resources, int, CharSequence)} instead.
              * @hide
              */
@@ -3677,7 +3676,7 @@ public final class ContactsContract {
                 return getTypeLabel(context.getResources(), type, label);
             }
 
-            /**
+            /*
              * @deprecated use {@link #getTypeLabel(Resources, int, CharSequence)} instead.
              * @hide
              */
@@ -3687,7 +3686,7 @@ public final class ContactsContract {
                 return getTypeLabel(context.getResources(), type, label);
             }
 
-            /**
+            /*
              * Return the string resource that best describes the given
              * {@link #TYPE}. Will always return a valid resource.
              */
@@ -3717,7 +3716,7 @@ public final class ContactsContract {
                 }
             }
 
-            /**
+            /*
              * Return a {@link CharSequence} that best describes the given type,
              * possibly substituting the given {@link #LABEL} value
              * for {@link #TYPE_CUSTOM}.
@@ -3733,7 +3732,7 @@ public final class ContactsContract {
             }
         }
 
-        /**
+        /*
          * <p>
          * A data kind representing an email address.
          * </p>
@@ -3778,20 +3777,20 @@ public final class ContactsContract {
          * </table>
          */
         public static final class Email implements DataColumnsWithJoins, CommonColumns {
-            /**
+            /*
              * This utility class cannot be instantiated
              */
             private Email() {}
 
-            /** MIME type used when storing this in data table. */
+            /* MIME type used when storing this in data table. */
             public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/email_v2";
 
-            /**
+            /*
              * The MIME type of {@link #CONTENT_URI} providing a directory of email addresses.
              */
             public static final String CONTENT_TYPE = "vnd.android.cursor.dir/email_v2";
 
-            /**
+            /*
              * The content:// style URI for all data records of the
              * {@link #CONTENT_ITEM_TYPE} MIME type, combined with the
              * associated raw contact and aggregate contact data.
@@ -3799,7 +3798,7 @@ public final class ContactsContract {
             public static final Uri CONTENT_URI = Uri.withAppendedPath(Data.CONTENT_URI,
                     "emails");
 
-            /**
+            /*
              * <p>
              * The content:// style URL for looking up data rows by email address. The
              * lookup argument, an email address, should be passed as an additional path segment
@@ -3817,7 +3816,7 @@ public final class ContactsContract {
             public static final Uri CONTENT_LOOKUP_URI = Uri.withAppendedPath(CONTENT_URI,
                     "lookup");
 
-            /**
+            /*
              * <p>
              * The content:// style URL for email lookup using a filter. The filter returns
              * records of MIME type {@link #CONTENT_ITEM_TYPE}. The filter is applied
@@ -3837,7 +3836,7 @@ public final class ContactsContract {
             public static final Uri CONTENT_FILTER_URI = Uri.withAppendedPath(CONTENT_URI,
                     "filter");
 
-            /**
+            /*
              * The email address.
              * <P>Type: TEXT</P>
              * @hide TODO: Unhide in a separate CL
@@ -3849,13 +3848,13 @@ public final class ContactsContract {
             public static final int TYPE_OTHER = 3;
             public static final int TYPE_MOBILE = 4;
 
-            /**
+            /*
              * The display name for the email address
              * <P>Type: TEXT</P>
              */
             public static final String DISPLAY_NAME = DATA4;
 
-            /**
+            /*
              * Return the string resource that best describes the given
              * {@link #TYPE}. Will always return a valid resource.
              */
@@ -3869,7 +3868,7 @@ public final class ContactsContract {
                 }
             }
 
-            /**
+            /*
              * Return a {@link CharSequence} that best describes the given type,
              * possibly substituting the given {@link #LABEL} value
              * for {@link #TYPE_CUSTOM}.
@@ -3885,7 +3884,7 @@ public final class ContactsContract {
             }
         }
 
-        /**
+        /*
          * <p>
          * A data kind representing a postal addresses.
          * </p>
@@ -3971,23 +3970,23 @@ public final class ContactsContract {
          * </table>
          */
         public static final class StructuredPostal implements DataColumnsWithJoins, CommonColumns {
-            /**
+            /*
              * This utility class cannot be instantiated
              */
             private StructuredPostal() {
             }
 
-            /** MIME type used when storing this in data table. */
+            /* MIME type used when storing this in data table. */
             public static final String CONTENT_ITEM_TYPE =
                     "vnd.android.cursor.item/postal-address_v2";
 
-            /**
+            /*
              * The MIME type of {@link #CONTENT_URI} providing a directory of
              * postal addresses.
              */
             public static final String CONTENT_TYPE = "vnd.android.cursor.dir/postal-address_v2";
 
-            /**
+            /*
              * The content:// style URI for all data records of the
              * {@link StructuredPostal#CONTENT_ITEM_TYPE} MIME type.
              */
@@ -3998,7 +3997,7 @@ public final class ContactsContract {
             public static final int TYPE_WORK = 2;
             public static final int TYPE_OTHER = 3;
 
-            /**
+            /*
              * The full, unstructured postal address. <i>This field must be
              * consistent with any structured data.</i>
              * <p>
@@ -4006,7 +4005,7 @@ public final class ContactsContract {
              */
             public static final String FORMATTED_ADDRESS = DATA;
 
-            /**
+            /*
              * Can be street, avenue, road, etc. This element also includes the
              * house number and room/apartment/flat/floor number.
              * <p>
@@ -4014,7 +4013,7 @@ public final class ContactsContract {
              */
             public static final String STREET = DATA4;
 
-            /**
+            /*
              * Covers actual P.O. boxes, drawers, locked bags, etc. This is
              * usually but not always mutually exclusive with street.
              * <p>
@@ -4022,7 +4021,7 @@ public final class ContactsContract {
              */
             public static final String POBOX = DATA5;
 
-            /**
+            /*
              * This is used to disambiguate a street address when a city
              * contains more than one street with the same name, or to specify a
              * small place whose mail is routed through a larger postal town. In
@@ -4032,7 +4031,7 @@ public final class ContactsContract {
              */
             public static final String NEIGHBORHOOD = DATA6;
 
-            /**
+            /*
              * Can be city, village, town, borough, etc. This is the postal town
              * and not necessarily the place of residence or place of business.
              * <p>
@@ -4040,7 +4039,7 @@ public final class ContactsContract {
              */
             public static final String CITY = DATA7;
 
-            /**
+            /*
              * A state, province, county (in Ireland), Land (in Germany),
              * departement (in France), etc.
              * <p>
@@ -4048,7 +4047,7 @@ public final class ContactsContract {
              */
             public static final String REGION = DATA8;
 
-            /**
+            /*
              * Postal code. Usually country-wide, but sometimes specific to the
              * city (e.g. "2" in "Dublin 2, Ireland" addresses).
              * <p>
@@ -4056,14 +4055,14 @@ public final class ContactsContract {
              */
             public static final String POSTCODE = DATA9;
 
-            /**
+            /*
              * The name or code of the country.
              * <p>
              * Type: TEXT
              */
             public static final String COUNTRY = DATA10;
 
-            /**
+            /*
              * Return the string resource that best describes the given
              * {@link #TYPE}. Will always return a valid resource.
              */
@@ -4076,7 +4075,7 @@ public final class ContactsContract {
                 }
             }
 
-            /**
+            /*
              * Return a {@link CharSequence} that best describes the given type,
              * possibly substituting the given {@link #LABEL} value
              * for {@link #TYPE_CUSTOM}.
@@ -4092,7 +4091,7 @@ public final class ContactsContract {
             }
         }
 
-        /**
+        /*
          * <p>
          * A data kind representing an IM address
          * </p>
@@ -4165,19 +4164,19 @@ public final class ContactsContract {
          * </table>
          */
         public static final class Im implements DataColumnsWithJoins, CommonColumns {
-            /**
+            /*
              * This utility class cannot be instantiated
              */
             private Im() {}
 
-            /** MIME type used when storing this in data table. */
+            /* MIME type used when storing this in data table. */
             public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/im";
 
             public static final int TYPE_HOME = 1;
             public static final int TYPE_WORK = 2;
             public static final int TYPE_OTHER = 3;
 
-            /**
+            /*
              * This column should be populated with one of the defined
              * constants, e.g. {@link #PROTOCOL_YAHOO}. If the value of this
              * column is {@link #PROTOCOL_CUSTOM}, the {@link #CUSTOM_PROTOCOL}
@@ -4201,7 +4200,7 @@ public final class ContactsContract {
             public static final int PROTOCOL_JABBER = 7;
             public static final int PROTOCOL_NETMEETING = 8;
 
-            /**
+            /*
              * Return the string resource that best describes the given
              * {@link #TYPE}. Will always return a valid resource.
              */
@@ -4214,7 +4213,7 @@ public final class ContactsContract {
                 }
             }
 
-            /**
+            /*
              * Return a {@link CharSequence} that best describes the given type,
              * possibly substituting the given {@link #LABEL} value
              * for {@link #TYPE_CUSTOM}.
@@ -4229,7 +4228,7 @@ public final class ContactsContract {
                 }
             }
 
-            /**
+            /*
              * Return the string resource that best describes the given
              * {@link #PROTOCOL}. Will always return a valid resource.
              */
@@ -4248,7 +4247,7 @@ public final class ContactsContract {
                 }
             }
 
-            /**
+            /*
              * Return a {@link CharSequence} that best describes the given
              * protocol, possibly substituting the given
              * {@link #CUSTOM_PROTOCOL} value for {@link #PROTOCOL_CUSTOM}.
@@ -4264,7 +4263,7 @@ public final class ContactsContract {
             }
         }
 
-        /**
+        /*
          * <p>
          * A data kind representing an organization.
          * </p>
@@ -4349,67 +4348,67 @@ public final class ContactsContract {
          * </table>
          */
         public static final class Organization implements DataColumnsWithJoins, CommonColumns {
-            /**
+            /*
              * This utility class cannot be instantiated
              */
             private Organization() {}
 
-            /** MIME type used when storing this in data table. */
+            /* MIME type used when storing this in data table. */
             public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/organization";
 
             public static final int TYPE_WORK = 1;
             public static final int TYPE_OTHER = 2;
 
-            /**
+            /*
              * The company as the user entered it.
              * <P>Type: TEXT</P>
              */
             public static final String COMPANY = DATA;
 
-            /**
+            /*
              * The position title at this company as the user entered it.
              * <P>Type: TEXT</P>
              */
             public static final String TITLE = DATA4;
 
-            /**
+            /*
              * The department at this company as the user entered it.
              * <P>Type: TEXT</P>
              */
             public static final String DEPARTMENT = DATA5;
 
-            /**
+            /*
              * The job description at this company as the user entered it.
              * <P>Type: TEXT</P>
              */
             public static final String JOB_DESCRIPTION = DATA6;
 
-            /**
+            /*
              * The symbol of this company as the user entered it.
              * <P>Type: TEXT</P>
              */
             public static final String SYMBOL = DATA7;
 
-            /**
+            /*
              * The phonetic name of this company as the user entered it.
              * <P>Type: TEXT</P>
              */
             public static final String PHONETIC_NAME = DATA8;
 
-            /**
+            /*
              * The office location of this organization.
              * <P>Type: TEXT</P>
              */
             public static final String OFFICE_LOCATION = DATA9;
 
-            /**
+            /*
              * The alphabet used for capturing the phonetic name.
              * See {@link ContactsContract.PhoneticNameStyle}.
              * @hide
              */
             public static final String PHONETIC_NAME_STYLE = DATA10;
 
-            /**
+            /*
              * Return the string resource that best describes the given
              * {@link #TYPE}. Will always return a valid resource.
              */
@@ -4421,7 +4420,7 @@ public final class ContactsContract {
                 }
             }
 
-            /**
+            /*
              * Return a {@link CharSequence} that best describes the given type,
              * possibly substituting the given {@link #LABEL} value
              * for {@link #TYPE_CUSTOM}.
@@ -4437,7 +4436,7 @@ public final class ContactsContract {
             }
         }
 
-        /**
+        /*
          * <p>
          * A data kind representing a relation.
          * </p>
@@ -4492,12 +4491,12 @@ public final class ContactsContract {
          * </table>
          */
         public static final class Relation implements DataColumnsWithJoins, CommonColumns {
-            /**
+            /*
              * This utility class cannot be instantiated
              */
             private Relation() {}
 
-            /** MIME type used when storing this in data table. */
+            /* MIME type used when storing this in data table. */
             public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/relation";
 
             public static final int TYPE_ASSISTANT = 1;
@@ -4515,14 +4514,14 @@ public final class ContactsContract {
             public static final int TYPE_SISTER = 13;
             public static final int TYPE_SPOUSE = 14;
 
-            /**
+            /*
              * The name of the relative as the user entered it.
              * <P>Type: TEXT</P>
              */
             public static final String NAME = DATA;
         }
 
-        /**
+        /*
          * <p>
          * A data kind representing an event.
          * </p>
@@ -4566,25 +4565,25 @@ public final class ContactsContract {
          * </table>
          */
         public static final class Event implements DataColumnsWithJoins, CommonColumns {
-            /**
+            /*
              * This utility class cannot be instantiated
              */
             private Event() {}
 
-            /** MIME type used when storing this in data table. */
+            /* MIME type used when storing this in data table. */
             public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/contact_event";
 
             public static final int TYPE_ANNIVERSARY = 1;
             public static final int TYPE_OTHER = 2;
             public static final int TYPE_BIRTHDAY = 3;
 
-            /**
+            /*
              * The event start date as the user entered it.
              * <P>Type: TEXT</P>
              */
             public static final String START_DATE = DATA;
 
-            /**
+            /*
              * Return the string resource that best describes the given
              * {@link #TYPE}. Will always return a valid resource.
              */
@@ -4602,7 +4601,7 @@ public final class ContactsContract {
             }
         }
 
-        /**
+        /*
          * <p>
          * A data kind representing an photo for the contact.
          * </p>
@@ -4632,15 +4631,15 @@ public final class ContactsContract {
          * </table>
          */
         public static final class Photo implements DataColumnsWithJoins {
-            /**
+            /*
              * This utility class cannot be instantiated
              */
             private Photo() {}
 
-            /** MIME type used when storing this in data table. */
+            /* MIME type used when storing this in data table. */
             public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/photo";
 
-            /**
+            /*
              * Thumbnail photo of the raw contact. This is the raw bytes of an image
              * that could be inflated using {@link android.graphics.BitmapFactory}.
              * <p>
@@ -4649,7 +4648,7 @@ public final class ContactsContract {
             public static final String PHOTO = DATA15;
         }
 
-        /**
+        /*
          * <p>
          * Notes about the contact.
          * </p>
@@ -4672,22 +4671,22 @@ public final class ContactsContract {
          * </table>
          */
         public static final class Note implements DataColumnsWithJoins {
-            /**
+            /*
              * This utility class cannot be instantiated
              */
             private Note() {}
 
-            /** MIME type used when storing this in data table. */
+            /* MIME type used when storing this in data table. */
             public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/note";
 
-            /**
+            /*
              * The note text.
              * <P>Type: TEXT</P>
              */
             public static final String NOTE = DATA1;
         }
 
-        /**
+        /*
          * <p>
          * Group Membership.
          * </p>
@@ -4727,23 +4726,23 @@ public final class ContactsContract {
          * </table>
          */
         public static final class GroupMembership implements DataColumnsWithJoins {
-            /**
+            /*
              * This utility class cannot be instantiated
              */
             private GroupMembership() {}
 
-            /** MIME type used when storing this in data table. */
+            /* MIME type used when storing this in data table. */
             public static final String CONTENT_ITEM_TYPE =
                     "vnd.android.cursor.item/group_membership";
 
-            /**
+            /*
              * The row id of the group that this group membership refers to. Exactly one of
              * this or {@link #GROUP_SOURCE_ID} must be set when inserting a row.
              * <P>Type: INTEGER</P>
              */
             public static final String GROUP_ROW_ID = DATA1;
 
-            /**
+            /*
              * The sourceid of the group that this group membership refers to.  Exactly one of
              * this or {@link #GROUP_ROW_ID} must be set when inserting a row.
              * <P>Type: TEXT</P>
@@ -4751,7 +4750,7 @@ public final class ContactsContract {
             public static final String GROUP_SOURCE_ID = "group_sourceid";
         }
 
-        /**
+        /*
          * <p>
          * A data kind representing a website related to the contact.
          * </p>
@@ -4799,12 +4798,12 @@ public final class ContactsContract {
          * </table>
          */
         public static final class Website implements DataColumnsWithJoins, CommonColumns {
-            /**
+            /*
              * This utility class cannot be instantiated
              */
             private Website() {}
 
-            /** MIME type used when storing this in data table. */
+            /* MIME type used when storing this in data table. */
             public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/website";
 
             public static final int TYPE_HOMEPAGE = 1;
@@ -4815,7 +4814,7 @@ public final class ContactsContract {
             public static final int TYPE_FTP = 6;
             public static final int TYPE_OTHER = 7;
 
-            /**
+            /*
              * The website URL string.
              * <P>Type: TEXT</P>
              */
@@ -4823,18 +4822,18 @@ public final class ContactsContract {
         }
     }
 
-    /**
+    /*
      * @see Groups
      */
     protected interface GroupsColumns {
-        /**
+        /*
          * The display title of this group.
          * <p>
          * Type: TEXT
          */
         public static final String TITLE = "title";
 
-        /**
+        /*
          * The package name to use when creating {@link Resources} objects for
          * this group. This value is only designed for use when building user
          * interfaces, and should not be used to infer the owner.
@@ -4843,7 +4842,7 @@ public final class ContactsContract {
          */
         public static final String RES_PACKAGE = "res_package";
 
-        /**
+        /*
          * The display title of this group to load as a resource from
          * {@link #RES_PACKAGE}, which may be localized.
          * <P>Type: TEXT</P>
@@ -4852,21 +4851,21 @@ public final class ContactsContract {
          */
         public static final String TITLE_RES = "title_res";
 
-        /**
+        /*
          * Notes about the group.
          * <p>
          * Type: TEXT
          */
         public static final String NOTES = "notes";
 
-        /**
+        /*
          * The ID of this group if it is a System Group, i.e. a group that has a special meaning
          * to the sync adapter, null otherwise.
          * <P>Type: TEXT</P>
          */
         public static final String SYSTEM_ID = "system_id";
 
-        /**
+        /*
          * The total number of {@link Contacts} that have
          * {@link CommonDataKinds.GroupMembership} in this group. Read-only value that is only
          * present when querying {@link Groups#CONTENT_SUMMARY_URI}.
@@ -4875,7 +4874,7 @@ public final class ContactsContract {
          */
         public static final String SUMMARY_COUNT = "summ_count";
 
-        /**
+        /*
          * The total number of {@link Contacts} that have both
          * {@link CommonDataKinds.GroupMembership} in this group, and also have phone numbers.
          * Read-only value that is only present when querying
@@ -4885,7 +4884,7 @@ public final class ContactsContract {
          */
         public static final String SUMMARY_WITH_PHONES = "summ_phones";
 
-        /**
+        /*
          * Flag indicating if the contacts belonging to this group should be
          * visible in any user interface.
          * <p>
@@ -4893,7 +4892,7 @@ public final class ContactsContract {
          */
         public static final String GROUP_VISIBLE = "group_visible";
 
-        /**
+        /*
          * The "deleted" flag: "0" by default, "1" if the row has been marked
          * for deletion. When {@link android.content.ContentResolver#delete} is
          * called on a group, it is marked for deletion. The sync adaptor
@@ -4905,7 +4904,7 @@ public final class ContactsContract {
          */
         public static final String DELETED = "deleted";
 
-        /**
+        /*
          * Whether this group should be synced if the SYNC_EVERYTHING settings
          * is false for this group's account.
          * <p>
@@ -4914,7 +4913,7 @@ public final class ContactsContract {
         public static final String SHOULD_SYNC = "should_sync";
     }
 
-    /**
+    /*
      * Constants for the groups table. Only per-account groups are supported.
      * <h2>Columns</h2>
      * <table class="jd-sumtable">
@@ -4993,30 +4992,30 @@ public final class ContactsContract {
      * </table>
      */
     public static final class Groups implements BaseColumns, GroupsColumns, SyncColumns {
-        /**
+        /*
          * This utility class cannot be instantiated
          */
         private Groups() {
         }
 
-        /**
+        /*
          * The content:// style URI for this table
          */
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, "groups");
 
-        /**
+        /*
          * The content:// style URI for this table joined with details data from
          * {@link ContactsContract.Data}.
          */
         public static final Uri CONTENT_SUMMARY_URI = Uri.withAppendedPath(AUTHORITY_URI,
                 "groups_summary");
 
-        /**
+        /*
          * The MIME type of a directory of groups.
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/group";
 
-        /**
+        /*
          * The MIME type of a single group.
          */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/group";
@@ -5058,7 +5057,7 @@ public final class ContactsContract {
         }
     }
 
-    /**
+    /*
      * <p>
      * Constants for the contact aggregation exceptions table, which contains
      * aggregation rules overriding those used by automatic aggregation. This
@@ -5094,29 +5093,29 @@ public final class ContactsContract {
      * </table>
      */
     public static final class AggregationExceptions implements BaseColumns {
-        /**
+        /*
          * This utility class cannot be instantiated
          */
         private AggregationExceptions() {}
 
-        /**
+        /*
          * The content:// style URI for this table
          */
         public static final Uri CONTENT_URI =
                 Uri.withAppendedPath(AUTHORITY_URI, "aggregation_exceptions");
 
-        /**
+        /*
          * The MIME type of {@link #CONTENT_URI} providing a directory of data.
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/aggregation_exception";
 
-        /**
+        /*
          * The MIME type of a {@link #CONTENT_URI} subdirectory of an aggregation exception
          */
         public static final String CONTENT_ITEM_TYPE =
                 "vnd.android.cursor.item/aggregation_exception";
 
-        /**
+        /*
          * The type of exception: {@link #TYPE_KEEP_TOGETHER}, {@link #TYPE_KEEP_SEPARATE} or
          * {@link #TYPE_AUTOMATIC}.
          *
@@ -5124,54 +5123,54 @@ public final class ContactsContract {
          */
         public static final String TYPE = "type";
 
-        /**
+        /*
          * Allows the provider to automatically decide whether the specified raw contacts should
          * be included in the same aggregate contact or not.
          */
         public static final int TYPE_AUTOMATIC = 0;
 
-        /**
+        /*
          * Makes sure that the specified raw contacts are included in the same
          * aggregate contact.
          */
         public static final int TYPE_KEEP_TOGETHER = 1;
 
-        /**
+        /*
          * Makes sure that the specified raw contacts are NOT included in the same
          * aggregate contact.
          */
         public static final int TYPE_KEEP_SEPARATE = 2;
 
-        /**
+        /*
          * A reference to the {@link RawContacts#_ID} of the raw contact that the rule applies to.
          */
         public static final String RAW_CONTACT_ID1 = "raw_contact_id1";
 
-        /**
+        /*
          * A reference to the other {@link RawContacts#_ID} of the raw contact that the rule
          * applies to.
          */
         public static final String RAW_CONTACT_ID2 = "raw_contact_id2";
     }
 
-    /**
+    /*
      * @see Settings
      */
     protected interface SettingsColumns {
-        /**
+        /*
          * The name of the account instance to which this row belongs.
          * <P>Type: TEXT</P>
          */
         public static final String ACCOUNT_NAME = "account_name";
 
-        /**
+        /*
          * The type of account to which this row belongs, which when paired with
          * {@link #ACCOUNT_NAME} identifies a specific account.
          * <P>Type: TEXT</P>
          */
         public static final String ACCOUNT_TYPE = "account_type";
 
-        /**
+        /*
          * Depending on the mode defined by the sync-adapter, this flag controls
          * the top-level sync behavior for this data source.
          * <p>
@@ -5179,7 +5178,7 @@ public final class ContactsContract {
          */
         public static final String SHOULD_SYNC = "should_sync";
 
-        /**
+        /*
          * Flag indicating if contacts without any {@link CommonDataKinds.GroupMembership}
          * entries should be visible in any user interface.
          * <p>
@@ -5187,14 +5186,14 @@ public final class ContactsContract {
          */
         public static final String UNGROUPED_VISIBLE = "ungrouped_visible";
 
-        /**
+        /*
          * Read-only flag indicating if this {@link #SHOULD_SYNC} or any
          * {@link Groups#SHOULD_SYNC} under this account have been marked as
          * unsynced.
          */
         public static final String ANY_UNSYNCED = "any_unsynced";
 
-        /**
+        /*
          * Read-only count of {@link Contacts} from a specific source that have
          * no {@link CommonDataKinds.GroupMembership} entries.
          * <p>
@@ -5202,7 +5201,7 @@ public final class ContactsContract {
          */
         public static final String UNGROUPED_COUNT = "summ_count";
 
-        /**
+        /*
          * Read-only count of {@link Contacts} from a specific source that have
          * no {@link CommonDataKinds.GroupMembership} entries, and also have phone numbers.
          * <p>
@@ -5211,7 +5210,7 @@ public final class ContactsContract {
         public static final String UNGROUPED_WITH_PHONES = "summ_phones";
     }
 
-    /**
+    /*
      * <p>
      * Contacts-specific settings for various {@link Account}'s.
      * </p>
@@ -5274,44 +5273,44 @@ public final class ContactsContract {
      * </table>
      */
     public static final class Settings implements SettingsColumns {
-        /**
+        /*
          * This utility class cannot be instantiated
          */
         private Settings() {
         }
 
-        /**
+        /*
          * The content:// style URI for this table
          */
         public static final Uri CONTENT_URI =
                 Uri.withAppendedPath(AUTHORITY_URI, "settings");
 
-        /**
+        /*
          * The MIME-type of {@link #CONTENT_URI} providing a directory of
          * settings.
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/setting";
 
-        /**
+        /*
          * The MIME-type of {@link #CONTENT_URI} providing a single setting.
          */
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/setting";
     }
 
-    /**
+    /*
      * Private API for inquiring about the general status of the provider.
      *
      * @hide
      */
     public static final class ProviderStatus {
 
-        /**
+        /*
          * Not instantiable.
          */
         private ProviderStatus() {
         }
 
-        /**
+        /*
          * The content:// style URI for this table.  Requests to this URI can be
          * performed on the UI thread because they are always unblocking.
          *
@@ -5320,7 +5319,7 @@ public final class ContactsContract {
         public static final Uri CONTENT_URI =
                 Uri.withAppendedPath(AUTHORITY_URI, "provider_status");
 
-        /**
+        /*
          * The MIME-type of {@link #CONTENT_URI} providing a directory of
          * settings.
          *
@@ -5328,21 +5327,21 @@ public final class ContactsContract {
          */
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/provider_status";
 
-        /**
+        /*
          * An integer representing the current status of the provider.
          *
          * @hide
          */
         public static final String STATUS = "status";
 
-        /**
+        /*
          * Default status of the provider.
          *
          * @hide
          */
         public static final int STATUS_NORMAL = 0;
 
-        /**
+        /*
          * The status used when the provider is in the process of upgrading.  Contacts
          * are temporarily unaccessible.
          *
@@ -5350,7 +5349,7 @@ public final class ContactsContract {
          */
         public static final int STATUS_UPGRADING = 1;
 
-        /**
+        /*
          * The status used if the provider was in the process of upgrading but ran
          * out of storage. The DATA1 column will contain the estimated amount of
          * storage required (in bytes). Update status to STATUS_NORMAL to force
@@ -5360,14 +5359,14 @@ public final class ContactsContract {
          */
         public static final int STATUS_UPGRADE_OUT_OF_MEMORY = 2;
 
-        /**
+        /*
          * The status used during a locale change.
          *
          * @hide
          */
         public static final int STATUS_CHANGING_LOCALE = 3;
 
-        /**
+        /*
          * Additional data associated with the status.
          *
          * @hide
@@ -5375,19 +5374,19 @@ public final class ContactsContract {
         public static final String DATA1 = "data1";
     }
 
-    /**
+    /*
      * Helper methods to display QuickContact dialogs that allow users to pivot on
      * a specific {@link Contacts} entry.
      */
     public static final class QuickContact {
-        /**
+        /*
          * Action used to trigger person pivot dialog.
          * @hide
          */
         public static final String ACTION_QUICK_CONTACT =
                 "edu.vu.isis.ammo.contacts.action.QUICK_CONTACT";
 
-        /**
+        /*
          * Extra used to specify pivot dialog location in screen coordinates.
          * @deprecated Use {@link Intent#setSourceBounds(Rect)} instead.
          * @hide
@@ -5395,39 +5394,39 @@ public final class ContactsContract {
         @Deprecated
         public static final String EXTRA_TARGET_RECT = "target_rect";
 
-        /**
+        /*
          * Extra used to specify size of pivot dialog.
          * @hide
          */
         public static final String EXTRA_MODE = "mode";
 
-        /**
+        /*
          * Extra used to indicate a list of specific MIME-types to exclude and
          * not display. Stored as a {@link String} array.
          * @hide
          */
         public static final String EXTRA_EXCLUDE_MIMES = "exclude_mimes";
 
-        /**
+        /*
          * Small QuickContact mode, usually presented with minimal actions.
          */
         public static final int MODE_SMALL = 1;
 
-        /**
+        /*
          * Medium QuickContact mode, includes actions and light summary describing
          * the {@link Contacts} entry being shown. This may include social
          * status and presence details.
          */
         public static final int MODE_MEDIUM = 2;
 
-        /**
+        /*
          * Large QuickContact mode, includes actions and larger, card-like summary
          * of the {@link Contacts} entry being shown. This may include detailed
          * information, such as a photo.
          */
         public static final int MODE_LARGE = 3;
 
-        /**
+        /*
          * Trigger a dialog that lists the various methods of interacting with
          * the requested {@link Contacts} entry. This may be based on available
          * {@link ContactsContract.Data} rows under that contact, and may also
@@ -5475,7 +5474,7 @@ public final class ContactsContract {
 	    */
         }
 
-        /**
+        /*
          * Trigger a dialog that lists the various methods of interacting with
          * the requested {@link Contacts} entry. This may be based on available
          * {@link ContactsContract.Data} rows under that contact, and may also
@@ -5516,39 +5515,39 @@ public final class ContactsContract {
         }
     }
 
-    /**
+    /*
      * Contains helper classes used to create or manage {@link android.content.Intent Intents}
      * that involve contacts.
      */
     public static final class Intents {
-        /**
+        /*
          * This is the intent that is fired when a search suggestion is clicked on.
          */
         public static final String SEARCH_SUGGESTION_CLICKED =
                 "android.provider.Contacts.SEARCH_SUGGESTION_CLICKED";
 
-        /**
+        /*
          * This is the intent that is fired when a search suggestion for dialing a number
          * is clicked on.
          */
         public static final String SEARCH_SUGGESTION_DIAL_NUMBER_CLICKED =
                 "android.provider.Contacts.SEARCH_SUGGESTION_DIAL_NUMBER_CLICKED";
 
-        /**
+        /*
          * This is the intent that is fired when a search suggestion for creating a contact
          * is clicked on.
          */
         public static final String SEARCH_SUGGESTION_CREATE_CONTACT_CLICKED =
                 "android.provider.Contacts.SEARCH_SUGGESTION_CREATE_CONTACT_CLICKED";
 
-        /**
+        /*
          * Starts an Activity that lets the user pick a contact to attach an image to.
          * After picking the contact it launches the image cropper in face detection mode.
          */
         public static final String ATTACH_IMAGE =
                 "edu.vu.isis.ammo.contacts.action.ATTACH_IMAGE";
 
-        /**
+        /*
          * Takes as input a data URI with a mailto: or tel: scheme. If a single
          * contact exists with the given data it will be shown. If no contact
          * exists, a dialog will ask the user if they want to create a new
@@ -5574,7 +5573,7 @@ public final class ContactsContract {
         public static final String SHOW_OR_CREATE_CONTACT =
                 "edu.vu.isis.ammo.contacts.action.SHOW_OR_CREATE_CONTACT";
 
-        /**
+        /*
          * Used with {@link #SHOW_OR_CREATE_CONTACT} to force creating a new
          * contact if no matching contact found. Otherwise, default behavior is
          * to prompt user with dialog before creating.
@@ -5584,7 +5583,7 @@ public final class ContactsContract {
         public static final String EXTRA_FORCE_CREATE =
                 "edu.vu.isis.ammo.contacts.action.FORCE_CREATE";
 
-        /**
+        /*
          * Used with {@link #SHOW_OR_CREATE_CONTACT} to specify an exact
          * description to be shown when prompting user about creating a new
          * contact.
@@ -5594,7 +5593,7 @@ public final class ContactsContract {
         public static final String EXTRA_CREATE_DESCRIPTION =
             "edu.vu.isis.ammo.contacts.action.CREATE_DESCRIPTION";
 
-        /**
+        /*
          * Optional extra used with {@link #SHOW_OR_CREATE_CONTACT} to specify a
          * dialog location using screen coordinates. When not specified, the
          * dialog will be centered.
@@ -5604,7 +5603,7 @@ public final class ContactsContract {
         @Deprecated
         public static final String EXTRA_TARGET_RECT = "target_rect";
 
-        /**
+        /*
          * Optional extra used with {@link #SHOW_OR_CREATE_CONTACT} to specify a
          * desired dialog style, usually a variation on size. One of
          * {@link #MODE_SMALL}, {@link #MODE_MEDIUM}, or {@link #MODE_LARGE}.
@@ -5614,7 +5613,7 @@ public final class ContactsContract {
         @Deprecated
         public static final String EXTRA_MODE = "mode";
 
-        /**
+        /*
          * Value for {@link #EXTRA_MODE} to show a small-sized dialog.
          *
          * @hide
@@ -5622,7 +5621,7 @@ public final class ContactsContract {
         @Deprecated
         public static final int MODE_SMALL = 1;
 
-        /**
+        /*
          * Value for {@link #EXTRA_MODE} to show a medium-sized dialog.
          *
          * @hide
@@ -5630,7 +5629,7 @@ public final class ContactsContract {
         @Deprecated
         public static final int MODE_MEDIUM = 2;
 
-        /**
+        /*
          * Value for {@link #EXTRA_MODE} to show a large-sized dialog.
          *
          * @hide
@@ -5638,7 +5637,7 @@ public final class ContactsContract {
         @Deprecated
         public static final int MODE_LARGE = 3;
 
-        /**
+        /*
          * Optional extra used with {@link #SHOW_OR_CREATE_CONTACT} to indicate
          * a list of specific MIME-types to exclude and not display. Stored as a
          * {@link String} array.
@@ -5648,54 +5647,54 @@ public final class ContactsContract {
         @Deprecated
         public static final String EXTRA_EXCLUDE_MIMES = "exclude_mimes";
 
-        /**
+        /*
          * Intents related to the Contacts app UI.
          *
          * @hide
          */
         public static final class UI {
-            /**
+            /*
              * The action for the default contacts list tab.
              */
             public static final String LIST_DEFAULT =
                     "edu.vu.isis.ammo.contacts.action.LIST_DEFAULT";
 
-            /**
+            /*
              * The action for the contacts list tab.
              */
             public static final String LIST_GROUP_ACTION =
                     "edu.vu.isis.ammo.contacts.action.LIST_GROUP";
 
-            /**
+            /*
              * When in LIST_GROUP_ACTION mode, this is the group to display.
              */
             public static final String GROUP_NAME_EXTRA_KEY = "edu.vu.isis.ammo.contacts.extra.GROUP";
 
-            /**
+            /*
              * The action for the all contacts list tab.
              */
             public static final String LIST_ALL_CONTACTS_ACTION =
                     "edu.vu.isis.ammo.contacts.action.LIST_ALL_CONTACTS";
 
-            /**
+            /*
              * The action for the contacts with phone numbers list tab.
              */
             public static final String LIST_CONTACTS_WITH_PHONES_ACTION =
                     "edu.vu.isis.ammo.contacts.action.LIST_CONTACTS_WITH_PHONES";
 
-            /**
+            /*
              * The action for the starred contacts list tab.
              */
             public static final String LIST_STARRED_ACTION =
                     "edu.vu.isis.ammo.contacts.action.LIST_STARRED";
 
-            /**
+            /*
              * The action for the frequent contacts list tab.
              */
             public static final String LIST_FREQUENT_ACTION =
                     "edu.vu.isis.ammo.contacts.action.LIST_FREQUENT";
 
-            /**
+            /*
              * The action for the "strequent" contacts list tab. It first lists the starred
              * contacts in alphabetical order and then the frequent contacts in descending
              * order of the number of times they have been contacted.
@@ -5703,14 +5702,14 @@ public final class ContactsContract {
             public static final String LIST_STREQUENT_ACTION =
                     "edu.vu.isis.ammo.contacts.action.LIST_STREQUENT";
 
-            /**
+            /*
              * A key for to be used as an intent extra to set the activity
              * title to a custom String value.
              */
             public static final String TITLE_EXTRA_KEY =
                     "edu.vu.isis.ammo.contacts.extra.TITLE_EXTRA";
 
-            /**
+            /*
              * Activity Action: Display a filtered list of contacts
              * <p>
              * Input: Extra field {@link #FILTER_TEXT_EXTRA_KEY} is the text to use for
@@ -5721,7 +5720,7 @@ public final class ContactsContract {
             public static final String FILTER_CONTACTS_ACTION =
                     "edu.vu.isis.ammo.contacts.action.FILTER_CONTACTS";
 
-            /**
+            /*
              * Used as an int extra field in {@link #FILTER_CONTACTS_ACTION}
              * intents to supply the text on which to filter.
              */
@@ -5729,20 +5728,20 @@ public final class ContactsContract {
                     "edu.vu.isis.ammo.contacts.extra.FILTER_TEXT";
         }
 
-        /**
+        /*
          * Convenience class that contains string constants used
          * to create contact {@link android.content.Intent Intents}.
          */
         public static final class Insert {
-            /** The action code to use when adding a contact */
+            /* The action code to use when adding a contact */
             public static final String ACTION = Intent.ACTION_INSERT;
 
-            /**
+            /*
              * If present, forces a bypass of quick insert mode.
              */
             public static final String FULL_MODE = "full_mode";
 
-            /**
+            /*
              * The extra field for the contact name.
              * <P>Type: String</P>
              */
@@ -5750,37 +5749,37 @@ public final class ContactsContract {
 
             // TODO add structured name values here.
 
-            /**
+            /*
              * The extra field for the contact phonetic name.
              * <P>Type: String</P>
              */
             public static final String PHONETIC_NAME = "phonetic_name";
 
-            /**
+            /*
              * The extra field for the contact company.
              * <P>Type: String</P>
              */
             public static final String COMPANY = "company";
 
-            /**
+            /*
              * The extra field for the contact job title.
              * <P>Type: String</P>
              */
             public static final String JOB_TITLE = "job_title";
 
-            /**
+            /*
              * The extra field for the contact notes.
              * <P>Type: String</P>
              */
             public static final String NOTES = "notes";
 
-            /**
+            /*
              * The extra field for the contact phone number.
              * <P>Type: String</P>
              */
             public static final String PHONE = "phone";
 
-            /**
+            /*
              * The extra field for the contact phone number type.
              * <P>Type: Either an integer value from
              * {@link CommonDataKinds.Phone},
@@ -5788,19 +5787,19 @@ public final class ContactsContract {
              */
             public static final String PHONE_TYPE = "phone_type";
 
-            /**
+            /*
              * The extra field for the phone isprimary flag.
              * <P>Type: boolean</P>
              */
             public static final String PHONE_ISPRIMARY = "phone_isprimary";
 
-            /**
+            /*
              * The extra field for an optional second contact phone number.
              * <P>Type: String</P>
              */
             public static final String SECONDARY_PHONE = "secondary_phone";
 
-            /**
+            /*
              * The extra field for an optional second contact phone number type.
              * <P>Type: Either an integer value from
              * {@link CommonDataKinds.Phone},
@@ -5808,13 +5807,13 @@ public final class ContactsContract {
              */
             public static final String SECONDARY_PHONE_TYPE = "secondary_phone_type";
 
-            /**
+            /*
              * The extra field for an optional third contact phone number.
              * <P>Type: String</P>
              */
             public static final String TERTIARY_PHONE = "tertiary_phone";
 
-            /**
+            /*
              * The extra field for an optional third contact phone number type.
              * <P>Type: Either an integer value from
              * {@link CommonDataKinds.Phone},
@@ -5822,13 +5821,13 @@ public final class ContactsContract {
              */
             public static final String TERTIARY_PHONE_TYPE = "tertiary_phone_type";
 
-            /**
+            /*
              * The extra field for the contact email address.
              * <P>Type: String</P>
              */
             public static final String EMAIL = "email";
 
-            /**
+            /*
              * The extra field for the contact email type.
              * <P>Type: Either an integer value from
              * {@link CommonDataKinds.Email}
@@ -5836,19 +5835,19 @@ public final class ContactsContract {
              */
             public static final String EMAIL_TYPE = "email_type";
 
-            /**
+            /*
              * The extra field for the email isprimary flag.
              * <P>Type: boolean</P>
              */
             public static final String EMAIL_ISPRIMARY = "email_isprimary";
 
-            /**
+            /*
              * The extra field for an optional second contact email address.
              * <P>Type: String</P>
              */
             public static final String SECONDARY_EMAIL = "secondary_email";
 
-            /**
+            /*
              * The extra field for an optional second contact email type.
              * <P>Type: Either an integer value from
              * {@link CommonDataKinds.Email}
@@ -5856,13 +5855,13 @@ public final class ContactsContract {
              */
             public static final String SECONDARY_EMAIL_TYPE = "secondary_email_type";
 
-            /**
+            /*
              * The extra field for an optional third contact email address.
              * <P>Type: String</P>
              */
             public static final String TERTIARY_EMAIL = "tertiary_email";
 
-            /**
+            /*
              * The extra field for an optional third contact email type.
              * <P>Type: Either an integer value from
              * {@link CommonDataKinds.Email}
@@ -5870,13 +5869,13 @@ public final class ContactsContract {
              */
             public static final String TERTIARY_EMAIL_TYPE = "tertiary_email_type";
 
-            /**
+            /*
              * The extra field for the contact postal address.
              * <P>Type: String</P>
              */
             public static final String POSTAL = "postal";
 
-            /**
+            /*
              * The extra field for the contact postal address type.
              * <P>Type: Either an integer value from
              * {@link CommonDataKinds.StructuredPostal}
@@ -5884,24 +5883,24 @@ public final class ContactsContract {
              */
             public static final String POSTAL_TYPE = "postal_type";
 
-            /**
+            /*
              * The extra field for the postal isprimary flag.
              * <P>Type: boolean</P>
              */
             public static final String POSTAL_ISPRIMARY = "postal_isprimary";
 
-            /**
+            /*
              * The extra field for an IM handle.
              * <P>Type: String</P>
              */
             public static final String IM_HANDLE = "im_handle";
 
-            /**
+            /*
              * The extra field for the IM protocol
              */
             public static final String IM_PROTOCOL = "im_protocol";
 
-            /**
+            /*
              * The extra field for the IM isprimary flag.
              * <P>Type: boolean</P>
              */

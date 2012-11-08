@@ -11,9 +11,8 @@ purpose whatsoever, and to have or authorize others to do so.
 
 package edu.vu.isis.ammo.api;
 
+import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -30,11 +29,13 @@ import android.content.Intent;
 import android.content.ReceiverCallNotAllowedException;
 import android.content.ServiceConnection;
 import android.net.Uri;
+import android.os.DeadObjectException;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.ParcelFormatException;
 import android.os.Parcelable;
 import android.os.RemoteException;
+import android.util.SparseArray;
 import edu.vu.isis.ammo.api.type.Action;
 import edu.vu.isis.ammo.api.type.BroadIntent;
 import edu.vu.isis.ammo.api.type.ChannelFilter;
@@ -130,7 +131,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 
     /**
      * how far the request is allowed to travel. It can be considered a measure
-     * of distance travelled.
+     * of distance traveled.
      */
     final public DeliveryScope scope;
     /**
@@ -262,26 +263,26 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
             plogger.debug("payload: {}", this.payload);
         Nominal.PAYLOAD.writeToParcel(dest, flags);
         Payload.writeToParcel(this.payload, dest, flags);
-        
+
         // INTENT
-        
-        //if (CLIENT_LOGGING)
-        //    plogger.debug("intent: {}", this.intent);
-        //Nominal.INTENT.writeToParcel(dest, flags);
-        //Payload.writeToParcel(this.intent, dest, flags);
+
+        // if (CLIENT_LOGGING)
+        // plogger.debug("intent: {}", this.intent);
+        // Nominal.INTENT.writeToParcel(dest, flags);
+        // Payload.writeToParcel(this.intent, dest, flags);
 
         // SERIAL MOMENT
         if (CLIENT_LOGGING)
             plogger.debug("moment: {}", this.moment);
         Nominal.MOMENT.writeToParcel(dest, flags);
         SerialMoment.writeToParcel(this.moment, dest, flags);
-        
+
         // TOPIC
         if (CLIENT_LOGGING)
             plogger.debug("topic: [{}]+[{}]", this.topic, this.subtopic);
         Nominal.TOPIC.writeToParcel(dest, flags);
         Topic.writeToParcel(this.topic, dest, flags);
-        
+
         Nominal.SUBTOPIC.writeToParcel(dest, flags);
         Topic.writeToParcel(this.subtopic, dest, flags);
 
@@ -365,7 +366,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 
         // PROJECTION
         if (CLIENT_LOGGING)
-            plogger.debug("projection: {}", this.project);
+            plogger.debug("projection: {}", Arrays.asList(this.project));
         Nominal.PROJECTION.writeToParcel(dest, flags);
         dest.writeStringArray(this.project);
 
@@ -414,7 +415,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 
         }
 
-        public static final Map<Integer, Nominal> lookup = new HashMap<Integer, Nominal>();
+        public static final SparseArray<Nominal> lookup = new SparseArray<Nominal>();
         static {
             for (Nominal nominal : EnumSet.allOf(Nominal.class)) {
                 lookup.put(nominal.code, nominal);
@@ -424,7 +425,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 
     private Nominal getNominalFromParcel(Parcel in) {
         final int nominalRaw = in.readInt();
-        return Nominal.lookup.get(new Integer(nominalRaw));
+        return Nominal.lookup.get(Integer.valueOf(nominalRaw));
     }
 
     /**
@@ -604,7 +605,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
             }
             try {
                 this.project = in.createStringArray();
-                plogger.trace("projection: {}", this.project);
+                plogger.trace("projection: {}", Arrays.asList(this.project));
             } catch (Exception ex) {
                 plogger.error("decoding projection: {}", ex);
                 throw new IncompleteRequest(ex);
@@ -805,7 +806,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
                 case PROJECTION:
                     try {
                         builder.project = in.createStringArray();
-                        plogger.trace("projection: {}", builder.project);
+                        plogger.trace("projection: {}", Arrays.asList(builder.project));
                     } catch (Exception ex) {
                         plogger.error("decoding projection: {}", ex);
                         throw new IncompleteRequest(ex);
@@ -928,10 +929,9 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
     public static Builder newBuilder(Context context) {
         return new AmmoRequest.Builder(context).reset();
     }
-    
+
     /**
-     * This method is deprecated.
-     * The resolver is no longer needed.
+     * This method is deprecated. The resolver is no longer needed.
      * 
      * @param context
      * @param resolver
@@ -1054,7 +1054,8 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
             this.context = context;
             this.pendingRequestQueue = new LinkedBlockingQueue<AmmoRequest>();
             try {
-                final boolean isBound = this.context.bindService(MAKE_DISTRIBUTOR_REQUEST, this.conn,
+                final boolean isBound = this.context.bindService(MAKE_DISTRIBUTOR_REQUEST,
+                        this.conn,
                         Context.BIND_AUTO_CREATE);
                 logger.trace("is the service bound? {}", isBound);
                 this.mode.compareAndSet(ConnectionMode.UNBOUND,
@@ -1083,7 +1084,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
         private String uid;
 
         private Provider provider;
-        public BroadIntent intent;
+        private BroadIntent intent;
         private Payload payload;
 
         private SerialMoment moment;
@@ -1127,8 +1128,14 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
             logger.info("make service request {} {}", this.mode, request);
             switch (this.mode.get()) {
                 case BOUND:
-                    final String ident = this.distributor.get().makeRequest(request);
-                    logger.info("service bound : {} {}", request, ident);
+                    try {
+                        final String ident = this.distributor.get().makeRequest(request);
+                        logger.info("service bound : {} {}", request, ident);
+                    } catch (DeadObjectException ex) {
+                        logger.info("service unbound : {} {}", request);
+                        this.mode.set(ConnectionMode.UNBOUND);
+                        this.makeRequest(request);
+                    }
                     break;
                 case UNBOUND:
                     final Intent parcelIntent = MAKE_DISTRIBUTOR_REQUEST.cloneFilter();
@@ -1583,6 +1590,12 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
         public Builder notice(Notice val) {
             this.notice = val;
             return this;
+        }
+
+        @Override
+        public Builder intent(Intent val) {
+            this.intent = new BroadIntent(val);
+            return null;
         }
     }
 

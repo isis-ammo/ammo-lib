@@ -580,7 +580,7 @@ public class Notice extends AmmoType {
             };
 
     /**
-     * symmetric with AmmoType:asParcelBytes()
+     * symmetric with AmmoType:pickle()
      * 
      * @param bytes
      * @return
