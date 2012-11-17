@@ -6,14 +6,6 @@
     <version>1.7.0-SNAPSHOT</version>
   </parent>
 
-  <properties>
-    <vandylib.release.url>http://ammo.isis.vanderbilt.edu:8081/nexus/content/repositories/Vanderbilt/</vandylib.release.url>
-    <transapps.public.url>http://devportal.researchinnovations.com:8081/nexus/content/groups/public/</transapps.public.url>
-
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <android.target>android-8</android.target>
-  </properties>
-
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>ammolib</artifactId>

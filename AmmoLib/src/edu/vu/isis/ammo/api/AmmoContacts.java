@@ -1167,7 +1167,8 @@ public class AmmoContacts {
     // For debugging and testing purposes... Print some information about a cursor
     // to the log.
     //========================================================
-    private void examineCursor(Cursor cursor) {
+    @SuppressWarnings("unused")
+	private void examineCursor(Cursor cursor) {
 	if (cursor != null) {
 	    Log.d(TAG, " -- examine cursor -- ");
 	    for (String proj : cursor.getColumnNames() ) {
@@ -1198,6 +1199,7 @@ public class AmmoContacts {
 			  + "/data/userid/" + userId);
 	Log.d(TAG, "  searching for uri = " + f.toString());
 
+	@SuppressWarnings("unused")
 	int contactId = -1;
 	Cursor cursor = null;
 	try {
@@ -1259,7 +1261,8 @@ public class AmmoContacts {
     // Internal utility function to get the URI for an existing 
     // contact in the database.
     //========================================================
-    private Uri findExistingContact(Contact lw) {
+    @SuppressWarnings("unused")
+	private Uri findExistingContact(Contact lw) {
 	Uri rval = null;
 	Log.d(TAG, "findExistingContact");
 	
