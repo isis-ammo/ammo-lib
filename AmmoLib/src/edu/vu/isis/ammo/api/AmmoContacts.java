@@ -210,6 +210,14 @@ public class AmmoContacts {
             this.tigruid = val;
             return this;
         }
+	
+        public String getUserId() {
+            return this.getTigrUid();
+        }
+        public Contact setUserId(String val) {
+            this.setTigrUid(val);
+            return this;
+        }
 
 	private String userIdNum;
 	public String getUserIdNumber() {
@@ -469,7 +477,7 @@ public class AmmoContacts {
 		.withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " 
 			       + ContactsContract.Data.MIMETYPE + "=?",
 			       new String[] {String.valueOf(contactId), 
-					     ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,});
+					     ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,});	    
 	    String firstname = lw.getName();
 	    if (firstname == null) firstname = "";
 	    if (firstname.length() > 0) {
