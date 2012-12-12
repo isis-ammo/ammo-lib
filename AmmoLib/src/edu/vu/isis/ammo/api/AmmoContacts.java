@@ -493,6 +493,18 @@ public class AmmoContacts {
 	    if (middlename.length() > 0) {
 		snb.withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, middlename);
 	    }
+
+	    // The display name should be the user id
+	    String displayName = "";
+	    String userId = r.getUserId();  // Existing value, because it shouldn't be changing
+	    if (userId != null && userId.length() > 0) {
+                 displayName = userId;
+            }
+	    if (displayName.length() > 0) {
+		snb.withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, displayName);
+	    }
+
+
 	    ops.add(snb.build());
 	}
 
