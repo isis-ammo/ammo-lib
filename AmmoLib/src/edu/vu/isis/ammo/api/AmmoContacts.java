@@ -21,6 +21,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
+import android.database.SQLException;
 import android.net.Uri;
 import android.util.Log;
 import edu.vu.isis.ammo.contacts.provider.ContactsContract;
@@ -209,6 +210,14 @@ public class AmmoContacts {
             this.tigruid = val;
             return this;
         }
+	
+        public String getUserId() {
+            return this.getTigrUid();
+        }
+        public Contact setUserId(String val) {
+            this.setTigrUid(val);
+            return this;
+        }
 
 	private String userIdNum;
 	public String getUserIdNumber() {
@@ -281,14 +290,38 @@ public class AmmoContacts {
 	// Then make a ContentProviderOperation to update this contact
 	ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
-	String callsign = lw.getCallSign();
-        if (callsign == null) callsign = "";
-        if (callsign.length() > 0) {
-            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
-                    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
-				   new String[] {String.valueOf(contactId), Constants.MIME_CALLSIGN,})
-                    .withValue(ContactsContract.Data.DATA1, callsign)
-                    .build());
+	// Callsign
+	{
+	    String callsign = lw.getCallSign();
+	    String currentCallsign = r.getCallSign();
+	    if (callsign == null) callsign = "";
+	    if (currentCallsign == null) currentCallsign = "";
+
+	    // Case 1: update
+	    if ((callsign.length() > 0) && (currentCallsign.length() > 0)) {
+		ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+			.withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " 
+				       + ContactsContract.Data.MIMETYPE + "=?",
+				       new String[] {String.valueOf(contactId), Constants.MIME_CALLSIGN,})
+			.withValue(ContactsContract.Data.DATA1, callsign)
+			.build());
+	    }
+	    // Case 2: remove existing
+	    else if ((callsign.length() <= 0) && (currentCallsign.length() > 0)) {
+		Uri dataUri = hasData(Constants.MIME_CALLSIGN, contactId);
+		if (dataUri != null) {
+		    ops.add(ContentProviderOperation.newDelete(dataUri).build());
+		}
+	    }
+	    // Case 3: add new
+	    else if ((callsign.length() > 0) && (currentCallsign.length() <= 0)) {
+		ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+			.withValue(ContactsContract.Data.RAW_CONTACT_ID, contactId)
+			.withValue(ContactsContract.Data.MIMETYPE, Constants.MIME_CALLSIGN)
+			.withValue(ContactsContract.Data.DATA1, callsign)
+			.build());
+
+	    }
 	}
 
 	// userid is a special case -- don't allow updates (but keep this snippet for future use)
@@ -304,119 +337,306 @@ public class AmmoContacts {
 	}
 	*/
 
-	String userIdNum = lw.getUserIdNumber();
-        if (userIdNum == null) userIdNum = "";
-        if (userIdNum.length() > 0) {
-            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
-		    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
-				   new String[] {String.valueOf(contactId), Constants.MIME_USERID_NUM,})
-                    .withValue(ContactsContract.Data.DATA1, userIdNum)
-                    .build());
+	// User ID Number
+	{
+	    String userIdNum = lw.getUserIdNumber();
+	    String currentIdNum = r.getUserIdNumber();
+	    if (userIdNum == null) userIdNum = "";
+	    if (currentIdNum == null) currentIdNum = "";
+	    
+	    // Case 1: update
+	    if ((userIdNum.length() > 0) && (currentIdNum.length() > 0)) {
+		ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+			.withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " 
+				       + ContactsContract.Data.MIMETYPE + "=?",
+				       new String[] {String.valueOf(contactId), Constants.MIME_USERID_NUM,})
+			.withValue(ContactsContract.Data.DATA1, userIdNum)
+			.build());
+	    }
+	    // Case 2: remove existing
+	    else if ((userIdNum.length() <= 0) && (currentIdNum.length() > 0)) {
+		Uri dataUri = hasData(Constants.MIME_USERID_NUM, contactId);
+		if (dataUri != null) {
+		    ops.add(ContentProviderOperation.newDelete(dataUri).build());
+		}
+	    }
+	    // Case 3: add new
+	    else if ((userIdNum.length() > 0) && (currentIdNum.length() <= 0)) {
+		ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+			.withValue(ContactsContract.Data.RAW_CONTACT_ID, contactId)
+			.withValue(ContactsContract.Data.MIMETYPE, Constants.MIME_USERID_NUM)
+			.withValue(ContactsContract.Data.DATA1, userIdNum)
+			.build());
+	    }
 	}
-        String rank = lw.getRank();
-        if (rank == null) rank = "";
-        if (rank != null && rank.length() > 0) {
-            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
-                    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
-				   new String[] {String.valueOf(contactId), Constants.MIME_RANK,})
-                    .withValue(ContactsContract.Data.DATA1, rank)
-                    .build());
+
+
+	// Rank
+	{
+	    String rank = lw.getRank();
+	    String currentRank = r.getRank();
+	    if (rank == null) rank = "";
+	    if (currentRank == null) currentRank = "";
+
+	    // Case 1: update existing value with new value (both 'new' and 'existing' have values)
+	    if ((rank.length() > 0) && (currentRank.length() > 0)) {
+		ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+			.withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " 
+				       + ContactsContract.Data.MIMETYPE + "=?",
+				       new String[] {String.valueOf(contactId), Constants.MIME_RANK,})
+			.withValue(ContactsContract.Data.DATA1, rank)
+			.build());
+	    } 
+	    // Case 2: remove existing value ('new' value is absent)
+	    else if ((rank.length() <= 0) && (currentRank.length() > 0)) {
+		Uri dataUri = hasData(Constants.MIME_RANK, contactId);
+		if (dataUri != null) {
+		    // removeData(dataUri, Constants.MIME_RANK, contactId);
+		    ops.add(ContentProviderOperation.newDelete(dataUri).build());
+		}
+	    }
+	    // Case 3: add new value ('new' value present, 'existing' value absent)
+	    else if ((rank.length() > 0) && (currentRank.length() <= 0)) {
+		ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+			.withValue(ContactsContract.Data.RAW_CONTACT_ID, contactId)
+			.withValue(ContactsContract.Data.MIMETYPE, Constants.MIME_RANK)
+			.withValue(ContactsContract.Data.DATA1, rank)
+			.build());
+	    }
 	}
-	String designator = lw.getDesignator();
-        if (designator == null) designator = "";
-        if (designator != null && designator.length() > 0) {
-            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
-                    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
-				   new String[] {String.valueOf(contactId), Constants.MIME_DESIGNATOR,})
-                    .withValue(ContactsContract.Data.DATA1, designator)
-                    .build());
+
+	// PLI Designator
+	{
+	    String designator = lw.getDesignator();
+	    String currentDesig = r.getDesignator();
+	    if (designator == null) designator = "";
+	    if (currentDesig == null) currentDesig = "";
+
+	    // Case 1: update 
+	    if ((designator.length() > 0) && (currentDesig.length() > 0)) {
+		ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+			.withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " 
+				       + ContactsContract.Data.MIMETYPE + "=?",
+				       new String[] {String.valueOf(contactId), Constants.MIME_DESIGNATOR,})
+			.withValue(ContactsContract.Data.DATA1, designator)
+			.build());
+	    }
+	    // Case 2: remove existing 
+	    else if ((designator.length() <= 0) && (currentDesig.length() > 0)) {
+		Uri dataUri = hasData(Constants.MIME_DESIGNATOR, contactId);
+		if (dataUri != null) {
+		    ops.add(ContentProviderOperation.newDelete(dataUri).build());
+		}
+	    }
+	    // Case 3: add new 
+	    else if ((designator.length() > 0) && (currentDesig.length() <= 0)) {
+		ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+			.withValue(ContactsContract.Data.RAW_CONTACT_ID, contactId)
+			.withValue(ContactsContract.Data.MIMETYPE, Constants.MIME_DESIGNATOR)
+			.withValue(ContactsContract.Data.DATA1, designator)
+			.build());
+	    }
 	}
-	String branch = lw.getBranch();
-        if (branch == null) branch = "";
-        if (branch != null && branch.length() > 0) {
-            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
-                    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
-				   new String[] {String.valueOf(contactId), Constants.MIME_BRANCH,})
-                    .withValue(ContactsContract.Data.DATA1, branch)
-                    .build());
+
+	// Branch
+	{
+	    String branch = lw.getBranch();
+	    String currentBranch = r.getBranch();
+	    if (branch == null) branch = "";
+	    if (currentBranch == null) currentBranch = "";
+
+	    // Case 1: update 
+	    if ((branch.length() > 0) && (currentBranch.length() > 0)) {
+		ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+			.withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " 
+				       + ContactsContract.Data.MIMETYPE + "=?",
+				       new String[] {String.valueOf(contactId), Constants.MIME_BRANCH,})
+			.withValue(ContactsContract.Data.DATA1, branch)
+			.build());
+	    }
+	    // Case 2: remove existing 
+	    else if ((branch.length() <= 0) && (currentBranch.length() > 0)) {
+		Uri dataUri = hasData(Constants.MIME_BRANCH, contactId);
+		if (dataUri != null) {
+		    ops.add(ContentProviderOperation.newDelete(dataUri).build());
+		}
+	    }
+	    // Case 3: add new 
+	    else if ((branch.length() > 0) && (currentBranch.length() <= 0)) {
+		ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+			.withValue(ContactsContract.Data.RAW_CONTACT_ID, contactId)
+			.withValue(ContactsContract.Data.MIMETYPE, Constants.MIME_BRANCH)
+			.withValue(ContactsContract.Data.DATA1, branch)
+			.build());
+	    }
 	}
 
 	// Structured name
-	ContentProviderOperation.Builder snb = ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
-	    .withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
-			   new String[] {String.valueOf(contactId), 
-					 ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,});
-        String firstname = lw.getName();
-        if (firstname == null) firstname = "";
-        if (firstname.length() > 0) {
-            snb.withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, firstname);
+	{
+	    ContentProviderOperation.Builder snb = ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+		.withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " 
+			       + ContactsContract.Data.MIMETYPE + "=?",
+			       new String[] {String.valueOf(contactId), 
+					     ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,});	    
+	    String firstname = lw.getName();
+	    if (firstname == null) firstname = "";
+	    if (firstname.length() > 0) {
+		snb.withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, firstname);
+	    }
+	    String lastname = lw.getLastName();
+	    if (lastname == null) lastname = "";
+	    if (lastname.length() > 0) {
+		snb.withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, lastname);
+	    }
+	    String middlename = lw.getMiddleName();
+	    if (middlename == null) middlename = "";
+	    if (middlename.length() > 0) {
+		snb.withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, middlename);
+	    }
+
+	    // The display name should be the user id
+	    String displayName = "";
+	    String userId = r.getUserId();  // Existing value, because it shouldn't be changing
+	    if (userId != null && userId.length() > 0) {
+                 displayName = userId;
+            }
+	    if (displayName.length() > 0) {
+		snb.withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, displayName);
+	    }
+
+
+	    ops.add(snb.build());
 	}
-        String lastname = lw.getLastName();
-        if (lastname == null) lastname = "";
-        if (lastname.length() > 0) {
-            snb.withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, lastname);
-	}
-        String middlename = lw.getMiddleName();
-        if (middlename == null) middlename = "";
-        if (middlename.length() > 0) {
-            snb.withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, middlename);
-	}
-	ops.add(snb.build());
 
 	// Unit info
+	{
 	String unit = lw.getUnit();
+	String currentUnit = r.getUnit();
         if (unit == null) unit = "";
-        if (unit.length() > 0)
-            {
-                ContentProviderOperation.Builder opbld = ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI);
-		opbld.withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?",
-			   new String[] {String.valueOf(contactId), Constants.MIME_UNIT_NAME });
-                opbld.withValue(ContactsContract.Data.DATA1, unit);
+        if (currentUnit == null) currentUnit = "";
 
-                String division = lw.getUnitDivision();
-                if (division == null) division = "";
-                if (division.length() > 0)
-                    {
-                        opbld.withValue(ContactsContract.Data.DATA2, division);
-                    }
+	// Case 1: update
+        if ((unit.length() > 0) && (currentUnit.length() > 0)) {
+	    ContentProviderOperation.Builder opUnit = ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI);
 
-                String brigade = lw.getUnitBrigade();
-                if (brigade == null) brigade = "";
-                if (brigade.length() > 0)
-                    {
-                        opbld.withValue(ContactsContract.Data.DATA3, brigade);
-                    }
+	    opUnit.withSelection(ContactsContract.Data.RAW_CONTACT_ID + "=? AND " 
+				+ ContactsContract.Data.MIMETYPE + "=?",
+				new String[] {String.valueOf(contactId), Constants.MIME_UNIT_NAME })
+		.withValue(ContactsContract.Data.DATA1, unit);
 
-                String battalion = lw.getUnitBattalion();
-                if (battalion == null) battalion = "";
-                if (battalion.length() > 0)
-                    {
-                        opbld.withValue(ContactsContract.Data.DATA4, battalion);
-                    }
+	    String division = lw.getUnitDivision();
+	    if (division == null) division = "";
+	    if (division.length() > 0)
+		{
+		    opUnit.withValue(ContactsContract.Data.DATA2, division);
+		}
 
-                String company = lw.getUnitCompany();
-                if (company == null) company = "";
-                if (company.length() > 0)
-                    {
-                        opbld.withValue(ContactsContract.Data.DATA5, company);
-                    }
+	    String brigade = lw.getUnitBrigade();
+	    if (brigade == null) brigade = "";
+	    if (brigade.length() > 0)
+		{
+		    opUnit.withValue(ContactsContract.Data.DATA3, brigade);
+		}
 
-                String platoon = lw.getUnitPlatoon();
-                if (platoon == null) platoon = "";
-                if (platoon.length() > 0)
-                    {
-                        opbld.withValue(ContactsContract.Data.DATA6, platoon);
-                    }
+	    String battalion = lw.getUnitBattalion();
+	    if (battalion == null) battalion = "";
+	    if (battalion.length() > 0)
+		{
+		    opUnit.withValue(ContactsContract.Data.DATA4, battalion);
+		}
 
-                String squad = lw.getUnitSquad();
-                if (squad == null) squad = "";
-                if (squad.length() > 0)
-                    {
-                        opbld.withValue(ContactsContract.Data.DATA7, squad);
-                    }
-                ops.add(opbld.build());
-            }
+	    String company = lw.getUnitCompany();
+	    if (company == null) company = "";
+	    if (company.length() > 0)
+		{
+		    opUnit.withValue(ContactsContract.Data.DATA5, company);
+		}
 
+	    String platoon = lw.getUnitPlatoon();
+	    if (platoon == null) platoon = "";
+	    if (platoon.length() > 0)
+		{
+		    opUnit.withValue(ContactsContract.Data.DATA6, platoon);
+		}
+
+	    String squad = lw.getUnitSquad();
+	    if (squad == null) squad = "";
+	    if (squad.length() > 0)
+		{
+		    opUnit.withValue(ContactsContract.Data.DATA7, squad);
+		}
+
+	    ops.add(opUnit.build());
+	}
+	// Case 2: remove existing 
+	else if ((unit.length() <= 0) && (currentUnit.length() > 0)) {
+	    Uri dataUri = hasData(Constants.MIME_UNIT_NAME, contactId);
+	    if (dataUri != null) {
+		ops.add(ContentProviderOperation.newDelete(dataUri).build());
+	    }
+	}
+	// Case 3: add new 
+	else if ((unit.length() > 0) && (currentUnit.length() <= 0)) {
+	    /*
+	      // Add unit "combined name" only to DATA1, without breakdown
+	      ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+		    .withValue(ContactsContract.Data.RAW_CONTACT_ID, contactId)
+		    .withValue(ContactsContract.Data.MIMETYPE, Constants.MIME_UNIT_NAME)
+		    .withValue(ContactsContract.Data.DATA1, unit)
+		    .build());
+	    */
+
+	    ContentProviderOperation.Builder opUnitInsert = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI);
+	    opUnitInsert.withValue(ContactsContract.Data.RAW_CONTACT_ID, contactId);
+	    opUnitInsert.withValue(ContactsContract.Data.MIMETYPE, Constants.MIME_UNIT_NAME);
+	    opUnitInsert.withValue(ContactsContract.Data.DATA1, unit);
+	    
+	    String division = lw.getUnitDivision();
+	    if (division == null) division = "";
+	    if (division.length() > 0)
+		{
+		    opUnitInsert.withValue(ContactsContract.Data.DATA2, division);
+		}
+
+	    String brigade = lw.getUnitBrigade();
+	    if (brigade == null) brigade = "";
+	    if (brigade.length() > 0)
+		{
+		    opUnitInsert.withValue(ContactsContract.Data.DATA3, brigade);
+		}
+
+	    String battalion = lw.getUnitBattalion();
+	    if (battalion == null) battalion = "";
+	    if (battalion.length() > 0)
+		{
+		    opUnitInsert.withValue(ContactsContract.Data.DATA4, battalion);
+		}
+
+	    String company = lw.getUnitCompany();
+	    if (company == null) company = "";
+	    if (company.length() > 0)
+		{
+		    opUnitInsert.withValue(ContactsContract.Data.DATA5, company);
+		}
+
+	    String platoon = lw.getUnitPlatoon();
+	    if (platoon == null) platoon = "";
+	    if (platoon.length() > 0)
+		{
+		    opUnitInsert.withValue(ContactsContract.Data.DATA6, platoon);
+		}
+
+	    String squad = lw.getUnitSquad();
+	    if (squad == null) squad = "";
+	    if (squad.length() > 0)
+		{
+		    opUnitInsert.withValue(ContactsContract.Data.DATA7, squad);
+		}
+	    ops.add(opUnitInsert.build());
+	}
+	
+	}
+	
 	// Apply the content provider operations
 	Uri uriToModify = null;
 	try {
@@ -833,6 +1053,9 @@ public class AmmoContacts {
 		    }
 		    if (Constants.MIME_DESIGNATOR.equals(f.get("mimetype"))) {
 			lw.setDesignator(f.get("data1") );
+		    }
+		    if (Constants.MIME_BRANCH.equals(f.get("mimetype"))) {
+			lw.setBranch(f.get("data1") );
 		    }
 
 		    if (StructuredName.CONTENT_ITEM_TYPE.equals(f.get("mimetype"))) {
@@ -1365,6 +1588,119 @@ public class AmmoContacts {
 	}
 	*/
 	return rval;
+    }
+
+    //========================================================
+    // 
+    // hasData()
+    // 
+    // Internal utility function to find if a given user has 
+    // existing data for a given mimetype. 
+    // Returns the URI of the data if it exists, null otherwise.
+    //========================================================
+    private Uri hasData(String mimeType, int contactId) {
+	ContentResolver cr = mResolver;
+
+	// The data URI for this contact
+	Uri dataUri = Uri.withAppendedPath(Uri.withAppendedPath(Contacts.CONTENT_URI, 
+								String.valueOf(contactId)), "data");
+	if (Log.isLoggable(TAG, Log.VERBOSE)) {
+	    Log.d(TAG, "hasData()  data uri = " + dataUri.toString());
+	}
+
+	//Uri dataUri = Data.CONTENT_URI;
+	String[] projection = {Data._ID, Data.DATA1};
+	String selection=Data.MIMETYPE+"=? AND " + Data.RAW_CONTACT_ID +"=?";
+	String[] selectionArgs={mimeType, String.valueOf(contactId)};
+
+	// Query the contacts content provider
+	Cursor c = null;
+	try {
+	    c = cr.query(dataUri, projection, selection, selectionArgs,null);
+	    if (c == null) {
+		Log.e(TAG, "hasData() -- cursor is null");
+		return null;
+	    }
+	} catch (Throwable e) {
+	    Log.e(TAG, "Exception: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	}
+
+	// Process the query's output
+	try {
+	    int count = c.getCount();	    
+	    Log.d(TAG, "hasData() -- returned " + String.valueOf(count) + " rows");
+	    if (count < 1) {
+		return null;
+	    }
+	    c.moveToFirst();
+	    int dataRowId = c.getInt(c.getColumnIndex(Data._ID));
+	    Log.d(TAG, "hasData()    id= " + String.valueOf(dataRowId) );
+	    Log.d(TAG, "hasData()    val= " + String.valueOf(c.getString(c.getColumnIndex(Data.DATA1))) );
+	    
+	    // If data was found, return the URI for the data row 
+	    Uri foundDataUri = Uri.withAppendedPath(Data.CONTENT_URI, String.valueOf(dataRowId));
+	    Log.d(TAG, "hasData()    uri= " + foundDataUri.toString());
+	    return foundDataUri;
+	} catch (IllegalArgumentException e) { 
+	    Log.e(TAG, "IllegalArgumentException: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} catch (CursorIndexOutOfBoundsException e) {
+	    Log.e(TAG, "Cursor out of bounds: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} catch (Throwable e) {
+	    Log.e(TAG, "Exception: " + e.getMessage());
+	    e.printStackTrace();
+	    return null;
+	} finally {
+            c.close();
+        }
+    }
+
+    //========================================================
+    // 
+    // removeData()
+    // 
+    // Internal utility function to remove an existing piece of
+    // user data. 
+    // Returns true if deletion succeeded, false otherwise.
+    //========================================================
+    private boolean removeData(Uri dataUri, String mimeType, int contactId) {
+	ContentResolver cr = mResolver;
+
+	if (Log.isLoggable(TAG, Log.VERBOSE)) {
+	    Log.d(TAG, "removeData()  data uri = " + dataUri.toString());
+	}
+
+	// For now we know we're deleting a specific row, but let's keep 
+	// the selection and selectionArgs for possible future use.
+	// String selection=Data.MIMETYPE+"=? AND " + Data.RAW_CONTACT_ID +"=?";
+	// String[] selectionArgs={mimeType, String.valueOf(contactId)};
+
+	// Send delete request to content provider
+	int rval = 0;
+	try {
+	    rval = cr.delete(dataUri, null, null);
+	    if (rval <= 0) {
+		Log.e(TAG, "removeData() : operation affected no rows");
+		return false;
+	    } else {
+		Log.d(TAG, "removeData() " + String.valueOf(rval) + " rows deleted");
+		return true;
+	    }
+	} catch (SQLException e) {
+	    Log.e(TAG, "SQL Exception: " + e.getMessage());
+	    e.printStackTrace();
+	    return false;
+	} catch (Throwable e) {
+	    Log.e(TAG, "Exception: " + e.getMessage());
+	    e.printStackTrace();
+	    return false;
+	}
+
     }
 
 }
