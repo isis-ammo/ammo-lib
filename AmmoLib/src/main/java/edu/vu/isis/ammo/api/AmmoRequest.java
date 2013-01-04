@@ -1055,7 +1055,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 		 * 
 		 * @param context
 		 */
-		private Builder(Context context) {
+		protected Builder(Context context) {
 			this.mode = new AtomicReference<ConnectionMode>(
 					ConnectionMode.UNBOUND);
 			this.distributor = new AtomicReference<IDistributorService>(null);
@@ -1134,7 +1134,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 		 * not yet been obtained. In that interim case the requests are put in a
 		 * queue in anticipation of a connection mode should be used.
 		 */
-		private IAmmoRequest makeRequest(final AmmoRequest request)
+		protected IAmmoRequest makeRequest(final AmmoRequest request)
 				throws RemoteException {
 			logger.info("make service request {} {}", this.mode, request);
 			switch (this.mode.get()) {
