@@ -52,7 +52,7 @@ public abstract class AmmoType implements Parcelable {
      * method like... public static T readFromParcel(Parcel source) { if
      * (AmmoType.isNull(source)) return null; return new T(source); }
      */
-    static public void writeToParcel(AmmoType that, Parcel dest, int flags) {
+    static public void writeToParcel(final AmmoType that, final Parcel dest, final int flags) {
         if (that == null) {
             dest.writeInt(0);
             return;

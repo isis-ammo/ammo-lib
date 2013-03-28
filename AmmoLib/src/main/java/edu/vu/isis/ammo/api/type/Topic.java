@@ -8,7 +8,11 @@ perform, display, or disclose computer software or computer software
 documentation in whole or in part, in any manner and for any 
 purpose whatsoever, and to have or authorize others to do so.
  */
+
 package edu.vu.isis.ammo.api.type;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +21,10 @@ import edu.vu.isis.ammo.api.IncompleteRequest;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Topic extends AmmoType { 
+public class Topic extends AmmoType {
 
     static final Logger logger = LoggerFactory.getLogger("type.topic");
-    
+
     static final public Topic RESET = null;
 
     public static final String DEFAULT = "";
@@ -29,23 +33,29 @@ public class Topic extends AmmoType {
     static final private int STR_ID = 1;
 
     static final Topic NONE = new Topic(Oid.EMPTY);
-    
-    public enum Type { 
+
+    public enum Type {
         /**
          * An object identifier (list of integers)
          */
-        OID(OID_ID), 
+        OID(OID_ID),
         /**
          * A topic as a string.
          */
         STR(STR_ID);
 
         final public int id;
-        private Type(final int id) { this.id = id; }
+
+        private Type(final int id) {
+            this.id = id;
+        }
+
         static public Type getInstance(final int id) {
             switch (id) {
-                case OID_ID: return OID;
-                case STR_ID: return STR;
+                case OID_ID:
+                    return OID;
+                case STR_ID:
+                    return STR;
             }
             return null;
         }
@@ -59,26 +69,27 @@ public class Topic extends AmmoType {
     // Parcelable Support
     // *********************************
 
-    public static final Parcelable.Creator<Topic> CREATOR = 
+    public static final Parcelable.Creator<Topic> CREATOR =
             new Parcelable.Creator<Topic>() {
 
-        @Override
-        public Topic createFromParcel(Parcel source) {
-            try {
-                return new Topic(source);
-            } catch (IncompleteRequest ex) {
-                return null;
-            }
-        }
+                @Override
+                public Topic createFromParcel(Parcel source) {
+                    try {
+                        return new Topic(source);
+                    } catch (IncompleteRequest ex) {
+                        return null;
+                    }
+                }
 
-        @Override
-        public Topic[] newArray(int size) {
-            return new Topic[size];
-        }
-    };
+                @Override
+                public Topic[] newArray(int size) {
+                    return new Topic[size];
+                }
+            };
 
     public static Topic readFromParcel(Parcel source) {
-        if (AmmoType.isNull(source)) return null;
+        if (AmmoType.isNull(source))
+            return null;
         try {
             return new Topic(source);
         } catch (IncompleteRequest ex) {
@@ -86,8 +97,24 @@ public class Topic extends AmmoType {
         }
     }
 
+    public static Topic[] readArrayFromParcel(Parcel source) {
+        return source.createTypedArray(CREATOR);
+    }
+
+    public static Topic[] readSingleFromParcel(Parcel source) {
+        if (AmmoType.isNull(source))
+            return null;
+        try {
+            return new Topic[] {
+                new Topic(source)
+            };
+        } catch (IncompleteRequest ex) {
+            return null;
+        }
+    }
+
     @Override
-    public void writeToParcel(Parcel dest, int flags) {		
+    public void writeToParcel(Parcel dest, int flags) {
         plogger.trace("marshall topic {}", this);
         dest.writeInt(this.type.id);
 
@@ -100,6 +127,11 @@ public class Topic extends AmmoType {
                 return;
         }
     }
+    
+    public static void writeToParcel(final Topic[] subtopic, final Parcel dest, int flags) {
+        dest.writeTypedArray(subtopic, flags);
+    }
+
 
     public Topic(Parcel in) throws IncompleteRequest {
         int ordinal = -1;
@@ -131,12 +163,12 @@ public class Topic extends AmmoType {
         }
         plogger.trace("unmarshall topic {}", this);
     }
+
     // *********************************
     // Standard Methods
     // *********************************
     /**
-     * Do not used toString() for serializing the topic.
-     * Use asString() instead.
+     * Do not used toString() for serializing the topic. Use asString() instead.
      * toString() is intended for reading by humans.
      */
     @Override
@@ -146,11 +178,11 @@ public class Topic extends AmmoType {
         }
         switch (this.type) {
             case OID:
-                return "oid:"+this.oid.toString();
+                return "oid:" + this.oid.toString();
             case STR:
-                return "str:"+this.str;
+                return "str:" + this.str;
             default:
-                return "<unknown type>"+ this.type;
+                return "<unknown type>" + this.type;
         }
     }
 
@@ -159,8 +191,8 @@ public class Topic extends AmmoType {
     // *********************************
 
     /**
-     * The constructor taking a string is symmetric with 
-     * the asString() method.
+     * The constructor taking a string is symmetric with the asString() method.
+     * 
      * @param val
      */
     public Topic(String val) {
@@ -168,6 +200,7 @@ public class Topic extends AmmoType {
         this.str = val;
         this.oid = null;
     }
+
     public Topic(Oid val) {
         this.type = Type.OID;
         this.str = null;
@@ -175,13 +208,13 @@ public class Topic extends AmmoType {
     }
 
     /**
-     * When the topic is to be transmitted as a string this 
-     * is the method which should be used <b>NOT</b> toString().
+     * When the topic is to be transmitted as a string this is the method which
+     * should be used <b>NOT</b> toString().
      * 
      * @return
      */
     @Override
-    public String asString() { 
+    public String asString() {
         if (this.type == null) {
             return "<no type>";
         }
@@ -191,26 +224,28 @@ public class Topic extends AmmoType {
             case STR:
                 return this.str;
             default:
-                return "<unknown type>"+ this.type;
+                return "<unknown type>" + this.type;
         }
     }
-    
+
     /**
      * check that the two objects are logically equal.
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Topic)) return false;
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Topic))
+            return false;
         final Topic that = (Topic) obj;
         if (AmmoType.differ(this.type, that.type))
             return false;
-        switch (this.type){
-            case STR: 
+        switch (this.type) {
+            case STR:
                 if (AmmoType.differ(this.str, that.str))
                     return false;
                 return true;
-            case OID: 
+            case OID:
                 if (AmmoType.differ(this.oid, that.oid))
                     return false;
                 return true;
@@ -222,15 +257,15 @@ public class Topic extends AmmoType {
 
     @Override
     public synchronized int hashCode() {
-        if (! this.dirtyHashcode.getAndSet(false))
+        if (!this.dirtyHashcode.getAndSet(false))
             return this.hashcode;
-        final HashBuilder hb =  AmmoType.HashBuilder.newBuilder()
+        final HashBuilder hb = AmmoType.HashBuilder.newBuilder()
                 .increment(this.type);
-        switch (this.type){
-            case STR: 
+        switch (this.type) {
+            case STR:
                 hb.increment(this.str);
                 break;
-            case OID: 
+            case OID:
                 hb.increment(this.oid);
                 break;
             default:
@@ -241,6 +276,38 @@ public class Topic extends AmmoType {
         return this.hashcode;
     }
 
+    /**
+     * A set of methods for creating lists of topics.
+     * 
+     * @param val
+     * @return
+     */
+    public static Topic[] newList(List<String> val) {
+        final Topic[] subtopic = new Topic[val.size()];
+        int ix = 0;
+        for(final String item : val) {
+            subtopic[ix] = new Topic(item);
+            ix++;
+        }
+        return subtopic;
+    }
+
+    public static Topic[] newList(Oid val) {
+        final Topic[] subtopic = new Topic[0];
+        subtopic[0] = new Topic(val);
+        return subtopic;
+    }
+
+    public static Topic[] newList(String val) {
+        final Topic[] subtopic = new Topic[0];
+        subtopic[0] = new Topic(val);
+        return subtopic;
+    }
+
+    public static Topic[] newEmptyList() {
+        return new Topic[0];
+    }
+
+
+
 }
-
-

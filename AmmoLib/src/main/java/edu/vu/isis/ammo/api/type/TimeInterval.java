@@ -29,6 +29,24 @@ public class TimeInterval extends AmmoType {
     };
 
     static public final int UNLIMITED = Integer.MAX_VALUE;
+    
+    static public class Builder {
+        private Unit units;
+        private long quantity;
+        
+        private Builder() {}
+        public Builder units(final Unit units) {
+            this.units = units;
+            return this;
+        }
+        public Builder quantity(final long quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+        public TimeInterval build() {
+            return new TimeInterval(this.units, this.quantity);
+        }
+    }
 
     final private Unit units;
     final private long quantity;
@@ -112,22 +130,22 @@ public class TimeInterval extends AmmoType {
         return this.quantity;
     }
 
-    public TimeInterval(Unit unit, long amount) {
+    public TimeInterval(final Unit unit, final long amount) {
         this.units = unit;
         this.quantity = amount;
     }
 
-    public TimeInterval(Unit unit) {
+    public TimeInterval(final Unit unit) {
         this.units = unit;
         this.quantity = 1;
     }
 
-    public TimeInterval(String seconds) {
+    public TimeInterval(final String seconds) {
         this.units = Unit.SECOND;
         this.quantity = Long.parseLong(seconds);
     }
 
-    public TimeInterval(long seconds) {
+    public TimeInterval(final long seconds) {
         this.units = Unit.SECOND;
         this.quantity = seconds;
     }
@@ -165,5 +183,5 @@ public class TimeInterval extends AmmoType {
         logger.error("asString() not implemented");
         return null;
     }
-
+ 
 }

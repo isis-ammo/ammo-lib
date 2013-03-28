@@ -19,7 +19,8 @@ public enum Action {
 	RETRIEVAL(3), 
 	UNRETRIEVAL(7), 
 	SUBSCRIBE(4), DIRECTED_SUBSCRIBE(5),
-	UNSUBSCRIBE(8);
+	UNSUBSCRIBE(8),
+	INVITE(9);
 
 	public static final Logger logger = LoggerFactory.getLogger("class.Action");
 	public static final Logger IPC_REQ_IN = LoggerFactory.getLogger( "ipc.request.inbound" );
@@ -40,6 +41,7 @@ public enum Action {
 		case UNRETRIEVAL: return "CANCEL RETRIEVAL";
 		case SUBSCRIBE: return "SUBSCRIBE";
 		case UNSUBSCRIBE: return "UNSUBSCRIBE";
+		case INVITE: return "INVITE";
 		default: 
 			return null;
 		}
@@ -62,6 +64,8 @@ public enum Action {
 			
 			if (ordinal == SUBSCRIBE.o) return SUBSCRIBE;
 			if (ordinal == UNSUBSCRIBE.o) return UNSUBSCRIBE;
+			
+			if (ordinal == INVITE.o) return INVITE;
 			
 			IncompleteRequest.logger.error("bad action index {}", ordinal);
 			throw new IncompleteRequest("bad action");

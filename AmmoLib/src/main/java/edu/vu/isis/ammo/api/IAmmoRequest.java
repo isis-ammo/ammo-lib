@@ -1,6 +1,8 @@
 // IAmmoRequest.java
 // See docs/java/ammo-api.nw for documentation
 package edu.vu.isis.ammo.api;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -90,6 +92,8 @@ public interface IAmmoRequest {
       public IAmmoRequest retrieve() throws RemoteException;
       public IAmmoRequest unretrieve() throws RemoteException;
       
+      public IAmmoRequest invite() throws RemoteException;
+      
       public IAmmoRequest getInstance(String uuid) throws RemoteException;
       public void releaseInstance();
       public Builder notice(Notice.Threshold threshold, Via.Type type);
@@ -101,6 +105,7 @@ public interface IAmmoRequest {
         public Builder payload(AmmoValues val);
         public Builder topic(String val);
         public Builder subtopic(String val);
+        public Builder subtopic(List<String> val);
         public Builder quantifier(String val);
         public Builder topic(String major, String minor, String quantifier);
 
@@ -133,6 +138,7 @@ public interface IAmmoRequest {
         public Builder select(Query val);
         public Builder select(Form val);
         public Builder intent(Intent val);
+       
    }
   
 }
