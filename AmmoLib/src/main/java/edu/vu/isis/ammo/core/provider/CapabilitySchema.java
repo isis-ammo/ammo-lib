@@ -7,7 +7,7 @@ import edu.vu.isis.ammo.util.EnumUtils;
 
 public enum CapabilitySchema implements RelationSchema {
 	/** This is a locally unique identifier for the request */
-	ID(BaseColumns._ID,"TEXT"),
+	ID(BaseColumns._ID, "TEXT"),
 	
 	/** This is a universally unique identifier for the request */
 	UUID("TEXT"),
