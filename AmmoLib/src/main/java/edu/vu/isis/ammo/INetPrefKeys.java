@@ -83,7 +83,7 @@ public interface INetPrefKeys {
     public static final int DEFAULT_MULTICAST_PORT = 9982;
     public static final int DEFAULT_MULTICAST_NET_CONN = 20;
     public static final int DEFAULT_MULTICAST_IDLE_TIME = 3;
-    public static final int DEFAULT_MULTICAST_TTL = 1;
+    public static final int DEFAULT_MULTICAST_TTL = 10;
 
     /**
      * ReliableMulticast Channel Settings External Keys SERIAL_DISABLED :
