@@ -133,14 +133,14 @@ public interface INetPrefKeys {
     public static final String SERIAL_TRANSMIT_DURATION = "SERIAL_TRANSMIT_DURATION";
 
     // VALUES
+    // IMPORTANT: These values must match the values in the AmmoCore xml prefs
+    // files.
     public static final boolean DEFAULT_SERIAL_ENABLED = Keys.NetworkingKeys.DEFAULT_SERIAL_ENABLED;
     public static final String DEFAULT_SERIAL_DEVICE = "/dev/ttyUSB0";
     public static final int DEFAULT_SERIAL_BAUD_RATE = 9600;
-    public static final int DEFAULT_SERIAL_SLOT_NUMBER = 1;
-    public static final int DEFAULT_SERIAL_RADIOS_IN_GROUP = 4;
-    public static final int DEFAULT_SERIAL_SLOT_DURATION = 500;
-    public static final int DEFAULT_SERIAL_TRANSMIT_DURATION = 400;
+    public static final int DEFAULT_SERIAL_SLOT_NUMBER = 8;
+    public static final int DEFAULT_SERIAL_RADIOS_IN_GROUP = 16;
+    public static final int DEFAULT_SERIAL_SLOT_DURATION = 750;
+    public static final int DEFAULT_SERIAL_TRANSMIT_DURATION = 500;
     public static final boolean DEFAULT_SERIAL_SEND_ENABLED = true;
-    public static final boolean DEFAULT_SERIAL_RECEIVE_ENABLED = true;
-
 }
