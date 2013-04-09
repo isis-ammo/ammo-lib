@@ -11,15 +11,14 @@ purpose whatsoever, and to have or authorize others to do so.
 
 package edu.vu.isis.ammo.api.type;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.vu.isis.ammo.api.IncompleteRequest;
 import android.os.Parcel;
 import android.os.Parcelable;
+import edu.vu.isis.ammo.api.IncompleteRequest;
 
 public class Topic extends AmmoType {
 
@@ -308,6 +307,12 @@ public class Topic extends AmmoType {
         return new Topic[0];
     }
 
-
+    public static String[] asString(final Topic[] subtopic) {
+        final String[] result = new String[subtopic.length];
+        for (int ix=0; ix < result.length; ++ix) {
+            result[ix] = subtopic[ix].asString();
+        }
+        return result;
+    }
 
 }

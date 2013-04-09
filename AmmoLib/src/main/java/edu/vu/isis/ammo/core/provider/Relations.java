@@ -47,7 +47,9 @@ public enum Relations {
 	/** The disposal status of subscribe requests */
 	SUBSCRIBE_DISPOSAL(231, "subscribe_disposal"),
 	/** A record of acknowledgments */
-	RECIPIENT(300, "recipient");
+	RECIPIENT(300, "recipient"),
+	/** A record of invitations */
+    INVITE(400, "invite");
 
 	final public int nominal;
 	final public String n;

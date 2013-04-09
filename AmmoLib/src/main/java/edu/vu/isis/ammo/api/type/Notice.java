@@ -97,7 +97,7 @@ public class Notice extends AmmoType {
 		@SuppressWarnings("unused")
 		private final Notice notice;
 		private String topic = null;
-		private String subtopic = null;
+		private String[] subtopic = null;
 		private String auid = null;
 		private String channel = null;
 		private String status = null;
@@ -118,12 +118,15 @@ public class Notice extends AmmoType {
 			return this;
 		}
 
-		public IntentBuilder subtopic(final Topic subtopic) {
-			this.subtopic = subtopic.toString();
+		public IntentBuilder subtopic(final Topic[] subtopic) {
+		    this.subtopic = new String[subtopic.length];
+		    for (int ix=0; ix < subtopic.length; ++ix) {
+		        this.subtopic[ix] = subtopic[ix].asString();
+		    }
 			return this;
 		}
 
-		public IntentBuilder subtopic(final String subtopic) {
+		public IntentBuilder subtopic(final String[] subtopic) {
 			this.subtopic = subtopic;
 			return this;
 		}
@@ -173,8 +176,11 @@ public class Notice extends AmmoType {
 			final Uri.Builder uriBuilder = new Uri.Builder().scheme("ammo")
 					.authority(this.topic);
 
-			if (this.subtopic != null)
-				uriBuilder.path(this.subtopic);
+            if (this.subtopic != null) {
+                for (final String subt : this.subtopic) {
+                    uriBuilder.path(subt);
+                }
+            }
 
 			final Intent noticed = new Intent().setAction(action)
 					.setData(uriBuilder.build())

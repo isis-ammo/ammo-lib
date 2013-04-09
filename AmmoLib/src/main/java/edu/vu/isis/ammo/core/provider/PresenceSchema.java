@@ -65,6 +65,7 @@ public enum PresenceSchema implements RelationSchema {
     static public final String WHERE_ALL = "where-all";
     /** "operator"=? */
     static public final String WHERE_OPERATOR_IS = "where-operator-is";
+    static public final String WHERE_OPERATOR_IS_SQL = PresenceSchema.OPERATOR + "=?";
 
     /** textual field name */
     final public String field;

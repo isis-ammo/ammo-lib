@@ -15,12 +15,11 @@ public enum Action {
 	NONE(-1),
 	POSTAL(0), DIRECTED_POSTAL(1), 
 	UNPOSTAL(6),
-	PUBLISH(2), 
+	INVITE(2), 
 	RETRIEVAL(3), 
 	UNRETRIEVAL(7), 
 	SUBSCRIBE(4), DIRECTED_SUBSCRIBE(5),
-	UNSUBSCRIBE(8),
-	INVITE(9);
+	UNSUBSCRIBE(8);
 
 	public static final Logger logger = LoggerFactory.getLogger("class.Action");
 	public static final Logger IPC_REQ_IN = LoggerFactory.getLogger( "ipc.request.inbound" );
