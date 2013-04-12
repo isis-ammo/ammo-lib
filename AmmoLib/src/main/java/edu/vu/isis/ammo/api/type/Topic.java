@@ -16,6 +16,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import edu.vu.isis.ammo.api.IncompleteRequest;
@@ -23,6 +26,13 @@ import edu.vu.isis.ammo.api.IncompleteRequest;
 public class Topic extends AmmoType {
 
     static final Logger logger = LoggerFactory.getLogger("type.topic");
+
+    public static final String ACTION_INVITATION = "edu.vu.isis.ammo.ACTION_MESSAGE_INVITATION";
+    
+    public static final String EXTRA_TOPIC = "topic";
+    public static final String EXTRA_SUBTOPIC = "subtopic";
+    public static final String EXTRA_UID = "uid";
+    public static final String EXTRA_CHANNEL = "channel";
 
     static final public Topic RESET = null;
 
@@ -105,7 +115,7 @@ public class Topic extends AmmoType {
             return null;
         try {
             return new Topic[] {
-                new Topic(source)
+                    new Topic(source)
             };
         } catch (IncompleteRequest ex) {
             return null;
@@ -126,11 +136,10 @@ public class Topic extends AmmoType {
                 return;
         }
     }
-    
+
     public static void writeToParcel(final Topic[] subtopic, final Parcel dest, int flags) {
         dest.writeTypedArray(subtopic, flags);
     }
-
 
     public Topic(Parcel in) throws IncompleteRequest {
         int ordinal = -1;
@@ -284,7 +293,7 @@ public class Topic extends AmmoType {
     public static Topic[] newList(List<String> val) {
         final Topic[] subtopic = new Topic[val.size()];
         int ix = 0;
-        for(final String item : val) {
+        for (final String item : val) {
             subtopic[ix] = new Topic(item);
             ix++;
         }
@@ -309,10 +318,72 @@ public class Topic extends AmmoType {
 
     public static String[] asString(final Topic[] subtopic) {
         final String[] result = new String[subtopic.length];
-        for (int ix=0; ix < result.length; ++ix) {
+        for (int ix = 0; ix < result.length; ++ix) {
             result[ix] = subtopic[ix].asString();
         }
         return result;
+    }
+
+    public static IntentBuilder getIntentBuilder() {
+        return new IntentBuilder();
+    }
+
+    static public class IntentBuilder {
+
+        private String topic = null;
+        private String[] subtopic = null;
+        private String auid = null;
+        private String channel = null;
+
+        public IntentBuilder() {
+        }
+
+        public IntentBuilder topic(final String topic) {
+            this.topic = topic;
+            return this;
+        }
+
+        public IntentBuilder subtopic(final String[] subtopic) {
+            this.subtopic = subtopic;
+            return this;
+        }
+
+        public IntentBuilder auid(final String auid) {
+            this.auid = auid;
+            return this;
+        }
+
+        public IntentBuilder channel(final String channel) {
+            this.channel = channel;
+            return this;
+        }
+
+        public Intent build(final Context context, final String action) {
+            final Uri.Builder uriBuilder = new Uri.Builder()
+                    .scheme("ammo")
+                    .authority(this.topic);
+
+            if (this.subtopic != null) {
+                for (final String st : this.subtopic) {
+                    uriBuilder.appendPath(st);
+                }
+            }
+
+            final Intent invited = new Intent().setAction(action)
+                    .setData(uriBuilder.build())
+                    .putExtra(EXTRA_TOPIC, this.topic);
+
+            if (this.subtopic != null)
+                invited.putExtra(EXTRA_SUBTOPIC, this.subtopic);
+
+            if (this.auid != null)
+                invited.putExtra(EXTRA_UID, this.auid);
+
+            if (this.channel != null)
+                invited.putExtra(EXTRA_CHANNEL, this.channel);
+
+            return invited;
+        }
     }
 
 }
