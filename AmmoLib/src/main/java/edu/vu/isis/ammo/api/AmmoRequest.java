@@ -216,7 +216,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 				// source.unmarshall(data, 0, size);
 				final byte[] data = source.marshall();
 				plogger.error("PARCEL UNMARSHALLING PROBLEM: size {} data {}",
-						new Object[] { capacity, data }, ex);
+						capacity, data, ex);
 				return null;
 			}
 		}
@@ -233,10 +233,17 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 	 * will will be handled correctly.
 	 */
 	private final byte VERSION = (byte) 0x05;
+    public final long buildTime;
 
 	/**
-	 * The first few fields are required and are positional. The remainder are
-	 * optional, their presence is indicated by their nominal values.
+     * The first few fields are required and are positional. 
+     * <dl>
+     * <dt>uuid</dt><dd></dd>
+     * <dt>uid</dt><dd></dd>
+     * <dt>action</dt><dd></dd>
+     * </dl>
+     * 
+     * The remainder are optional, their presence is indicated by their nominal values.
 	 */
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
@@ -249,6 +256,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 		if (CLIENT_LOGGING)
 			plogger.debug("action: {}", this.action);
 		Action.writeToParcel(dest, this.action);
+        /* OPTIONAL FIELDS BEGIN */
 
 		// PROVIDER
 		if (CLIENT_LOGGING)
@@ -382,11 +390,42 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 	 * identifiers.
 	 */
 	private enum Nominal {
-		PROVIDER(2), PAYLOAD(3), MOMENT(4), TOPIC(5), SUBTOPIC(6), QUANTIFIER(7), DOWNSAMPLE(
-				8), DURABLILITY(9), PRIORITY(10), ORDER(11), START(12), EXPIRE(
-				13), LIMIT(14), DELIVERY_SCOPE(15), THROTTLE(16), WORTH(17), NOTICE(
-				18), SELECTION(19), PROJECTION(20), CHANNEL_FILTER(21), INTENT(
-				22);
+        /** The content provider uri */
+        PROVIDER(2),
+        /** the serialized payload */
+        PAYLOAD(3),
+        /** when should the serialization happend */
+        MOMENT(4),
+        /** the topic (subtopic deprecated) and subtopic array */
+        TOPIC(5), SUBTOPIC(6), 
+        /** */
+        QUANTIFIER(7),
+        /** */
+        DOWNSAMPLE(8),
+        /**  */
+        DURABLILITY(9),
+        /** the relative importance of the message */
+        PRIORITY(10),
+        /** With priority determines the delivery order */
+        ORDER(11),
+        /** how long the request should persist */
+        START(12), EXPIRE(13),
+        /** how many ? */
+        LIMIT(14), 
+        /** */
+        DELIVERY_SCOPE(15), 
+        /** */
+        THROTTLE(16), 
+        /** used to determine the value of the network */
+        WORTH(17), 
+        /** specify the type of delivery notification to generate */
+        NOTICE(18), 
+        /** used to filter, by content, what is to be delivered, used for pull */
+        SELECTION(19), PROJECTION(20), 
+        /** futher reduce the available routes beyond what is specified in the distribution policy */
+        CHANNEL_FILTER(21), 
+        /** When sent the intent is generated */
+        INTENT(22);
 
 		public final int code;
 
@@ -418,6 +457,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 	 */
 	private AmmoRequest(Parcel in) throws IncompleteRequest {
 		final byte version;
+        this.buildTime = System.currentTimeMillis();
 		try {
 			version = in.readByte();
 			if (version < VERSION) {
@@ -644,7 +684,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 					builder.provider = Provider.readFromParcel(in);
 					plogger.trace("provider: {}", builder.provider);
 				} catch (Exception ex) {
-					plogger.error("decoding provider: {}", ex);
+                        plogger.error("decoding provider", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -653,7 +693,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 					builder.payload = Payload.readFromParcel(in);
 					plogger.trace("payload: {}", builder.payload);
 				} catch (Exception ex) {
-					plogger.error("decoding payload: {}", ex);
+                        plogger.error("decoding payload", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -662,7 +702,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 					builder.moment = SerialMoment.readFromParcel(in);
 					plogger.trace("moment: {}", builder.moment);
 				} catch (Exception ex) {
-					plogger.error("decoding moment: {}", ex);
+                        plogger.error("decoding moment", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -671,7 +711,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 					builder.topic = Topic.readFromParcel(in);
 					plogger.trace("topic: {}", builder.topic);
 				} catch (Exception ex) {
-					plogger.error("decoding topic: {}", ex);
+                        plogger.error("decoding topic", ex);
 					throw new IncompleteRequest(ex);
 				}
 			case SUBTOPIC:
@@ -688,7 +728,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 					builder.quantifier = Quantifier.readFromParcel(in);
 					plogger.trace("quantifier: {}", builder.quantifier);
 				} catch (Exception ex) {
-					plogger.error("decoding quantifier: {}", ex);
+                        plogger.error("decoding quantifier", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -698,7 +738,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 							.getClassLoader());
 					plogger.trace("downsample: {}", builder.downsample);
 				} catch (Exception ex) {
-					plogger.error("decoding downsample: {}", ex);
+                        plogger.error("decoding downsample", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -708,7 +748,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 							.getClassLoader());
 					plogger.trace("durability: {}", builder.durability);
 				} catch (Exception ex) {
-					plogger.error("decoding durability: {}", ex);
+                        plogger.error("decoding durability", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -718,7 +758,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 							.getClassLoader());
 					plogger.trace("priority: {}", builder.priority);
 				} catch (Exception ex) {
-					plogger.error("decoding priority: {}", ex);
+                        plogger.error("decoding priority", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -727,7 +767,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 					builder.order = Order.readFromParcel(in);
 					plogger.trace("order: {}", builder.order);
 				} catch (Exception ex) {
-					plogger.error("decoding order: {}", ex);
+                        plogger.error("decoding order", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -736,7 +776,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 					builder.start = TimeTrigger.readFromParcel(in);
 					plogger.trace("start: {}", builder.start);
 				} catch (Exception ex) {
-					plogger.error("unmarshall start {}", ex);
+                        plogger.error("unmarshall start", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -745,7 +785,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 					builder.expire = TimeTrigger.readFromParcel(in);
 					plogger.trace("expire: {}", builder.expire);
 				} catch (Exception ex) {
-					plogger.error("decoding expire: {}", ex);
+                        plogger.error("decoding expire", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -754,7 +794,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 					builder.limit = Limit.readFromParcel(in);
 					plogger.trace("limit: {}", builder.limit);
 				} catch (Exception ex) {
-					plogger.error("decoding limit: {}", ex);
+                        plogger.error("decoding limit", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -763,7 +803,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 					builder.scope = DeliveryScope.readFromParcel(in);
 					plogger.trace("scope: {}", builder.scope);
 				} catch (Exception ex) {
-					plogger.error("decoding scope: {}", ex);
+                        plogger.error("decoding scope", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -773,7 +813,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 							.getClassLoader());
 					plogger.trace("throttle: {}", builder.throttle);
 				} catch (Exception ex) {
-					plogger.error("unmarshall throttle {}", ex);
+                        plogger.error("unmarshall throttle", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -783,7 +823,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 							.getClassLoader());
 					plogger.trace("worth: {}", builder.worth);
 				} catch (Exception ex) {
-					plogger.error("decoding worth: {}", ex);
+                        plogger.error("decoding worth", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -792,7 +832,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 					builder.notice = Notice.readFromParcel(in);
 					plogger.trace("notice: {}", builder.notice);
 				} catch (Exception ex) {
-					plogger.error("decoding notice: {}", ex);
+                        plogger.error("decoding notice", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -801,7 +841,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 					builder.select = Selection.readFromParcel(in);
 					plogger.trace("select: {}", builder.select);
 				} catch (Exception ex) {
-					plogger.error("decoding select: {}", ex);
+                        plogger.error("decoding select", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -813,7 +853,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 								Arrays.asList(builder.project));
 					}
 				} catch (Exception ex) {
-					plogger.error("decoding projection: {}", ex);
+                        plogger.error("decoding projection", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -822,7 +862,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 					builder.channelFilter = ChannelFilter.readFromParcel(in);
 					plogger.trace("channelFilter: {}", builder.channelFilter);
 				} catch (Exception ex) {
-					plogger.error("decoding channelFilter: {}", ex);
+                        plogger.error("decoding channelFilter", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
@@ -873,6 +913,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 	// *********************************
 
 	private AmmoRequest(Action action, Builder builder) {
+        this.buildTime = System.currentTimeMillis();
 		this.action = action;
 		this.uid = builder.uid;
 
