@@ -65,6 +65,25 @@ public interface INetPrefKeys {
     public static final int DEFAULT_GW_TIMEOUT = 3; // 3 seconds
 
     /**
+     * Gateway SSL Channel Link Settings External Keys GATEWAY_DISABLED :
+     * Indicates that the user wishes to make use if possible. GATEWAY_HOST :
+     * The IP address of the gateway host GATEWAY_PORT : The listening port
+     */
+    public static final String SSL_DISABLED = Keys.NetworkingKeys.GATEWAY_DISABLED;
+    public static final String SSL_HOST = Keys.NetworkingKeys.GATEWAY_HOST;
+    public static final String SSL_PORT = "CORE_IP_PORT";
+    public static final String SSL_FLAT_LINE_TIME = "CORE_FLAT_LINE_TIME";
+    public static final String SSL_TIMEOUT = "CORE_SOCKET_TIMEOUT";
+
+    // VALUES
+    public static final boolean DEFAULT_SSL_ENABLED = true;
+    public static final String DEFAULT_SSL_HOST = Keys.NetworkingKeys.DEFAULT_GATEWAY_HOST;
+    public static final int DEFAULT_SSL_PORT = 33290;
+    public static final int DEFAULT_SSL_FLAT_LINE_TIME = 20; // 20 minutes
+    public static final int DEFAULT_SSL_TIMEOUT = 3; // 3 seconds
+    
+    
+    /**
      * Multicast Channel and UDP multicast Settings External Keys
      * MULTICAST_DISABLED : Indicates that the user wishes to make use if
      * possible. MULTICAST_HOST : The IP address of the gateway host

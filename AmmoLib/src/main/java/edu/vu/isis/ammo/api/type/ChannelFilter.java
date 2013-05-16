@@ -25,6 +25,7 @@ public class ChannelFilter extends AmmoType {
     public final static String RELIABLE_MULTICAST = "reliablemulticast";
     public final static String JOURNAL = "journal";
     public final static String MOCK = "mock";
+    public final static String SSL = "ssl";
 
     final private String name;
 
