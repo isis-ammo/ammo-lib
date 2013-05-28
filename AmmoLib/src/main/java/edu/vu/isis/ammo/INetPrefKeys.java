@@ -69,9 +69,9 @@ public interface INetPrefKeys {
      * Indicates that the user wishes to make use if possible. GATEWAY_HOST :
      * The IP address of the gateway host GATEWAY_PORT : The listening port
      */
-    public static final String SSL_DISABLED = Keys.NetworkingKeys.GATEWAY_DISABLED;
-    public static final String SSL_HOST = Keys.NetworkingKeys.GATEWAY_HOST;
-    public static final String SSL_PORT = "CORE_IP_PORT";
+    public static final String SSL_DISABLED = "transapps_settings_network_wifi_ssl_enabled";//Keys.NetworkingKeys.GATEWAY_DISABLED;
+    public static final String SSL_HOST = "transapps_settings_network_ssl_host";//Keys.NetworkingKeys.GATEWAY_HOST;
+    public static final String SSL_PORT = "CORE_SSL_IP_PORT";
     public static final String SSL_FLAT_LINE_TIME = "CORE_FLAT_LINE_TIME";
     public static final String SSL_TIMEOUT = "CORE_SOCKET_TIMEOUT";
 

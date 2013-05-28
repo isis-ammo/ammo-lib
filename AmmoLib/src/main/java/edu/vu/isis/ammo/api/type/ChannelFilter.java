@@ -21,11 +21,14 @@ public class ChannelFilter extends AmmoType {
     public final static String SERIAL = "serial";
     public final static String GATEWAY = "gateway";
     public final static String GATEWAYMEDIA = "gatewaymedia";
+    public final static String SSL = "ssl";
+    public final static String SSLMEDIA = "sslmedia";
+    
     public final static String MULTICAST = "multicast";
     public final static String RELIABLE_MULTICAST = "reliablemulticast";
     public final static String JOURNAL = "journal";
     public final static String MOCK = "mock";
-    public final static String SSL = "ssl";
+
 
     final private String name;
 
