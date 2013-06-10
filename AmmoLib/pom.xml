@@ -17,18 +17,11 @@
       <plugin>
         <groupId>com.jayway.maven.plugins.android.generation2</groupId>
         <artifactId>android-maven-plugin</artifactId>
+        <configuration>
+          <sdk><platform>8</platform></sdk>
+        </configuration>
         <extensions>true</extensions>
         <executions>
-          <execution>
-            <id>do-it</id>
-            <configuration>
-              <sdk>
-                <platform>8</platform>
-              </sdk>
-              <undeployBeforeDeploy>true</undeployBeforeDeploy>
-            </configuration>
-          </execution>
-
           <execution>
             <id>update-manifest</id>
             <goals>
@@ -36,14 +29,10 @@
             </goals>
             <configuration>
               <manifest>
-<!--
-                <versionCodeUpdateFromVersion>true</versionCodeUpdateFromVersion>
--->
                 <debuggable>true</debuggable>
               </manifest>
             </configuration>
           </execution>
-
         </executions>
       </plugin>
       <plugin>
