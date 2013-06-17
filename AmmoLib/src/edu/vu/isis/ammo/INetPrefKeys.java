@@ -99,7 +99,7 @@ public interface INetPrefKeys {
     public static final String RELIABLE_MULTICAST_NET_CONN_TIMEOUT = "RELIABLE_MULTICAST_NET_CONN_TIMEOUT";
     public static final String RELIABLE_MULTICAST_CONN_IDLE_TIMEOUT = "RELIABLE_MULTICAST_CONN_IDLE_TIMEOUT";
     public static final String RELIABLE_MULTICAST_TTL = "RELIABLE_MULTICAST_TTL";
-    public static final String RELIABLE_MULTICAST_FRAG_DELAY = "RELIABLE_MULTICAST_FRAG_DELAY";
+    public static final String RELIABLE_MULTICAST_FRAG_DELAY = Keys.NetworkingKeys.IP_RADIO_NETWORK_THRESHOLD;
 
     // VALUES
     public static final boolean DEFAULT_RELIABLE_MULTICAST_ENABLED = Keys.NetworkingKeys.DEFAULT_RELIABLE_MULTICAST_ENABLED;
@@ -108,7 +108,7 @@ public interface INetPrefKeys {
     public static final int DEFAULT_RELIABLE_MULTICAST_NET_CONN = 20;
     public static final int DEFAULT_RELIABLE_MULTICAST_IDLE_TIME = 3;
     public static final int DEFAULT_RELIABLE_MULTICAST_TTL = 1;
-    public static final int DEFAULT_RELIABLE_MULTICAST_FRAG_DELAY = 0;
+    public static final String DEFAULT_RELIABLE_MULTICAST_FRAG_DELAY = Keys.NetworkingKeys.DEFAULT_IP_RADIO_NETWORK_THRESHOLD;
 
     /**
      * Serial Channel and USB Link Settings Serial Channel/Link : External Keys
