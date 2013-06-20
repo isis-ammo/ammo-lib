@@ -23,6 +23,7 @@ public class ChannelFilter extends AmmoType {
     public final static String GATEWAYMEDIA = "gatewaymedia";
     public final static String MULTICAST = "multicast";
     public final static String RELIABLE_MULTICAST = "reliablemulticast";
+    public final static String RELIABLE_MULTICAST_MEDIA = "reliablemcastmedia";
     public final static String JOURNAL = "journal";
     public final static String MOCK = "mock";
 

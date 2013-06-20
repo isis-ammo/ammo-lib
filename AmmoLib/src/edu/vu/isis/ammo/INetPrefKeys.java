@@ -96,6 +96,7 @@ public interface INetPrefKeys {
      */
     public static final String RELIABLE_MULTICAST_HOST = "RELIABLE_MULTICAST_IP_ADDRESS";
     public static final String RELIABLE_MULTICAST_PORT = "RELIABLE_MULTICAST_PORT";
+    public static final String RELIABLE_MULTICAST_MEDIA_PORT = "RELIABLE_MULTICAST_MEDIA_PORT";
     public static final String RELIABLE_MULTICAST_NET_CONN_TIMEOUT = "RELIABLE_MULTICAST_NET_CONN_TIMEOUT";
     public static final String RELIABLE_MULTICAST_CONN_IDLE_TIMEOUT = "RELIABLE_MULTICAST_CONN_IDLE_TIMEOUT";
     public static final String RELIABLE_MULTICAST_TTL = "RELIABLE_MULTICAST_TTL";
@@ -105,6 +106,7 @@ public interface INetPrefKeys {
     public static final boolean DEFAULT_RELIABLE_MULTICAST_ENABLED = Keys.NetworkingKeys.DEFAULT_RELIABLE_MULTICAST_ENABLED;
     public static final String DEFAULT_RELIABLE_MULTICAST_HOST = "228.8.8.8";
     public static final int DEFAULT_RELIABLE_MULTICAST_PORT = 45588;
+    public static final int DEFAULT_RELIABLE_MULTICAST_MEDIA_PORT = 45590;
     public static final int DEFAULT_RELIABLE_MULTICAST_NET_CONN = 20;
     public static final int DEFAULT_RELIABLE_MULTICAST_IDLE_TIME = 3;
     public static final int DEFAULT_RELIABLE_MULTICAST_TTL = 1;
