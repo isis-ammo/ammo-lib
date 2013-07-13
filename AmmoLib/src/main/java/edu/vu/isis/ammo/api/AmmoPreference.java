@@ -30,7 +30,7 @@ public class AmmoPreference {
         mContext = context;
         mContentResolver = contentResolver;
 
-        if (context.getApplicationInfo().packageName.startsWith("edu.vu.isis.ammo.core")) {
+        if (context.getApplicationInfo().packageName.startsWith("edu.vu.isis")) {
             hasPermissionReadWrite = true;
         } else {
             hasPermissionReadWrite = false;
