@@ -301,13 +301,13 @@ public class Topic extends AmmoType {
     }
 
     public static Topic[] newList(Oid val) {
-        final Topic[] subtopic = new Topic[0];
+        final Topic[] subtopic = new Topic[1];
         subtopic[0] = new Topic(val);
         return subtopic;
     }
 
     public static Topic[] newList(String val) {
-        final Topic[] subtopic = new Topic[0];
+        final Topic[] subtopic = new Topic[1];
         subtopic[0] = new Topic(val);
         return subtopic;
     }
