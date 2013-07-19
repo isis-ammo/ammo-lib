@@ -56,6 +56,8 @@ public interface INetPrefKeys {
     public static final String GATEWAY_PORT = "CORE_IP_PORT";
     public static final String GATEWAY_FLAT_LINE_TIME = "CORE_FLAT_LINE_TIME";
     public static final String GATEWAY_TIMEOUT = "CORE_SOCKET_TIMEOUT";
+    
+    public static final String SERVER_PORT = "SERVER_IP_PORT";
 
     // VALUES
     public static final boolean DEFAULT_GATEWAY_ENABLED = Keys.NetworkingKeys.DEFAULT_GATEWAY_ENABLED;
@@ -63,6 +65,8 @@ public interface INetPrefKeys {
     public static final int DEFAULT_GATEWAY_PORT = 33289;
     public static final int DEFAULT_GW_FLAT_LINE_TIME = 20; // 20 minutes
     public static final int DEFAULT_GW_TIMEOUT = 3; // 3 seconds
+    
+    public static final int DEFAULT_SERVER_PORT = 51423;
 
     /**
      * Multicast Channel and UDP multicast Settings External Keys

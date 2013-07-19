@@ -21,6 +21,8 @@ public class ChannelFilter extends AmmoType {
     public final static String SERIAL = "serial";
     public final static String GATEWAY = "gateway";
     public final static String GATEWAYMEDIA = "gatewaymedia";
+    public final static String SERVER = "usb";
+    
     public final static String MULTICAST = "multicast";
     public final static String RELIABLE_MULTICAST = "reliablemulticast";
     public final static String RELIABLE_MULTICAST_MEDIA = "reliablemcastmedia";
