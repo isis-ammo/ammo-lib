@@ -57,6 +57,7 @@ public interface INetPrefKeys {
     public static final String GATEWAY_FLAT_LINE_TIME = "CORE_FLAT_LINE_TIME";
     public static final String GATEWAY_TIMEOUT = "CORE_SOCKET_TIMEOUT";
     
+    public static final String SERVER_ENABLED = "transaps.settings.server.disabled"; // Keys.NetworkingKeys.SERVER_DISABLED;
     public static final String SERVER_PORT = "SERVER_IP_PORT";
 
     // VALUES
@@ -66,6 +67,7 @@ public interface INetPrefKeys {
     public static final int DEFAULT_GW_FLAT_LINE_TIME = 20; // 20 minutes
     public static final int DEFAULT_GW_TIMEOUT = 3; // 3 seconds
     
+    public static final boolean DEFAULT_SERVER_ENABLED = true; // Keys.NetworkingKeys.DEFAULT_SERVER_ENABLED;
     public static final int DEFAULT_SERVER_PORT = 51423;
 
     /**
