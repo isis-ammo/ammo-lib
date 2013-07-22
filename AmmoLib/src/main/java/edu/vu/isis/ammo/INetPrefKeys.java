@@ -56,6 +56,9 @@ public interface INetPrefKeys {
     public static final String GATEWAY_PORT = "CORE_IP_PORT";
     public static final String GATEWAY_FLAT_LINE_TIME = "CORE_FLAT_LINE_TIME";
     public static final String GATEWAY_TIMEOUT = "CORE_SOCKET_TIMEOUT";
+    
+    public static final String SERVER_ENABLED = "transaps.settings.server.disabled"; // Keys.NetworkingKeys.SERVER_DISABLED;
+    public static final String SERVER_PORT = "SERVER_IP_PORT";
 
     // VALUES
     public static final boolean DEFAULT_GATEWAY_ENABLED = Keys.NetworkingKeys.DEFAULT_GATEWAY_ENABLED;
@@ -63,6 +66,9 @@ public interface INetPrefKeys {
     public static final int DEFAULT_GATEWAY_PORT = 33289;
     public static final int DEFAULT_GW_FLAT_LINE_TIME = 20; // 20 minutes
     public static final int DEFAULT_GW_TIMEOUT = 3; // 3 seconds
+    
+    public static final boolean DEFAULT_SERVER_ENABLED = true; // Keys.NetworkingKeys.DEFAULT_SERVER_ENABLED;
+    public static final int DEFAULT_SERVER_PORT = 51423;
 
     /**
      * Multicast Channel and UDP multicast Settings External Keys
@@ -96,19 +102,21 @@ public interface INetPrefKeys {
      */
     public static final String RELIABLE_MULTICAST_HOST = "RELIABLE_MULTICAST_IP_ADDRESS";
     public static final String RELIABLE_MULTICAST_PORT = "RELIABLE_MULTICAST_PORT";
+    public static final String RELIABLE_MULTICAST_MEDIA_PORT = "RELIABLE_MULTICAST_MEDIA_PORT";
     public static final String RELIABLE_MULTICAST_NET_CONN_TIMEOUT = "RELIABLE_MULTICAST_NET_CONN_TIMEOUT";
     public static final String RELIABLE_MULTICAST_CONN_IDLE_TIMEOUT = "RELIABLE_MULTICAST_CONN_IDLE_TIMEOUT";
     public static final String RELIABLE_MULTICAST_TTL = "RELIABLE_MULTICAST_TTL";
-    public static final String RELIABLE_MULTICAST_FRAG_DELAY = "RELIABLE_MULTICAST_FRAG_DELAY";
+    public static final String RELIABLE_MULTICAST_FRAG_DELAY = Keys.NetworkingKeys.IP_RADIO_NETWORK_THRESHOLD;
 
     // VALUES
     public static final boolean DEFAULT_RELIABLE_MULTICAST_ENABLED = Keys.NetworkingKeys.DEFAULT_RELIABLE_MULTICAST_ENABLED;
     public static final String DEFAULT_RELIABLE_MULTICAST_HOST = "228.8.8.8";
     public static final int DEFAULT_RELIABLE_MULTICAST_PORT = 45588;
+    public static final int DEFAULT_RELIABLE_MULTICAST_MEDIA_PORT = 45590;
     public static final int DEFAULT_RELIABLE_MULTICAST_NET_CONN = 20;
     public static final int DEFAULT_RELIABLE_MULTICAST_IDLE_TIME = 3;
     public static final int DEFAULT_RELIABLE_MULTICAST_TTL = 1;
-    public static final int DEFAULT_RELIABLE_MULTICAST_FRAG_DELAY = 0;
+    public static final String DEFAULT_RELIABLE_MULTICAST_FRAG_DELAY = Keys.NetworkingKeys.DEFAULT_IP_RADIO_NETWORK_THRESHOLD;
 
     /**
      * Serial Channel and USB Link Settings Serial Channel/Link : External Keys
