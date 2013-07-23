@@ -29,10 +29,14 @@
             </goals>
             <configuration>
               <manifest>
+<!--
+                <versionCodeUpdateFromVersion>true</versionCodeUpdateFromVersion>
+-->
                 <debuggable>true</debuggable>
               </manifest>
             </configuration>
           </execution>
+
         </executions>
       </plugin>
       <plugin>
