@@ -236,7 +236,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 	 * Class.writeToParcel(this.provider, dest, flags) so that when the null
 	 * will will be handled correctly.
 	 */
-	private final byte VERSION = (byte) 0x05;
+	private final byte VERSION = (byte) 0x06;
     public final long buildTime;
 
 	/**
@@ -729,16 +729,16 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 				} catch (Exception ex) {
                         plogger.error("decoding subtopic", ex);
                         throw new IncompleteRequest(ex);
+                }
+                break;
+            case SUBTOPIC_LIST:
+                try {
+                    builder.subtopic = Topic.readArrayFromParcel(in);
+                    if (plogger.isTraceEnabled()) {
+                        plogger.trace("subtopic: {}", Arrays.toString(builder.subtopic));
                     }
-                    break;
-                case SUBTOPIC_LIST:
-                    try {
-                        builder.subtopic = Topic.readArrayFromParcel(in);
-                        if (plogger.isTraceEnabled()) {
-                            plogger.trace("subtopic: {}", Arrays.toString(builder.subtopic));
-                        }
-                    } catch (Exception ex) {
-                        plogger.error("decoding subtopic", ex);
+                } catch (Exception ex) {
+                    plogger.error("decoding subtopic", ex);
 					throw new IncompleteRequest(ex);
 				}
 				break;
