@@ -153,4 +153,26 @@ public interface INetPrefKeys {
     public static final int DEFAULT_SERIAL_SLOT_DURATION = 750;
     public static final int DEFAULT_SERIAL_TRANSMIT_DURATION = 500;
     public static final boolean DEFAULT_SERIAL_SEND_ENABLED = true;
+
+    
+    // Message Size limits and defaults for each channel ....
+    /**
+     * maximum message length that OMMA allows over Gateway:  an integer number of MB.
+     */
+    public static final String GATEWAY_MAX_MESSAGE_SIZE = Keys.NetworkingKeys.GATEWAY_MAX_MESSAGE_SIZE;
+    public static final String DEFAULT_GATEWAY_MAX_MESSAGE_SIZE = Keys.NetworkingKeys.DEFAULT_GATEWAY_MAX_MESSAGE_SIZE;
+
+    /**
+     * maximum message length that OMMA allows over Reliable Multicast:  an integer number of MB.
+     */
+    public static final String RELIABLE_MULTICAST_MAX_MESSAGE_SIZE = Keys.NetworkingKeys.RELIABLE_MULTICAST_MAX_MESSAGE_SIZE;
+    public static final String DEFAULT_RELIABLE_MULTICAST_MAX_MESSAGE_SIZE = Keys.NetworkingKeys.DEFAULT_RELIABLE_MULTICAST_MAX_MESSAGE_SIZE;
+
+    /**
+     * maximum message length that OMMA allows over Serial:  an integer number of MB.
+     *
+     * This is for SatCom, not 152.
+     */
+    public static final String SERIAL_MAX_MESSAGE_SIZE = Keys.NetworkingKeys.SERIAL_MAX_MESSAGE_SIZE;;
+    public static final String DEFAULT_SERIAL_MAX_MESSAGE_SIZE = Keys.NetworkingKeys.DEFAULT_SERIAL_MAX_MESSAGE_SIZE;
 }
