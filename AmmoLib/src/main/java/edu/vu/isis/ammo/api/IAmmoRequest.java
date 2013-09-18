@@ -104,6 +104,7 @@ public interface IAmmoRequest {
         public Builder payload(ContentValues val);
         public Builder payload(AmmoValues val);
         public Builder topic(String val);
+        public Builder topic(List<String> val);
         public Builder subtopic(String val);
         public Builder subtopic(List<String> val);
         public Builder quantifier(String val);

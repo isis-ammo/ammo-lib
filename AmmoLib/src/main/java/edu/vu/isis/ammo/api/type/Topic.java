@@ -330,21 +330,15 @@ public class Topic extends AmmoType {
 
     static public class IntentBuilder {
 
-        private String topic = null;
-        private String[] subtopic = null;
+        private String[] topic = null;
         private String auid = null;
         private String channel = null;
 
         public IntentBuilder() {
         }
 
-        public IntentBuilder topic(final String topic) {
+        public IntentBuilder topic(final String[] topic) {
             this.topic = topic;
-            return this;
-        }
-
-        public IntentBuilder subtopic(final String[] subtopic) {
-            this.subtopic = subtopic;
             return this;
         }
 
@@ -361,10 +355,10 @@ public class Topic extends AmmoType {
         public Intent build(final Context context, final String action) {
             final Uri.Builder uriBuilder = new Uri.Builder()
                     .scheme("ammo")
-                    .authority(this.topic);
+                    .authority(this.topic[0]);
 
-            if (this.subtopic != null) {
-                for (final String st : this.subtopic) {
+            if (this.topic != null) {
+                for (final String st : this.topic) {
                     uriBuilder.appendPath(st);
                 }
             }
@@ -373,8 +367,8 @@ public class Topic extends AmmoType {
                     .setData(uriBuilder.build())
                     .putExtra(EXTRA_TOPIC, this.topic);
 
-            if (this.subtopic != null)
-                invited.putExtra(EXTRA_SUBTOPIC, this.subtopic);
+            if (this.topic != null)
+                invited.putExtra(EXTRA_SUBTOPIC, this.topic);
 
             if (this.auid != null)
                 invited.putExtra(EXTRA_UID, this.auid);

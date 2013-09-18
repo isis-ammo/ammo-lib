@@ -11,10 +11,7 @@ purpose whatsoever, and to have or authorize others to do so.
 
 package edu.vu.isis.ammo.api;
 
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
@@ -93,8 +90,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 	/**
 	 * the general uid and data type. This is a prefix match pattern.
 	 */
-	final public Topic topic;
-    final public Topic[] subtopic;
+    final public Topic[] topic;
 	final public Quantifier quantifier;
 
 	final public Integer downsample;
@@ -185,10 +181,8 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 			sb.append('[').append(this.uuid).append("]");
 		if (this.uid != null)
 			sb.append(":[").append(this.uid).append("] ");
-		if (this.topic != null)
-			sb.append('@').append(this.topic);
-        if (this.subtopic != null) {
-            for (final Topic sub : this.subtopic) {
+        if (this.topic != null) {
+            for (final Topic sub : this.topic) {
                 sb.append('&').append(sub);
             }
         }
@@ -291,14 +285,11 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 		// TOPIC
         if (CLIENT_LOGGING) {
             if (plogger.isDebugEnabled()) {
-			plogger.debug("topic: [{}]+[{}]", this.topic, this.subtopic);
+			plogger.debug("topic: [{}]", this.topic);
             }
         }
 		Nominal.TOPIC.writeToParcel(dest, flags);
 		Topic.writeToParcel(this.topic, dest, flags);
-
-		Nominal.SUBTOPIC.writeToParcel(dest, flags);
-		Topic.writeToParcel(this.subtopic, dest, flags);
 
 		// QUANTIFIER
 		if (CLIENT_LOGGING)
@@ -404,8 +395,8 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
         PAYLOAD(3),
         /** when should the serialization happend */
         MOMENT(4),
-        /** the topic (subtopic deprecated) and subtopic array */
-        TOPIC(5), SUBTOPIC(6), SUBTOPIC_LIST(23),
+        /** the topic subtopic (both deprecated) and new topic array */
+        DEPRECATED_TOPIC(5), DEPRECATED_SUBTOPIC(6), TOPIC(23),
         /** */
         QUANTIFIER(7),
         /** */
@@ -442,8 +433,6 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 		}
 
 		public void writeToParcel(Parcel dest, int flags) {
-			// TODO Auto-generated method stub
-
 		}
 
 		public static final SparseArray<Nominal> lookup = new SparseArray<Nominal>();
@@ -484,421 +473,54 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 			plogger.error("unmarshall on version", ex);
 			throw new IncompleteRequest(ex);
 		}
+        final AmmoRequest.Builder builder;
+
 		if (version < (byte) 6) {
-			try {
-				this.uuid = (String) in
-						.readValue(String.class.getClassLoader());
-				this.uid = (version < (byte) 3) ? this.uuid : (String) in
-						.readValue(String.class.getClassLoader());
-				plogger.trace("uuid: [{}:{}]", this.uuid, this.uid);
-			} catch (Exception ex) {
-				plogger.error("decoding uid: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
+            try {
+                this.uuid = (String) in.readValue(String.class.getClassLoader());
+                this.uid = (version < (byte) 3) ? this.uuid : (String) in
+                        .readValue(String.class.getClassLoader());
+                plogger.trace("uuid: [{}:{}]", this.uuid, this.uid);
+            } catch (Exception ex) {
+                plogger.error("decoding uid: {}", ex);
+                throw new IncompleteRequest(ex);
+            }
+            try {
+                this.action = Action.getInstance(in);
+                plogger.trace("action: {}", this.action);
+            } catch (Exception ex) {
+                plogger.error("decoding action: {}", ex);
+                throw new IncompleteRequest(ex);
+            }
+            builder = deprecatedPositionalDeserialization(in, version, null);
 
-			try {
-				this.action = Action.getInstance(in);
-				plogger.trace("action: {}", this.action);
-			} catch (Exception ex) {
-				plogger.error("decoding action: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.provider = Provider.readFromParcel(in);
-				plogger.trace("provider: {}", this.provider);
-			} catch (Exception ex) {
-				plogger.error("decoding provider: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.payload = Payload.readFromParcel(in);
-				plogger.trace("payload: {}", this.payload);
-			} catch (Exception ex) {
-				plogger.error("decoding payload: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.moment = (version < (byte) 4) ? SerialMoment.DEFAULT
-						: SerialMoment.readFromParcel(in);
-				plogger.trace("moment: {}", this.moment);
-			} catch (Exception ex) {
-				plogger.error("decoding moment: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.topic = Topic.readFromParcel(in);
-				plogger.trace("topic: {}", this.topic);
-			} catch (Exception ex) {
-				plogger.error("decoding topic: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
+		}  else {
 
-			if (version < (byte) 3) {
-				// unused read slack bytes
-                this.subtopic = Topic.newEmptyList();
-				this.quantifier = new Quantifier(Quantifier.Type.BULLETIN);
-			} else {
-				try {
-                    this.subtopic = Topic.readSingleFromParcel(in);
-                    // FIXME plogger.trace("subtopic: {}", this.subtopic);
-				} catch (Exception ex) {
-					plogger.error("decoding subtopic: {}", ex);
-					throw new IncompleteRequest(ex);
-				}
-				try {
-					this.quantifier = Quantifier.readFromParcel(in);
-					plogger.trace("quantifier: {}", this.quantifier);
-				} catch (Exception ex) {
-					plogger.error("decoding quantifier: {}", ex);
-					throw new IncompleteRequest(ex);
-				}
-			}
-			try {
-				this.downsample = (Integer) in.readValue(Integer.class
-						.getClassLoader());
-				plogger.trace("downsample: {}", this.downsample);
-			} catch (Exception ex) {
-				plogger.error("decoding downsample: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.durability = (Integer) in.readValue(Integer.class
-						.getClassLoader());
-				plogger.trace("durability: {}", this.durability);
-			} catch (Exception ex) {
-				plogger.error("decoding durability: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
+            try {
+                this.uuid = ((String) in.readValue(String.class.getClassLoader()));
+                this.uid = (String) in.readValue(String.class.getClassLoader());
+                plogger.trace("uuid: [{}:{}]", this.uuid, this.uid);
+            } catch (Exception ex) {
+                plogger.error("decoding uid: {}", ex);
+                throw new IncompleteRequest(ex);
+            }
 
-				this.priority = (Integer) in.readValue(Integer.class
-						.getClassLoader());
-				plogger.trace("priority: {}", this.priority);
-			} catch (Exception ex) {
-				plogger.error("decoding priority: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.order = Order.readFromParcel(in);
-				plogger.trace("order: {}", this.order);
-			} catch (Exception ex) {
-				plogger.error("decoding order: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.start = TimeTrigger.readFromParcel(in);
-				plogger.trace("start: {}", this.start);
-			} catch (Exception ex) {
-				plogger.error("unmarshall start {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.expire = TimeTrigger.readFromParcel(in);
-				plogger.trace("expire: {}", this.expire);
-			} catch (Exception ex) {
-				plogger.error("decoding expire: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.limit = (version < (byte) 2) ? new Limit(100) : Limit
-						.readFromParcel(in);
-				plogger.trace("limit: {}", this.limit);
-			} catch (Exception ex) {
-				plogger.error("decoding limit: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.scope = DeliveryScope.readFromParcel(in);
-				plogger.trace("scope: {}", this.scope);
-			} catch (Exception ex) {
-				plogger.error("decoding scope: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.throttle = (Integer) in.readValue(Integer.class
-						.getClassLoader());
-				plogger.trace("throttle: {}", this.throttle);
-			} catch (Exception ex) {
-				plogger.error("unmarshall throttle {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.worth = (Integer) in.readValue(Integer.class
-						.getClassLoader());
-				plogger.trace("worth: {}", this.worth);
-			} catch (Exception ex) {
-				plogger.error("decoding worth: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.notice = (version < 4) ? new Notice() : Notice
-						.readFromParcel(in);
-				plogger.trace("notice: {}", this.notice);
-			} catch (Exception ex) {
-				plogger.error("decoding notice: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.select = Selection.readFromParcel(in);
-				plogger.trace("select: {}", this.select);
-			} catch (Exception ex) {
-				plogger.error("decoding select: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.project = in.createStringArray();
-				if (this.project != null) {
-					plogger.trace("projection: {}", Arrays.asList(this.project));
-				}
-			} catch (Exception ex) {
-				plogger.error("decoding projection: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			try {
-				this.channelFilter = (version < (byte) 5) ? null
-						: ChannelFilter.readFromParcel(in);
-				plogger.trace("channelFilter: {}", this.channelFilter);
-			} catch (Exception ex) {
-				plogger.error("decoding channelFilter: {}", ex);
-				throw new IncompleteRequest(ex);
-			}
-			this.intent = null;
-			return;
-		}
-
-		try {
-			this.uuid = ((String) in.readValue(String.class.getClassLoader()));
-			this.uid = (String) in.readValue(String.class.getClassLoader());
-			plogger.trace("uuid: [{}:{}]", this.uuid, this.uid);
-		} catch (Exception ex) {
-			plogger.error("decoding uid: {}", ex);
-			throw new IncompleteRequest(ex);
-		}
-
-		try {
-			this.action = Action.getInstance(in);
-			plogger.trace("action: {}", this.action);
-		} catch (Exception ex) {
-			plogger.error("decoding action: {}", ex);
-			throw new IncompleteRequest(ex);
-		}
-		final Builder builder = newBuilder(null);
-		builder.limit = new Limit(100);
-		builder.moment = SerialMoment.DEFAULT;
-		for (Nominal nominal = getNominalFromParcel(in); nominal != null; nominal = getNominalFromParcel(in)) {
-			switch (nominal) {
-			case PROVIDER:
-				try {
-					builder.provider = Provider.readFromParcel(in);
-					plogger.trace("provider: {}", builder.provider);
-				} catch (Exception ex) {
-                        plogger.error("decoding provider", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case PAYLOAD:
-				try {
-					builder.payload = Payload.readFromParcel(in);
-					plogger.trace("payload: {}", builder.payload);
-				} catch (Exception ex) {
-                        plogger.error("decoding payload", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case MOMENT:
-				try {
-					builder.moment = SerialMoment.readFromParcel(in);
-					plogger.trace("moment: {}", builder.moment);
-				} catch (Exception ex) {
-                        plogger.error("decoding moment", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case TOPIC:
-				try {
-					builder.topic = Topic.readFromParcel(in);
-					plogger.trace("topic: {}", builder.topic);
-				} catch (Exception ex) {
-                        plogger.error("decoding topic", ex);
-					throw new IncompleteRequest(ex);
-				}
-			case SUBTOPIC:
-				try {
-                        builder.subtopic = Topic.readSingleFromParcel(in);
-                        plogger.trace("subtopic: {}", builder.subtopic[0]);
-				} catch (Exception ex) {
-                        plogger.error("decoding subtopic", ex);
-                        throw new IncompleteRequest(ex);
-                }
-                break;
-            case SUBTOPIC_LIST:
-                try {
-                    builder.subtopic = Topic.readArrayFromParcel(in);
-                    if (plogger.isTraceEnabled()) {
-                        plogger.trace("subtopic: {}", Arrays.toString(builder.subtopic));
-                    }
-                } catch (Exception ex) {
-                    plogger.error("decoding subtopic", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case QUANTIFIER:
-				try {
-					builder.quantifier = Quantifier.readFromParcel(in);
-					plogger.trace("quantifier: {}", builder.quantifier);
-				} catch (Exception ex) {
-                        plogger.error("decoding quantifier", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case DOWNSAMPLE:
-				try {
-					builder.downsample = (Integer) in.readValue(Integer.class
-							.getClassLoader());
-					plogger.trace("downsample: {}", builder.downsample);
-				} catch (Exception ex) {
-                        plogger.error("decoding downsample", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case DURABLILITY:
-				try {
-					builder.durability = (Integer) in.readValue(Integer.class
-							.getClassLoader());
-					plogger.trace("durability: {}", builder.durability);
-				} catch (Exception ex) {
-                        plogger.error("decoding durability", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case PRIORITY:
-				try {
-					builder.priority = (Integer) in.readValue(Integer.class
-							.getClassLoader());
-					plogger.trace("priority: {}", builder.priority);
-				} catch (Exception ex) {
-                        plogger.error("decoding priority", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case ORDER:
-				try {
-					builder.order = Order.readFromParcel(in);
-					plogger.trace("order: {}", builder.order);
-				} catch (Exception ex) {
-                        plogger.error("decoding order", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case START:
-				try {
-					builder.start = TimeTrigger.readFromParcel(in);
-					plogger.trace("start: {}", builder.start);
-				} catch (Exception ex) {
-                        plogger.error("unmarshall start", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case EXPIRE:
-				try {
-					builder.expire = TimeTrigger.readFromParcel(in);
-					plogger.trace("expire: {}", builder.expire);
-				} catch (Exception ex) {
-                        plogger.error("decoding expire", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case LIMIT:
-				try {
-					builder.limit = Limit.readFromParcel(in);
-					plogger.trace("limit: {}", builder.limit);
-				} catch (Exception ex) {
-                        plogger.error("decoding limit", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case DELIVERY_SCOPE:
-				try {
-					builder.scope = DeliveryScope.readFromParcel(in);
-					plogger.trace("scope: {}", builder.scope);
-				} catch (Exception ex) {
-                        plogger.error("decoding scope", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case THROTTLE:
-				try {
-					builder.throttle = (Integer) in.readValue(Integer.class
-							.getClassLoader());
-					plogger.trace("throttle: {}", builder.throttle);
-				} catch (Exception ex) {
-                        plogger.error("unmarshall throttle", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case WORTH:
-				try {
-					builder.worth = (Integer) in.readValue(Integer.class
-							.getClassLoader());
-					plogger.trace("worth: {}", builder.worth);
-				} catch (Exception ex) {
-                        plogger.error("decoding worth", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case NOTICE:
-				try {
-					builder.notice = Notice.readFromParcel(in);
-					plogger.trace("notice: {}", builder.notice);
-				} catch (Exception ex) {
-                        plogger.error("decoding notice", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case SELECTION:
-				try {
-					builder.select = Selection.readFromParcel(in);
-					plogger.trace("select: {}", builder.select);
-				} catch (Exception ex) {
-                        plogger.error("decoding select", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case PROJECTION:
-				try {
-					builder.project = in.createStringArray();
-					if (builder.project != null) {
-						plogger.trace("projection: {}",
-								Arrays.asList(builder.project));
-					}
-				} catch (Exception ex) {
-                        plogger.error("decoding projection", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case CHANNEL_FILTER:
-				try {
-					builder.channelFilter = ChannelFilter.readFromParcel(in);
-					plogger.trace("channelFilter: {}", builder.channelFilter);
-				} catch (Exception ex) {
-                        plogger.error("decoding channelFilter", ex);
-					throw new IncompleteRequest(ex);
-				}
-				break;
-			case INTENT:
-				builder.intent = BroadIntent.readFromParcel(in);
-				break;
-			default:
-			}
-		}
+            try {
+                this.action = Action.getInstance(in);
+                plogger.trace("action: {}", this.action);
+            } catch (Exception ex) {
+                plogger.error("decoding action: {}", ex);
+                throw new IncompleteRequest(ex);
+            }
+            builder = indexedDeserialization(in, version, null);
+        }
 
 		this.provider = builder.provider;
 		this.intent = builder.intent;
 		this.payload = builder.payload;
 		this.moment = builder.moment;
 
-		this.topic = builder.topic;
-		this.subtopic = builder.subtopic;
+		this.topic = builder.topic.toArray(new Topic[0]);
 		this.quantifier = builder.quantifier;
 		this.channelFilter = builder.channelFilter;
 
@@ -915,12 +537,438 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 		this.scope = builder.scope;
 		this.throttle = builder.throttle;
 
-		this.project = builder.project;
+		this.project = builder.project.toArray(new String[0]);
 		this.select = builder.select;
 
 		this.worth = builder.worth;
 		this.notice = builder.notice;
 	}
+
+    /**
+     * The new approach is to use a nominal index for each field.
+     *
+     * @param in
+     * @param version
+     * @return
+     * @throws IncompleteRequest
+     */
+    private AmmoRequest.Builder indexedDeserialization(Parcel in, final byte version, final Builder in_builder) throws IncompleteRequest {
+        AmmoRequest.Builder builder =  (in_builder == null) ? AmmoRequest.newBuilder(null) : in_builder;
+
+        builder.limit = new Limit(100);
+        builder.moment = SerialMoment.DEFAULT;
+        for (Nominal nominal = getNominalFromParcel(in); nominal != null; nominal = getNominalFromParcel(in)) {
+            switch (nominal) {
+                case PROVIDER:
+                    try {
+                        builder.provider = Provider.readFromParcel(in);
+                        plogger.trace("provider: {}", builder.provider);
+                    } catch (Exception ex) {
+                        plogger.error("decoding provider", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case PAYLOAD:
+                    try {
+                        builder.payload = Payload.readFromParcel(in);
+                        plogger.trace("payload: {}", builder.payload);
+                    } catch (Exception ex) {
+                        plogger.error("decoding payload", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case MOMENT:
+                    try {
+                        builder.moment = SerialMoment.readFromParcel(in);
+                        plogger.trace("moment: {}", builder.moment);
+                    } catch (Exception ex) {
+                        plogger.error("decoding moment", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                /**
+                 * The topic has been consolidated into a single list of strings.
+                 * Previously the main-topic and the list of sub-topics were treated
+                 * as two separate fields.  The reading of the two separate fields
+                 * continues to be supported but writing is not.
+                 * The main-topic is now the first element of the topic array.
+                 */
+                case DEPRECATED_TOPIC:
+                    try {
+                        final Topic mainTopic = Topic.readFromParcel(in);
+                        builder.topic.set(0, mainTopic);
+                        plogger.trace("topic: {}", builder.topic);
+                    } catch (Exception ex) {
+                        plogger.error("decoding topic", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                case DEPRECATED_SUBTOPIC:
+                    try {
+                        final Topic[] subtopicList = Topic.readSingleFromParcel(in);
+                        if (builder.topic.size() > 1) {
+                            final Topic mainTopic = builder.topic.get(0);
+                            builder.topic.clear();
+                            builder.topic.add(mainTopic);
+                        }
+                        for (final Topic subtopic : subtopicList) {
+                            builder.topic.add(subtopic);
+                        }
+                        plogger.trace("topic: {}", builder.topic);
+                    } catch (Exception ex) {
+                        plogger.error("decoding subtopic", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case TOPIC:
+                    try {
+                        builder.topic.clear();
+                        builder.topic.addAll( Arrays.asList(Topic.readArrayFromParcel(in)) );
+                        if (plogger.isTraceEnabled()) {
+                            plogger.trace("subtopic: {}", builder.topic);
+                        }
+                    } catch (Exception ex) {
+                        plogger.error("decoding subtopic", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case QUANTIFIER:
+                    try {
+                        builder.quantifier = Quantifier.readFromParcel(in);
+                        plogger.trace("quantifier: {}", builder.quantifier);
+                    } catch (Exception ex) {
+                        plogger.error("decoding quantifier", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case DOWNSAMPLE:
+                    try {
+                        builder.downsample = (Integer) in.readValue(Integer.class
+                                .getClassLoader());
+                        plogger.trace("downsample: {}", builder.downsample);
+                    } catch (Exception ex) {
+                        plogger.error("decoding downsample", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case DURABLILITY:
+                    try {
+                        builder.durability = (Integer) in.readValue(Integer.class
+                                .getClassLoader());
+                        plogger.trace("durability: {}", builder.durability);
+                    } catch (Exception ex) {
+                        plogger.error("decoding durability", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case PRIORITY:
+                    try {
+                        builder.priority = (Integer) in.readValue(Integer.class
+                                .getClassLoader());
+                        plogger.trace("priority: {}", builder.priority);
+                    } catch (Exception ex) {
+                        plogger.error("decoding priority", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case ORDER:
+                    try {
+                        builder.order = Order.readFromParcel(in);
+                        plogger.trace("order: {}", builder.order);
+                    } catch (Exception ex) {
+                        plogger.error("decoding order", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case START:
+                    try {
+                        builder.start = TimeTrigger.readFromParcel(in);
+                        plogger.trace("start: {}", builder.start);
+                    } catch (Exception ex) {
+                        plogger.error("unmarshall start", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case EXPIRE:
+                    try {
+                        builder.expire = TimeTrigger.readFromParcel(in);
+                        plogger.trace("expire: {}", builder.expire);
+                    } catch (Exception ex) {
+                        plogger.error("decoding expire", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case LIMIT:
+                    try {
+                        builder.limit = Limit.readFromParcel(in);
+                        plogger.trace("limit: {}", builder.limit);
+                    } catch (Exception ex) {
+                        plogger.error("decoding limit", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case DELIVERY_SCOPE:
+                    try {
+                        builder.scope = DeliveryScope.readFromParcel(in);
+                        plogger.trace("scope: {}", builder.scope);
+                    } catch (Exception ex) {
+                        plogger.error("decoding scope", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case THROTTLE:
+                    try {
+                        builder.throttle = (Integer) in.readValue(Integer.class
+                                .getClassLoader());
+                        plogger.trace("throttle: {}", builder.throttle);
+                    } catch (Exception ex) {
+                        plogger.error("unmarshall throttle", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case WORTH:
+                    try {
+                        builder.worth = (Integer) in.readValue(Integer.class
+                                .getClassLoader());
+                        plogger.trace("worth: {}", builder.worth);
+                    } catch (Exception ex) {
+                        plogger.error("decoding worth", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case NOTICE:
+                    try {
+                        builder.notice = Notice.readFromParcel(in);
+                        plogger.trace("notice: {}", builder.notice);
+                    } catch (Exception ex) {
+                        plogger.error("decoding notice", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case SELECTION:
+                    try {
+                        builder.select = Selection.readFromParcel(in);
+                        plogger.trace("select: {}", builder.select);
+                    } catch (Exception ex) {
+                        plogger.error("decoding select", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case PROJECTION:
+                    try {
+                        builder.project.clear();
+                        builder.project.addAll( Arrays.asList(in.createStringArray()) );
+                        if (builder.project != null) {
+                            plogger.trace("projection: {}",
+                                    Arrays.asList(builder.project));
+                        }
+                    } catch (Exception ex) {
+                        plogger.error("decoding projection", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case CHANNEL_FILTER:
+                    try {
+                        builder.channelFilter = ChannelFilter.readFromParcel(in);
+                        plogger.trace("channelFilter: {}", builder.channelFilter);
+                    } catch (Exception ex) {
+                        plogger.error("decoding channelFilter", ex);
+                        throw new IncompleteRequest(ex);
+                    }
+                    break;
+                case INTENT:
+                    builder.intent = BroadIntent.readFromParcel(in);
+                    break;
+                default:
+            }
+        }
+        return builder;
+    }
+    /**
+     * The original approach was for each field to have a reserved position.
+     * This proved brittle as the fields changed or became deprecated.
+     * It also requires the field marker be sent even when the field is unused.
+     *
+     * @param in
+     * @param version
+     * @return
+     * @throws IncompleteRequest
+     */
+    private AmmoRequest.Builder deprecatedPositionalDeserialization(Parcel in, final byte version, final Builder in_builder) throws IncompleteRequest {
+        AmmoRequest.Builder builder =  (in_builder == null) ? AmmoRequest.newBuilder(null) : in_builder;
+
+        try {
+            builder.provider = Provider.readFromParcel(in);
+            plogger.trace("provider: {}", builder.provider);
+        } catch (Exception ex) {
+            plogger.error("decoding provider: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.payload = Payload.readFromParcel(in);
+            plogger.trace("payload: {}", builder.payload);
+        } catch (Exception ex) {
+            plogger.error("decoding payload: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.moment = (version < (byte) 4) ? SerialMoment.DEFAULT
+                    : SerialMoment.readFromParcel(in);
+            plogger.trace("moment: {}", builder.moment);
+        } catch (Exception ex) {
+            plogger.error("decoding moment: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+
+        builder.topic.clear();
+        try {
+            final Topic mainTopic =  Topic.readFromParcel(in);
+            builder.topic.add(mainTopic);
+            plogger.trace("topic: {}", mainTopic);
+        } catch (Exception ex) {
+            plogger.error("decoding topic: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        // Added positional fields in version 3
+        // subtopic : a single field
+        // quantifier
+        if (version < (byte) 3) {
+            builder.quantifier = new Quantifier(Quantifier.Type.BULLETIN);
+        } else {
+            try {
+                final Topic[] subtopicList = Topic.readSingleFromParcel(in);
+                if (builder.topic.size() > 1) {
+                    final Topic mainTopic = builder.topic.get(0);
+                    builder.topic.clear();
+                    builder.topic.add(mainTopic);
+                }
+                for (final Topic subtopic : subtopicList) {
+                    builder.topic.add(subtopic);
+                }
+                plogger.trace("btopic: {}", builder.topic);
+            } catch (Exception ex) {
+                plogger.error("decoding topic: {}", ex);
+                throw new IncompleteRequest(ex);
+            }
+            try {
+                builder.quantifier = Quantifier.readFromParcel(in);
+                plogger.trace("quantifier: {}", builder.quantifier);
+            } catch (Exception ex) {
+                plogger.error("decoding quantifier: {}", ex);
+                throw new IncompleteRequest(ex);
+            }
+        }
+        try {
+            builder.downsample = (Integer) in.readValue(Integer.class
+                    .getClassLoader());
+            plogger.trace("downsample: {}", builder.downsample);
+        } catch (Exception ex) {
+            plogger.error("decoding downsample: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.durability = (Integer) in.readValue(Integer.class
+                    .getClassLoader());
+            plogger.trace("durability: {}", builder.durability);
+        } catch (Exception ex) {
+            plogger.error("decoding durability: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.priority = (Integer) in.readValue(Integer.class
+                    .getClassLoader());
+            plogger.trace("priority: {}", builder.priority);
+        } catch (Exception ex) {
+            plogger.error("decoding priority: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.order = Order.readFromParcel(in);
+            plogger.trace("order: {}", builder.order);
+        } catch (Exception ex) {
+            plogger.error("decoding order: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.start = TimeTrigger.readFromParcel(in);
+            plogger.trace("start: {}", builder.start);
+        } catch (Exception ex) {
+            plogger.error("unmarshall start {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.expire = TimeTrigger.readFromParcel(in);
+            plogger.trace("expire: {}", builder.expire);
+        } catch (Exception ex) {
+            plogger.error("decoding expire: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.limit = (version < (byte) 2) ? new Limit(100) : Limit
+                    .readFromParcel(in);
+            plogger.trace("limit: {}", builder.limit);
+        } catch (Exception ex) {
+            plogger.error("decoding limit: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.scope = DeliveryScope.readFromParcel(in);
+            plogger.trace("scope: {}", builder.scope);
+        } catch (Exception ex) {
+            plogger.error("decoding scope: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.throttle = (Integer) in.readValue(Integer.class
+                    .getClassLoader());
+            plogger.trace("throttle: {}", builder.throttle);
+        } catch (Exception ex) {
+            plogger.error("unmarshall throttle {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.worth = (Integer) in.readValue(Integer.class
+                    .getClassLoader());
+            plogger.trace("worth: {}", builder.worth);
+        } catch (Exception ex) {
+            plogger.error("decoding worth: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.notice = (version < 4) ? new Notice() : Notice
+                    .readFromParcel(in);
+            plogger.trace("notice: {}", builder.notice);
+        } catch (Exception ex) {
+            plogger.error("decoding notice: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.select = Selection.readFromParcel(in);
+            plogger.trace("select: {}", builder.select);
+        } catch (Exception ex) {
+            plogger.error("decoding select: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.project.clear();
+            builder.project.addAll( Arrays.asList(in.createStringArray()) );
+            if (builder.project != null) {
+                plogger.trace("projection: {}", builder.project);
+            }
+        } catch (Exception ex) {
+            plogger.error("decoding projection: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        try {
+            builder.channelFilter = (version < (byte) 5) ? null
+                    : ChannelFilter.readFromParcel(in);
+            plogger.trace("channelFilter: {}", builder.channelFilter);
+        } catch (Exception ex) {
+            plogger.error("decoding channelFilter: {}", ex);
+            throw new IncompleteRequest(ex);
+        }
+        builder.intent = null;
+        return builder;
+    }
 
 	@Override
 	public int describeContents() {
@@ -942,8 +990,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 		this.payload = builder.payload;
 		this.moment = builder.moment;
 
-		this.topic = builder.topic;
-		this.subtopic = builder.subtopic;
+		this.topic = builder.topic.toArray(new Topic[0]);
 		this.quantifier = builder.quantifier;
 		this.channelFilter = builder.channelFilter;
 
@@ -960,7 +1007,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 		this.scope = builder.scope;
 		this.throttle = builder.throttle;
 
-		this.project = builder.project;
+		this.project = builder.project.toArray(new String[0]);
 		this.select = builder.select;
 
 		this.worth = builder.worth;
@@ -1119,6 +1166,8 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 		protected Builder(Context context) {
 			this.mode = new AtomicReference<ConnectionMode>(
 					ConnectionMode.UNBOUND);
+            this.topic = new ArrayList<Topic>(1);
+            this.project = new ArrayList<String>(1);
 			this.distributor = new AtomicReference<IDistributorService>(null);
 			this.context = context;
 			this.pendingRequestQueue = new LinkedBlockingQueue<AmmoRequest>();
@@ -1150,6 +1199,8 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 			this.distributor = new AtomicReference<IDistributorService>(
 					IDistributorService.Stub.asInterface(serviceBinder));
 
+            this.topic = new ArrayList<Topic>(1);
+            this.project = new ArrayList<String>(1);
 		}
 
 		private String uid;
@@ -1159,8 +1210,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 		private Payload payload;
 
 		private SerialMoment moment;
-		private Topic topic;
-        private Topic[] subtopic;
+        private final ArrayList<Topic> topic;
 		private Quantifier quantifier;
 		private ChannelFilter channelFilter;
 
@@ -1177,7 +1227,7 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 		private DeliveryScope scope;
 		private Integer throttle;
 
-		private String[] project;
+		private final List<String> project;
 		private Selection select;
 
 		private Integer worth;
@@ -1318,7 +1368,6 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 			this.start(START_DEFAULT);
 			this.throttle(THROTTLE_DEFAULT);
 			this.topic(Topic.DEFAULT);
-			this.subtopic(Topic.DEFAULT);
 			this.quantifier(QUANTIFIER_DEFAULT);
 			this.uid(UID_DEFAULT);
 			this.expire(EXPIRE_DEFAULT);
@@ -1465,32 +1514,56 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 
 		@Override
 		public Builder topic(String val) {
-			this.topic = new Topic(val);
-			return this;
+            this.topic.set(0, new Topic(val));
+            return this;
 		}
+
+        @Override
+        public Builder topic(List<String> val) {
+            this.topic.clear();
+            for (final Topic subtopic : Topic.newList(val)) {
+                this.topic.add(subtopic);
+            }
+            return this;
+        }
 
 		@Override
 		public Builder topic(Oid val) {
-			this.topic = new Topic(val);
+			this.topic.set(0, new Topic(val));
 			return this;
 		}
 
 		@Override
 		public Builder subtopic(String val) {
-            this.subtopic = Topic.newList(val);
+            if (this.topic.size() > 1) {
+                this.topic.set(1, new Topic(val));
+            } else {
+                this.topic.add(new Topic(val));
+            }
             return this;
         }
 
         @Override
         public Builder subtopic(List<String> val) {
-            this.subtopic = Topic.newList(val);
+            if (this.topic.size() > 1) {
+                final Topic mainTopic = this.topic.get(0);
+                this.topic.clear();
+                this.topic.add(mainTopic);
+            }
+            for (final Topic subtopic : Topic.newList(val)) {
+                this.topic.add(subtopic);
+            }
 			return this;
 		}
 
 		@Override
 		public Builder subtopic(Oid val) {
-            this.subtopic = Topic.newList(val);
-			return this;
+            if (this.topic.size() > 1) {
+                this.topic.set(0, new Topic(val));
+            } else {
+                this.topic.add(new Topic(val));
+            }
+            return this;
 		}
 
 		@Override
@@ -1615,7 +1688,8 @@ public class AmmoRequest implements IAmmoRequest, Parcelable {
 
 		@Override
 		public Builder project(String[] val) {
-			this.project = val;
+			this.project.clear();
+            this.project.addAll( Arrays.asList(val) );
 			return this;
 		}
 
